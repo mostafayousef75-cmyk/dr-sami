@@ -53,7 +53,7 @@
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+            transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease, margin 0.3s ease, width 0.3s ease;
         }
 
         body {
@@ -62,14 +62,16 @@
             color: var(--text-main);
             direction: rtl;
             min-height: 100vh;
+            overflow-x: hidden;
         }
 
         .app-layout {
             display: flex;
             min-height: 100vh;
+            position: relative;
         }
 
-        /* القائمة الجانبية */
+        /* القائمة الجانبية قابلة للطي */
         .sidebar {
             width: 260px;
             background-color: var(--bg-sidebar);
@@ -83,14 +85,26 @@
             bottom: 0;
             right: 0;
             z-index: 100;
+            transition: transform 0.3s ease;
+        }
+
+        /* حالة إخفاء القائمة الجانبية */
+        .app-layout.sidebar-collapsed .sidebar {
+            transform: translateX(100%);
         }
 
         .sidebar-header {
             display: flex;
             align-items: center;
-            gap: 12px;
+            justify-content: space-between;
             padding-bottom: 20px;
             border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .brand-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
         .brand-icon {
@@ -100,6 +114,25 @@
 
         .brand-text h2 { font-size: 1.1rem; font-weight: 700; }
         .brand-text p { font-size: 0.8rem; opacity: 0.7; }
+
+        /* زر إخفاء القائمة داخل السايدبار */
+        .toggle-sidebar-btn {
+            background: rgba(255,255,255,0.1);
+            color: white;
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+        }
+
+        .toggle-sidebar-btn:hover {
+            background: var(--primary-color);
+        }
 
         .sidebar-menu {
             display: flex;
@@ -160,6 +193,13 @@
             flex: 1;
             display: flex;
             flex-direction: column;
+            width: calc(100% - 260px);
+        }
+
+        /* توسيع المحتوى عند إخفاء القائمة */
+        .app-layout.sidebar-collapsed .main-wrapper {
+            margin-right: 0;
+            width: 100%;
         }
 
         .top-header {
@@ -174,7 +214,31 @@
             z-index: 90;
         }
 
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
         .header-title h1 { font-size: 1.3rem; font-weight: 700; }
+
+        /* زر الإظهار العائم الهيدر */
+        .open-sidebar-btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 8px 14px;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-family: var(--font-family);
+            font-size: 0.88rem;
+            font-weight: 600;
+        }
+
+        .open-sidebar-btn:hover { background-color: var(--primary-hover); }
 
         .theme-toggle-btn {
             background: var(--bg-base);
@@ -564,28 +628,34 @@
             .sidebar, .top-header, .form-section, .actions-toolbar, .btn-save-action, .btn-edit-action, .btn-delete-action, .search-field {
                 display: none !important;
             }
-            .main-wrapper { margin-right: 0 !important; }
+            .main-wrapper { margin-right: 0 !important; width: 100% !important; }
             body { background: white; color: black; }
         }
 
         @media (max-width: 900px) {
-            .sidebar { width: 100%; position: relative; }
-            .main-wrapper { margin-right: 0; }
+            .sidebar { width: 100%; position: relative; transform: none !important; }
+            .main-wrapper { margin-right: 0; width: 100%; }
         }
     </style>
 </head>
 <body>
 
-    <div class="app-layout">
+    <div class="app-layout" id="appLayout">
         
         <!-- القائمة الجانبية Sidebar -->
         <aside class="sidebar">
             <div class="sidebar-header">
-                <div class="brand-icon"><i class="fa-solid fa-hospital"></i></div>
-                <div class="brand-text">
-                    <h2>مجمع ماجستي</h2>
-                    <p>د. سامي - التنسيق الطبي</p>
+                <div class="brand-info">
+                    <div class="brand-icon"><i class="fa-solid fa-hospital"></i></div>
+                    <div class="brand-text">
+                        <h2>مجمع ماجستي</h2>
+                        <p>د. سامي - التنسيق الطبي</p>
+                    </div>
                 </div>
+                <!-- زر طي القائمة داخل السايدبار -->
+                <button class="toggle-sidebar-btn" onclick="toggleSidebar()" title="إخفاء القائمة لتوسيع الشاشة">
+                    <i class="fa-solid fa-chevron-right"></i>
+                </button>
             </div>
 
             <nav class="sidebar-menu">
@@ -620,6 +690,10 @@
             <!-- الهيدر العلوي Top Header -->
             <header class="top-header">
                 <div class="header-title">
+                    <!-- زر إظهار القائمة عندما تكون مخفية -->
+                    <button class="open-sidebar-btn hidden" id="openSidebarBtn" onclick="toggleSidebar()">
+                        <i class="fa-solid fa-bars"></i> القائمة
+                    </button>
                     <h1>لوحة تحكم تنسيق المواعيد</h1>
                 </div>
                 
@@ -884,7 +958,7 @@
         </div>
     </div>
 
-    <!-- البرمجة السحابية والمحلية المعالجة بالكامل -->
+    <!-- البرمجة -->
     <script>
         const firebaseConfig = {
             databaseURL: "https://dr-sami-default-rtdb.firebaseio.com/"
@@ -898,7 +972,7 @@
         let currentFilter = 'all';
         const cloudStatus = document.getElementById('cloudStatus');
 
-        // جلب البيانات المحلية المخزنة أولاً وعرضها مباشرة بالجدول والـ KPIs
+        // جلب المحلي فوراً
         const cached = localStorage.getItem('cachedAppointments');
         if (cached) {
             try { 
@@ -908,11 +982,13 @@
             }
         }
         
-        // عرض أولى فوري للحالات المحفوظة محلياً
-        renderTable();
-        updateKPIs();
+        // رسم فوري لحظي عند فتح الصفحة
+        window.addEventListener('DOMContentLoaded', () => {
+            renderTable();
+            updateKPIs();
+        });
 
-        // التزامن مع Firebase مع دمج حذر يمنع مسح البيانات
+        // التزامن مع Firebase
         dbRef.on('value', (snapshot) => {
             const data = snapshot.val();
             if (data) {
@@ -921,7 +997,6 @@
                     cloudRecords.push({ firebaseKey: key, ...data[key] });
                 }
                 
-                // حفظ أية حالات أوفلاين جديدة معلقة
                 const localPending = records.filter(r => r.firebaseKey && r.firebaseKey.startsWith('local_'));
                 records = [...cloudRecords];
                 
@@ -932,22 +1007,30 @@
                         dbRef.push(uploadData);
                     });
                 }
-            } else {
-                // إذا لم توجد بيانات بالسحابة وكان هناك بيانات محلياً، لا نلغي البيانات المحلية
-                if (records.length === 0) {
-                    records = [];
-                }
             }
             saveLocal();
             updateCloudStatus(true);
             renderTable();
             updateKPIs();
         }, (error) => {
-            console.error("Firebase Sync Error: ", error);
+            console.error("Firebase Error: ", error);
             updateCloudStatus(false);
             renderTable();
             updateKPIs();
         });
+
+        // طي وإظهار السايدبار لتوفير مساحة كبيرة للكتابة
+        function toggleSidebar() {
+            const appLayout = document.getElementById('appLayout');
+            const openBtn = document.getElementById('openSidebarBtn');
+            appLayout.classList.toggle('sidebar-collapsed');
+            
+            if (appLayout.classList.contains('sidebar-collapsed')) {
+                openBtn.classList.remove('hidden');
+            } else {
+                openBtn.classList.add('hidden');
+            }
+        }
 
         function saveLocal() {
             localStorage.setItem('cachedAppointments', JSON.stringify(records));
@@ -986,7 +1069,7 @@
             document.getElementById('otherContactGroup').classList.toggle('hidden', method !== 'أخرى');
         }
 
-        // إضافة حالة جديدة وتحديث الـ KPIs والجدول بشكل مضمون وفوري
+        // إضافة حالة جديدة مصلحة 100%
         document.getElementById('appointmentForm').addEventListener('submit', function(e) {
             e.preventDefault();
 
@@ -994,7 +1077,6 @@
             const patientPhoneVal = document.getElementById('patientPhone').value.trim();
             const cleanNewPhone = patientPhoneVal.replace(/\D/g, '');
 
-            // الكشف عن العميل المكرر من السجلات الحالية المعروضة
             const isRepeated = records.some(r => {
                 const cleanPhone = r.patientPhone ? r.patientPhone.replace(/\D/g, '') : '';
                 const matchPhone = cleanNewPhone.length >= 8 && cleanPhone === cleanNewPhone;
@@ -1012,7 +1094,9 @@
                 ? `أخرى (${document.getElementById('otherContactDetail').value})` 
                 : contactMethodVal;
 
+            const tempKey = 'local_' + Date.now();
             const newRecord = {
+                firebaseKey: tempKey,
                 patientName: patientNameVal,
                 patientPhone: patientPhoneVal,
                 fileNumber: document.getElementById('fileNumber').value || '-',
@@ -1030,25 +1114,21 @@
                 adminContactDetail: ''
             };
 
-            const tempKey = 'local_' + Date.now();
-            const recordWithKey = { ...newRecord, firebaseKey: tempKey };
-
-            // الإضافة المباشرة للقائمة المحلية وتحديث الشاشة فوراً
-            records.unshift(recordWithKey);
+            // إدراج مباشر وتحديث متزامن فوراً
+            records.unshift(newRecord);
             saveLocal();
             renderTable();
             updateKPIs();
 
             if (navigator.onLine) {
-                dbRef.push(newRecord).then((pushedRef) => {
-                    // استبدال المفتاح المؤقت بمفتاح السحابة الأكيد
+                const uploadData = { ...newRecord };
+                delete uploadData.firebaseKey;
+                dbRef.push(uploadData).then((pushedRef) => {
                     const idx = records.findIndex(r => r.firebaseKey === tempKey);
                     if(idx !== -1) {
                         records[idx].firebaseKey = pushedRef.key;
                         saveLocal();
                     }
-                }).catch(err => {
-                    console.warn('تم الحفظ بالذاكرة المحلية');
                 });
             }
 
@@ -1122,7 +1202,7 @@
             }
         }
 
-        // عرض الجدول بشكل مباشر وموثوق
+        // رسم الجدول بوضوح
         function renderTable() {
             const tbody = document.getElementById('tableBody');
             if (!tbody) return;
@@ -1288,7 +1368,7 @@
             }
         }
 
-        // حساب المكونات ومؤشرات الأداء فوراً
+        // تحديث مؤشرات الأداء مؤكد وسريع
         function updateKPIs() {
             const totalEl = document.getElementById('kpi-total');
             const recurringEl = document.getElementById('kpi-recurring');
