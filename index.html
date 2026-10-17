@@ -71,7 +71,6 @@
             position: relative;
         }
 
-        /* القائمة الجانبية قابلة للطي */
         .sidebar {
             width: 260px;
             background-color: var(--bg-sidebar);
@@ -537,6 +536,7 @@
 
                     <div class="filter-tabs">
                         <button class="filter-tab active" onclick="setFilter('all', this)">📋 الكل</button>
+                        <button class="filter-tab" onclick="setFilter('priority', this)">⭐ ذات أولوية</button>
                         <button class="filter-tab" onclick="setFilter('today', this)">📅 حالات اليوم</button>
                         <button class="filter-tab" onclick="setFilter('week', this)">🗓️ حالات الأسبوع</button>
                         <button class="filter-tab" onclick="setFilter('month', this)">📊 حالات الشهر</button>
@@ -769,7 +769,6 @@
             alert(isRepeated ? 'تم حفظ الموعد! (تم الكشف عن تكرار الطلب وتم منح الحالة شارة طلب متكرر وأولوية تلقائياً 🔄)' : 'تم حفظ الموعد بنجاح!');
         });
 
-        /* ميزة الاستيراد (Excel / JSON) */
         function importData(event) {
             const file = event.target.files[0];
             if (!file) return;
@@ -937,6 +936,7 @@
 
         function filterByDateRange(recordsList) {
             if (currentFilter === 'all') return recordsList;
+            if (currentFilter === 'priority') return recordsList.filter(r => r.isRecurring);
             const now = new Date();
             const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
             return recordsList.filter(r => {
@@ -1028,11 +1028,33 @@
             const adminContactDetail = document.getElementById(`adminContactDetail_${key}`).value;
             const finalAdminContact = adminContactSelect === 'أخرى' && adminContactDetail.trim() !== '' ? `أخرى (${adminContactDetail.trim()})` : adminContactSelect;
 
-            const updatePayload = { actionTaken: actionVal, adminContactMethod: finalAdminContact, adminContactDetail: adminContactDetail };
-            const rec = records.find(r => r.firebaseKey === key);
-            if (rec) { rec.actionTaken = actionVal; rec.adminContactMethod = finalAdminContact; rec.adminContactDetail = adminContactDetail; saveLocal(); renderTable(); updateKPIs(); }
+            let rec = records.find(r => r.firebaseKey === key);
+            if (rec) { 
+                rec.actionTaken = actionVal; 
+                rec.adminContactMethod = finalAdminContact; 
+                rec.adminContactDetail = adminContactDetail; 
+                
+                // التعديل المطلوب: إذا تم تغيير حالة التواصل إلى "تم التواصل"، يتم إلغاء الأولوية تلقائياً
+                if (adminContactSelect === 'تم التواصل') {
+                    rec.isRecurring = false;
+                }
 
-            if (navigator.onLine && !key.startsWith('local_')) dbRef.child(key).update(updatePayload).then(() => alert('تم التحديث بنجاح!'));
+                saveLocal(); 
+                renderTable(); 
+                updateKPIs(); 
+            }
+
+            if (navigator.onLine && !key.startsWith('local_')) {
+                const updatePayload = { 
+                    actionTaken: actionVal, 
+                    adminContactMethod: finalAdminContact, 
+                    adminContactDetail: adminContactDetail,
+                    isRecurring: rec ? rec.isRecurring : false
+                };
+                dbRef.child(key).update(updatePayload).then(() => alert('تم التحديث بنجاح!'));
+            } else {
+                alert('تم التحديث بنجاح!');
+            }
         }
 
         function openEditModal(key) {
