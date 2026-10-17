@@ -884,7 +884,7 @@
         </div>
     </div>
 
-    <!-- البرمجة -->
+    <!-- البرمجة السحابية والمحلية المعالجة بالكامل -->
     <script>
         const firebaseConfig = {
             databaseURL: "https://dr-sami-default-rtdb.firebaseio.com/"
@@ -898,11 +898,21 @@
         let currentFilter = 'all';
         const cloudStatus = document.getElementById('cloudStatus');
 
+        // جلب البيانات المحلية المخزنة أولاً وعرضها مباشرة بالجدول والـ KPIs
         const cached = localStorage.getItem('cachedAppointments');
         if (cached) {
-            try { records = JSON.parse(cached); } catch(e) { records = []; }
+            try { 
+                records = JSON.parse(cached);
+            } catch(e) { 
+                records = []; 
+            }
         }
+        
+        // عرض أولى فوري للحالات المحفوظة محلياً
+        renderTable();
+        updateKPIs();
 
+        // التزامن مع Firebase مع دمج حذر يمنع مسح البيانات
         dbRef.on('value', (snapshot) => {
             const data = snapshot.val();
             if (data) {
@@ -911,6 +921,7 @@
                     cloudRecords.push({ firebaseKey: key, ...data[key] });
                 }
                 
+                // حفظ أية حالات أوفلاين جديدة معلقة
                 const localPending = records.filter(r => r.firebaseKey && r.firebaseKey.startsWith('local_'));
                 records = [...cloudRecords];
                 
@@ -922,7 +933,10 @@
                     });
                 }
             } else {
-                records = [];
+                // إذا لم توجد بيانات بالسحابة وكان هناك بيانات محلياً، لا نلغي البيانات المحلية
+                if (records.length === 0) {
+                    records = [];
+                }
             }
             saveLocal();
             updateCloudStatus(true);
@@ -972,7 +986,7 @@
             document.getElementById('otherContactGroup').classList.toggle('hidden', method !== 'أخرى');
         }
 
-        // إضافة حالة جديدة مع تصحيح فحص التكرار بدقة
+        // إضافة حالة جديدة وتحديث الـ KPIs والجدول بشكل مضمون وفوري
         document.getElementById('appointmentForm').addEventListener('submit', function(e) {
             e.preventDefault();
 
@@ -980,7 +994,7 @@
             const patientPhoneVal = document.getElementById('patientPhone').value.trim();
             const cleanNewPhone = patientPhoneVal.replace(/\D/g, '');
 
-            // فحص الدقة: لا يتم التكرار إلا إذا كان السجل موجوداً حالياً في القائمة النشطة
+            // الكشف عن العميل المكرر من السجلات الحالية المعروضة
             const isRepeated = records.some(r => {
                 const cleanPhone = r.patientPhone ? r.patientPhone.replace(/\D/g, '') : '';
                 const matchPhone = cleanNewPhone.length >= 8 && cleanPhone === cleanNewPhone;
@@ -990,7 +1004,7 @@
 
             let priorityStatus = document.getElementById('isRecurring').checked;
             if (isRepeated) {
-                priorityStatus = true; // إعطاء أولوية تلقائياً إذا أُعيد إضافة العميل المكرر
+                priorityStatus = true;
             }
 
             const contactMethodVal = document.getElementById('contactMethod').value;
@@ -1016,29 +1030,32 @@
                 adminContactDetail: ''
             };
 
-            if (navigator.onLine) {
-                dbRef.push(newRecord).then(() => {
-                    this.reset();
-                    toggleOtherContactInput();
-                    alert(isRepeated ? 'تم حفظ الموعد! (تم الكشف عن تكرار الطلب وتم منح الحالة أولوية تلقائياً ⭐)' : 'تم حفظ الموعد بنجاح!');
-                }).catch(err => {
-                    saveOfflineRecord(newRecord);
-                });
-            } else {
-                saveOfflineRecord(newRecord);
-            }
-        });
+            const tempKey = 'local_' + Date.now();
+            const recordWithKey = { ...newRecord, firebaseKey: tempKey };
 
-        function saveOfflineRecord(recordData) {
-            recordData.firebaseKey = 'local_' + Date.now();
-            records.unshift(recordData);
+            // الإضافة المباشرة للقائمة المحلية وتحديث الشاشة فوراً
+            records.unshift(recordWithKey);
             saveLocal();
-            document.getElementById('appointmentForm').reset();
-            toggleOtherContactInput();
             renderTable();
             updateKPIs();
-            alert('تم حفظ الموعد محلياً (أوفلاين) وتظهر في الجدول الآن.');
-        }
+
+            if (navigator.onLine) {
+                dbRef.push(newRecord).then((pushedRef) => {
+                    // استبدال المفتاح المؤقت بمفتاح السحابة الأكيد
+                    const idx = records.findIndex(r => r.firebaseKey === tempKey);
+                    if(idx !== -1) {
+                        records[idx].firebaseKey = pushedRef.key;
+                        saveLocal();
+                    }
+                }).catch(err => {
+                    console.warn('تم الحفظ بالذاكرة المحلية');
+                });
+            }
+
+            this.reset();
+            toggleOtherContactInput();
+            alert(isRepeated ? 'تم حفظ الموعد! (تم الكشف عن تكرار الطلب وتم منح الحالة أولوية تلقائياً ⭐)' : 'تم حفظ الموعد بنجاح!');
+        });
 
         function setFilter(filterType, element) {
             currentFilter = filterType;
@@ -1093,7 +1110,6 @@
             return cleaned;
         }
 
-        // إظهار وإخفاء حقل تفاصيل الإدارة عند اختيار أخرى
         function handleAdminContactChange(key) {
             const selectEl = document.getElementById(`adminContact_${key}`);
             const detailEl = document.getElementById(`adminContactDetail_${key}`);
@@ -1106,9 +1122,10 @@
             }
         }
 
-        // عرض البيانات بالجدول
+        // عرض الجدول بشكل مباشر وموثوق
         function renderTable() {
             const tbody = document.getElementById('tableBody');
+            if (!tbody) return;
             tbody.innerHTML = '';
 
             let filteredRecords = filterByDateRange(records);
@@ -1182,17 +1199,20 @@
                 adminContactDetail: adminContactDetail
             };
 
+            const rec = records.find(r => r.firebaseKey === key);
+            if (rec) {
+                rec.actionTaken = actionVal;
+                rec.adminContactMethod = finalAdminContact;
+                rec.adminContactDetail = adminContactDetail;
+                saveLocal();
+                renderTable();
+                updateKPIs();
+            }
+
             if (navigator.onLine && !key.startsWith('local_')) {
                 dbRef.child(key).update(updatePayload).then(() => alert('تم تحديث بيانات وتواصل الإدارة بنجاح!'));
             } else {
-                const rec = records.find(r => r.firebaseKey === key);
-                if (rec) {
-                    rec.actionTaken = actionVal;
-                    rec.adminContactMethod = finalAdminContact;
-                    rec.adminContactDetail = adminContactDetail;
-                    saveLocal();
-                    alert('تم الحفظ محلياً');
-                }
+                alert('تم الحفظ محلياً');
             }
         }
 
@@ -1236,44 +1256,49 @@
                 isRecurring: document.getElementById('editIsRecurring').checked
             };
 
+            const index = records.findIndex(r => r.firebaseKey === key);
+            if (index !== -1) {
+                records[index] = { ...records[index], ...updatedData };
+                saveLocal();
+                renderTable();
+                updateKPIs();
+            }
+
             if (navigator.onLine && !key.startsWith('local_')) {
                 dbRef.child(key).update(updatedData).then(() => {
                     closeEditModal();
                     alert('تم تعديل بيانات العميل بنجاح!');
                 });
             } else {
-                const index = records.findIndex(r => r.firebaseKey === key);
-                if (index !== -1) {
-                    records[index] = { ...records[index], ...updatedData };
-                    saveLocal();
-                    closeEditModal();
-                    renderTable();
-                    alert('تم التعديل بنجاح');
-                }
+                closeEditModal();
+                alert('تم التعديل محلياً');
             }
         });
 
         function deleteRecord(key) {
             if (confirm('هل أنت تأكد من الحذف النهائي؟')) {
+                records = records.filter(r => r.firebaseKey !== key);
+                saveLocal();
+                renderTable();
+                updateKPIs();
+
                 if (navigator.onLine && !key.startsWith('local_')) {
-                    dbRef.child(key).remove().then(() => {
-                        records = records.filter(r => r.firebaseKey !== key);
-                        saveLocal();
-                        renderTable();
-                        updateKPIs();
-                    });
-                } else {
-                    records = records.filter(r => r.firebaseKey !== key);
-                    saveLocal();
-                    renderTable();
-                    updateKPIs();
+                    dbRef.child(key).remove();
                 }
             }
         }
 
+        // حساب المكونات ومؤشرات الأداء فوراً
         function updateKPIs() {
-            document.getElementById('kpi-total').innerText = records.length;
-            document.getElementById('kpi-recurring').innerText = records.filter(r => r.isRecurring).length;
+            const totalEl = document.getElementById('kpi-total');
+            const recurringEl = document.getElementById('kpi-recurring');
+            const kpi24El = document.getElementById('kpi-24h');
+            const kpi48El = document.getElementById('kpi-48h');
+
+            if (!totalEl) return;
+
+            totalEl.innerText = records.length;
+            recurringEl.innerText = records.filter(r => r.isRecurring).length;
 
             let c24 = 0, c48 = 0;
             const now = new Date();
@@ -1286,8 +1311,8 @@
                 }
             });
 
-            document.getElementById('kpi-24h').innerText = c24;
-            document.getElementById('kpi-48h').innerText = c48;
+            kpi24El.innerText = c24;
+            kpi48El.innerText = c48;
         }
 
         function filterTable() {
@@ -1362,10 +1387,12 @@
                                 actionTaken: item["إجراء الإدارة"] || "",
                                 adminContactMethod: item["تواصل الإدارة"] || "قيد الانتظار"
                             };
+                            
+                            formattedItem.firebaseKey = 'local_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4);
+                            records.unshift(formattedItem);
+
                             if (navigator.onLine) {
                                 dbRef.push(formattedItem);
-                            } else {
-                                saveOfflineRecord(formattedItem);
                             }
                         });
                         
@@ -1386,12 +1413,15 @@
                             if (confirm(`رفع ${imported.length} سجل للسحابة؟`)) {
                                 imported.forEach(item => {
                                     delete item.firebaseKey;
+                                    const tempKey = 'local_' + Date.now();
+                                    records.unshift({ ...item, firebaseKey: tempKey });
                                     if (navigator.onLine) {
                                         dbRef.push(item);
-                                    } else {
-                                        saveOfflineRecord(item);
                                     }
                                 });
+                                saveLocal();
+                                renderTable();
+                                updateKPIs();
                             }
                         }
                     } catch (err) {
