@@ -806,7 +806,7 @@
                                     <th>الخدمة / تفاصيل الطلب</th>
                                     <th>المنسق</th>
                                     <th style="min-width: 220px;">إجراء الإدارة</th>
-                                    <th style="min-width: 140px;">تواصل الإدارة</th>
+                                    <th style="min-width: 180px;">تواصل الإدارة</th>
                                     <th>إجراءات</th>
                                 </tr>
                             </thead>
@@ -921,6 +921,8 @@
                         dbRef.push(uploadData);
                     });
                 }
+            } else {
+                records = [];
             }
             saveLocal();
             updateCloudStatus(true);
@@ -970,22 +972,25 @@
             document.getElementById('otherContactGroup').classList.toggle('hidden', method !== 'أخرى');
         }
 
-        // إضافة حالة جديدة مع فحص التكرار التلقائي وإعطاء الأولوية
+        // إضافة حالة جديدة مع تصحيح فحص التكرار بدقة
         document.getElementById('appointmentForm').addEventListener('submit', function(e) {
             e.preventDefault();
 
             const patientNameVal = document.getElementById('patientName').value.trim();
             const patientPhoneVal = document.getElementById('patientPhone').value.trim();
-            
-            // فحص كشف الحالات المتكررة تلقائياً
-            const isRepeated = records.some(r => 
-                (patientPhoneVal && r.patientPhone && r.patientPhone.replace(/\D/g, '') === patientPhoneVal.replace(/\D/g, '')) ||
-                (patientNameVal && r.patientName && r.patientName.toLowerCase() === patientNameVal.toLowerCase())
-            );
+            const cleanNewPhone = patientPhoneVal.replace(/\D/g, '');
+
+            // فحص الدقة: لا يتم التكرار إلا إذا كان السجل موجوداً حالياً في القائمة النشطة
+            const isRepeated = records.some(r => {
+                const cleanPhone = r.patientPhone ? r.patientPhone.replace(/\D/g, '') : '';
+                const matchPhone = cleanNewPhone.length >= 8 && cleanPhone === cleanNewPhone;
+                const matchName = patientNameVal.length >= 3 && r.patientName && r.patientName.trim().toLowerCase() === patientNameVal.toLowerCase();
+                return matchPhone || matchName;
+            });
 
             let priorityStatus = document.getElementById('isRecurring').checked;
             if (isRepeated) {
-                priorityStatus = true; // إعطاء أولوية تلقائياً عند تكرار العميل
+                priorityStatus = true; // إعطاء أولوية تلقائياً إذا أُعيد إضافة العميل المكرر
             }
 
             const contactMethodVal = document.getElementById('contactMethod').value;
@@ -1007,7 +1012,8 @@
                 isRepeatedRequest: isRepeated,
                 createdAt: new Date().toISOString(),
                 actionTaken: '',
-                adminContactMethod: 'قيد الانتظار' // الوضع الافتراضي لانتظار الإدارة
+                adminContactMethod: 'قيد الانتظار',
+                adminContactDetail: ''
             };
 
             if (navigator.onLine) {
@@ -1087,7 +1093,20 @@
             return cleaned;
         }
 
-        // عرض الجدول وتحديث الحقول المفتوحة
+        // إظهار وإخفاء حقل تفاصيل الإدارة عند اختيار أخرى
+        function handleAdminContactChange(key) {
+            const selectEl = document.getElementById(`adminContact_${key}`);
+            const detailEl = document.getElementById(`adminContactDetail_${key}`);
+            if (selectEl && detailEl) {
+                if (selectEl.value === 'أخرى') {
+                    detailEl.classList.remove('hidden');
+                } else {
+                    detailEl.classList.add('hidden');
+                }
+            }
+        }
+
+        // عرض البيانات بالجدول
         function renderTable() {
             const tbody = document.getElementById('tableBody');
             tbody.innerHTML = '';
@@ -1099,7 +1118,8 @@
                 const status = getDelayStatus(record.createdAt, record.actionTaken);
                 const formattedPhone = formatWhatsAppNumber(record.patientPhone);
                 const currentAdminContact = record.adminContactMethod || 'قيد الانتظار';
-                
+                const isOther = currentAdminContact === 'أخرى' || (currentAdminContact.startsWith('أخرى'));
+
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
                     <td>
@@ -1123,19 +1143,18 @@
                     </td>
                     <td>${record.coordinatorName}</td>
                     <td>
-                        <!-- مربع نصي مفتوح وقابل للقراءة دون اختفاء النص -->
                         <textarea class="table-input" id="action_${record.firebaseKey}" placeholder="اكتب إجراء الإدارة...">${record.actionTaken || ''}</textarea>
                     </td>
                     <td>
-                        <!-- قائمة تواصل الإدارة بالوضع الافتراضي: قيد الانتظار -->
-                        <select class="table-input" id="adminContact_${record.firebaseKey}">
+                        <select class="table-input" id="adminContact_${record.firebaseKey}" onchange="handleAdminContactChange('${record.firebaseKey}')">
                             <option value="قيد الانتظار" ${currentAdminContact === 'قيد الانتظار' ? 'selected' : ''}>قيد الانتظار ⏳</option>
                             <option value="تم التواصل" ${currentAdminContact === 'تم التواصل' ? 'selected' : ''}>تم التواصل ✅</option>
                             <option value="معلق" ${currentAdminContact === 'معلق' ? 'selected' : ''}>معلق 🟡</option>
                             <option value="لا يرد" ${currentAdminContact === 'لا يرد' ? 'selected' : ''}>لا يرد ❌</option>
                             <option value="تم إلغاء الموعد" ${currentAdminContact === 'تم إلغاء الموعد' ? 'selected' : ''}>تم إلغاء الموعد 🚫</option>
-                            <option value="أخرى" ${currentAdminContact === 'أخرى' ? 'selected' : ''}>أخرى</option>
+                            <option value="أخرى" ${isOther ? 'selected' : ''}>أخرى</option>
                         </select>
+                        <input type="text" class="table-input ${isOther ? '' : 'hidden'}" id="adminContactDetail_${record.firebaseKey}" value="${record.adminContactDetail || ''}" placeholder="اكتب تفاصيل التواصل..." style="margin-top: 5px;">
                     </td>
                     <td>
                         <button class="btn-save-action" onclick="saveAdminUpdate('${record.firebaseKey}')" title="حفظ إدخال الإدارة"><i class="fa-solid fa-floppy-disk"></i></button>
@@ -1149,18 +1168,28 @@
 
         function saveAdminUpdate(key) {
             const actionVal = document.getElementById(`action_${key}`).value;
-            const adminContactVal = document.getElementById(`adminContact_${key}`).value;
+            const adminContactSelect = document.getElementById(`adminContact_${key}`).value;
+            const adminContactDetail = document.getElementById(`adminContactDetail_${key}`).value;
+
+            let finalAdminContact = adminContactSelect;
+            if (adminContactSelect === 'أخرى' && adminContactDetail.trim() !== '') {
+                finalAdminContact = `أخرى (${adminContactDetail.trim()})`;
+            }
+
+            const updatePayload = {
+                actionTaken: actionVal,
+                adminContactMethod: finalAdminContact,
+                adminContactDetail: adminContactDetail
+            };
 
             if (navigator.onLine && !key.startsWith('local_')) {
-                dbRef.child(key).update({
-                    actionTaken: actionVal,
-                    adminContactMethod: adminContactVal
-                }).then(() => alert('تم تحديث إجراءات وتواصل الإدارة بنجاح!'));
+                dbRef.child(key).update(updatePayload).then(() => alert('تم تحديث بيانات وتواصل الإدارة بنجاح!'));
             } else {
                 const rec = records.find(r => r.firebaseKey === key);
                 if (rec) {
                     rec.actionTaken = actionVal;
-                    rec.adminContactMethod = adminContactVal;
+                    rec.adminContactMethod = finalAdminContact;
+                    rec.adminContactDetail = adminContactDetail;
                     saveLocal();
                     alert('تم الحفظ محلياً');
                 }
@@ -1227,7 +1256,12 @@
         function deleteRecord(key) {
             if (confirm('هل أنت تأكد من الحذف النهائي؟')) {
                 if (navigator.onLine && !key.startsWith('local_')) {
-                    dbRef.child(key).remove();
+                    dbRef.child(key).remove().then(() => {
+                        records = records.filter(r => r.firebaseKey !== key);
+                        saveLocal();
+                        renderTable();
+                        updateKPIs();
+                    });
                 } else {
                     records = records.filter(r => r.firebaseKey !== key);
                     saveLocal();
