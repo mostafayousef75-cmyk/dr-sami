@@ -348,6 +348,7 @@
         .badge-24h { background-color: var(--warning-color); }
         .badge-48h { background-color: var(--danger-color); }
         .badge-priority { background-color: var(--accent-purple); margin-bottom: 4px; }
+        .badge-repeated { background-color: #e11d48; margin-bottom: 4px; }
 
         .table-input {
             width: 100%; padding: 8px; border: 1px solid var(--border-color); border-radius: var(--radius-md); background: var(--bg-surface); color: var(--text-main); font-family: var(--font-family); font-size: 0.88rem; box-shadow: inset 0 1px 2px rgba(0,0,0,0.03);
@@ -654,12 +655,10 @@
         let records = [];
         let currentFilter = 'all';
 
-        // إعدادات كلمة المرور الافتراضية
         if (!localStorage.getItem('adminPassword')) {
             localStorage.setItem('adminPassword', '1234');
         }
 
-        // إعدادات الدارك مود
         const savedTheme = localStorage.getItem('theme');
         if (savedTheme === 'dark') {
             document.body.classList.add('dark-theme');
@@ -715,9 +714,12 @@
             const patientPhoneVal = document.getElementById('patientPhone').value.trim();
             const cleanNewPhone = patientPhoneVal.replace(/\D/g, '');
 
+            // فحص دقيق ومحسن للكشف عن تكرار الطلب برقم الجوال أو اسم العميل
             const isRepeated = records.some(r => {
-                const cleanPhone = r.patientPhone ? r.patientPhone.replace(/\D/g, '') : '';
-                return (cleanNewPhone.length >= 8 && cleanPhone === cleanNewPhone) || (patientNameVal.length >= 3 && r.patientName && r.patientName.trim().toLowerCase() === patientNameVal.toLowerCase());
+                const cleanExistingPhone = r.patientPhone ? r.patientPhone.replace(/\D/g, '') : '';
+                const matchPhone = (cleanNewPhone.length >= 8 && cleanExistingPhone === cleanNewPhone);
+                const matchName = (r.patientName && r.patientName.trim().toLowerCase() === patientNameVal.toLowerCase());
+                return matchPhone || matchName;
             });
 
             let priorityStatus = document.getElementById('isRecurring').checked || isRepeated;
@@ -760,10 +762,9 @@
 
             this.reset();
             toggleOtherContactInput();
-            alert(isRepeated ? 'تم حفظ الموعد! (تم الكشف عن تكرار الطلب وتم منح الحالة أولوية تلقائياً ⭐)' : 'تم حفظ الموعد بنجاح!');
+            alert(isRepeated ? 'تم حفظ الموعد! (تم الكشف عن تكرار الطلب وتم منح الحالة شارة طلب متكرر وأولوية تلقائياً 🔄)' : 'تم حفظ الموعد بنجاح!');
         });
 
-        /* النوافذ والمسح المفلتر بكلمة مرور */
         function openClearModal() { document.getElementById('clearModal').classList.add('open'); }
         function closeClearModal() { 
             document.getElementById('clearModal').classList.remove('open'); 
@@ -909,7 +910,7 @@
                 tr.innerHTML = `
                     <td>
                         ${record.isRecurring ? '<span class="status-badge badge-priority">⭐ أولوية</span><br>' : ''}
-                        ${record.isRepeatedRequest ? '<span class="status-badge badge-priority" style="background:#e11d48;">🔄 طلب متكرر</span><br>' : ''}
+                        ${record.isRepeatedRequest ? '<span class="status-badge badge-repeated">🔄 طلب متكرر</span><br>' : ''}
                         <span class="status-badge ${status.class}">${status.text}</span>
                     </td>
                     <td><strong>${record.patientName}</strong></td>
@@ -1051,6 +1052,7 @@
                 "الموعد المقترح": r.appointmentDateTime,
                 "اسم المنسق": r.coordinatorName,
                 "أولوية": r.isRecurring ? "نعم" : "لا",
+                "طلب متكرر": r.isRepeatedRequest ? "نعم" : "لا",
                 "تاريخ التسجيل": r.createdAt,
                 "إجراء الإدارة": r.actionTaken || '',
                 "تواصل الإدارة": r.adminContactMethod || 'قيد الانتظار'
