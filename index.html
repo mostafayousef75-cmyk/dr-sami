@@ -601,7 +601,7 @@
 
             <div class="sidebar-footer">
                 <div class="cloud-badge" id="cloudStatus">
-                    <span class="online-dot"></span> <span>أونلاين 🟢</span>
+                    <span class="online-dot"></span> <span>متصل بالسحابة 🟢</span>
                 </div>
             </div>
         </aside>
@@ -640,7 +640,7 @@
                         <div class="kpi-card purple">
                             <div class="kpi-icon-box"><i class="fa-solid fa-star"></i></div>
                             <div class="kpi-info">
-                                <h3>حالات متكررة (أولوية)</h3>
+                                <h3>حالات ذات أولوية</h3>
                                 <span class="kpi-value" id="kpi-recurring">0</span>
                             </div>
                         </div>
@@ -729,11 +729,12 @@
                                 <textarea id="serviceRequired" required placeholder="اكتب هنا طلب العميل، مشكلته، أو تفاصيل الموعد المطلوب..."></textarea>
                             </div>
 
+                            <!-- تغيير المسمى إلى إعطاء أولوية -->
                             <div class="input-field full-width">
                                 <label class="priority-checkbox">
                                     <input type="checkbox" id="isRecurring">
                                     <span class="custom-check"></span>
-                                    <span>حالة متكررة (إعطاء أولوية) ⭐</span>
+                                    <span>إعطاء أولوية ⭐</span>
                                 </label>
                             </div>
                         </div>
@@ -766,7 +767,7 @@
                     </div>
                 </section>
 
-                <!-- جدول الحالات بعد الفصل بين الأعمدة -->
+                <!-- جدول الحالات -->
                 <section class="dashboard-section" id="table-section">
                     <div class="table-section-header">
                         <h2><i class="fa-solid fa-list-check"></i> 📋 سجل متابعة المنسقين والعملاء</h2>
@@ -865,7 +866,7 @@
                     <div class="input-field full-width">
                         <label class="priority-checkbox">
                             <input type="checkbox" id="editIsRecurring">
-                            <span>حالة متكررة (أولوية) ⭐</span>
+                            <span>إعطاء أولوية ⭐</span>
                         </label>
                     </div>
                 </div>
@@ -876,7 +877,7 @@
         </div>
     </div>
 
-    <!-- البرمجة -->
+    <!-- البرمجة السحابية والمحلية المدمجة -->
     <script>
         const firebaseConfig = {
             databaseURL: "https://dr-sami-default-rtdb.firebaseio.com/"
@@ -890,36 +891,63 @@
         let currentFilter = 'all';
         const cloudStatus = document.getElementById('cloudStatus');
 
+        // جلب البيانات المحلية أولاً لضمان عدم حدوث بطء أو فقدان أوفلاين
+        const cached = localStorage.getItem('cachedAppointments');
+        if (cached) {
+            try { records = JSON.parse(cached); } catch(e) { records = []; }
+        }
+
+        // المزامنة مع Firebase عند جلب أي تحديث جديد
         dbRef.on('value', (snapshot) => {
             const data = snapshot.val();
-            records = [];
             if (data) {
+                const cloudRecords = [];
                 for (let key in data) {
-                    records.push({ firebaseKey: key, ...data[key] });
+                    cloudRecords.push({ firebaseKey: key, ...data[key] });
+                }
+                
+                // الدمج الذكي لحفظ السجلات المحلية المعلقة التي أُضيفت أوفلاين
+                const localPending = records.filter(r => r.firebaseKey && r.firebaseKey.startsWith('local_'));
+                records = [...cloudRecords];
+                
+                // رفع البيانات التي سُجلت أثناء انقطاع النت تلقائياً إلى السحابة
+                if (localPending.length > 0 && navigator.onLine) {
+                    localPending.forEach(item => {
+                        const uploadData = { ...item };
+                        delete uploadData.firebaseKey;
+                        dbRef.push(uploadData);
+                    });
                 }
             }
-            localStorage.setItem('cachedAppointments', JSON.stringify(records));
+            saveLocal();
             updateCloudStatus(true);
             renderTable();
             updateKPIs();
         }, (error) => {
-            console.error("Firebase Error: ", error);
-            const cached = localStorage.getItem('cachedAppointments');
-            if (cached) records = JSON.parse(cached);
+            console.error("Firebase Sync Error: ", error);
             updateCloudStatus(false);
             renderTable();
             updateKPIs();
         });
 
+        function saveLocal() {
+            localStorage.setItem('cachedAppointments', JSON.stringify(records));
+        }
+
         function updateCloudStatus(isOnline) {
             if (isOnline && navigator.onLine) {
-                cloudStatus.innerHTML = `<span class="online-dot"></span> <span>أونلاين 🟢</span>`;
+                cloudStatus.innerHTML = `<span class="online-dot"></span> <span>متصل بالسحابة 🟢</span>`;
             } else {
-                cloudStatus.innerHTML = `<span class="offline-dot"></span> <span>أوفلاين ⚪</span>`;
+                cloudStatus.innerHTML = `<span class="offline-dot"></span> <span>غير متصل بالسحابة ⚪</span>`;
             }
         }
 
-        window.addEventListener('online', () => updateCloudStatus(true));
+        window.addEventListener('online', () => {
+            updateCloudStatus(true);
+            // إعادة المزامنة عند عودة الانترنت
+            dbRef.once('value');
+        });
+        
         window.addEventListener('offline', () => updateCloudStatus(false));
 
         const themeToggleBtn = document.getElementById('themeToggleBtn');
@@ -940,6 +968,7 @@
             document.getElementById('otherContactGroup').classList.toggle('hidden', method !== 'أخرى');
         }
 
+        // إضافة حالة جديدة
         document.getElementById('appointmentForm').addEventListener('submit', function(e) {
             e.preventDefault();
 
@@ -969,17 +998,24 @@
                     this.reset();
                     toggleOtherContactInput();
                     alert('تم حفظ الموعد بنجاح!');
-                }).catch(err => alert('خطأ في الحفظ: ' + err.message));
+                }).catch(err => {
+                    saveOfflineRecord(newRecord);
+                });
             } else {
-                newRecord.firebaseKey = 'local_' + Date.now();
-                records.push(newRecord);
-                localStorage.setItem('cachedAppointments', JSON.stringify(records));
-                this.reset();
-                renderTable();
-                updateKPIs();
-                alert('تم حفظ الموعد محلياً (أوفلاين) وسيتم المزامنة فور الاتصال بالإنتـرنت.');
+                saveOfflineRecord(newRecord);
             }
         });
+
+        function saveOfflineRecord(recordData) {
+            recordData.firebaseKey = 'local_' + Date.now();
+            records.unshift(recordData);
+            saveLocal();
+            document.getElementById('appointmentForm').reset();
+            toggleOtherContactInput();
+            renderTable();
+            updateKPIs();
+            alert('تم حفظ الموعد بنجاح محلياً (أوفلاين) وتظهر في الجدول الآن، وستتم مزامنتها مع السحابة فور توفر النت.');
+        }
 
         function setFilter(filterType, element) {
             currentFilter = filterType;
@@ -1020,16 +1056,13 @@
             return { text: 'جديد', class: 'badge-normal' };
         }
 
-        // دالة ذكية لتجهيز رقم الواتساب المباشر (يدعم مصر، السعودية، وغيرهما)
         function formatWhatsAppNumber(phone) {
             if (!phone) return '';
-            let cleaned = phone.replace(/\D/g, ''); // إزالة الأشكال والمسافات
+            let cleaned = phone.replace(/\D/g, '');
 
             if (cleaned.startsWith('01')) {
-                // رقم مصري
                 return '20' + cleaned.slice(1);
             } else if (cleaned.startsWith('05')) {
-                // رقم سعودي
                 return '966' + cleaned.slice(1);
             } else if (cleaned.startsWith('00')) {
                 return cleaned.slice(2);
@@ -1037,7 +1070,7 @@
             return cleaned;
         }
 
-        // عرض البيانات
+        // عرض الجدول
         function renderTable() {
             const tbody = document.getElementById('tableBody');
             tbody.innerHTML = '';
@@ -1052,7 +1085,7 @@
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
                     <td>
-                        ${record.isRecurring ? '<span class="status-badge badge-priority">⭐ متكرر</span><br>' : ''}
+                        ${record.isRecurring ? '<span class="status-badge badge-priority">⭐ أولوية</span><br>' : ''}
                         <span class="status-badge ${status.class}">${status.text}</span>
                     </td>
                     <td><strong>${record.patientName}</strong></td>
@@ -1100,7 +1133,7 @@
                 if (rec) {
                     rec.actionTaken = actionVal;
                     rec.adminContactMethod = adminContactVal;
-                    localStorage.setItem('cachedAppointments', JSON.stringify(records));
+                    saveLocal();
                     alert('تم الحفظ محلياً');
                 }
             }
@@ -1155,10 +1188,10 @@
                 const index = records.findIndex(r => r.firebaseKey === key);
                 if (index !== -1) {
                     records[index] = { ...records[index], ...updatedData };
-                    localStorage.setItem('cachedAppointments', JSON.stringify(records));
+                    saveLocal();
                     closeEditModal();
                     renderTable();
-                    alert('تم التعديل محلياً');
+                    alert('تم التعديل بنجاح');
                 }
             }
         });
@@ -1169,7 +1202,7 @@
                     dbRef.child(key).remove();
                 } else {
                     records = records.filter(r => r.firebaseKey !== key);
-                    localStorage.setItem('cachedAppointments', JSON.stringify(records));
+                    saveLocal();
                     renderTable();
                     updateKPIs();
                 }
@@ -1215,7 +1248,7 @@
                 "الخدمة المطلوبة / تفاصيل الطلب": r.serviceRequired,
                 "الموعد المقترح": r.appointmentDateTime,
                 "اسم المنسق": r.coordinatorName,
-                "حالة متكررة": r.isRecurring ? "نعم" : "لا",
+                "أولوية": r.isRecurring ? "نعم" : "لا",
                 "تاريخ التسجيل": r.createdAt,
                 "إجراء الإدارة": r.actionTaken || '',
                 "تواصل الإدارة": r.adminContactMethod || ''
@@ -1262,14 +1295,18 @@
                                 serviceRequired: item["الخدمة المطلوبة / تفاصيل الطلب"] || item["الخدمة المطلوبة"] || "-",
                                 appointmentDateTime: item["الموعد المقترح"] || "-",
                                 coordinatorName: item["اسم المنسق"] || "عام",
-                                isRecurring: item["حالة متكررة"] === "نعم",
+                                isRecurring: item["أولوية"] === "نعم" || item["حالة متكررة"] === "نعم",
                                 createdAt: new Date().toISOString(),
                                 actionTaken: item["إجراء الإدارة"] || "",
                                 adminContactMethod: item["تواصل الإدارة"] || ""
                             };
-                            dbRef.push(formattedItem);
+                            if (navigator.onLine) {
+                                dbRef.push(formattedItem);
+                            } else {
+                                saveOfflineRecord(formattedItem);
+                            }
                         });
-                        alert('تم استيراد ملف Excel ورفعه بنجاح!');
+                        alert('تم استيراد الملف بنجاح!');
                     }
                 };
                 reader.readAsArrayBuffer(file);
@@ -1282,7 +1319,11 @@
                             if (confirm(`رفع ${imported.length} سجل للسحابة؟`)) {
                                 imported.forEach(item => {
                                     delete item.firebaseKey;
-                                    dbRef.push(item);
+                                    if (navigator.onLine) {
+                                        dbRef.push(item);
+                                    } else {
+                                        saveOfflineRecord(item);
+                                    }
                                 });
                             }
                         }
