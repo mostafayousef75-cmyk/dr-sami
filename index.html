@@ -327,7 +327,6 @@
         .action-btn.clear-all { background-color: #dc2626; }
         .action-btn.settings { background-color: #475569; }
 
-        /* تصميم الفلاتر الاحترافي الجديد */
         .filter-container-box {
             background: var(--bg-base);
             border: 1px solid var(--border-color);
@@ -371,10 +370,28 @@
         }
         .search-field i { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: var(--text-muted); }
 
-        .table-container { overflow-x: auto; }
+        /* حاوية الجدول وتثبيت رأس الجدول (Sticky Header) */
+        .table-container { 
+            max-height: 650px; 
+            overflow-y: auto; 
+            position: relative;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+        }
+
         table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+        
+        table th { 
+            background-color: var(--bg-base); 
+            color: var(--text-muted); 
+            font-weight: 700; 
+            position: sticky; 
+            top: 0; 
+            z-index: 10; 
+            box-shadow: 0 2px 2px rgba(0,0,0,0.05);
+        }
+
         table th, table td { padding: 12px 10px; text-align: right; border-bottom: 1px solid var(--border-color); vertical-align: top; }
-        table th { background-color: var(--bg-base); color: var(--text-muted); font-weight: 700; }
 
         .status-badge { padding: 4px 10px; border-radius: 20px; font-size: 0.78rem; font-weight: 700; color: #fff; display: inline-block; }
         .badge-normal { background-color: var(--success-color); }
@@ -594,7 +611,6 @@
                         </div>
                     </div>
 
-                    <!-- الفلاتر الاحترافية المحدثة -->
                     <div class="filter-container-box">
                         <div class="filter-row">
                             <span class="filter-label"><i class="fa-solid fa-filter"></i> فلاتر الحالات:</span>
@@ -607,7 +623,7 @@
                         <div class="filter-row">
                             <span class="filter-label"><i class="fa-solid fa-calendar-days"></i> فلاتر الوقت:</span>
                             <div class="filter-tabs">
-                                <button class="filter-tab" onclick="setTimeFilter('all', this)">الكل</button>
+                                <button class="filter-tab active" onclick="setTimeFilter('all', this)">الكل</button>
                                 <button class="filter-tab" onclick="setTimeFilter('today', this)">حالات اليوم</button>
                                 <button class="filter-tab" onclick="setTimeFilter('week', this)">حالات الأسبوع</button>
                                 <button class="filter-tab" onclick="setTimeFilter('month', this)">حالات الشهر</button>
@@ -855,13 +871,27 @@
                         const importedArray = JSON.parse(e.target.result);
                         if (Array.isArray(importedArray)) {
                             importedArray.forEach(item => {
-                                if(!item.firebaseKey) item.firebaseKey = 'local_' + Math.random();
-                                records.unshift(item);
+                                const cleanItem = { ...item };
+                                const originalKey = cleanItem.firebaseKey && !cleanItem.firebaseKey.startsWith('local_') ? cleanItem.firebaseKey : null;
+                                delete cleanItem.firebaseKey;
+
+                                if (navigator.onLine) {
+                                    if (originalKey) {
+                                        dbRef.child(originalKey).set(cleanItem);
+                                        cleanItem.firebaseKey = originalKey;
+                                    } else {
+                                        const newRef = dbRef.push(cleanItem);
+                                        cleanItem.firebaseKey = newRef.key;
+                                    }
+                                } else {
+                                    cleanItem.firebaseKey = originalKey || ('local_' + Math.random());
+                                }
+                                records.unshift(cleanItem);
                             });
                             saveLocal();
                             renderTable();
                             updateKPIs();
-                            alert(`تم استيراد ${importedArray.length} سجل بنجاح!`);
+                            alert(`تم استيراد وحفظ ${importedArray.length} سجل بنجاح في السحابة والقاعدة!`);
                         } else {
                             alert('ملف الـ JSON غير متوافق.');
                         }
@@ -882,7 +912,6 @@
 
                         jsonArr.forEach(row => {
                             const newRec = {
-                                firebaseKey: 'local_' + Math.random() + Date.now(),
                                 patientName: row["اسم العميل"] || row["PatientName"] || "مستورد",
                                 patientPhone: String(row["الجوال"] || row["الهاتف"] || row["Phone"] || "-"),
                                 fileNumber: String(row["رقم الملف"] || "-"),
@@ -899,13 +928,20 @@
                                 adminContactMethod: row["تواصل الإدارة"] || "قيد الانتظار",
                                 adminContactDetail: ""
                             };
+
+                            if (navigator.onLine) {
+                                const newRef = dbRef.push(newRec);
+                                newRec.firebaseKey = newRef.key;
+                            } else {
+                                newRec.firebaseKey = 'local_' + Math.random() + Date.now();
+                            }
                             records.unshift(newRec);
                         });
 
                         saveLocal();
                         renderTable();
                         updateKPIs();
-                        alert(`تم استيراد بيانات ملف الـ Excel بنجاح!`);
+                        alert(`تم استيراد وحفظ بيانات ملف الـ Excel بنجاح في السحابة!`);
                     } catch(err) {
                         alert('حدث خطأ أثناء تحليل ملف الـ Excel.');
                     }
@@ -1003,7 +1039,6 @@
 
         function setFilter(filterType, element) {
             currentFilter = filterType;
-            // إزالة الأنشط من أزرار نوع الحالة فقط
             const parentRow = element.closest('.filter-row');
             parentRow.querySelectorAll('.filter-tab').forEach(btn => btn.classList.remove('active'));
             element.classList.add('active');
@@ -1021,14 +1056,12 @@
         function filterRecordsList(recordsList) {
             let res = recordsList;
             
-            // فلتر نوع الحالة
             if (currentFilter === 'priority') {
                 res = res.filter(r => r.isRecurring);
             } else if (currentFilter === 'repeated') {
                 res = res.filter(r => r.isRepeatedRequest);
             }
 
-            // فلتر الوقت
             if (currentTimeFilter !== 'all') {
                 const now = new Date();
                 const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
