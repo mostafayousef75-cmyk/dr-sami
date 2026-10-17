@@ -577,6 +577,19 @@
                                 <label><i class="fa-solid fa-clock"></i> التاريخ والميعاد (اختياري)</label>
                                 <input type="datetime-local" id="appointmentDateTime">
                             </div>
+                            <div class="input-field">
+                                <label><i class="fa-solid fa-stethoscope"></i> نوع الإجراء *</label>
+                                <select id="procedureType" required onchange="toggleOtherProcedureInput()">
+                                    <option value="">اختر نوع الإجراء...</option>
+                                    <option value="زراعة">زراعة</option>
+                                    <option value="خلع">خلع</option>
+                                    <option value="أخرى">أخرى</option>
+                                </select>
+                            </div>
+                            <div class="input-field hidden" id="otherProcedureGroup">
+                                <label><i class="fa-solid fa-pen-clip"></i> حدد الإجراء (أخرى)</label>
+                                <input type="text" id="otherProcedureDetail" placeholder="اكتب نوع الإجراء الآخر">
+                            </div>
                             <div class="input-field full-width">
                                 <label><i class="fa-solid fa-notes-medical"></i> الخدمة المطلوبة / تفاصيل المشكلة والطلب *</label>
                                 <textarea id="serviceRequired" required placeholder="اكتب هنا طلب العميل، مشكلته، أو تفاصيل الموعد المطلوب..."></textarea>
@@ -648,6 +661,7 @@
                                     <th>رقم الملف</th>
                                     <th>رقم الهوية</th>
                                     <th>الفرع</th>
+                                    <th>نوع الإجراء</th>
                                     <th>طريقة التواصل</th>
                                     <th style="min-width: 285px;">الخدمة / تفاصيل الطلب</th>
                                     <th>المنسق</th>
@@ -734,6 +748,7 @@
                         <label>الفرع *</label>
                         <select id="editBranch" required><option value="معشي">فرع معشي</option><option value="الوسام">فرع الوسام</option></select>
                     </div>
+                    <div class="input-field"><label>نوع الإجراء *</label><input type="text" id="editProcedureType" required></div>
                     <div class="input-field"><label>طريقة التواصل *</label><input type="text" id="editContactMethod" required></div>
                     <div class="input-field"><label>اسم المنسق *</label><input type="text" id="editCoordinatorName" required></div>
                     <div class="input-field"><label>التاريخ والميعاد</label><input type="datetime-local" id="editAppointmentDateTime"></div>
@@ -810,6 +825,11 @@
             document.getElementById('otherContactGroup').classList.toggle('hidden', method !== 'أخرى');
         }
 
+        function toggleOtherProcedureInput() {
+            const proc = document.getElementById('procedureType').value;
+            document.getElementById('otherProcedureGroup').classList.toggle('hidden', proc !== 'أخرى');
+        }
+
         document.getElementById('appointmentForm').addEventListener('submit', function(e) {
             e.preventDefault();
             const patientNameVal = document.getElementById('patientName').value.trim();
@@ -827,6 +847,9 @@
             const contactMethodVal = document.getElementById('contactMethod').value;
             const finalContactMethod = contactMethodVal === 'أخرى' ? `أخرى (${document.getElementById('otherContactDetail').value})` : contactMethodVal;
 
+            const procedureVal = document.getElementById('procedureType').value;
+            const finalProcedureType = procedureVal === 'أخرى' ? `أخرى (${document.getElementById('otherProcedureDetail').value})` : procedureVal;
+
             const tempKey = 'local_' + Date.now();
             const newRecord = {
                 firebaseKey: tempKey,
@@ -835,6 +858,7 @@
                 fileNumber: document.getElementById('fileNumber').value || '-',
                 idNumber: document.getElementById('idNumber').value || '-',
                 branch: document.getElementById('branch').value,
+                procedureType: finalProcedureType,
                 contactMethod: finalContactMethod,
                 serviceRequired: document.getElementById('serviceRequired').value,
                 appointmentDateTime: document.getElementById('appointmentDateTime').value || '-',
@@ -863,6 +887,7 @@
 
             this.reset();
             toggleOtherContactInput();
+            toggleOtherProcedureInput();
             alert(isRepeated ? 'تم حفظ الموعد! (تم الكشف عن تكرار الطلب وتم منح الحالة شارة طلب متكرر وأولوية تلقائياً 🔄)' : 'تم حفظ الموعد بنجاح!');
         });
 
@@ -924,6 +949,7 @@
                                 fileNumber: String(row["رقم الملف"] || "-"),
                                 idNumber: String(row["رقم الهوية"] || "-"),
                                 branch: row["الفرع"] || "معشي",
+                                procedureType: row["نوع الإجراء"] || "أخرى",
                                 contactMethod: row["طريقة التواصل"] || "اتصال",
                                 serviceRequired: row["الخدمة المطلوبة"] || row["تفاصيل الطلب"] || "-",
                                 appointmentDateTime: row["الموعد المقترح"] || "-",
@@ -1068,7 +1094,7 @@
             } else if (currentFilter === 'repeated') {
                 res = res.filter(r => r.isRepeatedRequest);
             } else if (currentFilter === 'plants') {
-                res = res.filter(r => r.serviceRequired && r.serviceRequired.toLowerCase().includes('زراعة'));
+                res = res.filter(r => (r.procedureType && r.procedureType.toLowerCase().includes('زراعة')) || (r.serviceRequired && r.serviceRequired.toLowerCase().includes('زراعة')));
             }
 
             if (currentTimeFilter !== 'all') {
@@ -1166,6 +1192,7 @@
                     <td>${record.fileNumber}</td>
                     <td>${record.idNumber}</td>
                     <td>${record.branch}</td>
+                    <td><span style="font-weight: 600; color: var(--primary-color);">${record.procedureType || 'غير محدد'}</span></td>
                     <td>${record.contactMethod}</td>
                     <td style="min-width: 285px; white-space: pre-wrap; word-break: break-word; line-height: 1.5;">${record.serviceRequired}${record.appointmentDateTime !== '-' ? `<br><small style="color:var(--primary-color);"><strong>الموعد:</strong> ${record.appointmentDateTime.replace('T', ' ')}</small>` : ''}</td>
                     <td>${record.coordinatorName}</td>
@@ -1234,6 +1261,7 @@
             document.getElementById('editFileNumber').value = item.fileNumber !== '-' ? item.fileNumber : '';
             document.getElementById('editIdNumber').value = item.idNumber !== '-' ? item.idNumber : '';
             document.getElementById('editBranch').value = item.branch || 'معشي';
+            document.getElementById('editProcedureType').value = item.procedureType || '';
             document.getElementById('editContactMethod').value = item.contactMethod || '';
             document.getElementById('editCoordinatorName').value = item.coordinatorName || '';
             document.getElementById('editAppointmentDateTime').value = item.appointmentDateTime !== '-' ? item.appointmentDateTime : '';
@@ -1253,6 +1281,7 @@
                 fileNumber: document.getElementById('editFileNumber').value || '-',
                 idNumber: document.getElementById('editIdNumber').value || '-',
                 branch: document.getElementById('editBranch').value,
+                procedureType: document.getElementById('editProcedureType').value,
                 contactMethod: document.getElementById('editContactMethod').value,
                 coordinatorName: document.getElementById('editCoordinatorName').value,
                 appointmentDateTime: document.getElementById('editAppointmentDateTime').value || '-',
@@ -1292,7 +1321,7 @@
             repeatedEl.innerText = records.filter(r => r.isRepeatedRequest).length;
             
             if (plantsEl) {
-                plantsEl.innerText = records.filter(r => r.serviceRequired && r.serviceRequired.toLowerCase().includes('زراعة')).length;
+                plantsEl.innerText = records.filter(r => (r.procedureType && r.procedureType.toLowerCase().includes('زراعة')) || (r.serviceRequired && r.serviceRequired.toLowerCase().includes('زراعة'))).length;
             }
 
             let c24 = 0, c48 = 0;
@@ -1323,6 +1352,7 @@
                 "رقم الملف": r.fileNumber,
                 "رقم الهوية": r.idNumber,
                 "الفرع": r.branch,
+                "نوع الإجراء": r.procedureType || '',
                 "طريقة التواصل": r.contactMethod,
                 "الخدمة المطلوبة": r.serviceRequired,
                 "الموعد المقترح": r.appointmentDateTime,
