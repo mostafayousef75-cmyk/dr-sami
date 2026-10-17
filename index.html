@@ -10,22 +10,430 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
     
-    <!-- FontAwesome الأيقونات -->
+    <!-- FontAwesome للأيقونات -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- CSS -->
-    <link rel="stylesheet" href="style.css">
 
-    <!-- المكتبات الخارجية -->
+    <!-- المكتبات الخارجية: Excel + Firebase السحابي -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+    <!-- تنسيقات CSS كاملة داخل الملف -->
+    <style>
+        :root {
+            --font-family: 'Tajawal', sans-serif;
+            --bg-base: #f4f6fb;
+            --bg-surface: #ffffff;
+            --bg-sidebar: #0f172a;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            
+            --primary-color: #2563eb;
+            --primary-hover: #1d4ed8;
+            --accent-purple: #7c3aed;
+            --warning-color: #d97706;
+            --danger-color: #dc2626;
+            --success-color: #16a34a;
+
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
+            --radius-lg: 12px;
+            --radius-md: 8px;
+        }
+
+        body.dark-theme {
+            --bg-base: #090d16;
+            --bg-surface: #151c2c;
+            --bg-sidebar: #0b1120;
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --border-color: #26334d;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            direction: rtl;
+            min-height: 100vh;
+        }
+
+        .app-layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* القائمة الجانبية */
+        .sidebar {
+            width: 260px;
+            background-color: var(--bg-sidebar);
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 20px 15px;
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            right: 0;
+            z-index: 100;
+        }
+
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .brand-icon {
+            font-size: 1.8rem;
+            color: var(--primary-color);
+        }
+
+        .brand-text h2 { font-size: 1.1rem; font-weight: 700; }
+        .brand-text p { font-size: 0.8rem; opacity: 0.7; }
+
+        .sidebar-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 20px;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #94a3b8;
+            text-decoration: none;
+            padding: 12px 15px;
+            border-radius: var(--radius-md);
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+
+        .menu-item:hover, .menu-item.active {
+            background-color: rgba(37, 99, 235, 0.15);
+            color: #ffffff;
+        }
+
+        .cloud-badge {
+            background: rgba(255,255,255,0.05);
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            justify-content: center;
+        }
+
+        /* المحتوى الرئيسي */
+        .main-wrapper {
+            margin-right: 260px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .top-header {
+            background-color: var(--bg-surface);
+            border-bottom: 1px solid var(--border-color);
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 90;
+        }
+
+        .header-title h1 { font-size: 1.3rem; font-weight: 700; }
+
+        .theme-toggle-btn {
+            background: var(--bg-base);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.1rem;
+        }
+
+        .content-body {
+            padding: 25px 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .dashboard-section {
+            background-color: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 22px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .section-header h2 {
+            font-size: 1.1rem;
+            color: var(--primary-color);
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* KPIs */
+        .kpi-cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 15px;
+        }
+
+        .kpi-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 18px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            border-right: 4px solid;
+        }
+
+        .kpi-card.blue { border-color: var(--primary-color); }
+        .kpi-card.purple { border-color: var(--accent-purple); }
+        .kpi-card.warning { border-color: var(--warning-color); }
+        .kpi-card.danger { border-color: var(--danger-color); }
+
+        .kpi-icon-box {
+            font-size: 1.8rem;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg-base);
+        }
+
+        .kpi-card.blue .kpi-icon-box { color: var(--primary-color); }
+        .kpi-card.purple .kpi-icon-box { color: var(--accent-purple); }
+        .kpi-card.warning .kpi-icon-box { color: var(--warning-color); }
+        .kpi-card.danger .kpi-icon-box { color: var(--danger-color); }
+
+        .kpi-info h3 { font-size: 0.85rem; color: var(--text-muted); font-weight: 500; }
+        .kpi-value { font-size: 1.6rem; font-weight: 800; }
+
+        /* النموذج */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+            gap: 15px;
+        }
+
+        .input-field {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .input-field label {
+            font-size: 0.88rem;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        .input-field input, .input-field select {
+            padding: 10px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            background-color: var(--bg-surface);
+            color: var(--text-main);
+            outline: none;
+            font-family: var(--font-family);
+            font-size: 0.9rem;
+        }
+
+        .input-field input:focus, .input-field select:focus {
+            border-color: var(--primary-color);
+        }
+
+        .priority-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            background: rgba(124, 58, 237, 0.08);
+            padding: 10px 14px;
+            border-radius: var(--radius-md);
+            border: 1px dashed var(--accent-purple);
+            width: 100%;
+        }
+
+        .hidden { display: none !important; }
+
+        .submit-btn {
+            margin-top: 20px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: var(--radius-md);
+            font-family: var(--font-family);
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .submit-btn:hover { background-color: var(--primary-hover); }
+
+        /* الأزرار والتصدير */
+        .actions-toolbar {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            padding: 10px 18px;
+            border-radius: var(--radius-md);
+            border: none;
+            color: white;
+            font-family: var(--font-family);
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .action-btn.excel { background-color: #107c41; }
+        .action-btn.json { background-color: #6366f1; }
+        .action-btn.import { background-color: #0284c7; }
+
+        /* الجدول */
+        .table-section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 18px;
+        }
+
+        .search-field {
+            position: relative;
+            min-width: 260px;
+        }
+
+        .search-field input {
+            width: 100%;
+            padding: 9px 38px 9px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            background-color: var(--bg-surface);
+            color: var(--text-main);
+            font-family: var(--font-family);
+        }
+
+        .search-field i {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+        }
+
+        .table-container { overflow-x: auto; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.88rem;
+        }
+
+        table th, table td {
+            padding: 12px 10px;
+            text-align: right;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        table th {
+            background-color: var(--bg-base);
+            color: var(--text-muted);
+            font-weight: 700;
+        }
+
+        .status-badge {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: #fff;
+            display: inline-block;
+        }
+
+        .badge-normal { background-color: var(--success-color); }
+        .badge-24h { background-color: var(--warning-color); }
+        .badge-48h { background-color: var(--danger-color); }
+        .badge-priority { background-color: var(--accent-purple); margin-bottom: 4px; }
+
+        .table-input {
+            width: 100%;
+            padding: 6px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            background: var(--bg-surface);
+            color: var(--text-main);
+        }
+
+        .btn-save-action {
+            background-color: var(--success-color);
+            color: #fff;
+            border: none;
+            padding: 6px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .btn-delete-action {
+            background-color: var(--danger-color);
+            color: #fff;
+            border: none;
+            padding: 6px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        @media (max-width: 900px) {
+            .sidebar { width: 100%; position: relative; }
+            .main-wrapper { margin-right: 0; }
+        }
+    </style>
 </head>
-<body class="light-theme">
+<body>
 
     <div class="app-layout">
         
-        <!-- الشريط الجانبي Sidebar -->
+        <!-- القائمة الجانبية Sidebar -->
         <aside class="sidebar">
             <div class="sidebar-header">
                 <div class="brand-icon"><i class="fa-solid fa-hospital"></i></div>
@@ -64,12 +472,9 @@
         <!-- المحتوى الرئيسي Main Content -->
         <main class="main-wrapper">
             
-            <!-- الهيدر العلوي Top Navigation -->
+            <!-- الهيدر العلوي Top Header -->
             <header class="top-header">
                 <div class="header-title">
-                    <button class="mobile-toggle-btn" id="sidebarToggleBtn">
-                        <i class="fa-solid fa-bars"></i>
-                    </button>
                     <h1>لوحة تحكم تنسيق المواعيد</h1>
                 </div>
                 
@@ -207,7 +612,7 @@
                     </form>
                 </section>
 
-                <!-- إدارة واستخراج البيانات -->
+                <!-- إدارة البيانات وتصدير Excel -->
                 <section class="dashboard-section" id="tools-section">
                     <div class="section-header">
                         <h2><i class="fa-solid fa-database"></i> إدارة واستخراج البيانات</h2>
@@ -263,6 +668,245 @@
         </main>
     </div>
 
-    <script src="app.js"></script>
+    <!-- برمجة JavaScript الكاملة داخل الملف -->
+    <script>
+        // 1. إعدادات السحابة المباشرة Firebase Realtime Database
+        const firebaseConfig = {
+            databaseURL: "https://dr-sami-default-rtdb.firebaseio.com/"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+        const dbRef = database.ref('appointments');
+
+        let records = [];
+        const cloudStatus = document.getElementById('cloudStatus');
+
+        // الربط المباشر بالسحابة Realtime Sync
+        dbRef.on('value', (snapshot) => {
+            const data = snapshot.val();
+            records = [];
+            if (data) {
+                for (let key in data) {
+                    records.push({ firebaseKey: key, ...data[key] });
+                }
+            }
+            cloudStatus.innerHTML = `<i class="fa-solid fa-cloud-check" style="color: #34d399"></i> <span>متصل بالسحابة</span>`;
+            renderTable();
+            updateKPIs();
+        }, (error) => {
+            console.error("Firebase Error: ", error);
+            cloudStatus.innerHTML = `<i class="fa-solid fa-cloud-slash" style="color: #f87171"></i> <span>غير متصل</span>`;
+        });
+
+        // 2. التحكم بالمظهر (الوضع الداكن)
+        const themeToggleBtn = document.getElementById('themeToggleBtn');
+
+        if (localStorage.getItem('theme') === 'dark') {
+            document.body.classList.add('dark-theme');
+            themeToggleBtn.innerHTML = `<i class="fa-solid fa-sun"></i>`;
+        }
+
+        themeToggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('dark-theme');
+            const isDark = document.body.classList.contains('dark-theme');
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            themeToggleBtn.innerHTML = isDark ? `<i class="fa-solid fa-sun"></i>` : `<i class="fa-solid fa-moon"></i>`;
+        });
+
+        // 3. خيارات النموذج الديناميكية
+        function toggleOtherContactInput() {
+            const method = document.getElementById('contactMethod').value;
+            document.getElementById('otherContactGroup').classList.toggle('hidden', method !== 'أخرى');
+        }
+
+        function toggleAppointmentDateInput() {
+            const service = document.getElementById('serviceRequired').value;
+            document.getElementById('appointmentDateGroup').classList.toggle('hidden', service !== 'حجز موعد');
+        }
+
+        // 4. حفظ البيانات للسحابة
+        document.getElementById('appointmentForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const contactMethodVal = document.getElementById('contactMethod').value;
+            const finalContactMethod = contactMethodVal === 'أخرى' 
+                ? `أخرى (${document.getElementById('otherContactDetail').value})` 
+                : contactMethodVal;
+
+            const newRecord = {
+                patientName: document.getElementById('patientName').value,
+                patientPhone: document.getElementById('patientPhone').value,
+                fileNumber: document.getElementById('fileNumber').value || '-',
+                idNumber: document.getElementById('idNumber').value || '-',
+                branch: document.getElementById('branch').value,
+                contactMethod: finalContactMethod,
+                serviceRequired: document.getElementById('serviceRequired').value,
+                appointmentDateTime: document.getElementById('appointmentDateTime').value || '-',
+                coordinatorName: document.getElementById('coordinatorName').value,
+                isRecurring: document.getElementById('isRecurring').checked,
+                createdAt: new Date().toISOString(),
+                actionTaken: '',
+                adminContactMethod: ''
+            };
+
+            dbRef.push(newRecord).then(() => {
+                this.reset();
+                toggleOtherContactInput();
+                toggleAppointmentDateInput();
+                alert('تم الحفظ بنجاح بالسحابة!');
+            }).catch(err => alert('خطأ في الحفظ: ' + err.message));
+        });
+
+        // 5. التنبيهات الزمانية (+24 / +48 ساعة)
+        function getDelayStatus(createdAt, actionTaken) {
+            if (actionTaken && actionTaken.trim() !== '') {
+                return { text: 'تم الإجراء', class: 'badge-normal' };
+            }
+
+            const diffHours = (new Date() - new Date(createdAt)) / (1000 * 60 * 60);
+
+            if (diffHours >= 48) return { text: 'تأخير +48 ساعة', class: 'badge-48h' };
+            if (diffHours >= 24) return { text: 'تأخير +24 ساعة', class: 'badge-24h' };
+            return { text: 'جديد', class: 'badge-normal' };
+        }
+
+        // 6. عرض البيانات وتحديث مؤشرات الأداء
+        function renderTable() {
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '';
+
+            const sorted = [...records].sort((a, b) => b.isRecurring - a.isRecurring || new Date(b.createdAt) - new Date(a.createdAt));
+
+            sorted.forEach(record => {
+                const status = getDelayStatus(record.createdAt, record.actionTaken);
+                
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>
+                        ${record.isRecurring ? '<span class="status-badge badge-priority">⭐ متكرر</span><br>' : ''}
+                        <span class="status-badge ${status.class}">${status.text}</span>
+                    </td>
+                    <td><strong>${record.patientName}</strong></td>
+                    <td>${record.patientPhone}<br><small>ملف: ${record.fileNumber} | هوية: ${record.idNumber}</small></td>
+                    <td>${record.branch}</td>
+                    <td>${record.contactMethod}</td>
+                    <td>${record.serviceRequired}<br><small>${record.appointmentDateTime !== '-' ? record.appointmentDateTime.replace('T', ' ') : ''}</small></td>
+                    <td>${record.coordinatorName}</td>
+                    <td>
+                        <input type="text" class="table-input" id="action_${record.firebaseKey}" value="${record.actionTaken || ''}" placeholder="الإجراء...">
+                    </td>
+                    <td>
+                        <input type="text" class="table-input" id="adminContact_${record.firebaseKey}" value="${record.adminContactMethod || ''}" placeholder="التواصل...">
+                    </td>
+                    <td>
+                        <button class="btn-save-action" onclick="saveAdminUpdate('${record.firebaseKey}')" title="حفظ"><i class="fa-solid fa-floppy-disk"></i></button>
+                        <button class="btn-delete-action" onclick="deleteRecord('${record.firebaseKey}')" title="حذف"><i class="fa-solid fa-trash"></i></button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function saveAdminUpdate(key) {
+            const actionVal = document.getElementById(`action_${key}`).value;
+            const adminContactVal = document.getElementById(`adminContact_${key}`).value;
+
+            dbRef.child(key).update({
+                actionTaken: actionVal,
+                adminContactMethod: adminContactVal
+            }).then(() => alert('تم تحديث بيانات الإدارة بنجاح!'));
+        }
+
+        function deleteRecord(key) {
+            if (confirm('هل أنت تأكد من الحذف من السحابة؟')) {
+                dbRef.child(key).remove();
+            }
+        }
+
+        function updateKPIs() {
+            document.getElementById('kpi-total').innerText = records.length;
+            document.getElementById('kpi-recurring').innerText = records.filter(r => r.isRecurring).length;
+
+            let c24 = 0, c48 = 0;
+            const now = new Date();
+
+            records.forEach(r => {
+                if (!r.actionTaken || r.actionTaken.trim() === '') {
+                    const diffHours = (now - new Date(r.createdAt)) / (1000 * 60 * 60);
+                    if (diffHours >= 48) c48++;
+                    else if (diffHours >= 24) c24++;
+                }
+            });
+
+            document.getElementById('kpi-24h').innerText = c24;
+            document.getElementById('kpi-48h').innerText = c48;
+        }
+
+        function filterTable() {
+            const input = document.getElementById('searchInput').value.toLowerCase();
+            const rows = document.querySelectorAll('#tableBody tr');
+            rows.forEach(row => {
+                row.style.display = row.innerText.toLowerCase().includes(input) ? '' : 'none';
+            });
+        }
+
+        // 7. التصدير والاستيراد (Excel & JSON)
+        function exportToExcel() {
+            if (records.length === 0) return alert('لا توجد بيانات للتصدير');
+            const dataToExport = records.map(r => ({
+                "اسم العميل": r.patientName,
+                "الجوال": r.patientPhone,
+                "رقم الملف": r.fileNumber,
+                "رقم الهوية": r.idNumber,
+                "الفرع": r.branch,
+                "طريقة التواصل": r.contactMethod,
+                "الخدمة المطلوبة": r.serviceRequired,
+                "الموعد المقترح": r.appointmentDateTime,
+                "اسم المنسق": r.coordinatorName,
+                "حالة متكررة": r.isRecurring ? "نعم" : "لا",
+                "تاريخ التسجيل": r.createdAt,
+                "إجراء الإدارة": r.actionTaken || '',
+                "تواصل الإدارة": r.adminContactMethod || ''
+            }));
+
+            const worksheet = XLSX.utils.json_to_sheet(dataToExport);
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, "مواعيد د.سامي");
+            XLSX.writeFile(workbook, `Majesty_Appointments_${new Date().toISOString().slice(0,10)}.xlsx`);
+        }
+
+        function exportToJSON() {
+            if (records.length === 0) return alert('لا توجد بيانات');
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(records, null, 2));
+            const a = document.createElement('a');
+            a.href = dataStr;
+            a.download = `Backup_Appointments_${new Date().toISOString().slice(0,10)}.json`;
+            a.click();
+        }
+
+        function importData(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const imported = JSON.parse(e.target.result);
+                    if (Array.isArray(imported)) {
+                        if (confirm(`رفع ${imported.length} سجل للسحابة؟`)) {
+                            imported.forEach(item => {
+                                delete item.firebaseKey;
+                                dbRef.push(item);
+                            });
+                        }
+                    }
+                } catch (err) {
+                    alert('خطأ في الملف: ' + err.message);
+                }
+            };
+            reader.readAsText(file);
+        }
+    </script>
 </body>
 </html>
