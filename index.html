@@ -370,7 +370,7 @@
         }
         .search-field i { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: var(--text-muted); }
 
-        /* حاوية الجدول وتثبيت رأس الجدول (Sticky Header) */
+        /* حاوية الجدول وتثبيت رأس الجدول (Sticky Header) أثناء التمرير */
         .table-container { 
             max-height: 650px; 
             overflow-y: auto; 
@@ -1094,13 +1094,30 @@
             return cleaned;
         }
 
+        /* نسخ الرقم بدون إظهار أي إشعار تأكيد (Alert) */
         function copyPhoneNumber(phone, event) {
     event.stopPropagation();
     if (!phone) return;
+    
     navigator.clipboard.writeText(phone).then(() => {
-        // تم إزالة رسالة الـ alert لعدم إظهار أي إشعار مزعج عند النسخ
+        // إنشاء عنصر إشعار مؤقت (Toast) خفيف
+        const btn = event.currentTarget;
+        let tooltip = btn.querySelector('.copy-tooltip');
+        if (!tooltip) {
+            tooltip = document.createElement('span');
+            tooltip.className = 'copy-tooltip';
+            tooltip.style.cssText = 'position: absolute; background: #16a34a; color: white; padding: 2px 6px; font-size: 0.75rem; border-radius: 4px; transform: translateY(-30px); pointer-events: none; transition: opacity 0.2s;';
+            btn.style.position = 'relative';
+            btn.appendChild(tooltip);
+        }
+        tooltip.innerText = 'تم النسخ ✓';
+        tooltip.style.opacity = '1';
+        
+        setTimeout(() => {
+            tooltip.style.opacity = '0';
+        }, 1200);
     }).catch(err => {
-        console.error('فشل نسخ الرقم', err);
+        console.error('فشل النسخ', err);
     });
 }
 
