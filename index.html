@@ -318,10 +318,11 @@
 
         .actions-toolbar { display: flex; gap: 12px; flex-wrap: wrap; }
         .action-btn {
-            padding: 10px 18px; border-radius: var(--radius-md); border: none; color: white; font-family: var(--font-family); font-size: 0.9rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px;
+            padding: 10px 18px; border-radius: var(--radius-md); border: none; color: white; font-family: var(--font-family); font-size: 0.9rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; text-decoration: none; align-items: center;
         }
         .action-btn.excel { background-color: #107c41; }
         .action-btn.json { background-color: #6366f1; }
+        .action-btn.import { background-color: #0284c7; }
         .action-btn.clear-all { background-color: #dc2626; }
         .action-btn.settings { background-color: #475569; }
 
@@ -391,7 +392,7 @@
                 <a href="#kpi-section" class="menu-item active"><i class="fa-solid fa-chart-pie"></i><span>مؤشرات الأداء</span></a>
                 <a href="#form-section" class="menu-item"><i class="fa-solid fa-calendar-plus"></i><span>إضافة موعد جديد</span></a>
                 <a href="#table-section" class="menu-item"><i class="fa-solid fa-list-check"></i><span>جدول المواعيد</span></a>
-                <a href="#tools-section" class="menu-item"><i class="fa-solid fa-database"></i><span>تصدير وإدارة</span></a>
+                <a href="#tools-section" class="menu-item"><i class="fa-solid fa-database"></i><span>تصدير واستيراد وإدارة</span></a>
             </nav>
 
             <div class="sidebar-footer">
@@ -516,6 +517,10 @@
                     <div class="actions-toolbar">
                         <button class="action-btn excel" onclick="exportToExcel()"><i class="fa-solid fa-file-excel"></i> تصدير Excel</button>
                         <button class="action-btn json" onclick="exportToJSON()"><i class="fa-solid fa-file-code"></i> تصدير JSON</button>
+                        <label class="action-btn import">
+                            <i class="fa-solid fa-file-import"></i> استيراد ملف (Excel / JSON)
+                            <input type="file" id="importFile" accept=".json,.xlsx,.xls" onchange="importData(event)" hidden>
+                        </label>
                         <button class="action-btn clear-all" onclick="openClearModal()"><i class="fa-solid fa-trash-can"></i> مسح بفلتر وباسورد</button>
                         <button class="action-btn settings" onclick="openPasswordModal()"><i class="fa-solid fa-key"></i> تغيير كلمة المرور</button>
                     </div>
@@ -548,10 +553,10 @@
                                     <th>رقم الهوية</th>
                                     <th>الفرع</th>
                                     <th>طريقة التواصل</th>
-                                    <th>الخدمة / تفاصيل الطلب</th>
+                                    <th style="min-width: 285px;">الخدمة / تفاصيل الطلب</th>
                                     <th>المنسق</th>
-                                    <th style="min-width: 220px;">إجراء الإدارة</th>
                                     <th style="min-width: 180px;">تواصل الإدارة</th>
+                                    <th style="min-width: 220px;">إجراء الإدارة</th>
                                     <th>إجراءات</th>
                                 </tr>
                             </thead>
@@ -714,7 +719,6 @@
             const patientPhoneVal = document.getElementById('patientPhone').value.trim();
             const cleanNewPhone = patientPhoneVal.replace(/\D/g, '');
 
-            // فحص دقيق ومحسن للكشف عن تكرار الطلب برقم الجوال أو اسم العميل
             const isRepeated = records.some(r => {
                 const cleanExistingPhone = r.patientPhone ? r.patientPhone.replace(/\D/g, '') : '';
                 const matchPhone = (cleanNewPhone.length >= 8 && cleanExistingPhone === cleanNewPhone);
@@ -764,6 +768,81 @@
             toggleOtherContactInput();
             alert(isRepeated ? 'تم حفظ الموعد! (تم الكشف عن تكرار الطلب وتم منح الحالة شارة طلب متكرر وأولوية تلقائياً 🔄)' : 'تم حفظ الموعد بنجاح!');
         });
+
+        /* ميزة الاستيراد (Excel / JSON) */
+        function importData(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const fileName = file.name.toLowerCase();
+
+            if (fileName.endsWith('.json')) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        const importedArray = JSON.parse(e.target.result);
+                        if (Array.isArray(importedArray)) {
+                            importedArray.forEach(item => {
+                                if(!item.firebaseKey) item.firebaseKey = 'local_' + Math.random();
+                                records.unshift(item);
+                            });
+                            saveLocal();
+                            renderTable();
+                            updateKPIs();
+                            alert(`تم استيراد ${importedArray.length} سجل بنجاح!`);
+                        } else {
+                            alert('ملف الـ JSON غير متوافق.');
+                        }
+                    } catch(err) {
+                        alert('حدث خطأ أثناء قراءة ملف الـ JSON.');
+                    }
+                };
+                reader.readAsText(file);
+            } else if (fileName.endsWith('.xlsx') || fileName.endsWith('.xls')) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        const data = new Uint8Array(e.target.result);
+                        const workbook = XLSX.read(data, {type: 'array'});
+                        const firstSheetName = workbook.SheetNames[0];
+                        const worksheet = workbook.Sheets[firstSheetName];
+                        const jsonArr = XLSX.utils.sheet_to_json(worksheet);
+
+                        jsonArr.forEach(row => {
+                            const newRec = {
+                                firebaseKey: 'local_' + Math.random() + Date.now(),
+                                patientName: row["اسم العميل"] || row["PatientName"] || "مستورد",
+                                patientPhone: String(row["الجوال"] || row["الهاتف"] || row["Phone"] || "-"),
+                                fileNumber: String(row["رقم الملف"] || "-"),
+                                idNumber: String(row["رقم الهوية"] || "-"),
+                                branch: row["الفرع"] || "معشي",
+                                contactMethod: row["طريقة التواصل"] || "اتصال",
+                                serviceRequired: row["الخدمة المطلوبة"] || row["تفاصيل الطلب"] || "-",
+                                appointmentDateTime: row["الموعد المقترح"] || "-",
+                                coordinatorName: row["اسم المنسق"] || "مسؤول الاستيراد",
+                                isRecurring: (row["أولوية"] === "نعم" || row["أولوية"] === true),
+                                isRepeatedRequest: (row["طلب متكرر"] === "نعم"),
+                                createdAt: row["تاريخ التسجيل"] || new Date().toISOString(),
+                                actionTaken: row["إجراء الإدارة"] || "",
+                                adminContactMethod: row["تواصل الإدارة"] || "قيد الانتظار",
+                                adminContactDetail: ""
+                            };
+                            records.unshift(newRec);
+                        });
+
+                        saveLocal();
+                        renderTable();
+                        updateKPIs();
+                        alert(`تم استيراد بيانات ملف الـ Excel بنجاح!`);
+                    } catch(err) {
+                        alert('حدث خطأ أثناء تحليل ملف الـ Excel.');
+                    }
+                };
+                reader.readAsArrayBuffer(file);
+            } else {
+                alert('الرجاء اختيار ملف Excel أو JSON صحيح.');
+            }
+            event.target.value = '';
+        }
 
         function openClearModal() { document.getElementById('clearModal').classList.add('open'); }
         function closeClearModal() { 
@@ -919,9 +998,8 @@
                     <td>${record.idNumber}</td>
                     <td>${record.branch}</td>
                     <td>${record.contactMethod}</td>
-                    <td style="max-width: 250px; word-break: break-word;">${record.serviceRequired}${record.appointmentDateTime !== '-' ? `<br><small><strong>الموعد:</strong> ${record.appointmentDateTime.replace('T', ' ')}</small>` : ''}</td>
+                    <td style="min-width: 285px; white-space: pre-wrap; word-break: break-word; line-height: 1.5;">${record.serviceRequired}${record.appointmentDateTime !== '-' ? `<br><small style="color:var(--primary-color);"><strong>الموعد:</strong> ${record.appointmentDateTime.replace('T', ' ')}</small>` : ''}</td>
                     <td>${record.coordinatorName}</td>
-                    <td><textarea class="table-input" id="action_${record.firebaseKey}" placeholder="اكتب إجراء الإدارة...">${record.actionTaken || ''}</textarea></td>
                     <td>
                         <select class="table-input" id="adminContact_${record.firebaseKey}" onchange="handleAdminContactChange('${record.firebaseKey}')">
                             <option value="قيد الانتظار" ${currentAdminContact === 'قيد الانتظار' ? 'selected' : ''}>قيد الانتظار ⏳</option>
@@ -933,6 +1011,7 @@
                         </select>
                         <input type="text" class="table-input ${isOther ? '' : 'hidden'}" id="adminContactDetail_${record.firebaseKey}" value="${record.adminContactDetail || ''}" placeholder="اكتب تفاصيل التواصل..." style="margin-top: 5px;">
                     </td>
+                    <td><textarea class="table-input" id="action_${record.firebaseKey}" placeholder="اكتب إجراء الإدارة..." style="min-height: 85px;">${record.actionTaken || ''}</textarea></td>
                     <td>
                         <button class="btn-save-action" onclick="saveAdminUpdate('${record.firebaseKey}')" title="حفظ"><i class="fa-solid fa-floppy-disk"></i></button>
                         <button class="btn-edit-action" onclick="openEditModal('${record.firebaseKey}')" title="تعديل"><i class="fa-solid fa-pen-to-square"></i></button>
@@ -1054,8 +1133,8 @@
                 "أولوية": r.isRecurring ? "نعم" : "لا",
                 "طلب متكرر": r.isRepeatedRequest ? "نعم" : "لا",
                 "تاريخ التسجيل": r.createdAt,
-                "إجراء الإدارة": r.actionTaken || '',
-                "تواصل الإدارة": r.adminContactMethod || 'قيد الانتظار'
+                "تواصل الإدارة": r.adminContactMethod || 'قيد الانتظار',
+                "إجراء الإدارة": r.actionTaken || ''
             }));
             const worksheet = XLSX.utils.json_to_sheet(dataToExport);
             const workbook = XLSX.utils.book_new();
