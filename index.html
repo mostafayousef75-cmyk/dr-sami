@@ -1095,14 +1095,14 @@
         }
 
         function copyPhoneNumber(phone, event) {
-            event.stopPropagation();
-            if (!phone) return;
-            navigator.clipboard.writeText(phone).then(() => {
-                alert(`تم نسخ رقم الجوال (${phone}) بنجاح!`);
-            }).catch(err => {
-                alert('فشل نسخ الرقم.');
-            });
-        }
+    event.stopPropagation();
+    if (!phone) return;
+    navigator.clipboard.writeText(phone).then(() => {
+        // تم إزالة رسالة الـ alert لعدم إظهار أي إشعار مزعج عند النسخ
+    }).catch(err => {
+        console.error('فشل نسخ الرقم', err);
+    });
+}
 
         function handleAdminContactChange(key) {
             const selectEl = document.getElementById(`adminContact_${key}`);
