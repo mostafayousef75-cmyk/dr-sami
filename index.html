@@ -398,12 +398,27 @@
         .badge-normal { background-color: var(--success-color); }
         .badge-24h { background-color: var(--warning-color); }
         .badge-48h { background-color: var(--danger-color); }
+        
+        /* شارة الحالات التي لم يتم إجراء شيء لها بعد */
+        .badge-pending-action { background-color: #f59e0b !important; color: #ffffff !important; }
+
         .badge-priority { background-color: var(--accent-purple); margin-bottom: 4px; }
         .badge-repeated { background-color: #e11d48; margin-bottom: 4px; }
         
-        /* شارة نوع الإجراء باللون الأصفر الواضح */
+        /* شارة نوع الإجراء الافتراضية (باللون الأصفر الداكن) */
         .badge-procedure {
             background-color: #ca8a04 !important;
+            color: #ffffff !important;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            display: inline-block;
+        }
+
+        /* شارة مخصصة لتمييز نوع إجراء الزراعة בלون مختلف تماماً */
+        .badge-procedure-plant {
+            background-color: #0d9488 !important;
             color: #ffffff !important;
             padding: 4px 10px;
             border-radius: 20px;
@@ -453,7 +468,6 @@
         .modal-header h3 { color: var(--primary-color); font-size: 1.2rem; }
         .close-modal-btn { background: none; border: none; font-size: 1.5rem; color: var(--text-muted); cursor: pointer; }
 
-        /* دعم الموبايل والتمرير الأفقي للجدول */
         @media (max-width: 768px) {
             .table-container {
                 overflow-x: auto;
@@ -464,7 +478,6 @@
             }
         }
 
-        /* الوميض البصري للحالات العاجلة */
         @keyframes urgentPulse {
             0% { background-color: rgba(220, 38, 38, 0.15); }
             50% { background-color: rgba(220, 38, 38, 0.03); }
@@ -615,6 +628,9 @@
                                     <option value="">اختر نوع الإجراء...</option>
                                     <option value="زراعة">زراعة</option>
                                     <option value="خلع">خلع</option>
+                                    <option value="جراحه">جراحه</option>
+                                    <option value="فك خياطه">فك خياطه</option>
+                                    <option value="مراجعه">مراجعه</option>
                                     <option value="أخرى">أخرى</option>
                                 </select>
                             </div>
@@ -778,7 +794,17 @@
                         <label>الفرع *</label>
                         <select id="editBranch" required><option value="معشي">فرع معشي</option><option value="الوسام">فرع الوسام</option></select>
                     </div>
-                    <div class="input-field"><label>نوع الإجراء *</label><input type="text" id="editProcedureType" required></div>
+                    <div class="input-field">
+                        <label>نوع الإجراء *</label>
+                        <select id="editProcedureType" required>
+                            <option value="زراعة">زراعة</option>
+                            <option value="خلع">خلع</option>
+                            <option value="جراحه">جراحه</option>
+                            <option value="فك خياطه">فك خياطه</option>
+                            <option value="مراجعه">مراجعه</option>
+                            <option value="أخرى">أخرى</option>
+                        </select>
+                    </div>
                     <div class="input-field"><label>طريقة التواصل *</label><input type="text" id="editContactMethod" required></div>
                     <div class="input-field"><label>اسم المنسق *</label><input type="text" id="editCoordinatorName" required></div>
                     <div class="input-field"><label>التاريخ والميعاد</label><input type="datetime-local" id="editAppointmentDateTime"></div>
@@ -823,7 +849,6 @@
         const cached = localStorage.getItem('cachedAppointments');
         if (cached) { try { records = JSON.parse(cached); } catch(e) { records = []; } }
 
-        // استرجاع الفلاتر المخزنة محلياً عند تحميل الصفحة
         window.addEventListener('DOMContentLoaded', () => {
             const savedFilter = localStorage.getItem('savedFilter');
             const savedTimeFilter = localStorage.getItem('savedTimeFilter');
@@ -1131,7 +1156,6 @@
             closeClearModal();
         }
 
-        // حفظ وتحديث فلاتر الحالة والوقت في LocalStorage
         function setFilter(filterType, element) {
             currentFilter = filterType;
             localStorage.setItem('savedFilter', filterType);
@@ -1202,7 +1226,7 @@
             const diffHours = (new Date() - new Date(createdAt)) / (1000 * 60 * 60);
             if (diffHours >= 48) return { text: 'تأخير +48 ساعة', class: 'badge-48h' };
             if (diffHours >= 24) return { text: 'تأخير +24 ساعة', class: 'badge-24h' };
-            return { text: 'جديد', class: 'badge-normal' };
+            return { text: 'لم يتم إجراء (جديد)', class: 'badge-pending-action' };
         }
 
         function formatWhatsAppNumber(phone) {
@@ -1265,6 +1289,9 @@
                     tr.classList.add('row-urgent-new');
                 }
 
+                const isPlantProcedure = record.procedureType && record.procedureType.includes('زراعة');
+                const procedureBadgeClass = isPlantProcedure ? 'badge-procedure-plant' : 'badge-procedure';
+
                 tr.innerHTML = `
                     <td>
                         ${record.isRecurring ? '<span class="status-badge badge-priority">⭐ أولوية</span><br>' : ''}
@@ -1283,7 +1310,7 @@
                     <td>${record.fileNumber}</td>
                     <td>${record.idNumber}</td>
                     <td>${record.branch}</td>
-                    <td><span class="badge-procedure">${record.procedureType || 'غير محدد'}</span></td>
+                    <td><span class="${procedureBadgeClass}">${record.procedureType || 'غير محدد'}</span></td>
                     <td>${record.contactMethod}</td>
                     <td style="min-width: 285px; white-space: pre-wrap; word-break: break-word; line-height: 1.5;">${record.serviceRequired}${record.appointmentDateTime !== '-' ? `<br><small style="color:var(--primary-color);"><strong>الموعد:</strong> ${record.appointmentDateTime.replace('T', ' ')}</small>` : ''}</td>
                     <td>${record.coordinatorName}</td>
@@ -1352,7 +1379,7 @@
             document.getElementById('editFileNumber').value = item.fileNumber !== '-' ? item.fileNumber : '';
             document.getElementById('editIdNumber').value = item.idNumber !== '-' ? item.idNumber : '';
             document.getElementById('editBranch').value = item.branch || 'معشي';
-            document.getElementById('editProcedureType').value = item.procedureType || '';
+            document.getElementById('editProcedureType').value = item.procedureType || 'زراعة';
             document.getElementById('editContactMethod').value = item.contactMethod || '';
             document.getElementById('editCoordinatorName').value = item.coordinatorName || '';
             document.getElementById('editAppointmentDateTime').value = item.appointmentDateTime !== '-' ? item.appointmentDateTime : '';
