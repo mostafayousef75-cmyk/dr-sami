@@ -275,6 +275,7 @@
         .kpi-card.blue { border-color: var(--primary-color); }
         .kpi-card.purple { border-color: var(--accent-purple); }
         .kpi-card.pink { border-color: #e11d48; }
+        .kpi-card.teal { border-color: #0d9488; }
         .kpi-card.warning { border-color: var(--warning-color); }
         .kpi-card.danger { border-color: var(--danger-color); }
 
@@ -285,6 +286,7 @@
         .kpi-card.blue .kpi-icon-box { color: var(--primary-color); }
         .kpi-card.purple .kpi-icon-box { color: var(--accent-purple); }
         .kpi-card.pink .kpi-icon-box { color: #e11d48; }
+        .kpi-card.teal .kpi-icon-box { color: #0d9488; }
         .kpi-card.warning .kpi-icon-box { color: var(--warning-color); }
         .kpi-card.danger .kpi-icon-box { color: var(--danger-color); }
 
@@ -508,6 +510,10 @@
                             <div class="kpi-icon-box"><i class="fa-solid fa-rotate-right"></i></div>
                             <div class="kpi-info"><h3>الطلبات المتكررة</h3><span class="kpi-value" id="kpi-repeated">0</span></div>
                         </div>
+                        <div class="kpi-card teal">
+                            <div class="kpi-icon-box"><i class="fa-solid fa-tooth"></i></div>
+                            <div class="kpi-info"><h3>حالات الزراعة</h3><span class="kpi-value" id="kpi-plants">0</span></div>
+                        </div>
                         <div class="kpi-card warning">
                             <div class="kpi-icon-box"><i class="fa-solid fa-clock-rotate-left"></i></div>
                             <div class="kpi-info"><h3>تأخير +24 ساعة</h3><span class="kpi-value" id="kpi-24h">0</span></div>
@@ -618,6 +624,7 @@
                                 <button class="filter-tab active" onclick="setFilter('all', this)"><i class="fa-solid fa-list"></i> الكل</button>
                                 <button class="filter-tab" onclick="setFilter('priority', this)"><i class="fa-solid fa-star" style="color:var(--accent-purple);"></i> ذات أولوية</button>
                                 <button class="filter-tab" onclick="setFilter('repeated', this)"><i class="fa-solid fa-rotate-right" style="color:#e11d48;"></i> الطلبات المتكررة</button>
+                                <button class="filter-tab" onclick="setFilter('plants', this)"><i class="fa-solid fa-tooth" style="color:#0d9488;"></i> حالات الزراعة</button>
                             </div>
                         </div>
                         <div class="filter-row">
@@ -1060,6 +1067,8 @@
                 res = res.filter(r => r.isRecurring);
             } else if (currentFilter === 'repeated') {
                 res = res.filter(r => r.isRepeatedRequest);
+            } else if (currentFilter === 'plants') {
+                res = res.filter(r => r.serviceRequired && r.serviceRequired.toLowerCase().includes('زراعة'));
             }
 
             if (currentTimeFilter !== 'all') {
@@ -1094,7 +1103,7 @@
             return cleaned;
         }
 
-        /* دالة النسخ المُحدثة بإظهار "تم النسخ ✓" */
+        /* نسخ الرقم وإظهار إشعار تم النسخ بجانب الزر */
         function copyPhoneNumber(phone, event) {
             event.stopPropagation();
             if (!phone) return;
@@ -1273,6 +1282,7 @@
             const totalEl = document.getElementById('kpi-total');
             const recurringEl = document.getElementById('kpi-recurring');
             const repeatedEl = document.getElementById('kpi-repeated');
+            const plantsEl = document.getElementById('kpi-plants');
             const kpi24El = document.getElementById('kpi-24h');
             const kpi48El = document.getElementById('kpi-48h');
             if (!totalEl) return;
@@ -1280,6 +1290,10 @@
             totalEl.innerText = records.length;
             recurringEl.innerText = records.filter(r => r.isRecurring).length;
             repeatedEl.innerText = records.filter(r => r.isRepeatedRequest).length;
+            
+            if (plantsEl) {
+                plantsEl.innerText = records.filter(r => r.serviceRequired && r.serviceRequired.toLowerCase().includes('زراعة')).length;
+            }
 
             let c24 = 0, c48 = 0;
             const now = new Date();
