@@ -165,13 +165,8 @@
             justify-content: center;
         }
 
-        .online-dot {
-            width: 10px; height: 10px; background-color: #22c55e; border-radius: 50%; box-shadow: 0 0 8px #22c55e; display: inline-block;
-        }
-
-        .offline-dot {
-            width: 10px; height: 10px; background-color: #94a3b8; border-radius: 50%; display: inline-block;
-        }
+        .online-dot { width: 10px; height: 10px; background-color: #22c55e; border-radius: 50%; box-shadow: 0 0 8px #22c55e; display: inline-block; }
+        .offline-dot { width: 10px; height: 10px; background-color: #94a3b8; border-radius: 50%; display: inline-block; }
 
         .main-wrapper {
             margin-right: 260px;
@@ -325,7 +320,6 @@
         .action-btn.excel { background-color: #107c41; }
         .action-btn.json { background-color: #6366f1; }
         .action-btn.import { background-color: #0284c7; }
-        .action-btn.print { background-color: #475569; }
 
         .filter-tabs { display: flex; gap: 10px; margin-bottom: 15px; border-bottom: 2px solid var(--border-color); padding-bottom: 10px; flex-wrap: wrap; }
         .filter-tab {
@@ -368,12 +362,6 @@
         .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; }
         .modal-header h3 { color: var(--primary-color); font-size: 1.2rem; }
         .close-modal-btn { background: none; border: none; font-size: 1.5rem; color: var(--text-muted); cursor: pointer; }
-
-        @media print {
-            .sidebar, .top-header, .form-section, .actions-toolbar, .btn-save-action, .btn-edit-action, .btn-delete-action, .search-field { display: none !important; }
-            .main-wrapper { margin-right: 0 !important; width: 100% !important; }
-            body { background: white; color: black; }
-        }
     </style>
 </head>
 <body>
@@ -528,7 +516,6 @@
                             <i class="fa-solid fa-file-import"></i> استيراد ملف (Excel / JSON)
                             <input type="file" id="importFile" accept=".json,.xlsx,.xls" onchange="importData(event)" hidden>
                         </label>
-                        <button class="action-btn print" onclick="window.print()"><i class="fa-solid fa-print"></i> طباعة كشف المواعيد</button>
                     </div>
                 </section>
 
@@ -892,6 +879,38 @@
             document.querySelectorAll('#tableBody tr').forEach(row => {
                 row.style.display = row.innerText.toLowerCase().includes(input) ? '' : 'none';
             });
+        }
+
+        function exportToExcel() {
+            if (records.length === 0) return alert('لا توجد بيانات للتصدير');
+            const dataToExport = records.map(r => ({
+                "اسم العميل": r.patientName,
+                "الجوال": r.patientPhone,
+                "رقم الملف": r.fileNumber,
+                "رقم الهوية": r.idNumber,
+                "الفرع": r.branch,
+                "طريقة التواصل": r.contactMethod,
+                "الخدمة المطلوبة": r.serviceRequired,
+                "الموعد المقترح": r.appointmentDateTime,
+                "اسم المنسق": r.coordinatorName,
+                "أولوية": r.isRecurring ? "نعم" : "لا",
+                "تاريخ التسجيل": r.createdAt,
+                "إجراء الإدارة": r.actionTaken || '',
+                "تواصل الإدارة": r.adminContactMethod || 'قيد الانتظار'
+            }));
+            const worksheet = XLSX.utils.json_to_sheet(dataToExport);
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, "مواعيد د.سامي");
+            XLSX.writeFile(workbook, `Majesty_Appointments_${new Date().toISOString().slice(0,10)}.xlsx`);
+        }
+
+        function exportToJSON() {
+            if (records.length === 0) return alert('لا توجد بيانات للتصدير');
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(records, null, 2));
+            const a = document.createElement('a');
+            a.href = dataStr;
+            a.download = `Backup_Appointments_${new Date().toISOString().slice(0,10)}.json`;
+            a.click();
         }
     </script>
 </body>
