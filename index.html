@@ -166,7 +166,6 @@
         }
 
         .online-dot { width: 10px; height: 10px; background-color: #22c55e; border-radius: 50%; box-shadow: 0 0 8px #22c55e; display: inline-block; }
-        .offline-dot { width: 10px; height: 10px; background-color: #94a3b8; border-radius: 50%; display: inline-block; }
 
         .main-wrapper {
             margin-right: 260px;
@@ -217,17 +216,6 @@
         }
 
         .open-sidebar-btn:hover { background-color: var(--primary-hover); }
-
-        .theme-toggle-btn {
-            background: var(--bg-base);
-            border: 1px solid var(--border-color);
-            color: var(--text-main);
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            cursor: pointer;
-            font-size: 1.1rem;
-        }
 
         .content-body {
             padding: 25px 30px;
@@ -319,7 +307,7 @@
         }
         .action-btn.excel { background-color: #107c41; }
         .action-btn.json { background-color: #6366f1; }
-        .action-btn.import { background-color: #0284c7; }
+        .action-btn.clear-all { background-color: #dc2626; }
 
         .filter-tabs { display: flex; gap: 10px; margin-bottom: 15px; border-bottom: 2px solid var(--border-color); padding-bottom: 10px; flex-wrap: wrap; }
         .filter-tab {
@@ -390,7 +378,7 @@
             </nav>
 
             <div class="sidebar-footer">
-                <div class="cloud-badge" id="cloudStatus">
+                <div class="cloud-badge">
                     <span class="online-dot"></span> <span>متصل بالسحابة 🟢</span>
                 </div>
             </div>
@@ -403,12 +391,6 @@
                         <i class="fa-solid fa-bars"></i> القائمة
                     </button>
                     <h1>لوحة تحكم تنسيق المواعيد</h1>
-                </div>
-                
-                <div class="header-actions">
-                    <button class="theme-toggle-btn" id="themeToggleBtn" title="تبديل المظهر">
-                        <i class="fa-solid fa-moon"></i>
-                    </button>
                 </div>
             </header>
 
@@ -512,10 +494,7 @@
                     <div class="actions-toolbar">
                         <button class="action-btn excel" onclick="exportToExcel()"><i class="fa-solid fa-file-excel"></i> تصدير Excel</button>
                         <button class="action-btn json" onclick="exportToJSON()"><i class="fa-solid fa-file-code"></i> تصدير JSON</button>
-                        <label class="action-btn import">
-                            <i class="fa-solid fa-file-import"></i> استيراد ملف (Excel / JSON)
-                            <input type="file" id="importFile" accept=".json,.xlsx,.xls" onchange="importData(event)" hidden>
-                        </label>
+                        <button class="action-btn clear-all" onclick="clearAllData()"><i class="fa-solid fa-trash-can"></i> مسح جميع البيانات الحاليين</button>
                     </div>
                 </section>
 
@@ -600,12 +579,14 @@
 
         let records = [];
         let currentFilter = 'all';
-        const cloudStatus = document.getElementById('cloudStatus');
 
         const cached = localStorage.getItem('cachedAppointments');
         if (cached) { try { records = JSON.parse(cached); } catch(e) { records = []; } }
-        
-        window.addEventListener('DOMContentLoaded', () => { renderTable(); updateKPIs(); });
+
+        window.addEventListener('DOMContentLoaded', () => {
+            renderTable();
+            updateKPIs();
+        });
 
         dbRef.on('value', (snapshot) => {
             const data = snapshot.val();
@@ -613,12 +594,10 @@
                 const cloudRecords = [];
                 for (let key in data) { cloudRecords.push({ firebaseKey: key, ...data[key] }); }
                 records = cloudRecords;
-                saveLocal();
+            } else {
+                records = [];
             }
-            renderTable();
-            updateKPIs();
-        }, (error) => {
-            console.error("Firebase Error: ", error);
+            saveLocal();
             renderTable();
             updateKPIs();
         });
@@ -690,6 +669,17 @@
             toggleOtherContactInput();
             alert(isRepeated ? 'تم حفظ الموعد! (تم الكشف عن تكرار الطلب وتم منح الحالة أولوية تلقائياً ⭐)' : 'تم حفظ الموعد بنجاح!');
         });
+
+        function clearAllData() {
+            if (confirm('⚠️ هل أنت متأكد من حذف جميع بيانات العملاء بالكامل من السحابة والبرنامج؟ هذا الإجراء لا يمكن التراجع عنه.')) {
+                records = [];
+                saveLocal();
+                renderTable();
+                updateKPIs();
+                if (navigator.onLine) dbRef.remove();
+                alert('تم مسح جميع البيانات بنجاح!');
+            }
+        }
 
         function setFilter(filterType, element) {
             currentFilter = filterType;
