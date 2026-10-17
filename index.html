@@ -3,217 +3,264 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تنسيق مواعيد الدكتور سامي - مجمع ماجستي الطبي</title>
-    <link rel="stylesheet" href="style.css">
-    <!-- FontAwesome للأيقونات -->
+    <title>مجمع ماجستي الطبي - تنسيق مواعيد الدكتور سامي</title>
+    
+    <!-- خط Tajawal الأنيق -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome الأيقونات -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- مكتبة SheetJS لتصدير ملفات Excel -->
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="style.css">
+
+    <!-- المكتبات الخارجية -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <!-- مكتبات Firebase JS SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 </head>
-<body>
+<body class="light-theme">
 
-    <!-- الهيدر والواجهة العلوية -->
-    <header class="main-header">
-        <div class="header-content">
-            <div class="logo-area">
-                <i class="fa-solid fa-hospital-user logo-icon"></i>
-                <div>
-                    <h1>مجمع ماجستي الطبي</h1>
-                    <h2>تنسيق مواعيد الدكتور سامي</h2>
-                </div>
-            </div>
-            
-            <div class="header-actions">
-                <!-- حالة الاتصال بالسحابة -->
-                <div class="cloud-status" id="cloudStatus">
-                    <i class="fa-solid fa-cloud-check"></i> <span>جاري الاتصال...</span>
-                </div>
-                <!-- زر الدارك مود -->
-                <button class="btn-icon" id="themeToggleBtn" title="تبديل المظهر">
-                    <i class="fa-solid fa-moon"></i>
-                </button>
-            </div>
-        </div>
-    </header>
-
-    <div class="container">
+    <div class="app-layout">
         
-        <!-- شريط أدوات استيراد وتصدير البيانات -->
-        <div class="toolbar-section">
-            <div class="toolbar-title">
-                <i class="fa-solid fa-file-export"></i> إدارة واستخراج البيانات
-            </div>
-            <div class="toolbar-buttons">
-                <button class="btn-tool btn-excel" onclick="exportToExcel()">
-                    <i class="fa-solid fa-file-excel"></i> تصدير Excel
-                </button>
-                <button class="btn-tool btn-json" onclick="exportToJSON()">
-                    <i class="fa-solid fa-code"></i> تصدير JSON
-                </button>
-                <label class="btn-tool btn-import">
-                    <i class="fa-solid fa-file-import"></i> استيراد ملف
-                    <input type="file" id="importFile" accept=".json,.csv" onchange="importData(event)" hidden>
-                </label>
-            </div>
-        </div>
-
-        <!-- شاشة مؤشرات الأداء KPIs -->
-        <section class="kpi-section">
-            <h3 class="section-title"><i class="fa-solid fa-chart-pie"></i> لوحة مؤشرات الأداء (KPIs)</h3>
-            <div class="kpi-grid">
-                <div class="kpi-card blue">
-                    <div class="kpi-icon"><i class="fa-solid fa-users"></i></div>
-                    <div class="kpi-details">
-                        <h4>إجمالي الحالات</h4>
-                        <span id="kpi-total">0</span>
-                    </div>
-                </div>
-                <div class="kpi-card purple">
-                    <div class="kpi-icon"><i class="fa-solid fa-star"></i></div>
-                    <div class="kpi-details">
-                        <h4>حالات متكررة (أولوية)</h4>
-                        <span id="kpi-recurring">0</span>
-                    </div>
-                </div>
-                <div class="kpi-card warning">
-                    <div class="kpi-icon"><i class="fa-solid fa-clock-history"></i></div>
-                    <div class="kpi-details">
-                        <h4>تأخير +24 ساعة</h4>
-                        <span id="kpi-24h">0</span>
-                    </div>
-                </div>
-                <div class="kpi-card danger">
-                    <div class="kpi-icon"><i class="fa-solid fa-circle-exclamation"></i></div>
-                    <div class="kpi-details">
-                        <h4>تأخير +48 ساعة</h4>
-                        <span id="kpi-48h">0</span>
-                    </div>
+        <!-- الشريط الجانبي Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="brand-icon"><i class="fa-solid fa-hospital"></i></div>
+                <div class="brand-text">
+                    <h2>مجمع ماجستي</h2>
+                    <p>د. سامي - التنسيق الطبي</p>
                 </div>
             </div>
-        </section>
 
-        <!-- نموذج تسجيل البيانات -->
-        <section class="form-section">
-            <h3 class="section-title"><i class="fa-solid fa-user-plus"></i> إضافة طلب / موعد جديد</h3>
-            <form id="appointmentForm">
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label>اسم العميل *</label>
-                        <input type="text" id="patientName" required placeholder="أدخل اسم العميل الكامل">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>رقم الجوال *</label>
-                        <input type="tel" id="patientPhone" required placeholder="05xxxxxxxx">
-                    </div>
+            <nav class="sidebar-menu">
+                <a href="#kpi-section" class="menu-item active">
+                    <i class="fa-solid fa-chart-pie"></i>
+                    <span>مؤشرات الأداء</span>
+                </a>
+                <a href="#form-section" class="menu-item">
+                    <i class="fa-solid fa-calendar-plus"></i>
+                    <span>إضافة موعد جديد</span>
+                </a>
+                <a href="#table-section" class="menu-item">
+                    <i class="fa-solid fa-list-check"></i>
+                    <span>جدول المواعيد</span>
+                </a>
+                <a href="#tools-section" class="menu-item">
+                    <i class="fa-solid fa-database"></i>
+                    <span>تصدير واستيراد</span>
+                </a>
+            </nav>
 
-                    <div class="form-group">
-                        <label>رقم الملف</label>
-                        <input type="text" id="fileNumber" placeholder="رقم الملف الطبي">
-                    </div>
+            <div class="sidebar-footer">
+                <div class="cloud-badge" id="cloudStatus">
+                    <i class="fa-solid fa-circle-notch fa-spin"></i> <span>جاري الاتصال...</span>
+                </div>
+            </div>
+        </aside>
 
-                    <div class="form-group">
-                        <label>رقم الهوية / الإقامة</label>
-                        <input type="text" id="idNumber" placeholder="أدخل رقم الهوية">
-                    </div>
+        <!-- المحتوى الرئيسي Main Content -->
+        <main class="main-wrapper">
+            
+            <!-- الهيدر العلوي Top Navigation -->
+            <header class="top-header">
+                <div class="header-title">
+                    <button class="mobile-toggle-btn" id="sidebarToggleBtn">
+                        <i class="fa-solid fa-bars"></i>
+                    </button>
+                    <h1>لوحة تحكم تنسيق المواعيد</h1>
+                </div>
+                
+                <div class="header-actions">
+                    <button class="theme-toggle-btn" id="themeToggleBtn" title="تبديل المظهر">
+                        <i class="fa-solid fa-moon"></i>
+                    </button>
+                </div>
+            </header>
 
-                    <div class="form-group">
-                        <label>اختيار الفرع *</label>
-                        <select id="branch" required>
-                            <option value="">اختر الفرع...</option>
-                            <option value="معشي">فرع معشي</option>
-                            <option value="الوسام">فرع الوسام</option>
-                        </select>
+            <div class="content-body">
+                
+                <!-- مؤشرات الأداء KPIs -->
+                <section class="dashboard-section" id="kpi-section">
+                    <div class="section-header">
+                        <h2><i class="fa-solid fa-chart-pie"></i> ملخص مؤشرات الأداء (KPIs)</h2>
                     </div>
-
-                    <div class="form-group">
-                        <label>طريقة التواصل *</label>
-                        <select id="contactMethod" required onchange="toggleOtherContactInput()">
-                            <option value="">اختر طريقة التواصل...</option>
-                            <option value="اتصال">اتصال هاتفي</option>
-                            <option value="شات">واتساب / شات</option>
-                            <option value="بالاستقبال">بالاستقبال</option>
-                            <option value="أخرى">أخرى</option>
-                        </select>
+                    <div class="kpi-cards-grid">
+                        <div class="kpi-card blue">
+                            <div class="kpi-icon-box"><i class="fa-solid fa-users"></i></div>
+                            <div class="kpi-info">
+                                <h3>إجمالي الحالات</h3>
+                                <span class="kpi-value" id="kpi-total">0</span>
+                            </div>
+                        </div>
+                        <div class="kpi-card purple">
+                            <div class="kpi-icon-box"><i class="fa-solid fa-star"></i></div>
+                            <div class="kpi-info">
+                                <h3>حالات متكررة (أولوية)</h3>
+                                <span class="kpi-value" id="kpi-recurring">0</span>
+                            </div>
+                        </div>
+                        <div class="kpi-card warning">
+                            <div class="kpi-icon-box"><i class="fa-solid fa-clock-rotate-left"></i></div>
+                            <div class="kpi-info">
+                                <h3>تأخير +24 ساعة</h3>
+                                <span class="kpi-value" id="kpi-24h">0</span>
+                            </div>
+                        </div>
+                        <div class="kpi-card danger">
+                            <div class="kpi-icon-box"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                            <div class="kpi-info">
+                                <h3>تأخير +48 ساعة</h3>
+                                <span class="kpi-value" id="kpi-48h">0</span>
+                            </div>
+                        </div>
                     </div>
+                </section>
 
-                    <div class="form-group hidden" id="otherContactGroup">
-                        <label>تحديد طريقة التواصل الأخرى *</label>
-                        <input type="text" id="otherContactDetail" placeholder="اكتب طريقة التواصل هنا">
+                <!-- نموذج الإضافة -->
+                <section class="dashboard-section" id="form-section">
+                    <div class="section-header">
+                        <h2><i class="fa-solid fa-calendar-plus"></i> تسجيل موعد / طلب جديد</h2>
                     </div>
+                    <form id="appointmentForm" class="modern-form">
+                        <div class="form-grid">
+                            <div class="input-field">
+                                <label><i class="fa-solid fa-user"></i> اسم العميل *</label>
+                                <input type="text" id="patientName" required placeholder="الاسم الكامل للعميل">
+                            </div>
 
-                    <div class="form-group">
-                        <label>الخدمة المطلوبة *</label>
-                        <select id="serviceRequired" required onchange="toggleAppointmentDateInput()">
-                            <option value="">اختر الخدمة...</option>
-                            <option value="حجز موعد">حجز موعد جديد</option>
-                            <option value="استفسار">استفسار عام</option>
-                            <option value="متابعة">متابعة حالة</option>
-                            <option value="خدمة أخرى">خدمة أخرى</option>
-                        </select>
+                            <div class="input-field">
+                                <label><i class="fa-solid fa-phone"></i> رقم الجوال *</label>
+                                <input type="tel" id="patientPhone" required placeholder="05xxxxxxxx">
+                            </div>
+
+                            <div class="input-field">
+                                <label><i class="fa-solid fa-folder"></i> رقم الملف</label>
+                                <input type="text" id="fileNumber" placeholder="رقم الملف الطبي">
+                            </div>
+
+                            <div class="input-field">
+                                <label><i class="fa-solid fa-id-card"></i> رقم الهوية / الإقامة</label>
+                                <input type="text" id="idNumber" placeholder="رقم الهوية الوطنية أو الإقامة">
+                            </div>
+
+                            <div class="input-field">
+                                <label><i class="fa-solid fa-location-dot"></i> الفرع *</label>
+                                <select id="branch" required>
+                                    <option value="">اختر الفرع...</option>
+                                    <option value="معشي">فرع معشي</option>
+                                    <option value="الوسام">فرع الوسام</option>
+                                </select>
+                            </div>
+
+                            <div class="input-field">
+                                <label><i class="fa-solid fa-comments"></i> طريقة التواصل *</label>
+                                <select id="contactMethod" required onchange="toggleOtherContactInput()">
+                                    <option value="">اختر طريقة التواصل...</option>
+                                    <option value="اتصال">اتصال هاتفي</option>
+                                    <option value="شات">واتساب / شات</option>
+                                    <option value="بالاستقبال">بالاستقبال</option>
+                                    <option value="أخرى">أخرى</option>
+                                </select>
+                            </div>
+
+                            <div class="input-field hidden" id="otherContactGroup">
+                                <label><i class="fa-solid fa-pen-clip"></i> طريقة التواصل (أخرى)</label>
+                                <input type="text" id="otherContactDetail" placeholder="اكتب طريقة التواصل">
+                            </div>
+
+                            <div class="input-field">
+                                <label><i class="fa-solid fa-stethoscope"></i> الخدمة المطلوبة *</label>
+                                <select id="serviceRequired" required onchange="toggleAppointmentDateInput()">
+                                    <option value="">اختر الخدمة...</option>
+                                    <option value="حجز موعد">حجز موعد جديد</option>
+                                    <option value="استفسار">استفسار عام</option>
+                                    <option value="متابعة">متابعة حالة</option>
+                                    <option value="خدمة أخرى">خدمة أخرى</option>
+                                </select>
+                            </div>
+
+                            <div class="input-field hidden" id="appointmentDateGroup">
+                                <label><i class="fa-solid fa-clock"></i> التاريخ والميعاد</label>
+                                <input type="datetime-local" id="appointmentDateTime">
+                            </div>
+
+                            <div class="input-field">
+                                <label><i class="fa-solid fa-user-gear"></i> اسم المنسق *</label>
+                                <input type="text" id="coordinatorName" required placeholder="اسم المنسق المسؤول">
+                            </div>
+
+                            <div class="input-field checkbox-field">
+                                <label class="priority-checkbox">
+                                    <input type="checkbox" id="isRecurring">
+                                    <span class="custom-check"></span>
+                                    <span>حالة متكررة (إعطاء أولوية) ⭐</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="submit-btn">
+                            <i class="fa-solid fa-cloud-arrow-up"></i> حفظ الموعد وإرسال للسحابة
+                        </button>
+                    </form>
+                </section>
+
+                <!-- إدارة واستخراج البيانات -->
+                <section class="dashboard-section" id="tools-section">
+                    <div class="section-header">
+                        <h2><i class="fa-solid fa-database"></i> إدارة واستخراج البيانات</h2>
                     </div>
-
-                    <div class="form-group hidden" id="appointmentDateGroup">
-                        <label>تاريخ ووقت الموعد المقترح</label>
-                        <input type="datetime-local" id="appointmentDateTime">
-                    </div>
-
-                    <div class="form-group">
-                        <label>اسم المنسق *</label>
-                        <input type="text" id="coordinatorName" required placeholder="اسم المنسق المسؤول">
-                    </div>
-
-                    <div class="form-group checkbox-wrapper">
-                        <label class="custom-checkbox">
-                            <input type="checkbox" id="isRecurring">
-                            <span class="checkmark"></span>
-                            <strong>حالة متكررة (إعطاء أولوية) ⭐</strong>
+                    <div class="actions-toolbar">
+                        <button class="action-btn excel" onclick="exportToExcel()">
+                            <i class="fa-solid fa-file-excel"></i> تصدير Excel
+                        </button>
+                        <button class="action-btn json" onclick="exportToJSON()">
+                            <i class="fa-solid fa-file-code"></i> تصدير JSON
+                        </button>
+                        <label class="action-btn import">
+                            <i class="fa-solid fa-file-import"></i> استيراد ملف
+                            <input type="file" id="importFile" accept=".json,.csv" onchange="importData(event)" hidden>
                         </label>
                     </div>
-                </div>
+                </section>
 
-                <button type="submit" class="btn-submit">
-                    <i class="fa-solid fa-paper-plane"></i> حفظ وإرسال للسحابة
-                </button>
-            </form>
-        </section>
+                <!-- جدول الحالات -->
+                <section class="dashboard-section" id="table-section">
+                    <div class="table-section-header">
+                        <h2><i class="fa-solid fa-list-check"></i> جدول المواعيد المباشر</h2>
+                        <div class="search-field">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                            <input type="text" id="searchInput" onkeyup="filterTable()" placeholder="بحث بالاسم، الجوال، أو الفرع...">
+                        </div>
+                    </div>
 
-        <!-- جدول الحالات ومتابعة الإدارة -->
-        <section class="table-section">
-            <div class="table-header">
-                <h3 class="section-title"><i class="fa-solid fa-list-check"></i> جدول المواعيد وسجلات الإدارة</h3>
-                <div class="search-box">
-                    <i class="fa-solid fa-magnifying-glass"></i>
-                    <input type="text" id="searchInput" onkeyup="filterTable()" placeholder="بحث باسم العميل أو الجوال أو الفرع...">
-                </div>
+                    <div class="table-container">
+                        <table id="requestsTable">
+                            <thead>
+                                <tr>
+                                    <th>الحالة والأولوية</th>
+                                    <th>العميل</th>
+                                    <th>الجوال والملف</th>
+                                    <th>الفرع</th>
+                                    <th>طريقة التواصل</th>
+                                    <th>الخدمة / الموعد</th>
+                                    <th>المنسق</th>
+                                    <th>إجراء الإدارة</th>
+                                    <th>تواصل الإدارة</th>
+                                    <th>إجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tableBody">
+                                <!-- البيانات الديناميكية -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
             </div>
-            
-            <div class="table-responsive">
-                <table id="requestsTable">
-                    <thead>
-                        <tr>
-                            <th>التنبيه والأولوية</th>
-                            <th>اسم العميل</th>
-                            <th>الجوال / الملف / الهوية</th>
-                            <th>الفرع</th>
-                            <th>طريقة التواصل</th>
-                            <th>الخدمة / الموعد</th>
-                            <th>المنسق</th>
-                            <th>الإجراء الذي تم (الإدارة)</th>
-                            <th>طريقة التواصل (الإدارة)</th>
-                            <th>إجراءات</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tableBody">
-                        <!-- تُضاف البيانات ديناميكياً -->
-                    </tbody>
-                </table>
-            </div>
-        </section>
-
+        </main>
     </div>
 
     <script src="app.js"></script>
