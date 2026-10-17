@@ -422,6 +422,7 @@
             align-items: center;
             justify-content: center;
             font-size: 0.8rem;
+            position: relative;
         }
         .copy-phone-btn:hover { background: var(--primary-color); color: #fff; border-color: var(--primary-color); }
 
@@ -1094,32 +1095,28 @@
             return cleaned;
         }
 
-        /* نسخ الرقم بدون إظهار أي إشعار تأكيد (Alert) */
+        /* دالة نسخ الرقم مع إظهار إشعار "تم النسخ" السريع بجانب الزر */
         function copyPhoneNumber(phone, event) {
-    event.stopPropagation();
-    if (!phone) return;
-    
-    navigator.clipboard.writeText(phone).then(() => {
-        // إنشاء عنصر إشعار مؤقت (Toast) خفيف
-        const btn = event.currentTarget;
-        let tooltip = btn.querySelector('.copy-tooltip');
-        if (!tooltip) {
-            tooltip = document.createElement('span');
-            tooltip.className = 'copy-tooltip';
-            tooltip.style.cssText = 'position: absolute; background: #16a34a; color: white; padding: 2px 6px; font-size: 0.75rem; border-radius: 4px; transform: translateY(-30px); pointer-events: none; transition: opacity 0.2s;';
-            btn.style.position = 'relative';
-            btn.appendChild(tooltip);
+            event.stopPropagation();
+            if (!phone) return;
+            navigator.clipboard.writeText(phone).then(() => {
+                const btn = event.currentTarget;
+                let tooltip = btn.querySelector('.copy-tooltip');
+                if (!tooltip) {
+                    tooltip = document.createElement('span');
+                    tooltip.className = 'copy-tooltip';
+                    tooltip.style.cssText = 'position: absolute; right: 35px; background: #16a34a; color: white; padding: 2px 8px; font-size: 0.75rem; border-radius: 4px; pointer-events: none; white-space: nowrap; opacity: 0; transition: opacity 0.2s ease; z-index: 20;';
+                    btn.appendChild(tooltip);
+                }
+                tooltip.innerText = 'تم النسخ ✓';
+                tooltip.style.opacity = '1';
+                setTimeout(() => {
+                    tooltip.style.opacity = '0';
+                }, 1200);
+            }).catch(err => {
+                console.error('فشل النسخ', err);
+            });
         }
-        tooltip.innerText = 'تم النسخ ✓';
-        tooltip.style.opacity = '1';
-        
-        setTimeout(() => {
-            tooltip.style.opacity = '0';
-        }, 1200);
-    }).catch(err => {
-        console.error('فشل النسخ', err);
-    });
-}
 
         function handleAdminContactChange(key) {
             const selectEl = document.getElementById(`adminContact_${key}`);
