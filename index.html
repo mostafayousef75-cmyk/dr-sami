@@ -5,20 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>مجمع ماجستي الطبي - تنسيق مواعيد الدكتور سامي</title>
     
-    <!-- خط Tajawal الأنيق -->
+    <!-- خط Tajawal -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
     
-    <!-- FontAwesome للأيقونات -->
+    <!-- FontAwesome الأيقونات -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <!-- المكتبات الخارجية: Excel + Firebase السحابي -->
+    <!-- المكتبات الخارجية: Excel + Firebase -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
-    <!-- تنسيقات CSS كاملة داخل الملف -->
     <style>
         :root {
             --font-family: 'Tajawal', sans-serif;
@@ -126,15 +125,33 @@
             color: #ffffff;
         }
 
+        /* مؤشر الاتصال بالسحابة مع النقطة الخضراء */
         .cloud-badge {
             background: rgba(255,255,255,0.05);
-            padding: 8px 12px;
+            padding: 8px 14px;
             border-radius: 20px;
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             display: flex;
             align-items: center;
             gap: 8px;
             justify-content: center;
+        }
+
+        .online-dot {
+            width: 10px;
+            height: 10px;
+            background-color: #22c55e;
+            border-radius: 50%;
+            box-shadow: 0 0 8px #22c55e;
+            display: inline-block;
+        }
+
+        .offline-dot {
+            width: 10px;
+            height: 10px;
+            background-color: #94a3b8;
+            border-radius: 50%;
+            display: inline-block;
         }
 
         /* المحتوى الرئيسي */
@@ -337,6 +354,35 @@
         .action-btn.excel { background-color: #107c41; }
         .action-btn.json { background-color: #6366f1; }
         .action-btn.import { background-color: #0284c7; }
+        .action-btn.print { background-color: #475569; }
+
+        /* تصفية الفلاتر (Filtration Bar) */
+        .filter-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 10px;
+            flex-wrap: wrap;
+        }
+
+        .filter-tab {
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+            background: var(--bg-base);
+            color: var(--text-main);
+            font-family: var(--font-family);
+            font-size: 0.88rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .filter-tab.active {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
 
         /* الجدول */
         .table-section-header {
@@ -444,7 +490,13 @@
             cursor: pointer;
         }
 
-        /* نافذة التعديل المنبثقة Modal */
+        .whatsapp-link {
+            color: #25d366;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        /* النافذة المنبثقة للتعديل Modal */
         .modal {
             display: none;
             position: fixed;
@@ -497,6 +549,15 @@
             cursor: pointer;
         }
 
+        /* الطباعة */
+        @media print {
+            .sidebar, .top-header, .form-section, .actions-toolbar, .btn-save-action, .btn-edit-action, .btn-delete-action, .search-field {
+                display: none !important;
+            }
+            .main-wrapper { margin-right: 0 !important; }
+            body { background: white; color: black; }
+        }
+
         @media (max-width: 900px) {
             .sidebar { width: 100%; position: relative; }
             .main-wrapper { margin-right: 0; }
@@ -538,7 +599,7 @@
 
             <div class="sidebar-footer">
                 <div class="cloud-badge" id="cloudStatus">
-                    <i class="fa-solid fa-circle-notch fa-spin"></i> <span>جاري الاتصال...</span>
+                    <span class="online-dot"></span> <span>أونلاين 🟢</span>
                 </div>
             </div>
         </aside>
@@ -660,7 +721,7 @@
                                 <input type="datetime-local" id="appointmentDateTime">
                             </div>
 
-                            <!-- تفاصيل الخدمة المطلوبة خامة مفتوحة للكتابة -->
+                            <!-- الخدمة المطلوبة -->
                             <div class="input-field full-width">
                                 <label><i class="fa-solid fa-notes-medical"></i> الخدمة المطلوبة / تفاصيل المشكلة والطلب *</label>
                                 <textarea id="serviceRequired" required placeholder="اكتب هنا طلب العميل، مشكلته، أو تفاصيل الموعد المطلوب..."></textarea>
@@ -670,18 +731,19 @@
                                 <label class="priority-checkbox">
                                     <input type="checkbox" id="isRecurring">
                                     <span class="custom-check"></span>
-                                    <span>حالة متكررة (إعطاء أولوية في أعلى القائمة) ⭐</span>
+                                    <span>حالة متكررة (إعطاء أولوية) ⭐</span>
                                 </label>
                             </div>
                         </div>
 
+                        <!-- تم تعديل نص الزر بطلب العميل -->
                         <button type="submit" class="submit-btn">
-                            <i class="fa-solid fa-cloud-arrow-up"></i> حفظ الموعد وإرسال للسحابة
+                            <i class="fa-solid fa-floppy-disk"></i> حفظ الموعد
                         </button>
                     </form>
                 </section>
 
-                <!-- إدارة البيانات وتصدير Excel -->
+                <!-- استيراد وتصدير البيانات -->
                 <section class="dashboard-section" id="tools-section">
                     <div class="section-header">
                         <h2><i class="fa-solid fa-database"></i> إدارة واستخراج البيانات</h2>
@@ -693,21 +755,33 @@
                         <button class="action-btn json" onclick="exportToJSON()">
                             <i class="fa-solid fa-file-code"></i> تصدير JSON
                         </button>
+                        <!-- زر استيراد ملف Excel أو JSON -->
                         <label class="action-btn import">
-                            <i class="fa-solid fa-file-import"></i> استيراد ملف
-                            <input type="file" id="importFile" accept=".json,.csv" onchange="importData(event)" hidden>
+                            <i class="fa-solid fa-file-import"></i> استيراد ملف (Excel / JSON)
+                            <input type="file" id="importFile" accept=".json,.xlsx,.xls" onchange="importData(event)" hidden>
                         </label>
+                        <button class="action-btn print" onclick="window.print()">
+                            <i class="fa-solid fa-print"></i> طباعة كشف المواعيد
+                        </button>
                     </div>
                 </section>
 
-                <!-- جدول الحالات -->
+                <!-- جدول الحالات مع الفلاتر (Filtration) -->
                 <section class="dashboard-section" id="table-section">
                     <div class="table-section-header">
-                        <h2><i class="fa-solid fa-list-check"></i> جدول المواعيد المباشر (الحالات المتكررة لها الأولوية)</h2>
+                        <h2><i class="fa-solid fa-list-check"></i> 📋 سجل متابعة المنسقين والعملاء</h2>
                         <div class="search-field">
                             <i class="fa-solid fa-magnifying-glass"></i>
                             <input type="text" id="searchInput" onkeyup="filterTable()" placeholder="بحث بالاسم، الجوال، أو الفرع...">
                         </div>
+                    </div>
+
+                    <!-- فلاتر الزمان (الكل - اليوم - الاسبوع - الشهر) -->
+                    <div class="filter-tabs">
+                        <button class="filter-tab active" onclick="setFilter('all', this)">📋 الكل</button>
+                        <button class="filter-tab" onclick="setFilter('today', this)">📅 حالات اليوم</button>
+                        <button class="filter-tab" onclick="setFilter('week', this)">🗓️ حالات الأسبوع</button>
+                        <button class="filter-tab" onclick="setFilter('month', this)">📊 حالات الشهر</button>
                     </div>
 
                     <div class="table-container">
@@ -800,9 +874,9 @@
         </div>
     </div>
 
-    <!-- برمجة JavaScript الكاملة داخل الملف -->
+    <!-- البرمجة الفعالة -->
     <script>
-        // 1. إعدادات السحابة المباشرة Firebase Realtime Database
+        // 1. Firebase Realtime Sync + Offline Support
         const firebaseConfig = {
             databaseURL: "https://dr-sami-default-rtdb.firebaseio.com/"
         };
@@ -812,9 +886,10 @@
         const dbRef = database.ref('appointments');
 
         let records = [];
+        let currentFilter = 'all'; // الفلتر المبدئي
         const cloudStatus = document.getElementById('cloudStatus');
 
-        // الربط المباشر بالسحابة Realtime Sync
+        // الربط بالسحابة
         dbRef.on('value', (snapshot) => {
             const data = snapshot.val();
             records = [];
@@ -823,17 +898,34 @@
                     records.push({ firebaseKey: key, ...data[key] });
                 }
             }
-            cloudStatus.innerHTML = `<i class="fa-solid fa-cloud-check" style="color: #34d399"></i> <span>متصل بالسحابة</span>`;
+            // حفظ نسخة محلياً للأوفلاين
+            localStorage.setItem('cachedAppointments', JSON.stringify(records));
+            updateCloudStatus(true);
             renderTable();
             updateKPIs();
         }, (error) => {
             console.error("Firebase Error: ", error);
-            cloudStatus.innerHTML = `<i class="fa-solid fa-cloud-slash" style="color: #f87171"></i> <span>غير متصل</span>`;
+            // جلب البيانات من المفهوم المحلي (Offline Fallback)
+            const cached = localStorage.getItem('cachedAppointments');
+            if (cached) records = JSON.parse(cached);
+            updateCloudStatus(false);
+            renderTable();
+            updateKPIs();
         });
 
-        // 2. التحكم بالمظهر (الوضع الداكن)
-        const themeToggleBtn = document.getElementById('themeToggleBtn');
+        function updateCloudStatus(isOnline) {
+            if (isOnline && navigator.onLine) {
+                cloudStatus.innerHTML = `<span class="online-dot"></span> <span>أونلاين 🟢</span>`;
+            } else {
+                cloudStatus.innerHTML = `<span class="offline-dot"></span> <span>أوفلاين ⚪</span>`;
+            }
+        }
 
+        window.addEventListener('online', () => updateCloudStatus(true));
+        window.addEventListener('offline', () => updateCloudStatus(false));
+
+        // 2. المظهر الداكن
+        const themeToggleBtn = document.getElementById('themeToggleBtn');
         if (localStorage.getItem('theme') === 'dark') {
             document.body.classList.add('dark-theme');
             themeToggleBtn.innerHTML = `<i class="fa-solid fa-sun"></i>`;
@@ -846,13 +938,12 @@
             themeToggleBtn.innerHTML = isDark ? `<i class="fa-solid fa-sun"></i>` : `<i class="fa-solid fa-moon"></i>`;
         });
 
-        // 3. خيارات النموذج الديناميكية
         function toggleOtherContactInput() {
             const method = document.getElementById('contactMethod').value;
             document.getElementById('otherContactGroup').classList.toggle('hidden', method !== 'أخرى');
         }
 
-        // 4. حفظ البيانات للسحابة
+        // 3. حفظ بيانات طلب جديد
         document.getElementById('appointmentForm').addEventListener('submit', function(e) {
             e.preventDefault();
 
@@ -877,14 +968,52 @@
                 adminContactMethod: ''
             };
 
-            dbRef.push(newRecord).then(() => {
+            if (navigator.onLine) {
+                dbRef.push(newRecord).then(() => {
+                    this.reset();
+                    toggleOtherContactInput();
+                    alert('تم حفظ الموعد بنجاح!');
+                }).catch(err => alert('خطأ في الحفظ: ' + err.message));
+            } else {
+                // الحفظ أوفلاين
+                newRecord.firebaseKey = 'local_' + Date.now();
+                records.push(newRecord);
+                localStorage.setItem('cachedAppointments', JSON.stringify(records));
                 this.reset();
-                toggleOtherContactInput();
-                alert('تم الحفظ بنجاح بالسحابة!');
-            }).catch(err => alert('خطأ في الحفظ: ' + err.message));
+                renderTable();
+                updateKPIs();
+                alert('تم حفظ الموعد محلياً (أوفلاين) وسيتم المزامنة فور الاتصال بالإنتـرنت.');
+            }
         });
 
-        // 5. التنبيهات الزمانية (+24 / +48 ساعة)
+        // 4. دالة الفلترة (اليوم - الاسبوع - الشهر)
+        function setFilter(filterType, element) {
+            currentFilter = filterType;
+            document.querySelectorAll('.filter-tab').forEach(btn => btn.classList.remove('active'));
+            element.classList.add('active');
+            renderTable();
+        }
+
+        function filterByDateRange(recordsList) {
+            if (currentFilter === 'all') return recordsList;
+
+            const now = new Date();
+            const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+            return recordsList.filter(r => {
+                const created = new Date(r.createdAt);
+                if (currentFilter === 'today') {
+                    return created >= startOfDay;
+                } else if (currentFilter === 'week') {
+                    const diffDays = (now - created) / (1000 * 60 * 60 * 24);
+                    return diffDays <= 7;
+                } else if (currentFilter === 'month') {
+                    return created.getMonth() === now.getMonth() && created.getFullYear() === now.getFullYear();
+                }
+                return true;
+            });
+        }
+
         function getDelayStatus(createdAt, actionTaken) {
             if (actionTaken && actionTaken.trim() !== '') {
                 return { text: 'تم الإجراء', class: 'badge-normal' };
@@ -897,16 +1026,18 @@
             return { text: 'جديد', class: 'badge-normal' };
         }
 
-        // 6. عرض البيانات وتحديث مؤشرات الأداء مع إعطاء الأولوية للحالات المتكررة
+        // 5. عرض البيانات وتصفيتها
         function renderTable() {
             const tbody = document.getElementById('tableBody');
             tbody.innerHTML = '';
 
-            // ترتيب السجلات: الحالات المتكررة أولاً، ثم حسب الأحدث في تاريخ الإنشاء
-            const sorted = [...records].sort((a, b) => b.isRecurring - a.isRecurring || new Date(b.createdAt) - new Date(a.createdAt));
+            // تطبيق الفلاتر الزمنية والأولوية للمتكرر
+            let filteredRecords = filterByDateRange(records);
+            const sorted = [...filteredRecords].sort((a, b) => b.isRecurring - a.isRecurring || new Date(b.createdAt) - new Date(a.createdAt));
 
             sorted.forEach(record => {
                 const status = getDelayStatus(record.createdAt, record.actionTaken);
+                const cleanPhone = record.patientPhone.replace(/\D/g, '');
                 
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
@@ -915,7 +1046,12 @@
                         <span class="status-badge ${status.class}">${status.text}</span>
                     </td>
                     <td><strong>${record.patientName}</strong></td>
-                    <td>${record.patientPhone}<br><small>ملف: ${record.fileNumber} | هوية: ${record.idNumber}</small></td>
+                    <td>
+                        <a href="https://wa.me/${cleanPhone.startsWith('0') ? '966' + cleanPhone.slice(1) : cleanPhone}" target="_blank" class="whatsapp-link">
+                            <i class="fa-brands fa-whatsapp"></i> ${record.patientPhone}
+                        </a>
+                        <br><small>ملف: ${record.fileNumber} | هوية: ${record.idNumber}</small>
+                    </td>
                     <td>${record.branch}</td>
                     <td>${record.contactMethod}</td>
                     <td style="max-width: 250px; word-break: break-word;">
@@ -931,8 +1067,8 @@
                     </td>
                     <td>
                         <button class="btn-save-action" onclick="saveAdminUpdate('${record.firebaseKey}')" title="حفظ إدخال الإدارة"><i class="fa-solid fa-floppy-disk"></i></button>
-                        <button class="btn-edit-action" onclick="openEditModal('${record.firebaseKey}')" title="تعديل بيانات العميل"><i class="fa-solid fa-pen-to-square"></i></button>
-                        <button class="btn-delete-action" onclick="deleteRecord('${record.firebaseKey}')" title="حذف العميل"><i class="fa-solid fa-trash"></i></button>
+                        <button class="btn-edit-action" onclick="openEditModal('${record.firebaseKey}')" title="تعديل البيانات"><i class="fa-solid fa-pen-to-square"></i></button>
+                        <button class="btn-delete-action" onclick="deleteRecord('${record.firebaseKey}')" title="حذف"><i class="fa-solid fa-trash"></i></button>
                     </td>
                 `;
                 tbody.appendChild(tr);
@@ -943,13 +1079,22 @@
             const actionVal = document.getElementById(`action_${key}`).value;
             const adminContactVal = document.getElementById(`adminContact_${key}`).value;
 
-            dbRef.child(key).update({
-                actionTaken: actionVal,
-                adminContactMethod: adminContactVal
-            }).then(() => alert('تم تحديث بيانات الإدارة بنجاح!'));
+            if (navigator.onLine && !key.startsWith('local_')) {
+                dbRef.child(key).update({
+                    actionTaken: actionVal,
+                    adminContactMethod: adminContactVal
+                }).then(() => alert('تم تحديث بيانات الإدارة بنجاح!'));
+            } else {
+                const rec = records.find(r => r.firebaseKey === key);
+                if (rec) {
+                    rec.actionTaken = actionVal;
+                    rec.adminContactMethod = adminContactVal;
+                    localStorage.setItem('cachedAppointments', JSON.stringify(records));
+                    alert('تم الحفظ محلياً');
+                }
+            }
         }
 
-        // تعديل بيانات عميل
         function openEditModal(key) {
             const item = records.find(r => r.firebaseKey === key);
             if (!item) return;
@@ -990,16 +1135,33 @@
                 isRecurring: document.getElementById('editIsRecurring').checked
             };
 
-            dbRef.child(key).update(updatedData).then(() => {
-                closeEditModal();
-                alert('تم تعديل بيانات العميل بنجاح!');
-            }).catch(err => alert('حدث خطأ أثناء التعديل: ' + err.message));
+            if (navigator.onLine && !key.startsWith('local_')) {
+                dbRef.child(key).update(updatedData).then(() => {
+                    closeEditModal();
+                    alert('تم تعديل بيانات العميل بنجاح!');
+                });
+            } else {
+                const index = records.findIndex(r => r.firebaseKey === key);
+                if (index !== -1) {
+                    records[index] = { ...records[index], ...updatedData };
+                    localStorage.setItem('cachedAppointments', JSON.stringify(records));
+                    closeEditModal();
+                    renderTable();
+                    alert('تم التعديل محلياً');
+                }
+            }
         });
 
-        // حذف عميل
         function deleteRecord(key) {
-            if (confirm('هل أنت تأكد من حذف هذا العميل نهائياً من السحابة؟')) {
-                dbRef.child(key).remove().then(() => alert('تم الحذف بنجاح'));
+            if (confirm('هل أنت تأكد من الحذف النهائي؟')) {
+                if (navigator.onLine && !key.startsWith('local_')) {
+                    dbRef.child(key).remove();
+                } else {
+                    records = records.filter(r => r.firebaseKey !== key);
+                    localStorage.setItem('cachedAppointments', JSON.stringify(records));
+                    renderTable();
+                    updateKPIs();
+                }
             }
         }
 
@@ -1030,7 +1192,7 @@
             });
         }
 
-        // 7. التصدير والاستيراد (Excel & JSON)
+        // 6. استيراد واستخراج البيانات (Excel & JSON)
         function exportToExcel() {
             if (records.length === 0) return alert('لا توجد بيانات للتصدير');
             const dataToExport = records.map(r => ({
@@ -1064,27 +1226,65 @@
             a.click();
         }
 
+        // استيراد ملفات Excel و JSON
         function importData(event) {
             const file = event.target.files[0];
             if (!file) return;
 
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    const imported = JSON.parse(e.target.result);
-                    if (Array.isArray(imported)) {
-                        if (confirm(`رفع ${imported.length} سجل للسحابة؟`)) {
-                            imported.forEach(item => {
-                                delete item.firebaseKey;
-                                dbRef.push(item);
-                            });
-                        }
+            const fileName = file.name.toLowerCase();
+
+            if (fileName.endsWith('.xlsx') || fileName.endsWith('.xls')) {
+                // استيراد Excel
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    const firstSheet = workbook.SheetNames[0];
+                    const jsonData = XLSX.utils.sheet_to_json(workbook.Sheets[firstSheet]);
+
+                    if (confirm(`هل ترغب في رفع ${jsonData.length} موعد من ملف Excel؟`)) {
+                        jsonData.forEach(item => {
+                            const formattedItem = {
+                                patientName: item["اسم العميل"] || "بدون اسم",
+                                patientPhone: item["الجوال"] || "-",
+                                fileNumber: item["رقم الملف"] || "-",
+                                idNumber: item["رقم الهوية"] || "-",
+                                branch: item["الفرع"] || "معشي",
+                                contactMethod: item["طريقة التواصل"] || "اتصال",
+                                serviceRequired: item["الخدمة المطلوبة / تفاصيل الطلب"] || item["الخدمة المطلوبة"] || "-",
+                                appointmentDateTime: item["الموعد المقترح"] || "-",
+                                coordinatorName: item["اسم المنسق"] || "عام",
+                                isRecurring: item["حالة متكررة"] === "نعم",
+                                createdAt: new Date().toISOString(),
+                                actionTaken: item["إجراء الإدارة"] || "",
+                                adminContactMethod: item["تواصل الإدارة"] || ""
+                            };
+                            dbRef.push(formattedItem);
+                        });
+                        alert('تم استيراد ملف Excel ورفعه بنجاح!');
                     }
-                } catch (err) {
-                    alert('خطأ في الملف: ' + err.message);
-                }
-            };
-            reader.readAsText(file);
+                };
+                reader.readAsArrayBuffer(file);
+            } else if (fileName.endsWith('.json')) {
+                // استيراد JSON
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        const imported = JSON.parse(e.target.result);
+                        if (Array.isArray(imported)) {
+                            if (confirm(`رفع ${imported.length} سجل للسحابة؟`)) {
+                                imported.forEach(item => {
+                                    delete item.firebaseKey;
+                                    dbRef.push(item);
+                                });
+                            }
+                        }
+                    } catch (err) {
+                        alert('خطأ في الملف: ' + err.message);
+                    }
+                };
+                reader.readAsText(file);
+            }
         }
     </script>
 </body>
