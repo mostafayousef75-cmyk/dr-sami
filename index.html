@@ -125,7 +125,7 @@
             color: #ffffff;
         }
 
-        /* مؤشر الاتصال بالسحابة مع النقطة الخضراء */
+        /* مؤشر الاتصال بالسحابة */
         .cloud-badge {
             background: rgba(255,255,255,0.05);
             padding: 8px 14px;
@@ -356,7 +356,7 @@
         .action-btn.import { background-color: #0284c7; }
         .action-btn.print { background-color: #475569; }
 
-        /* تصفية الفلاتر (Filtration Bar) */
+        /* الفلاتر */
         .filter-tabs {
             display: flex;
             gap: 10px;
@@ -494,6 +494,9 @@
             color: #25d366;
             text-decoration: none;
             font-weight: bold;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
         }
 
         /* النافذة المنبثقة للتعديل Modal */
@@ -549,7 +552,6 @@
             cursor: pointer;
         }
 
-        /* الطباعة */
         @media print {
             .sidebar, .top-header, .form-section, .actions-toolbar, .btn-save-action, .btn-edit-action, .btn-delete-action, .search-field {
                 display: none !important;
@@ -673,7 +675,7 @@
 
                             <div class="input-field">
                                 <label><i class="fa-solid fa-phone"></i> رقم الجوال *</label>
-                                <input type="tel" id="patientPhone" required placeholder="05xxxxxxxx">
+                                <input type="tel" id="patientPhone" required placeholder="05xxxxxxxx / 01xxxxxxxxx">
                             </div>
 
                             <div class="input-field">
@@ -736,7 +738,6 @@
                             </div>
                         </div>
 
-                        <!-- تم تعديل نص الزر بطلب العميل -->
                         <button type="submit" class="submit-btn">
                             <i class="fa-solid fa-floppy-disk"></i> حفظ الموعد
                         </button>
@@ -755,7 +756,6 @@
                         <button class="action-btn json" onclick="exportToJSON()">
                             <i class="fa-solid fa-file-code"></i> تصدير JSON
                         </button>
-                        <!-- زر استيراد ملف Excel أو JSON -->
                         <label class="action-btn import">
                             <i class="fa-solid fa-file-import"></i> استيراد ملف (Excel / JSON)
                             <input type="file" id="importFile" accept=".json,.xlsx,.xls" onchange="importData(event)" hidden>
@@ -766,7 +766,7 @@
                     </div>
                 </section>
 
-                <!-- جدول الحالات مع الفلاتر (Filtration) -->
+                <!-- جدول الحالات بعد الفصل بين الأعمدة -->
                 <section class="dashboard-section" id="table-section">
                     <div class="table-section-header">
                         <h2><i class="fa-solid fa-list-check"></i> 📋 سجل متابعة المنسقين والعملاء</h2>
@@ -776,7 +776,7 @@
                         </div>
                     </div>
 
-                    <!-- فلاتر الزمان (الكل - اليوم - الاسبوع - الشهر) -->
+                    <!-- الفلاتر الزمانية -->
                     <div class="filter-tabs">
                         <button class="filter-tab active" onclick="setFilter('all', this)">📋 الكل</button>
                         <button class="filter-tab" onclick="setFilter('today', this)">📅 حالات اليوم</button>
@@ -790,7 +790,9 @@
                                 <tr>
                                     <th>الحالة والأولوية</th>
                                     <th>العميل</th>
-                                    <th>الجوال والملف</th>
+                                    <th>رقم الجوال (واتساب)</th>
+                                    <th>رقم الملف</th>
+                                    <th>رقم الهوية</th>
                                     <th>الفرع</th>
                                     <th>طريقة التواصل</th>
                                     <th>الخدمة / تفاصيل الطلب</th>
@@ -874,9 +876,8 @@
         </div>
     </div>
 
-    <!-- البرمجة الفعالة -->
+    <!-- البرمجة -->
     <script>
-        // 1. Firebase Realtime Sync + Offline Support
         const firebaseConfig = {
             databaseURL: "https://dr-sami-default-rtdb.firebaseio.com/"
         };
@@ -886,10 +887,9 @@
         const dbRef = database.ref('appointments');
 
         let records = [];
-        let currentFilter = 'all'; // الفلتر المبدئي
+        let currentFilter = 'all';
         const cloudStatus = document.getElementById('cloudStatus');
 
-        // الربط بالسحابة
         dbRef.on('value', (snapshot) => {
             const data = snapshot.val();
             records = [];
@@ -898,14 +898,12 @@
                     records.push({ firebaseKey: key, ...data[key] });
                 }
             }
-            // حفظ نسخة محلياً للأوفلاين
             localStorage.setItem('cachedAppointments', JSON.stringify(records));
             updateCloudStatus(true);
             renderTable();
             updateKPIs();
         }, (error) => {
             console.error("Firebase Error: ", error);
-            // جلب البيانات من المفهوم المحلي (Offline Fallback)
             const cached = localStorage.getItem('cachedAppointments');
             if (cached) records = JSON.parse(cached);
             updateCloudStatus(false);
@@ -924,7 +922,6 @@
         window.addEventListener('online', () => updateCloudStatus(true));
         window.addEventListener('offline', () => updateCloudStatus(false));
 
-        // 2. المظهر الداكن
         const themeToggleBtn = document.getElementById('themeToggleBtn');
         if (localStorage.getItem('theme') === 'dark') {
             document.body.classList.add('dark-theme');
@@ -943,7 +940,6 @@
             document.getElementById('otherContactGroup').classList.toggle('hidden', method !== 'أخرى');
         }
 
-        // 3. حفظ بيانات طلب جديد
         document.getElementById('appointmentForm').addEventListener('submit', function(e) {
             e.preventDefault();
 
@@ -975,7 +971,6 @@
                     alert('تم حفظ الموعد بنجاح!');
                 }).catch(err => alert('خطأ في الحفظ: ' + err.message));
             } else {
-                // الحفظ أوفلاين
                 newRecord.firebaseKey = 'local_' + Date.now();
                 records.push(newRecord);
                 localStorage.setItem('cachedAppointments', JSON.stringify(records));
@@ -986,7 +981,6 @@
             }
         });
 
-        // 4. دالة الفلترة (اليوم - الاسبوع - الشهر)
         function setFilter(filterType, element) {
             currentFilter = filterType;
             document.querySelectorAll('.filter-tab').forEach(btn => btn.classList.remove('active'));
@@ -1026,18 +1020,34 @@
             return { text: 'جديد', class: 'badge-normal' };
         }
 
-        // 5. عرض البيانات وتصفيتها
+        // دالة ذكية لتجهيز رقم الواتساب المباشر (يدعم مصر، السعودية، وغيرهما)
+        function formatWhatsAppNumber(phone) {
+            if (!phone) return '';
+            let cleaned = phone.replace(/\D/g, ''); // إزالة الأشكال والمسافات
+
+            if (cleaned.startsWith('01')) {
+                // رقم مصري
+                return '20' + cleaned.slice(1);
+            } else if (cleaned.startsWith('05')) {
+                // رقم سعودي
+                return '966' + cleaned.slice(1);
+            } else if (cleaned.startsWith('00')) {
+                return cleaned.slice(2);
+            }
+            return cleaned;
+        }
+
+        // عرض البيانات
         function renderTable() {
             const tbody = document.getElementById('tableBody');
             tbody.innerHTML = '';
 
-            // تطبيق الفلاتر الزمنية والأولوية للمتكرر
             let filteredRecords = filterByDateRange(records);
             const sorted = [...filteredRecords].sort((a, b) => b.isRecurring - a.isRecurring || new Date(b.createdAt) - new Date(a.createdAt));
 
             sorted.forEach(record => {
                 const status = getDelayStatus(record.createdAt, record.actionTaken);
-                const cleanPhone = record.patientPhone.replace(/\D/g, '');
+                const formattedPhone = formatWhatsAppNumber(record.patientPhone);
                 
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
@@ -1047,11 +1057,12 @@
                     </td>
                     <td><strong>${record.patientName}</strong></td>
                     <td>
-                        <a href="https://wa.me/${cleanPhone.startsWith('0') ? '966' + cleanPhone.slice(1) : cleanPhone}" target="_blank" class="whatsapp-link">
+                        <a href="https://wa.me/${formattedPhone}" target="_blank" class="whatsapp-link">
                             <i class="fa-brands fa-whatsapp"></i> ${record.patientPhone}
                         </a>
-                        <br><small>ملف: ${record.fileNumber} | هوية: ${record.idNumber}</small>
                     </td>
+                    <td>${record.fileNumber}</td>
+                    <td>${record.idNumber}</td>
                     <td>${record.branch}</td>
                     <td>${record.contactMethod}</td>
                     <td style="max-width: 250px; word-break: break-word;">
@@ -1192,7 +1203,6 @@
             });
         }
 
-        // 6. استيراد واستخراج البيانات (Excel & JSON)
         function exportToExcel() {
             if (records.length === 0) return alert('لا توجد بيانات للتصدير');
             const dataToExport = records.map(r => ({
@@ -1226,7 +1236,6 @@
             a.click();
         }
 
-        // استيراد ملفات Excel و JSON
         function importData(event) {
             const file = event.target.files[0];
             if (!file) return;
@@ -1234,7 +1243,6 @@
             const fileName = file.name.toLowerCase();
 
             if (fileName.endsWith('.xlsx') || fileName.endsWith('.xls')) {
-                // استيراد Excel
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     const data = new Uint8Array(e.target.result);
@@ -1266,7 +1274,6 @@
                 };
                 reader.readAsArrayBuffer(file);
             } else if (fileName.endsWith('.json')) {
-                // استيراد JSON
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     try {
