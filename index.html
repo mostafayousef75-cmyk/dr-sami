@@ -454,11 +454,19 @@
 
         .table-input {
             width: 100%;
-            padding: 6px;
+            padding: 8px;
             border: 1px solid var(--border-color);
-            border-radius: 4px;
+            border-radius: var(--radius-md);
             background: var(--bg-surface);
             color: var(--text-main);
+            font-family: var(--font-family);
+            font-size: 0.88rem;
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.03);
+        }
+
+        textarea.table-input {
+            resize: vertical;
+            min-height: 70px;
         }
 
         .btn-save-action {
@@ -729,7 +737,6 @@
                                 <textarea id="serviceRequired" required placeholder="اكتب هنا طلب العميل، مشكلته، أو تفاصيل الموعد المطلوب..."></textarea>
                             </div>
 
-                            <!-- تغيير المسمى إلى إعطاء أولوية -->
                             <div class="input-field full-width">
                                 <label class="priority-checkbox">
                                     <input type="checkbox" id="isRecurring">
@@ -798,8 +805,8 @@
                                     <th>طريقة التواصل</th>
                                     <th>الخدمة / تفاصيل الطلب</th>
                                     <th>المنسق</th>
-                                    <th>إجراء الإدارة</th>
-                                    <th>تواصل الإدارة</th>
+                                    <th style="min-width: 220px;">إجراء الإدارة</th>
+                                    <th style="min-width: 140px;">تواصل الإدارة</th>
                                     <th>إجراءات</th>
                                 </tr>
                             </thead>
@@ -877,7 +884,7 @@
         </div>
     </div>
 
-    <!-- البرمجة السحابية والمحلية المدمجة -->
+    <!-- البرمجة -->
     <script>
         const firebaseConfig = {
             databaseURL: "https://dr-sami-default-rtdb.firebaseio.com/"
@@ -891,13 +898,11 @@
         let currentFilter = 'all';
         const cloudStatus = document.getElementById('cloudStatus');
 
-        // جلب البيانات المحلية أولاً لضمان عدم حدوث بطء أو فقدان أوفلاين
         const cached = localStorage.getItem('cachedAppointments');
         if (cached) {
             try { records = JSON.parse(cached); } catch(e) { records = []; }
         }
 
-        // المزامنة مع Firebase عند جلب أي تحديث جديد
         dbRef.on('value', (snapshot) => {
             const data = snapshot.val();
             if (data) {
@@ -906,11 +911,9 @@
                     cloudRecords.push({ firebaseKey: key, ...data[key] });
                 }
                 
-                // الدمج الذكي لحفظ السجلات المحلية المعلقة التي أُضيفت أوفلاين
                 const localPending = records.filter(r => r.firebaseKey && r.firebaseKey.startsWith('local_'));
                 records = [...cloudRecords];
                 
-                // رفع البيانات التي سُجلت أثناء انقطاع النت تلقائياً إلى السحابة
                 if (localPending.length > 0 && navigator.onLine) {
                     localPending.forEach(item => {
                         const uploadData = { ...item };
@@ -944,7 +947,6 @@
 
         window.addEventListener('online', () => {
             updateCloudStatus(true);
-            // إعادة المزامنة عند عودة الانترنت
             dbRef.once('value');
         });
         
@@ -968,9 +970,23 @@
             document.getElementById('otherContactGroup').classList.toggle('hidden', method !== 'أخرى');
         }
 
-        // إضافة حالة جديدة
+        // إضافة حالة جديدة مع فحص التكرار التلقائي وإعطاء الأولوية
         document.getElementById('appointmentForm').addEventListener('submit', function(e) {
             e.preventDefault();
+
+            const patientNameVal = document.getElementById('patientName').value.trim();
+            const patientPhoneVal = document.getElementById('patientPhone').value.trim();
+            
+            // فحص كشف الحالات المتكررة تلقائياً
+            const isRepeated = records.some(r => 
+                (patientPhoneVal && r.patientPhone && r.patientPhone.replace(/\D/g, '') === patientPhoneVal.replace(/\D/g, '')) ||
+                (patientNameVal && r.patientName && r.patientName.toLowerCase() === patientNameVal.toLowerCase())
+            );
+
+            let priorityStatus = document.getElementById('isRecurring').checked;
+            if (isRepeated) {
+                priorityStatus = true; // إعطاء أولوية تلقائياً عند تكرار العميل
+            }
 
             const contactMethodVal = document.getElementById('contactMethod').value;
             const finalContactMethod = contactMethodVal === 'أخرى' 
@@ -978,8 +994,8 @@
                 : contactMethodVal;
 
             const newRecord = {
-                patientName: document.getElementById('patientName').value,
-                patientPhone: document.getElementById('patientPhone').value,
+                patientName: patientNameVal,
+                patientPhone: patientPhoneVal,
                 fileNumber: document.getElementById('fileNumber').value || '-',
                 idNumber: document.getElementById('idNumber').value || '-',
                 branch: document.getElementById('branch').value,
@@ -987,17 +1003,18 @@
                 serviceRequired: document.getElementById('serviceRequired').value,
                 appointmentDateTime: document.getElementById('appointmentDateTime').value || '-',
                 coordinatorName: document.getElementById('coordinatorName').value,
-                isRecurring: document.getElementById('isRecurring').checked,
+                isRecurring: priorityStatus,
+                isRepeatedRequest: isRepeated,
                 createdAt: new Date().toISOString(),
                 actionTaken: '',
-                adminContactMethod: ''
+                adminContactMethod: 'قيد الانتظار' // الوضع الافتراضي لانتظار الإدارة
             };
 
             if (navigator.onLine) {
                 dbRef.push(newRecord).then(() => {
                     this.reset();
                     toggleOtherContactInput();
-                    alert('تم حفظ الموعد بنجاح!');
+                    alert(isRepeated ? 'تم حفظ الموعد! (تم الكشف عن تكرار الطلب وتم منح الحالة أولوية تلقائياً ⭐)' : 'تم حفظ الموعد بنجاح!');
                 }).catch(err => {
                     saveOfflineRecord(newRecord);
                 });
@@ -1014,7 +1031,7 @@
             toggleOtherContactInput();
             renderTable();
             updateKPIs();
-            alert('تم حفظ الموعد بنجاح محلياً (أوفلاين) وتظهر في الجدول الآن، وستتم مزامنتها مع السحابة فور توفر النت.');
+            alert('تم حفظ الموعد محلياً (أوفلاين) وتظهر في الجدول الآن.');
         }
 
         function setFilter(filterType, element) {
@@ -1070,7 +1087,7 @@
             return cleaned;
         }
 
-        // عرض الجدول
+        // عرض الجدول وتحديث الحقول المفتوحة
         function renderTable() {
             const tbody = document.getElementById('tableBody');
             tbody.innerHTML = '';
@@ -1081,11 +1098,13 @@
             sorted.forEach(record => {
                 const status = getDelayStatus(record.createdAt, record.actionTaken);
                 const formattedPhone = formatWhatsAppNumber(record.patientPhone);
+                const currentAdminContact = record.adminContactMethod || 'قيد الانتظار';
                 
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
                     <td>
                         ${record.isRecurring ? '<span class="status-badge badge-priority">⭐ أولوية</span><br>' : ''}
+                        ${record.isRepeatedRequest ? '<span class="status-badge badge-priority" style="background:#e11d48;">🔄 طلب متكرر</span><br>' : ''}
                         <span class="status-badge ${status.class}">${status.text}</span>
                     </td>
                     <td><strong>${record.patientName}</strong></td>
@@ -1104,10 +1123,19 @@
                     </td>
                     <td>${record.coordinatorName}</td>
                     <td>
-                        <input type="text" class="table-input" id="action_${record.firebaseKey}" value="${record.actionTaken || ''}" placeholder="الإجراء...">
+                        <!-- مربع نصي مفتوح وقابل للقراءة دون اختفاء النص -->
+                        <textarea class="table-input" id="action_${record.firebaseKey}" placeholder="اكتب إجراء الإدارة...">${record.actionTaken || ''}</textarea>
                     </td>
                     <td>
-                        <input type="text" class="table-input" id="adminContact_${record.firebaseKey}" value="${record.adminContactMethod || ''}" placeholder="التواصل...">
+                        <!-- قائمة تواصل الإدارة بالوضع الافتراضي: قيد الانتظار -->
+                        <select class="table-input" id="adminContact_${record.firebaseKey}">
+                            <option value="قيد الانتظار" ${currentAdminContact === 'قيد الانتظار' ? 'selected' : ''}>قيد الانتظار ⏳</option>
+                            <option value="تم التواصل" ${currentAdminContact === 'تم التواصل' ? 'selected' : ''}>تم التواصل ✅</option>
+                            <option value="معلق" ${currentAdminContact === 'معلق' ? 'selected' : ''}>معلق 🟡</option>
+                            <option value="لا يرد" ${currentAdminContact === 'لا يرد' ? 'selected' : ''}>لا يرد ❌</option>
+                            <option value="تم إلغاء الموعد" ${currentAdminContact === 'تم إلغاء الموعد' ? 'selected' : ''}>تم إلغاء الموعد 🚫</option>
+                            <option value="أخرى" ${currentAdminContact === 'أخرى' ? 'selected' : ''}>أخرى</option>
+                        </select>
                     </td>
                     <td>
                         <button class="btn-save-action" onclick="saveAdminUpdate('${record.firebaseKey}')" title="حفظ إدخال الإدارة"><i class="fa-solid fa-floppy-disk"></i></button>
@@ -1127,7 +1155,7 @@
                 dbRef.child(key).update({
                     actionTaken: actionVal,
                     adminContactMethod: adminContactVal
-                }).then(() => alert('تم تحديث بيانات الإدارة بنجاح!'));
+                }).then(() => alert('تم تحديث إجراءات وتواصل الإدارة بنجاح!'));
             } else {
                 const rec = records.find(r => r.firebaseKey === key);
                 if (rec) {
@@ -1251,7 +1279,7 @@
                 "أولوية": r.isRecurring ? "نعم" : "لا",
                 "تاريخ التسجيل": r.createdAt,
                 "إجراء الإدارة": r.actionTaken || '',
-                "تواصل الإدارة": r.adminContactMethod || ''
+                "تواصل الإدارة": r.adminContactMethod || 'قيد الانتظار'
             }));
 
             const worksheet = XLSX.utils.json_to_sheet(dataToExport);
@@ -1283,7 +1311,7 @@
                     const firstSheet = workbook.SheetNames[0];
                     const jsonData = XLSX.utils.sheet_to_json(workbook.Sheets[firstSheet]);
 
-                    if (confirm(`هل ترغب في رفع ${jsonData.length} موعد من ملف Excel؟`)) {
+                    if (confirm(`هل ترغب في إضافة ${jsonData.length} موعد من ملف Excel؟`)) {
                         jsonData.forEach(item => {
                             const formattedItem = {
                                 patientName: item["اسم العميل"] || "بدون اسم",
@@ -1296,9 +1324,9 @@
                                 appointmentDateTime: item["الموعد المقترح"] || "-",
                                 coordinatorName: item["اسم المنسق"] || "عام",
                                 isRecurring: item["أولوية"] === "نعم" || item["حالة متكررة"] === "نعم",
-                                createdAt: new Date().toISOString(),
+                                createdAt: item["تاريخ التسجيل"] || new Date().toISOString(),
                                 actionTaken: item["إجراء الإدارة"] || "",
-                                adminContactMethod: item["تواصل الإدارة"] || ""
+                                adminContactMethod: item["تواصل الإدارة"] || "قيد الانتظار"
                             };
                             if (navigator.onLine) {
                                 dbRef.push(formattedItem);
@@ -1306,7 +1334,12 @@
                                 saveOfflineRecord(formattedItem);
                             }
                         });
-                        alert('تم استيراد الملف بنجاح!');
+                        
+                        saveLocal();
+                        currentFilter = 'all';
+                        renderTable();
+                        updateKPIs();
+                        alert('تم استيراد البيانات بنجاح وعرضها بالكامل!');
                     }
                 };
                 reader.readAsArrayBuffer(file);
