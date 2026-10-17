@@ -257,7 +257,7 @@
 
         .kpi-cards-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 15px;
         }
 
@@ -274,20 +274,22 @@
 
         .kpi-card.blue { border-color: var(--primary-color); }
         .kpi-card.purple { border-color: var(--accent-purple); }
+        .kpi-card.pink { border-color: #e11d48; }
         .kpi-card.warning { border-color: var(--warning-color); }
         .kpi-card.danger { border-color: var(--danger-color); }
 
         .kpi-icon-box {
-            font-size: 1.8rem; width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: var(--bg-base);
+            font-size: 1.6rem; width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: var(--bg-base);
         }
 
         .kpi-card.blue .kpi-icon-box { color: var(--primary-color); }
         .kpi-card.purple .kpi-icon-box { color: var(--accent-purple); }
+        .kpi-card.pink .kpi-icon-box { color: #e11d48; }
         .kpi-card.warning .kpi-icon-box { color: var(--warning-color); }
         .kpi-card.danger .kpi-icon-box { color: var(--danger-color); }
 
-        .kpi-info h3 { font-size: 0.85rem; color: var(--text-muted); font-weight: 500; }
-        .kpi-value { font-size: 1.6rem; font-weight: 800; }
+        .kpi-info h3 { font-size: 0.83rem; color: var(--text-muted); font-weight: 500; }
+        .kpi-value { font-size: 1.5rem; font-weight: 800; }
 
         .form-grid {
             display: grid;
@@ -325,11 +327,42 @@
         .action-btn.clear-all { background-color: #dc2626; }
         .action-btn.settings { background-color: #475569; }
 
-        .filter-tabs { display: flex; gap: 10px; margin-bottom: 15px; border-bottom: 2px solid var(--border-color); padding-bottom: 10px; flex-wrap: wrap; }
-        .filter-tab {
-            padding: 8px 16px; border-radius: 20px; border: 1px solid var(--border-color); background: var(--bg-base); color: var(--text-main); font-family: var(--font-family); font-size: 0.88rem; font-weight: 600; cursor: pointer;
+        /* تصميم الفلاتر الاحترافي الجديد */
+        .filter-container-box {
+            background: var(--bg-base);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 14px 18px;
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
         }
-        .filter-tab.active { background-color: var(--primary-color); color: white; border-color: var(--primary-color); }
+
+        .filter-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .filter-label {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            min-width: 90px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .filter-tabs { display: flex; gap: 8px; flex-wrap: wrap; }
+        .filter-tab {
+            padding: 7px 15px; border-radius: 20px; border: 1px solid var(--border-color); background: var(--bg-surface); color: var(--text-main); font-family: var(--font-family); font-size: 0.83rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+        }
+        .filter-tab:hover { border-color: var(--primary-color); color: var(--primary-color); }
+        .filter-tab.active { background-color: var(--primary-color); color: white; border-color: var(--primary-color); box-shadow: 0 2px 5px rgba(37,99,235,0.25); }
 
         .table-section-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; margin-bottom: 18px; }
         .search-field { position: relative; min-width: 260px; }
@@ -350,6 +383,31 @@
         .badge-priority { background-color: var(--accent-purple); margin-bottom: 4px; }
         .badge-repeated { background-color: #e11d48; margin-bottom: 4px; }
 
+        .phone-cell-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+        }
+
+        .whatsapp-link { color: #25d366; text-decoration: none; font-weight: bold; display: inline-flex; align-items: center; gap: 4px; }
+        .whatsapp-link:hover { text-decoration: underline; }
+
+        .copy-phone-btn {
+            background: var(--bg-base);
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+        }
+        .copy-phone-btn:hover { background: var(--primary-color); color: #fff; border-color: var(--primary-color); }
+
         .table-input {
             width: 100%; padding: 8px; border: 1px solid var(--border-color); border-radius: var(--radius-md); background: var(--bg-surface); color: var(--text-main); font-family: var(--font-family); font-size: 0.88rem; box-shadow: inset 0 1px 2px rgba(0,0,0,0.03);
         }
@@ -358,8 +416,6 @@
         .btn-save-action { background-color: var(--success-color); color: #fff; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; margin-bottom: 4px; }
         .btn-edit-action { background-color: var(--primary-color); color: #fff; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; margin-bottom: 4px; }
         .btn-delete-action { background-color: var(--danger-color); color: #fff; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; }
-
-        .whatsapp-link { color: #25d366; text-decoration: none; font-weight: bold; display: inline-flex; align-items: center; gap: 5px; }
 
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 200; justify-content: center; align-items: center; padding: 15px; }
         .modal.open { display: flex; }
@@ -430,6 +486,10 @@
                         <div class="kpi-card purple">
                             <div class="kpi-icon-box"><i class="fa-solid fa-star"></i></div>
                             <div class="kpi-info"><h3>حالات ذات أولوية</h3><span class="kpi-value" id="kpi-recurring">0</span></div>
+                        </div>
+                        <div class="kpi-card pink">
+                            <div class="kpi-icon-box"><i class="fa-solid fa-rotate-right"></i></div>
+                            <div class="kpi-info"><h3>الطلبات المتكررة</h3><span class="kpi-value" id="kpi-repeated">0</span></div>
                         </div>
                         <div class="kpi-card warning">
                             <div class="kpi-icon-box"><i class="fa-solid fa-clock-rotate-left"></i></div>
@@ -534,12 +594,25 @@
                         </div>
                     </div>
 
-                    <div class="filter-tabs">
-                        <button class="filter-tab active" onclick="setFilter('all', this)">📋 الكل</button>
-                        <button class="filter-tab" onclick="setFilter('priority', this)">⭐ ذات أولوية</button>
-                        <button class="filter-tab" onclick="setFilter('today', this)">📅 حالات اليوم</button>
-                        <button class="filter-tab" onclick="setFilter('week', this)">🗓️ حالات الأسبوع</button>
-                        <button class="filter-tab" onclick="setFilter('month', this)">📊 حالات الشهر</button>
+                    <!-- الفلاتر الاحترافية المحدثة -->
+                    <div class="filter-container-box">
+                        <div class="filter-row">
+                            <span class="filter-label"><i class="fa-solid fa-filter"></i> فلاتر الحالات:</span>
+                            <div class="filter-tabs">
+                                <button class="filter-tab active" onclick="setFilter('all', this)"><i class="fa-solid fa-list"></i> الكل</button>
+                                <button class="filter-tab" onclick="setFilter('priority', this)"><i class="fa-solid fa-star" style="color:var(--accent-purple);"></i> ذات أولوية</button>
+                                <button class="filter-tab" onclick="setFilter('repeated', this)"><i class="fa-solid fa-rotate-right" style="color:#e11d48;"></i> الطلبات المتكررة</button>
+                            </div>
+                        </div>
+                        <div class="filter-row">
+                            <span class="filter-label"><i class="fa-solid fa-calendar-days"></i> فلاتر الوقت:</span>
+                            <div class="filter-tabs">
+                                <button class="filter-tab" onclick="setTimeFilter('all', this)">الكل</button>
+                                <button class="filter-tab" onclick="setTimeFilter('today', this)">حالات اليوم</button>
+                                <button class="filter-tab" onclick="setTimeFilter('week', this)">حالات الأسبوع</button>
+                                <button class="filter-tab" onclick="setTimeFilter('month', this)">حالات الشهر</button>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="table-container">
@@ -548,7 +621,7 @@
                                 <tr>
                                     <th>الحالة والأولوية</th>
                                     <th>العميل</th>
-                                    <th>رقم الجوال (واتساب)</th>
+                                    <th>رقم الجوال (واتساب / نسخ)</th>
                                     <th>رقم الملف</th>
                                     <th>رقم الهوية</th>
                                     <th>الفرع</th>
@@ -659,6 +732,7 @@
 
         let records = [];
         let currentFilter = 'all';
+        let currentTimeFilter = 'all';
 
         if (!localStorage.getItem('adminPassword')) {
             localStorage.setItem('adminPassword', '1234');
@@ -929,23 +1003,45 @@
 
         function setFilter(filterType, element) {
             currentFilter = filterType;
-            document.querySelectorAll('.filter-tab').forEach(btn => btn.classList.remove('active'));
+            // إزالة الأنشط من أزرار نوع الحالة فقط
+            const parentRow = element.closest('.filter-row');
+            parentRow.querySelectorAll('.filter-tab').forEach(btn => btn.classList.remove('active'));
             element.classList.add('active');
             renderTable();
         }
 
-        function filterByDateRange(recordsList) {
-            if (currentFilter === 'all') return recordsList;
-            if (currentFilter === 'priority') return recordsList.filter(r => r.isRecurring);
-            const now = new Date();
-            const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-            return recordsList.filter(r => {
-                const created = new Date(r.createdAt);
-                if (currentFilter === 'today') return created >= startOfDay;
-                if (currentFilter === 'week') return (now - created) / (1000 * 60 * 60 * 24) <= 7;
-                if (currentFilter === 'month') return created.getMonth() === now.getMonth() && created.getFullYear() === now.getFullYear();
-                return true;
-            });
+        function setTimeFilter(timeType, element) {
+            currentTimeFilter = timeType;
+            const parentRow = element.closest('.filter-row');
+            parentRow.querySelectorAll('.filter-tab').forEach(btn => btn.classList.remove('active'));
+            element.classList.add('active');
+            renderTable();
+        }
+
+        function filterRecordsList(recordsList) {
+            let res = recordsList;
+            
+            // فلتر نوع الحالة
+            if (currentFilter === 'priority') {
+                res = res.filter(r => r.isRecurring);
+            } else if (currentFilter === 'repeated') {
+                res = res.filter(r => r.isRepeatedRequest);
+            }
+
+            // فلتر الوقت
+            if (currentTimeFilter !== 'all') {
+                const now = new Date();
+                const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+                res = res.filter(r => {
+                    const created = new Date(r.createdAt);
+                    if (currentTimeFilter === 'today') return created >= startOfDay;
+                    if (currentTimeFilter === 'week') return (now - created) / (1000 * 60 * 60 * 24) <= 7;
+                    if (currentTimeFilter === 'month') return created.getMonth() === now.getMonth() && created.getFullYear() === now.getFullYear();
+                    return true;
+                });
+            }
+
+            return res;
         }
 
         function getDelayStatus(createdAt, actionTaken) {
@@ -965,6 +1061,16 @@
             return cleaned;
         }
 
+        function copyPhoneNumber(phone, event) {
+            event.stopPropagation();
+            if (!phone) return;
+            navigator.clipboard.writeText(phone).then(() => {
+                alert(`تم نسخ رقم الجوال (${phone}) بنجاح!`);
+            }).catch(err => {
+                alert('فشل نسخ الرقم.');
+            });
+        }
+
         function handleAdminContactChange(key) {
             const selectEl = document.getElementById(`adminContact_${key}`);
             const detailEl = document.getElementById(`adminContactDetail_${key}`);
@@ -976,7 +1082,7 @@
             if (!tbody) return;
             tbody.innerHTML = '';
 
-            let filteredRecords = filterByDateRange(records);
+            let filteredRecords = filterRecordsList(records);
             const sorted = [...filteredRecords].sort((a, b) => b.isRecurring - a.isRecurring || new Date(b.createdAt) - new Date(a.createdAt));
 
             sorted.forEach(record => {
@@ -993,7 +1099,12 @@
                         <span class="status-badge ${status.class}">${status.text}</span>
                     </td>
                     <td><strong>${record.patientName}</strong></td>
-                    <td><a href="https://wa.me/${formattedPhone}" target="_blank" class="whatsapp-link"><i class="fa-brands fa-whatsapp"></i> ${record.patientPhone}</a></td>
+                    <td>
+                        <div class="phone-cell-wrapper">
+                            <a href="https://wa.me/${formattedPhone}" target="_blank" class="whatsapp-link" title="انقر لفتح واتساب"><i class="fa-brands fa-whatsapp"></i> ${record.patientPhone}</a>
+                            <button class="copy-phone-btn" onclick="copyPhoneNumber('${record.patientPhone}', event)" title="نسخ الرقم"><i class="fa-solid fa-copy"></i></button>
+                        </div>
+                    </td>
                     <td>${record.fileNumber}</td>
                     <td>${record.idNumber}</td>
                     <td>${record.branch}</td>
@@ -1034,7 +1145,6 @@
                 rec.adminContactMethod = finalAdminContact; 
                 rec.adminContactDetail = adminContactDetail; 
                 
-                // التعديل المطلوب: إذا تم تغيير حالة التواصل إلى "تم التواصل"، يتم إلغاء الأولوية تلقائياً
                 if (adminContactSelect === 'تم التواصل') {
                     rec.isRecurring = false;
                 }
@@ -1113,12 +1223,14 @@
         function updateKPIs() {
             const totalEl = document.getElementById('kpi-total');
             const recurringEl = document.getElementById('kpi-recurring');
+            const repeatedEl = document.getElementById('kpi-repeated');
             const kpi24El = document.getElementById('kpi-24h');
             const kpi48El = document.getElementById('kpi-48h');
             if (!totalEl) return;
 
             totalEl.innerText = records.length;
             recurringEl.innerText = records.filter(r => r.isRecurring).length;
+            repeatedEl.innerText = records.filter(r => r.isRepeatedRequest).length;
 
             let c24 = 0, c48 = 0;
             const now = new Date();
