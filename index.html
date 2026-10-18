@@ -424,7 +424,7 @@
             width: 100%; padding: 8px; border: 1px solid var(--border-color); border-radius: var(--radius-md); background: var(--bg-surface); color: var(--text-main); font-family: var(--font-family); font-size: 0.88rem;
         }
         
-        /* تنسيق عمود تفاصيل الطلب ليكون منسقاً وبدون امتداد مفرط لأسفل */
+        /* تنسيق عمود تفاصيل الطلب */
         .service-cell-content {
             max-height: 100px;
             overflow-y: auto;
@@ -441,6 +441,16 @@
         .btn-save-action { background-color: var(--success-color); color: #fff; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; margin-bottom: 4px; }
         .btn-edit-action { background-color: var(--primary-color); color: #fff; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; margin-bottom: 4px; }
         .btn-delete-action { background-color: var(--danger-color); color: #fff; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; }
+
+        /* تأثير الوميض البصري للحالات ذات الأولوية */
+        @keyframes urgentPulse {
+            0% { background-color: rgba(124, 58, 237, 0.15); }
+            50% { background-color: rgba(124, 58, 237, 0.02); }
+            100% { background-color: rgba(124, 58, 237, 0.15); }
+        }
+        .row-priority-pulse {
+            animation: urgentPulse 1.8s infinite ease-in-out;
+        }
 
         /* كشوفات العملاء بطاقة العميل المميزة */
         .client-card {
@@ -876,7 +886,7 @@
         const cachedTrash = localStorage.getItem('cachedTrash');
         if (cachedTrash) { try { deletedRecords = JSON.parse(cachedTrash); } catch(e) { deletedRecords = []; } }
 
-        // استرجاع الصفحة النشطة عند عمل Refresh
+        // استرجاع الصفحة النشطة وثباتها عند عمل Refresh
         window.addEventListener('DOMContentLoaded', () => {
             const activePage = localStorage.getItem('activePage') || 'dashboard';
             switchPage(activePage);
@@ -989,7 +999,7 @@
             alert('تم حفظ الموعد بنجاح!');
         });
 
-        /* جدول المواعيد (مع تثبيت الأولوية في الأعلى) */
+        /* جدول المواعيد (مع تثبيت الأولوية في الأعلى وتطبيق الوميض البصري) */
         function renderTable() {
             const tbody = document.getElementById('tableBody');
             if (!tbody) return;
@@ -1000,6 +1010,10 @@
 
             sortedRecords.forEach((record, index) => {
                 const tr = document.createElement('tr');
+                if (record.isRecurring) {
+                    tr.classList.add('row-priority-pulse');
+                }
+
                 tr.innerHTML = `
                     <td>${index + 1}</td>
                     <td>${formatDateOnly(record.createdAt)}</td>
@@ -1065,9 +1079,9 @@
 
                     if (navigator.onLine && !key.startsWith('local_')) {
                         dbRef.child(key).remove();
-                        const tRef = trashRef.push();
-                        trashRef.child(tRef.key).set(deletedItem);
                     }
+                    const tRef = trashRef.push();
+                    trashRef.child(tRef.key).set(deletedItem);
                 }
             } else if (pass !== null) {
                 alert('كلمة المرور غير صحيحة!');
@@ -1144,8 +1158,7 @@
                 card.innerHTML = `
                     <div class="client-card-header">
                         <div class="client-title">
-                            <span>${index + 1}. ${client.patientName}</span>
-                            ${client.fileNumber ? `<span class="client-file">ملف: ${client.fileNumber}</span>` : ''}
+                            <span>${index + 1}. ${client.patientName}</span>${client.fileNumber && client.fileNumber.trim() !== '' ? `<span class="client-file">ملف: ${client.fileNumber}</span>` : ''}
                         </div>
                     </div>
                     <div class="client-info-row">
@@ -1163,7 +1176,7 @@
             });
         }
 
-        /* نسخ كشف العملاء المفتوحين بشكل احترافي للواتساب (تجاهل الملف غير المسجل) */
+        /* نسخ كشف العملاء للواتساب بشكل نصي احترافي (تجاهل الملف الفارغ تماماً) */
         function copyClientReport() {
             let openRecords = getOpenFilteredRecords();
 
@@ -1179,20 +1192,20 @@
             const keys = Object.keys(groupedClients);
             if (keys.length === 0) return alert('لا يوجد عملاء لنسخ الكشف!');
 
-            let reportText = `📋 *كشف العملاء والطلبات المعلقة*\n----------------------------------\n`;
+            let reportText = ``;
             keys.forEach((cKey, idx) => {
                 const c = groupedClients[cKey];
-                reportText += `${idx + 1}- اسم العميل: ${c.patientName}`;
+                reportText += `${idx + 1}. ${c.patientName}`;
                 if (c.fileNumber && c.fileNumber.trim() !== '') {
-                    reportText += ` (ملف: ${c.fileNumber})`;
+                    reportText += ` ${c.fileNumber}`;
                 }
-                reportText += `\n   رقم الجوال: ${c.patientPhone}\n   الخدمة المطلوبة / المشكلة:\n   - ${c.services.join('\n   - ')}\n----------------------------------\n`;
+                reportText += `\nالجوال / ${c.patientPhone}\n${c.services.join('\n')}\n\n`;
             });
 
-            navigator.clipboard.writeText(reportText).then(() => alert('تم نسخ كشف العملاء بنجاح وجاهز للإلصاق في الواتساب!'));
+            navigator.clipboard.writeText(reportText.trim()).then(() => alert('تم نسخ كشف العملاء بالتنسيق الاحترافي بنجاح وجاهز للإلصاق في الواتساب!'));
         }
 
-        /* حذف الفترة الزمنية من كشف العملاء مع سلة المحذوفات */
+        /* حذف الفترة الزمنية من كشف العملاء ونقلها لسلة المحذوفات */
         function deleteClientsTimeRange() {
             const pass = prompt('أدخل كلمة مرور الإدارة للحذف:');
             if (pass === localStorage.getItem('adminPassword')) {
@@ -1216,9 +1229,9 @@
                         movedToTrash.push(r);
                         if (!r.firebaseKey.startsWith('local_') && navigator.onLine) {
                             dbRef.child(r.firebaseKey).remove();
-                            const tRef = trashRef.push();
-                            trashRef.child(tRef.key).set(r);
                         }
+                        const tRef = trashRef.push();
+                        trashRef.child(tRef.key).set(r);
                     } else {
                         remaining.push(r);
                     }
@@ -1267,7 +1280,7 @@
             const pass = prompt('أدخل كلمة مرور الإدارة للاسترجاع:');
             if (pass === localStorage.getItem('adminPassword')) {
                 const restored = deletedRecords.splice(idx, 1)[0];
-                const originalKey = restored.firebaseKey;
+                const trashKey = restored.firebaseKey;
                 delete restored.firebaseKey;
 
                 records.unshift(restored);
@@ -1280,10 +1293,8 @@
                 if (navigator.onLine) {
                     const newRef = dbRef.push(restored);
                     restored.firebaseKey = newRef.key;
-                    if (originalKey && !originalKey.startsWith('local_')) {
-                        trashRef.orderByChild('patientName').equalTo(restored.patientName).once('child_added', snapshot => {
-                            snapshot.ref.remove();
-                        });
+                    if (trashKey) {
+                        trashRef.child(trashKey).remove();
                     }
                 }
                 alert('تم استرجاع الحالة بنجاح!');
