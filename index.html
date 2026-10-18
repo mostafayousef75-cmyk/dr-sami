@@ -405,18 +405,13 @@
 
         .status-badge { padding: 4px 10px; border-radius: 20px; font-size: 0.78rem; font-weight: 700; color: #fff; display: inline-block; }
         .badge-new { background-color: var(--success-color); }
-        .badge-done { background-color: #0284c7; }
-        .badge-pending { background-color: var(--warning-color); }
-        .badge-canceled { background-color: var(--danger-color); }
-        .badge-priority { background-color: var(--accent-purple); margin-bottom: 4px; }
-        .badge-repeated { background-color: #e11d48; margin-bottom: 4px; }
         .badge-procedure { background-color: var(--primary-color); color: #fff; padding: 4px 10px; border-radius: 20px; font-size: 0.78rem; font-weight: 700; display: inline-block; }
 
         .table-input {
             width: 100%; padding: 8px; border: 1px solid var(--border-color); border-radius: var(--radius-md); background: var(--bg-surface); color: var(--text-main); font-family: var(--font-family); font-size: 0.88rem;
         }
         
-        /* خلية تفاصيل الطلب بشكل مرتب بدون سكرول وبدون تمدد مفرط */
+        /* خلية تفاصيل الطلب */
         .service-cell-box {
             width: 230px;
             white-space: pre-wrap;
@@ -435,7 +430,6 @@
         .btn-edit-action { background-color: var(--primary-color); color: #fff; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; margin-bottom: 4px; }
         .btn-delete-action { background-color: var(--danger-color); color: #fff; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; }
 
-        /* تأثير الوميض للحالات ذات الأولوية */
         @keyframes urgentPulse {
             0% { background-color: rgba(124, 58, 237, 0.15); }
             50% { background-color: rgba(124, 58, 237, 0.02); }
@@ -445,7 +439,6 @@
             animation: urgentPulse 1.8s infinite ease-in-out;
         }
 
-        /* كشف العملاء بصيغة تكست متصل واحترافي */
         .client-text-block {
             background: var(--bg-surface);
             border: 1px solid var(--border-color);
@@ -459,7 +452,6 @@
             border-right: 5px solid var(--primary-color);
         }
 
-        /* Modals النوافذ المنبثقة */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 200; justify-content: center; align-items: center; padding: 15px; }
         .modal.open { display: flex; }
         .modal-content { background: var(--bg-surface); border-radius: var(--radius-lg); width: 100%; max-width: 550px; max-height: 90vh; overflow-y: auto; padding: 25px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); border: 1px solid var(--border-color); }
@@ -477,7 +469,6 @@
 
     <div class="app-layout" id="appLayout">
         
-        <!-- الشريط الجانبي -->
         <aside class="sidebar">
             <div class="sidebar-header">
                 <div class="brand-info">
@@ -527,7 +518,6 @@
 
             <div class="content-body">
                 
-                <!-- الصفحة الأولى: مؤشر الأداء وجدول المواعيد -->
                 <div id="page-dashboard" class="page-view">
                     
                     <section class="dashboard-section">
@@ -658,6 +648,22 @@
                             </div>
                         </div>
 
+                        <!-- الفلاتر المعاد إضافتها لصفحة مؤشر الأداء وجدول المواعيد -->
+                        <div class="filter-container-box">
+                            <div class="filter-row">
+                                <span class="filter-label"><i class="fa-solid fa-filter"></i> فلاتر الجدول:</span>
+                                <div class="filter-tabs" id="dashboardFilterTabs">
+                                    <button class="filter-tab active" onclick="setDashboardFilter('all', this)">الكل</button>
+                                    <button class="filter-tab" onclick="setDashboardFilter('today', this)">اليوم</button>
+                                    <button class="filter-tab" onclick="setDashboardFilter('week', this)">الأسبوع</button>
+                                    <button class="filter-tab" onclick="setDashboardFilter('month', this)">الشهر</button>
+                                    <button class="filter-tab" onclick="setDashboardFilter('priority', this)">حالات ذات أولوية ⭐</button>
+                                    <button class="filter-tab" onclick="setDashboardFilter('repeated', this)">الطلبات المتكررة 🔄</button>
+                                    <button class="filter-tab" onclick="setDashboardFilter('plants', this)">حالات الزراعة 🦷</button>
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="table-container">
                             <table id="requestsTable">
                                 <thead>
@@ -683,7 +689,7 @@
 
                 </div>
 
-                <!-- الصفحة الثانية: كشف العملاء المستقل تماماً عن الجدول الأساسي -->
+                <!-- صفحة كشف العملاء المستقل -->
                 <div id="page-clients" class="page-view hidden">
                     
                     <section class="dashboard-section">
@@ -800,7 +806,7 @@
         </div>
     </div>
 
-    <!-- نافذة تعديل بيانات العميل -->
+    <!-- نافذة تعديل بيانات العميل مع خيار الأولوية ⭐ -->
     <div class="modal" id="editModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -861,6 +867,13 @@
                         <label>الخدمة المطلوبة / تفاصيل المشكلة والطلب *</label>
                         <textarea id="editServiceRequired" required></textarea>
                     </div>
+                    <!-- خيار الأولوية المضاف داخل نموذج التعديل -->
+                    <div class="input-field full-width">
+                        <label class="priority-checkbox">
+                            <input type="checkbox" id="editIsRecurring">
+                            <span>تعيين كحالة ذات أولوية ⭐</span>
+                        </label>
+                    </div>
                 </div>
                 <button type="submit" class="submit-btn" style="margin-top: 15px;"><i class="fa-solid fa-floppy-disk"></i> حفظ التعديلات</button>
             </form>
@@ -873,11 +886,12 @@
         const database = firebase.database();
         const dbRef = database.ref('appointments');
         const trashRef = database.ref('trash');
-        const clientDeletedRef = database.ref('clientDeleted'); // لتخزين المحذوفات الخاصة بكشف العملاء بشكل مستقل
+        const clientDeletedRef = database.ref('clientDeleted');
 
         let records = [];
         let deletedRecords = [];
-        let clientDeletedRecords = []; // سجل محذوفات كشف العملاء المستقل
+        let clientDeletedRecords = [];
+        let dashboardFilter = 'all';
         let clientHoursFilter = 'all';
 
         if (!localStorage.getItem('adminPassword')) {
@@ -942,7 +956,6 @@
             switchPage(activePage);
         });
 
-        // مزامنة المواعيد الأساسية من Firebase
         dbRef.on('value', (snapshot) => {
             const data = snapshot.val();
             if (data) {
@@ -982,7 +995,6 @@
             saveLocal();
         });
 
-        /* التحقق من كلمة المرور للأولوية */
         let pendingPriorityCheckbox = null;
         function checkPriorityAuth(checkbox) {
             if (checkbox.checked) {
@@ -1008,7 +1020,6 @@
             if (pendingPriorityCheckbox) pendingPriorityCheckbox.checked = false;
         }
 
-        /* حفظ الموعد الجديد (إضافته في أعلى الجدول تلقائياً) */
         document.getElementById('appointmentForm').addEventListener('submit', function(e) {
             e.preventDefault();
             const patientNameVal = document.getElementById('patientName').value.trim();
@@ -1061,15 +1072,55 @@
             alert('تم حفظ الموعد بنجاح وإضافته في الأعلى!');
         });
 
-        /* جدول المواعيد مع الوميض والأولوية وتابة أخرى ووظيفة التعديل والحذف المستقل */
+        /* فلاتر الجدول الأساسي */
+        function setDashboardFilter(filterType, btn) {
+            dashboardFilter = filterType;
+            btn.closest('.filter-tabs').querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+            btn.classList.add('active');
+            renderTable();
+        }
+
+        /* جدول المواعيد مع تطبيق الفلاتر والترتيب التسلسلي الصحيح */
         function renderTable() {
             const tbody = document.getElementById('tableBody');
             if (!tbody) return;
             tbody.innerHTML = '';
 
-            const sortedRecords = [...records].sort((a, b) => (b.isRecurring === true) - (a.isRecurring === true));
+            let filteredList = [...records];
+            const now = new Date();
 
-            sortedRecords.forEach((record, index) => {
+            if (dashboardFilter === 'today') {
+                filteredList = filteredList.filter(r => {
+                    const d = new Date(r.createdAt);
+                    return d.toDateString() === now.toDateString();
+                });
+            } else if (dashboardFilter === 'week') {
+                filteredList = filteredList.filter(r => {
+                    const diffTime = now - new Date(r.createdAt);
+                    return diffTime <= 7 * 24 * 60 * 60 * 1000;
+                });
+            } else if (dashboardFilter === 'month') {
+                filteredList = filteredList.filter(r => {
+                    const d = new Date(r.createdAt);
+                    return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+                });
+            } else if (dashboardFilter === 'priority') {
+                filteredList = filteredList.filter(r => r.isRecurring);
+            } else if (dashboardFilter === 'repeated') {
+                filteredList = filteredList.filter(r => r.isRepeatedRequest);
+            } else if (dashboardFilter === 'plants') {
+                filteredList = filteredList.filter(r => r.procedureType && r.procedureType.includes('زراعة'));
+            }
+
+            // ترتيب دقيق وتنازلي حسب تاريخ الإضافة مع تثبيت الأولوية
+            filteredList.sort((a, b) => {
+                if (b.isRecurring !== a.isRecurring) {
+                    return (b.isRecurring === true) - (a.isRecurring === true);
+                }
+                return new Date(b.createdAt) - new Date(a.createdAt);
+            });
+
+            filteredList.forEach((record, index) => {
                 const tr = document.createElement('tr');
                 if (record.isRecurring) {
                     tr.classList.add('row-priority-pulse');
@@ -1084,7 +1135,7 @@
                     <td>${index + 1}</td>
                     <td>${formatDateOnly(record.createdAt)}</td>
                     <td>
-                        ${record.isRecurring ? '<span class="status-badge badge-priority">⭐ أولوية</span><br>' : ''}
+                        ${record.isRecurring ? '<span class="status-badge badge-priority" style="background-color: var(--accent-purple); color:#fff; padding:3px 8px; border-radius:10px; font-size:0.75rem;">⭐ أولوية</span><br>' : ''}
                         <span class="status-badge badge-new">${selectVal}</span>
                     </td>
                     <td><strong>${record.patientName}</strong></td>
@@ -1152,7 +1203,7 @@
             alert('تم التحديث بنجاح!');
         }
 
-        /* دوال تعديل العميل */
+        /* نافذة التعديل مع خانة الأولوية ⭐ */
         function openEditModal(key) {
             const rec = records.find(r => r.firebaseKey === key);
             if (!rec) return;
@@ -1167,6 +1218,7 @@
             document.getElementById('editCoordinatorName').value = rec.coordinatorName || '';
             document.getElementById('editProcedureType').value = rec.procedureType || 'مراجعه';
             document.getElementById('editServiceRequired').value = rec.serviceRequired || '';
+            document.getElementById('editIsRecurring').checked = !!rec.isRecurring; // تفعيل حالة الأولوية في التعديل
 
             document.getElementById('editModal').classList.add('open');
         }
@@ -1190,6 +1242,7 @@
             rec.coordinatorName = document.getElementById('editCoordinatorName').value.trim();
             rec.procedureType = document.getElementById('editProcedureType').value;
             rec.serviceRequired = document.getElementById('editServiceRequired').value.trim();
+            rec.isRecurring = document.getElementById('editIsRecurring').checked; // حفظ حالة الأولوية المحدثة
 
             saveLocal();
             renderTable();
@@ -1207,7 +1260,8 @@
                     contactMethod: rec.contactMethod,
                     coordinatorName: rec.coordinatorName,
                     procedureType: rec.procedureType,
-                    serviceRequired: rec.serviceRequired
+                    serviceRequired: rec.serviceRequired,
+                    isRecurring: rec.isRecurring
                 });
             }
             alert('تم تعديل بيانات العميل بنجاح!');
@@ -1236,7 +1290,7 @@
             }
         }
 
-        /* كشف العملاء المستقل تماماً (حذف الفلاتر لا يؤثر على جدول المواعيد الأساسي) */
+        /* كشف العملاء المستقل */
         function setClientTimeFilter(hours, btn) {
             clientHoursFilter = hours;
             btn.closest('.filter-tabs').querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
@@ -1302,7 +1356,6 @@
             });
         }
 
-        /* نسخ كشف العملاء للواتساب */
         function copyClientReport() {
             let openRecords = getOpenFilteredRecords();
 
@@ -1331,7 +1384,6 @@
             navigator.clipboard.writeText(reportText.trim()).then(() => alert('تم نسخ الكشف بصيغة تكست احترافية للواتساب بنجاح!'));
         }
 
-        /* حذف الفترة الزمنية من كشف العملاء بشكل مستقل تماماً (لا يؤثر على جدول المواعيد) */
         function deleteClientsTimeRange() {
             const pass = prompt('أدخل كلمة مرور الإدارة للحذف:');
             if (pass === localStorage.getItem('adminPassword')) {
@@ -1353,7 +1405,6 @@
 
                     if (shouldDelete) {
                         movedToClientTrash.push(r);
-                        // يحذف من كشف العملاء المفتوحين في السحابة إن وجد دون المساس بباقي السجلات المرتبطة بالجدول الرئيسي
                         if (!r.firebaseKey.startsWith('local_') && navigator.onLine) {
                             dbRef.child(r.firebaseKey).remove();
                         }
@@ -1375,7 +1426,6 @@
             }
         }
 
-        /* طلب باسورد واحد لفتح سلة المحذوفات */
         function requestRestoreAccess() {
             document.getElementById('restorePassInput').value = '';
             document.getElementById('restoreAuthModal').classList.add('open');
@@ -1453,7 +1503,6 @@
             alert('تم استرجاع الحالة بنجاح!');
         }
 
-        /* تحديث المؤشرات */
         function updateKPIs() {
             document.getElementById('kpi-total').innerText = records.length;
             document.getElementById('kpi-recurring').innerText = records.filter(r => r.isRecurring).length;
@@ -1488,7 +1537,6 @@
             });
         }
 
-        /* أدوات الإدارة والنسخ الاحتياطي */
         function openClearModal() { document.getElementById('clearModal').classList.add('open'); }
         function closeClearModal() { document.getElementById('clearModal').classList.remove('open'); }
         function openPasswordModal() { document.getElementById('passwordModal').classList.add('open'); }
