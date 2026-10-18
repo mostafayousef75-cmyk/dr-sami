@@ -507,11 +507,8 @@
             </div>
 
             <nav class="sidebar-menu">
-                <a href="#kpi-section" class="menu-item active" onclick="switchPage('main', this)"><i class="fa-solid fa-chart-pie"></i><span>مؤشرات الأداء</span></a>
-                <a href="#form-section" class="menu-item" onclick="switchPage('main', this)"><i class="fa-solid fa-calendar-plus"></i><span>إضافة موعد جديد</span></a>
-                <a href="#table-section" class="menu-item" onclick="switchPage('main', this)"><i class="fa-solid fa-list-check"></i><span>جدول المواعيد</span></a>
-                <a href="#report-section" class="menu-item" onclick="switchPage('report', this)"><i class="fa-solid fa-file-lines"></i><span>صفحة الكشف</span></a>
-                <a href="#tools-section" class="menu-item" onclick="switchPage('main', this)"><i class="fa-solid fa-database"></i><span>تصدير واستيراد وإدارة</span></a>
+                <a href="#main" class="menu-item active" onclick="switchPage('main', this)"><i class="fa-solid fa-chart-pie"></i><span>مؤشرات الأداء والمواعيد</span></a>
+                <a href="#report" class="menu-item" onclick="switchPage('report', this)"><i class="fa-solid fa-file-lines"></i><span>صفحة الكشف</span></a>
             </nav>
 
             <div class="sidebar-footer">
@@ -527,7 +524,7 @@
                     <button class="open-sidebar-btn hidden" id="openSidebarBtn" onclick="toggleSidebar()">
                         <i class="fa-solid fa-bars"></i> القائمة
                     </button>
-                    <h1>لوحة تحكم تنسيق المواعيد</h1>
+                    <h1 id="pageHeadingTitle">لوحة تحكم تنسيق المواعيد</h1>
                 </div>
                 <div class="header-actions" style="display: flex; gap: 10px;">
                     <button class="theme-toggle-btn" id="themeToggleBtn" onclick="toggleTheme()" title="تبديل المظهر">
@@ -536,6 +533,7 @@
                 </div>
             </header>
 
+            <!-- القسم الرئيسي (مؤشرات + إدخال + جدول + أدوات) -->
             <div class="content-body" id="mainContentBody">
                 
                 <section class="dashboard-section" id="kpi-section">
@@ -731,7 +729,7 @@
             <div class="content-body hidden" id="reportContentBody">
                 <section class="dashboard-section">
                     <div class="section-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
-                        <h2><i class="fa-solid fa-file-lines"></i> صفحة الكشف (غير المُعالجة)</h2>
+                        <h2><i class="fa-solid fa-file-lines"></i> صفحة الكشف (الحالات الجديدة وغير المُعالجة)</h2>
                         <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
                             <select id="reportPeriodSelect" class="table-input" style="width: 160px;" onchange="renderReport()">
                                 <option value="6">آخر 6 ساعات</option>
@@ -740,7 +738,7 @@
                                 <option value="24">آخر 24 ساعة</option>
                             </select>
                             <button class="action-btn excel" onclick="copyReportText()"><i class="fa-solid fa-copy"></i> نسخ الكشف كاملاً</button>
-                            <button class="action-btn clear-all" onclick="clearCurrentReportPeriod()" style="padding: 10px 14px;"><i class="fa-solid fa-trash"></i> مسح الفترة</button>
+                            <button class="action-btn clear-all" onclick="openClearReportModal()" style="padding: 10px 14px;"><i class="fa-solid fa-trash"></i> مسح الفترة</button>
                         </div>
                     </div>
                     <div id="reportContainer" style="background: var(--bg-base); padding: 20px; border-radius: var(--radius-md); border: 1px solid var(--border-color); font-size: 1.05rem; line-height: 1.8; white-space: pre-wrap;">
@@ -769,8 +767,8 @@
                     </select>
                 </div>
                 <div class="input-field full-width">
-                    <label>كلمة المرور *</label>
-                    <input type="password" id="clearPasswordInput" placeholder="أدخل كلمة المرور لحذف البيانات">
+                    <label>كلمة المرور المشتركة *</label>
+                    <input type="password" id="clearPasswordInput" placeholder="أدخل كلمة المرور المشتركة لحذف البيانات">
                 </div>
             </div>
             <button type="button" class="submit-btn" style="background-color: var(--danger-color); margin-top: 15px;" onclick="executeFilteredClear()">
@@ -779,10 +777,28 @@
         </div>
     </div>
 
+    <div class="modal" id="clearReportModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-shield-halved"></i> تأكيد مسح الفترة الحالية</h3>
+                <button class="close-modal-btn" onclick="closeClearReportModal()">&times;</button>
+            </div>
+            <div class="form-grid">
+                <div class="input-field full-width">
+                    <label>كلمة المرور المشتركة *</label>
+                    <input type="password" id="clearReportPasswordInput" placeholder="أدخل كلمة المرور المشتركة">
+                </div>
+            </div>
+            <button type="button" class="submit-btn" style="background-color: var(--danger-color); margin-top: 15px;" onclick="executeClearReportPeriod()">
+                <i class="fa-solid fa-trash"></i> تأكيد مسح الفترة
+            </button>
+        </div>
+    </div>
+
     <div class="modal" id="passwordModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3><i class="fa-solid fa-key"></i> تغيير كلمة المرور</h3>
+                <h3><i class="fa-solid fa-key"></i> تغيير كلمة المرور المشتركة</h3>
                 <button class="close-modal-btn" onclick="closePasswordModal()">&times;</button>
             </div>
             <div class="form-grid">
@@ -873,6 +889,7 @@
         const cached = localStorage.getItem('cachedAppointments');
         if (cached) { try { records = JSON.parse(cached); } catch(e) { records = []; } }
 
+        // التحقق من الصفحة الحالية عند إعادة التحميل (Refresh) لمنع ضياع مكان المستخدم
         window.addEventListener('DOMContentLoaded', () => {
             const savedFilter = localStorage.getItem('savedFilter');
             const savedTimeFilter = localStorage.getItem('savedTimeFilter');
@@ -884,6 +901,22 @@
             renderTable();
             renderReport();
             updateKPIs();
+
+            // فحص الرابط أو الهاش للحفاظ على الصفحة الحالية عند الـ Refresh
+            const currentHash = window.location.hash;
+            if (currentHash === '#report') {
+                switchPage('report', document.querySelector('.sidebar-menu .menu-item[href="#report"]'));
+            } else {
+                switchPage('main', document.querySelector('.sidebar-menu .menu-item[href="#main"]'));
+            }
+        });
+
+        window.addEventListener('hashchange', () => {
+            if (window.location.hash === '#report') {
+                switchPage('report', null);
+            } else {
+                switchPage('main', null);
+            }
         });
 
         dbRef.on('value', (snapshot) => {
@@ -907,19 +940,27 @@
         });
 
         function switchPage(pageType, element) {
+            if (!element) {
+                element = document.querySelector(`.sidebar-menu .menu-item[href="#${pageType}"]`);
+            }
             document.querySelectorAll('.sidebar-menu .menu-item').forEach(el => el.classList.remove('active'));
             if (element) element.classList.add('active');
 
             const mainBody = document.getElementById('mainContentBody');
             const reportBody = document.getElementById('reportContentBody');
+            const headingTitle = document.getElementById('pageHeadingTitle');
 
             if (pageType === 'report') {
                 mainBody.classList.add('hidden');
                 reportBody.classList.remove('hidden');
+                headingTitle.innerText = 'صفحة الكشف والمتابعة الدورية';
+                window.location.hash = 'report';
                 renderReport();
             } else {
                 reportBody.classList.add('hidden');
                 mainBody.classList.remove('hidden');
+                headingTitle.innerText = 'لوحة تحكم تنسيق المواعيد';
+                window.location.hash = 'main';
             }
         }
 
@@ -1141,6 +1182,12 @@
             document.getElementById('clearPasswordInput').value = '';
         }
 
+        function openClearReportModal() { document.getElementById('clearReportModal').classList.add('open'); }
+        function closeClearReportModal() { 
+            document.getElementById('clearReportModal').classList.remove('open'); 
+            document.getElementById('clearReportPasswordInput').value = '';
+        }
+
         function openPasswordModal() { document.getElementById('passwordModal').classList.add('open'); }
         function closePasswordModal() { 
             document.getElementById('passwordModal').classList.remove('open');
@@ -1218,6 +1265,37 @@
 
             alert('تمت عملية المسح بنجاح!');
             closeClearModal();
+        }
+
+        function executeClearReportPeriod() {
+            const passInput = document.getElementById('clearReportPasswordInput').value;
+            const correctPass = localStorage.getItem('adminPassword');
+
+            if (passInput !== correctPass) {
+                alert('كلمة المرور غير صحيحة!');
+                return;
+            }
+
+            const hoursSelect = parseInt(document.getElementById('reportPeriodSelect').value) || 8;
+            const now = new Date();
+            const timeLimit = new Date(now.getTime() - (hoursSelect * 60 * 60 * 1000));
+
+            // حذف الحالات ضمن الفترة التي لم يتم معالجتها
+            records = records.filter(r => {
+                const created = new Date(r.createdAt);
+                const hasAction = (r.actionTaken && r.actionTaken.trim() !== '') || (r.adminContactMethod && r.adminContactMethod !== 'قيد الانتظار');
+                if (created >= timeLimit && !hasAction) {
+                    return false;
+                }
+                return true;
+            });
+
+            saveLocal();
+            renderTable();
+            renderReport();
+            updateKPIs();
+            alert('تم مسح وإزالة حالات هذه الفترة بنجاح!');
+            closeClearReportModal();
         }
 
         function setFilter(filterType, element) {
@@ -1347,7 +1425,7 @@
             tbody.innerHTML = '';
 
             let filteredRecords = filterRecordsList(records);
-            const sorted = [...filteredRecords].sort((a, b) => b.isRecurring - a.isRecurring || new Date(b.createdAt) - new Date(b.createdAt));
+            const sorted = [...filteredRecords].sort((a, b) => b.isRecurring - a.isRecurring || new Date(b.createdAt) - new Date(a.createdAt));
 
             sorted.forEach((record, index) => {
                 const currentAdminContact = record.adminContactMethod || 'قيد الانتظار';
@@ -1398,7 +1476,7 @@
                             <option value="تم التواصل" ${currentAdminContact === 'تم التواصل' ? 'selected' : ''}>تم التواصل ✅</option>
                             <option value="معلق" ${currentAdminContact === 'معلق' ? 'selected' : ''}>معلق 🟡</option>
                             <option value="لا يرد" ${currentAdminContact === 'لا يرد' ? 'selected' : ''}>لا يرد ❌</option>
-                            <option value="تم إلغاء الموعد" ${currentAdminContact === 'تم إلغاء الموعد' ? 'selected' : ''}>تم إلغاء الموعد 🚫</option>
+                            <option value="تم إلغاء الموعد" ${currentAdminContact === 'تم إلغاء الموعد' ? 'selected' : ''}>تم إلغاء الموعد 🚫</option> مفترض
                             <option value="أخرى" ${isOther ? 'selected' : ''}>أخرى</option>
                         </select>
                         <input type="text" class="table-input ${isOther ? '' : 'hidden'}" id="adminContactDetail_${record.firebaseKey}" value="${record.adminContactDetail || ''}" placeholder="اكتب تفاصيل التواصل..." style="margin-top: 4px;">
@@ -1422,19 +1500,25 @@
             const now = new Date();
             const timeLimit = new Date(now.getTime() - (hoursSelect * 60 * 60 * 1000));
 
-            // تصفية الحالات: ضمن الفترة الزمنية المحددة، ولم يتم عمل إجراء إداري عليها (قيد الانتظار ولم يتم التواصل)
+            // تصفية الحالات: ضمن الفترة، ولم تتم معالجتها
             const unprocessedRecords = records.filter(r => {
                 const created = new Date(r.createdAt);
                 const hasAction = (r.actionTaken && r.actionTaken.trim() !== '') || (r.adminContactMethod && r.adminContactMethod !== 'قيد الانتظار');
                 return created >= timeLimit && !hasAction;
             });
 
-            // منع تكرار الأسماء (أخذ أول ظهور لكل اسم فريد فقط)
+            // استبعاد العملاء المتضررين (منع تكرار الاسم، أو رقم الجوال، أو رقم الهوية)
             const uniqueMap = new Map();
             unprocessedRecords.forEach(r => {
                 const cleanName = (r.patientName || '').trim().toLowerCase();
-                if (cleanName && !uniqueMap.has(cleanName)) {
-                    uniqueMap.set(cleanName, r);
+                const cleanPhone = (r.patientPhone && r.patientPhone !== '-') ? r.patientPhone.replace(/\D/g, '') : '';
+                const cleanId = (r.idNumber && r.idNumber !== '-') ? r.idNumber.trim() : '';
+
+                // مفتاح فريد لمنع التكرار بناءً على الاسم أو الجوال أو الهوية
+                const uniqueKey = cleanPhone || cleanId || cleanName;
+
+                if (uniqueKey && !uniqueMap.has(uniqueKey)) {
+                    uniqueMap.set(uniqueKey, r);
                 }
             });
 
@@ -1466,30 +1550,6 @@
             navigator.clipboard.writeText(container.innerText).then(() => {
                 alert('تم نسخ الكشف كاملاً بنجاح! ✓');
             });
-        }
-
-        function clearCurrentReportPeriod() {
-            const hoursSelect = parseInt(document.getElementById('reportPeriodSelect').value) || 8;
-            if (!confirm(`⚠️ هل أنت متأكد من حذف وإزالة جميع الحالات المعروضة في هذه الفترة (${hoursSelect} ساعات)؟`)) return;
-
-            const now = new Date();
-            const timeLimit = new Date(now.getTime() - (hoursSelect * 60 * 60 * 1000));
-
-            // حذف السجلات الواقعة في هذه الفترة ولم يتم معالجتها
-            records = records.filter(r => {
-                const created = new Date(r.createdAt);
-                const hasAction = (r.actionTaken && r.actionTaken.trim() !== '') || (r.adminContactMethod && r.adminContactMethod !== 'قيد الانتظار');
-                if (created >= timeLimit && !hasAction) {
-                    return false; // حذف
-                }
-                return true;
-            });
-
-            saveLocal();
-            renderTable();
-            renderReport();
-            updateKPIs();
-            alert('تمت صفحة الكشف وإزالة الحالات بنجاح!');
         }
 
         function saveAdminUpdate(key) {
