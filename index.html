@@ -403,6 +403,7 @@
         .badge-priority { background-color: var(--accent-purple); margin-bottom: 4px; }
         .badge-repeated { background-color: #e11d48; margin-bottom: 4px; }
         
+        /* شارة نوع الإجراء العادية */
         .badge-procedure {
             background-color: var(--primary-color) !important;
             color: #ffffff !important;
@@ -413,6 +414,7 @@
             display: inline-block;
         }
 
+        /* شارة مخصصة لتمييز نوع إجراء الزراعة بلون فريد ومميز */
         .badge-procedure-plant {
             background-color: #0d9488 !important;
             color: #ffffff !important;
@@ -640,8 +642,8 @@
                             </div>
                             <div class="input-field full-width">
                                 <label class="priority-checkbox">
-                                    <input type="checkbox" id="isRecurring" onchange="verifyPriorityPassword(this)">
-                                    <span>إعطاء أولوية ⭐ (محمي بكلمة مرور الإدارة)</span>
+                                    <input type="checkbox" id="isRecurring">
+                                    <span>إعطاء أولوية ⭐</span>
                                 </label>
                             </div>
                         </div>
@@ -808,7 +810,7 @@
                     <div class="input-field"><label>موعد بطلب من العميل (اختياري)</label><input type="datetime-local" id="editAppointmentDateTime"></div>
                     <div class="input-field full-width"><label>الخدمة المطلوبة / تفاصيل الطلب *</label><textarea id="editServiceRequired" required rows="3"></textarea></div>
                     <div class="input-field full-width">
-                        <label class="priority-checkbox"><input type="checkbox" id="editIsRecurring" onchange="verifyPriorityPasswordEdit(this)"><span>إعطاء أولوية ⭐ (محمي بكلمة المرور)</span></label>
+                        <label class="priority-checkbox"><input type="checkbox" id="editIsRecurring"><span>إعطاء أولوية ⭐</span></label>
                     </div>
                 </div>
                 <button type="submit" class="submit-btn" style="margin-top: 15px;"><i class="fa-solid fa-floppy-disk"></i> حفظ التعديلات</button>
@@ -912,26 +914,6 @@
         function toggleOtherProcedureInput() {
             const proc = document.getElementById('procedureType').value;
             document.getElementById('otherProcedureGroup').classList.toggle('hidden', proc !== 'أخرى');
-        }
-
-        function verifyPriorityPassword(checkbox) {
-            if (checkbox.checked) {
-                const pass = prompt('أدخل كلمة المرور الخاصة بالإدارة لتفعيل الأولوية:');
-                if (pass !== localStorage.getItem('adminPassword')) {
-                    alert('كلمة المرور غير صحيحة!');
-                    checkbox.checked = false;
-                }
-            }
-        }
-
-        function verifyPriorityPasswordEdit(checkbox) {
-            if (checkbox.checked) {
-                const pass = prompt('أدخل كلمة المرور الخاصة بالإدارة لتفعيل الأولوية:');
-                if (pass !== localStorage.getItem('adminPassword')) {
-                    alert('كلمة المرور غير صحيحة!');
-                    checkbox.checked = false;
-                }
-            }
         }
 
         document.getElementById('appointmentForm').addEventListener('submit', function(e) {
@@ -1245,7 +1227,7 @@
             if (hasAction) {
                 if (adminContactMethod === 'تم إلغاء الموعد') return { text: 'تم الإلغاء', class: 'badge-canceled' };
                 if (adminContactMethod === 'معلق') return { text: 'معلق', class: 'badge-pending' };
-                if (adminContactMethod === 'قيد الاجراء') return { text: 'قيد الاجراء', class: 'badge-pending' };
+                if (adminContactMethod === 'لا يرد') return { text: 'لا يرد', class: 'badge-pending' };
                 return { text: 'تم الإجراء', class: 'badge-done' };
             }
             
@@ -1358,8 +1340,8 @@
                         <select class="table-input" id="adminContact_${record.firebaseKey}" onchange="handleAdminContactChange('${record.firebaseKey}')">
                             <option value="قيد الانتظار" ${currentAdminContact === 'قيد الانتظار' ? 'selected' : ''}>قيد الانتظار ⏳</option>
                             <option value="تم التواصل" ${currentAdminContact === 'تم التواصل' ? 'selected' : ''}>تم التواصل ✅</option>
-                            <option value="قيد الاجراء" ${currentAdminContact === 'قيد الاجراء' ? 'selected' : ''}>قيد الاجراء 🔄</option>
                             <option value="معلق" ${currentAdminContact === 'معلق' ? 'selected' : ''}>معلق 🟡</option>
+                            <option value="لا يرد" ${currentAdminContact === 'لا يرد' ? 'selected' : ''}>لا يرد ❌</option>
                             <option value="تم إلغاء الموعد" ${currentAdminContact === 'تم إلغاء الموعد' ? 'selected' : ''}>تم إلغاء الموعد 🚫</option>
                             <option value="أخرى" ${isOther ? 'selected' : ''}>أخرى</option>
                         </select>
