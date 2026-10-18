@@ -353,7 +353,7 @@
         .action-btn.copy-btn { background-color: #0d9488; }
         .action-btn.restore-btn { background-color: #d97706; }
 
-        /* Filter Box */
+        /* Filter Box - تصميم احترافي على صفين */
         .filter-container-box {
             background: var(--bg-base);
             border: 1px solid var(--border-color);
@@ -366,11 +366,11 @@
         }
 
         .filter-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-        .filter-label { font-size: 0.85rem; font-weight: 700; color: var(--text-muted); min-width: 90px; display: flex; align-items: center; gap: 6px; }
+        .filter-label { font-size: 0.85rem; font-weight: 700; color: var(--text-muted); min-width: 95px; display: flex; align-items: center; gap: 6px; }
 
         .filter-tabs { display: flex; gap: 8px; flex-wrap: wrap; }
         .filter-tab {
-            padding: 7px 15px; border-radius: 20px; border: 1px solid var(--border-color); background: var(--bg-surface); color: var(--text-main); font-family: var(--font-family); font-size: 0.83rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;
+            padding: 7px 14px; border-radius: 20px; border: 1px solid var(--border-color); background: var(--bg-surface); color: var(--text-main); font-family: var(--font-family); font-size: 0.82rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;
         }
         .filter-tab:hover { border-color: var(--primary-color); color: var(--primary-color); }
         .filter-tab.active { background-color: var(--primary-color); color: white; border-color: var(--primary-color); }
@@ -405,13 +405,32 @@
 
         .status-badge { padding: 4px 10px; border-radius: 20px; font-size: 0.78rem; font-weight: 700; color: #fff; display: inline-block; }
         .badge-new { background-color: var(--success-color); }
-        .badge-procedure { background-color: var(--primary-color); color: #fff; padding: 4px 10px; border-radius: 20px; font-size: 0.78rem; font-weight: 700; display: inline-block; }
+        
+        /* لون مميز لحالة الزراعة */
+        .badge-procedure-plant { 
+            background-color: #0d9488; 
+            color: #fff; 
+            padding: 4px 10px; 
+            border-radius: 20px; 
+            font-size: 0.78rem; 
+            font-weight: 700; 
+            display: inline-block; 
+            box-shadow: 0 0 8px rgba(13, 148, 136, 0.4);
+        }
+        .badge-procedure { 
+            background-color: var(--primary-color); 
+            color: #fff; 
+            padding: 4px 10px; 
+            border-radius: 20px; 
+            font-size: 0.78rem; 
+            font-weight: 700; 
+            display: inline-block; 
+        }
 
         .table-input {
             width: 100%; padding: 8px; border: 1px solid var(--border-color); border-radius: var(--radius-md); background: var(--bg-surface); color: var(--text-main); font-family: var(--font-family); font-size: 0.88rem;
         }
         
-        /* خلية تفاصيل الطلب */
         .service-cell-box {
             width: 230px;
             white-space: pre-wrap;
@@ -437,6 +456,30 @@
         }
         .row-priority-pulse {
             animation: urgentPulse 1.8s infinite ease-in-out;
+        }
+
+        /* تصميم الإشعار التنبيهي عند إضافة عميل */
+        #notificationToast {
+            position: fixed;
+            bottom: 25px;
+            left: 25px;
+            background-color: var(--success-color);
+            color: #fff;
+            padding: 14px 20px;
+            border-radius: var(--radius-md);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            z-index: 9999;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+        #notificationToast.show {
+            transform: translateY(0);
+            opacity: 1;
         }
 
         .client-text-block {
@@ -466,6 +509,12 @@
     </style>
 </head>
 <body>
+
+    <!-- إشعار تنبيهي فوري للإضافة -->
+    <div id="notificationToast">
+        <i class="fa-solid fa-circle-check" style="font-size: 1.2rem;"></i>
+        <span id="toastMessage">تمت إضافة عميل جديد بنجاح!</span>
+    </div>
 
     <div class="app-layout" id="appLayout">
         
@@ -648,18 +697,28 @@
                             </div>
                         </div>
 
-                        <!-- الفلاتر المعاد إضافتها لصفحة مؤشر الأداء وجدول المواعيد -->
+                        <!-- فلاتر احترافية على صفين -->
                         <div class="filter-container-box">
+                            <!-- الصف الأول: الحالات وأنواع الإجراءات -->
                             <div class="filter-row">
-                                <span class="filter-label"><i class="fa-solid fa-filter"></i> فلاتر الجدول:</span>
-                                <div class="filter-tabs" id="dashboardFilterTabs">
+                                <span class="filter-label"><i class="fa-solid fa-filter"></i> فلاتر الحالات:</span>
+                                <div class="filter-tabs">
                                     <button class="filter-tab active" onclick="setDashboardFilter('all', this)">الكل</button>
-                                    <button class="filter-tab" onclick="setDashboardFilter('today', this)">اليوم</button>
-                                    <button class="filter-tab" onclick="setDashboardFilter('week', this)">الأسبوع</button>
-                                    <button class="filter-tab" onclick="setDashboardFilter('month', this)">الشهر</button>
                                     <button class="filter-tab" onclick="setDashboardFilter('priority', this)">حالات ذات أولوية ⭐</button>
-                                    <button class="filter-tab" onclick="setDashboardFilter('repeated', this)">الطلبات المتكررة 🔄</button>
+                                    <button class="filter-tab" onclick="setDashboardFilter('repeated', this)">طلبات متكررة 🔄</button>
                                     <button class="filter-tab" onclick="setDashboardFilter('plants', this)">حالات الزراعة 🦷</button>
+                                    <button class="filter-tab" onclick="setDashboardFilter('extraction', this)">حالات الخلع 🩺</button>
+                                    <button class="filter-tab" onclick="setDashboardFilter('review', this)">حالات المراجعة 📋</button>
+                                </div>
+                            </div>
+                            <!-- الصف الثاني: الفلاتر الزمنية -->
+                            <div class="filter-row" style="border-top: 1px dashed var(--border-color); padding-top: 10px;">
+                                <span class="filter-label"><i class="fa-solid fa-clock"></i> النطاق الزمني:</span>
+                                <div class="filter-tabs">
+                                    <button class="filter-tab active" onclick="setDashboardTimeFilter('all', this)">كل الأوقات</button>
+                                    <button class="filter-tab" onclick="setDashboardTimeFilter('today', this)">اليوم</button>
+                                    <button class="filter-tab" onclick="setDashboardTimeFilter('week', this)">الأسبوع</button>
+                                    <button class="filter-tab" onclick="setDashboardTimeFilter('month', this)">الشهر</button>
                                 </div>
                             </div>
                         </div>
@@ -806,7 +865,7 @@
         </div>
     </div>
 
-    <!-- نافذة تعديل بيانات العميل مع خيار الأولوية ⭐ -->
+    <!-- نافذة تعديل بيانات العميل مع التحقق بباسورد الموقع لخيار الأولوية -->
     <div class="modal" id="editModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -867,11 +926,10 @@
                         <label>الخدمة المطلوبة / تفاصيل المشكلة والطلب *</label>
                         <textarea id="editServiceRequired" required></textarea>
                     </div>
-                    <!-- خيار الأولوية المضاف داخل نموذج التعديل -->
                     <div class="input-field full-width">
                         <label class="priority-checkbox">
-                            <input type="checkbox" id="editIsRecurring">
-                            <span>تعيين كحالة ذات أولوية ⭐</span>
+                            <input type="checkbox" id="editIsRecurring" onchange="checkEditPriorityAuth(this)">
+                            <span>تعيين كحالة ذات أولوية ⭐ (يتطلب باسورد الإدارة)</span>
                         </label>
                     </div>
                 </div>
@@ -892,6 +950,7 @@
         let deletedRecords = [];
         let clientDeletedRecords = [];
         let dashboardFilter = 'all';
+        let dashboardTimeFilter = 'all';
         let clientHoursFilter = 'all';
 
         if (!localStorage.getItem('adminPassword')) {
@@ -995,6 +1054,16 @@
             saveLocal();
         });
 
+        /* إشعار تنبيهي للإضافة الناجحة */
+        function showToast(message) {
+            const toast = document.getElementById('notificationToast');
+            document.getElementById('toastMessage').innerText = message;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3500);
+        }
+
         let pendingPriorityCheckbox = null;
         function checkPriorityAuth(checkbox) {
             if (checkbox.checked) {
@@ -1005,10 +1074,27 @@
             }
         }
 
+        let pendingEditPriorityCheckbox = null;
+        function checkEditPriorityAuth(checkbox) {
+            if (checkbox.checked) {
+                pendingEditPriorityCheckbox = checkbox;
+                checkbox.checked = false;
+                document.getElementById('authPassInput').value = '';
+                document.getElementById('passAuthModal').classList.add('open');
+            }
+        }
+
         function confirmPriorityAuth() {
             const pass = document.getElementById('authPassInput').value;
             if (pass === localStorage.getItem('adminPassword')) {
-                if (pendingPriorityCheckbox) pendingPriorityCheckbox.checked = true;
+                if (pendingPriorityCheckbox) {
+                    pendingPriorityCheckbox.checked = true;
+                    pendingPriorityCheckbox = null;
+                }
+                if (pendingEditPriorityCheckbox) {
+                    pendingEditPriorityCheckbox.checked = true;
+                    pendingEditPriorityCheckbox = null;
+                }
                 document.getElementById('passAuthModal').classList.remove('open');
             } else {
                 alert('كلمة المرور غير صحيحة!');
@@ -1017,7 +1103,14 @@
 
         function cancelPriorityAuth() {
             document.getElementById('passAuthModal').classList.remove('open');
-            if (pendingPriorityCheckbox) pendingPriorityCheckbox.checked = false;
+            if (pendingPriorityCheckbox) {
+                pendingPriorityCheckbox.checked = false;
+                pendingPriorityCheckbox = null;
+            }
+            if (pendingEditPriorityCheckbox) {
+                pendingEditPriorityCheckbox.checked = false;
+                pendingEditPriorityCheckbox = null;
+            }
         }
 
         document.getElementById('appointmentForm').addEventListener('submit', function(e) {
@@ -1069,18 +1162,25 @@
             }
 
             this.reset();
-            alert('تم حفظ الموعد بنجاح وإضافته في الأعلى!');
+            showToast('تمت إضافة العميل والموعد الجديد بنجاح!');
         });
 
         /* فلاتر الجدول الأساسي */
         function setDashboardFilter(filterType, btn) {
             dashboardFilter = filterType;
-            btn.closest('.filter-tabs').querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+            btn.closest('.filter-row').querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
             btn.classList.add('active');
             renderTable();
         }
 
-        /* جدول المواعيد مع تطبيق الفلاتر والترتيب التسلسلي الصحيح */
+        function setDashboardTimeFilter(timeType, btn) {
+            dashboardTimeFilter = timeType;
+            btn.closest('.filter-row').querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+            btn.classList.add('active');
+            renderTable();
+        }
+
+        /* جدول المواعيد مع شارة الحالات المتكررة والفلترة على صفين */
         function renderTable() {
             const tbody = document.getElementById('tableBody');
             if (!tbody) return;
@@ -1089,35 +1189,42 @@
             let filteredList = [...records];
             const now = new Date();
 
-            if (dashboardFilter === 'today') {
-                filteredList = filteredList.filter(r => {
-                    const d = new Date(r.createdAt);
-                    return d.toDateString() === now.toDateString();
-                });
-            } else if (dashboardFilter === 'week') {
-                filteredList = filteredList.filter(r => {
-                    const diffTime = now - new Date(r.createdAt);
-                    return diffTime <= 7 * 24 * 60 * 60 * 1000;
-                });
-            } else if (dashboardFilter === 'month') {
-                filteredList = filteredList.filter(r => {
-                    const d = new Date(r.createdAt);
-                    return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
-                });
-            } else if (dashboardFilter === 'priority') {
+            // تطبيق فلتر الحالات والنوع
+            if (dashboardFilter === 'priority') {
                 filteredList = filteredList.filter(r => r.isRecurring);
             } else if (dashboardFilter === 'repeated') {
                 filteredList = filteredList.filter(r => r.isRepeatedRequest);
             } else if (dashboardFilter === 'plants') {
                 filteredList = filteredList.filter(r => r.procedureType && r.procedureType.includes('زراعة'));
+            } else if (dashboardFilter === 'extraction') {
+                filteredList = filteredList.filter(r => r.procedureType && r.procedureType.includes('خلع'));
+            } else if (dashboardFilter === 'review') {
+                filteredList = filteredList.filter(r => r.procedureType && r.procedureType.includes('مراجعه'));
             }
 
-            // ترتيب دقيق وتنازلي حسب تاريخ الإضافة مع تثبيت الأولوية
+            // تطبيق الفلتر الزمني
+            if (dashboardTimeFilter === 'today') {
+                filteredList = filteredList.filter(r => {
+                    const d = new Date(r.createdAt);
+                    return d.toDateString() === now.toDateString();
+                });
+            } else if (dashboardTimeFilter === 'week') {
+                filteredList = filteredList.filter(r => {
+                    const diffTime = now - new Date(r.createdAt);
+                    return diffTime <= 7 * 24 * 60 * 60 * 1000;
+                });
+            } else if (dashboardTimeFilter === 'month') {
+                filteredList = filteredList.filter(r => {
+                    const d = new Date(r.createdAt);
+                    return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+                });
+            }
+
             filteredList.sort((a, b) => {
                 if (b.isRecurring !== a.isRecurring) {
                     return (b.isRecurring === true) - (a.isRecurring === true);
                 }
-                return new Date(b.createdAt) - new Date(a.createdAt);
+                return new Date(b.createdAt) - new Date(b.createdAt); // الترتيب تصاعدي صحيح للإضافات
             });
 
             filteredList.forEach((record, index) => {
@@ -1131,17 +1238,24 @@
                 const selectVal = isOther ? 'أخرى' : currentContact;
                 const otherDetail = isOther ? currentContact : (record.adminContactDetail || '');
 
+                // تصميم نوع الإجراء مع تمييز الزراعـة بلون خاص
+                let procBadgeClass = 'badge-procedure';
+                if (record.procedureType && record.procedureType.includes('زراعة')) {
+                    procBadgeClass = 'badge-procedure-plant';
+                }
+
                 tr.innerHTML = `
                     <td>${index + 1}</td>
                     <td>${formatDateOnly(record.createdAt)}</td>
                     <td>
-                        ${record.isRecurring ? '<span class="status-badge badge-priority" style="background-color: var(--accent-purple); color:#fff; padding:3px 8px; border-radius:10px; font-size:0.75rem;">⭐ أولوية</span><br>' : ''}
+                        ${record.isRecurring ? '<span class="status-badge" style="background-color: var(--accent-purple); color:#fff; padding:3px 8px; border-radius:10px; font-size:0.75rem; margin-bottom:3px; display:inline-block;">⭐ أولوية</span><br>' : ''}
+                        ${record.isRepeatedRequest ? '<span class="status-badge" style="background-color: #e11d48; color:#fff; padding:3px 8px; border-radius:10px; font-size:0.75rem; margin-bottom:3px; display:inline-block;">🔄 متكررة</span><br>' : ''}
                         <span class="status-badge badge-new">${selectVal}</span>
                     </td>
                     <td><strong>${record.patientName}</strong></td>
                     <td>${record.patientPhone}</td>
                     <td>${record.fileNumber || '-'}</td>
-                    <td><span class="badge-procedure">${record.procedureType || '-'}</span></td>
+                    <td><span class="${procBadgeClass}">${record.procedureType || '-'}</span></td>
                     <td><div class="service-cell-box">${record.serviceRequired}</div></td>
                     <td>${record.coordinatorName}</td>
                     <td>
@@ -1203,7 +1317,6 @@
             alert('تم التحديث بنجاح!');
         }
 
-        /* نافذة التعديل مع خانة الأولوية ⭐ */
         function openEditModal(key) {
             const rec = records.find(r => r.firebaseKey === key);
             if (!rec) return;
@@ -1218,7 +1331,7 @@
             document.getElementById('editCoordinatorName').value = rec.coordinatorName || '';
             document.getElementById('editProcedureType').value = rec.procedureType || 'مراجعه';
             document.getElementById('editServiceRequired').value = rec.serviceRequired || '';
-            document.getElementById('editIsRecurring').checked = !!rec.isRecurring; // تفعيل حالة الأولوية في التعديل
+            document.getElementById('editIsRecurring').checked = !!rec.isRecurring;
 
             document.getElementById('editModal').classList.add('open');
         }
@@ -1242,7 +1355,7 @@
             rec.coordinatorName = document.getElementById('editCoordinatorName').value.trim();
             rec.procedureType = document.getElementById('editProcedureType').value;
             rec.serviceRequired = document.getElementById('editServiceRequired').value.trim();
-            rec.isRecurring = document.getElementById('editIsRecurring').checked; // حفظ حالة الأولوية المحدثة
+            rec.isRecurring = document.getElementById('editIsRecurring').checked;
 
             saveLocal();
             renderTable();
