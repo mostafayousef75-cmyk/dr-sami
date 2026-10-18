@@ -432,9 +432,6 @@
             white-space: nowrap;
         }
 
-        .whatsapp-link { color: #25d366; text-decoration: none; font-weight: bold; display: inline-flex; align-items: center; gap: 4px; cursor: pointer; }
-        .whatsapp-link:hover { text-decoration: underline; }
-
         .copy-phone-btn {
             background: var(--bg-base);
             border: 1px solid var(--border-color);
@@ -918,7 +915,7 @@
 
         document.getElementById('appointmentForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            const patientNameVal = document.getElementById('patientName').value.trim();
+            const patientNameVal = document.getElementById('patientName').value.trim().replace(/\s+/g, ' ');
             const patientPhoneVal = document.getElementById('patientPhone').value.trim() || '-';
             const cleanNewPhone = patientPhoneVal !== '-' ? patientPhoneVal.replace(/\D/g, '') : '';
 
@@ -990,6 +987,7 @@
                         if (Array.isArray(importedArray)) {
                             importedArray.forEach(item => {
                                 const cleanItem = { ...item };
+                                if(cleanItem.patientName) cleanItem.patientName = cleanItem.patientName.replace(/\s+/g, ' ');
                                 const originalKey = cleanItem.firebaseKey && !cleanItem.firebaseKey.startsWith('local_') ? cleanItem.firebaseKey : null;
                                 delete cleanItem.firebaseKey;
 
@@ -1029,8 +1027,9 @@
                         const jsonArr = XLSX.utils.sheet_to_json(worksheet);
 
                         jsonArr.forEach(row => {
+                            const rawName = row["اسم العميل"] || row["PatientName"] || "مستورد";
                             const newRec = {
-                                patientName: row["اسم العميل"] || row["PatientName"] || "مستورد",
+                                patientName: String(rawName).replace(/\s+/g, ' '),
                                 patientPhone: String(row["الجوال"] || row["الهاتف"] || row["Phone"] || "-"),
                                 fileNumber: String(row["رقم الملف"] || "-"),
                                 idNumber: String(row["رقم الهوية"] || "-"),
@@ -1234,15 +1233,6 @@
             return { text: 'جديد', class: 'badge-new' };
         }
 
-        function formatWhatsAppNumber(phone) {
-            if (!phone) return '';
-            let cleaned = phone.replace(/\D/g, '');
-            if (cleaned.startsWith('01')) return '20' + cleaned.slice(1);
-            if (cleaned.startsWith('05')) return '966' + cleaned.slice(1);
-            if (cleaned.startsWith('00')) return cleaned.slice(2);
-            return cleaned;
-        }
-
         function formatDateOnly(isoString) {
             if (!isoString) return '-';
             try {
@@ -1298,7 +1288,6 @@
                 const currentAdminContact = record.adminContactMethod || 'قيد الانتظار';
                 const status = getStatusDetails(record.createdAt, record.actionTaken, currentAdminContact);
                 const hasPhone = record.patientPhone && record.patientPhone !== '-';
-                const formattedPhone = hasPhone ? formatWhatsAppNumber(record.patientPhone) : '';
                 const isOther = currentAdminContact === 'أخرى' || currentAdminContact.startsWith('أخرى');
 
                 const tr = document.createElement('tr');
@@ -1311,6 +1300,8 @@
                 const isPlantProcedure = record.procedureType && record.procedureType.includes('زراعة');
                 const procedureBadgeClass = isPlantProcedure ? 'badge-procedure-plant' : 'badge-procedure';
                 const formattedDate = formatDateOnly(record.createdAt);
+                
+                const cleanName = record.patientName ? record.patientName.replace(/\s+/g, ' ') : '';
 
                 tr.innerHTML = `
                     <td style="text-align: center; font-weight: 700; color: var(--text-muted);">${index + 1}</td>
@@ -1320,11 +1311,11 @@
                         ${record.isRepeatedRequest ? '<span class="status-badge badge-repeated">🔄 طلب متكرر</span><br>' : ''}
                         <span class="status-badge ${status.class}">${status.text}</span>
                     </td>
-                    <td><strong>${record.patientName}</strong></td>
+                    <td><strong style="white-space: nowrap; display: inline-block;">${cleanName}</strong></td>
                     <td>
                         ${hasPhone ? `
                             <div class="phone-cell-wrapper">
-                                <a href="https://wa.me/${formattedPhone}" target="_blank" class="whatsapp-link" title="انقر لفتح واتساب"><i class="fa-brands fa-whatsapp"></i> ${record.patientPhone}</a>
+                                <span style="font-weight: 700;">${record.patientPhone}</span>
                                 <button class="copy-phone-btn" onclick="copyPhoneNumber('${record.patientPhone}', event)" title="نسخ الرقم"><i class="fa-solid fa-copy"></i></button>
                             </div>
                         ` : '<span style="color: var(--text-muted);">-</span>'}
@@ -1415,8 +1406,9 @@
         document.getElementById('editForm').addEventListener('submit', function(e) {
             e.preventDefault();
             const key = document.getElementById('editFirebaseKey').value;
+            const updatedNameVal = document.getElementById('editPatientName').value.trim().replace(/\s+/g, ' ');
             const updatedData = {
-                patientName: document.getElementById('editPatientName').value,
+                patientName: updatedNameVal,
                 patientPhone: document.getElementById('editPatientPhone').value.trim() || '-',
                 fileNumber: document.getElementById('editFileNumber').value || '-',
                 idNumber: document.getElementById('editIdNumber').value || '-',
