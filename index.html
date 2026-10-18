@@ -328,6 +328,7 @@
         .action-btn.import { background-color: #0284c7; }
         .action-btn.clear-all { background-color: #dc2626; }
         .action-btn.settings { background-color: #475569; }
+        .action-btn.report-page { background-color: #0d9488; }
 
         .filter-container-box {
             background: var(--bg-base);
@@ -656,6 +657,7 @@
                     <div class="actions-toolbar">
                         <button class="action-btn excel" onclick="exportToExcel()"><i class="fa-solid fa-file-excel"></i> تصدير Excel</button>
                         <button class="action-btn json" onclick="exportToJSON()"><i class="fa-solid fa-file-code"></i> تصدير JSON</button>
+                        <button class="action-btn report-page" onclick="openReportPage()"><i class="fa-solid fa-file-lines"></i> صفحة الكشف المستقلة</button>
                         <label class="action-btn import">
                             <i class="fa-solid fa-file-import"></i> استيراد ملف (Excel / JSON)
                             <input type="file" id="importFile" accept=".json,.xlsx,.xls" onchange="importData(event)" hidden>
@@ -723,6 +725,22 @@
 
             </div>
         </main>
+    </div>
+
+    <!-- نافذة صفحة الكشف المستقلة -->
+    <div class="modal" id="reportModal" style="z-index: 300;">
+        <div class="modal-content" style="max-width: 900px; width: 95%; max-height: 85vh;">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-file-lines"></i> صفحة الكشفيات المستقلة للنسخ</h3>
+                <button class="close-modal-btn" onclick="closeReportPage()">&times;</button>
+            </div>
+            <div style="margin-bottom: 15px; display: flex; gap: 10px;">
+                <button class="action-btn excel" onclick="copyReportText()"><i class="fa-solid fa-copy"></i> نسخ الكشفيات نصياً</button>
+            </div>
+            <div id="reportContentArea" style="background: var(--bg-base); padding: 15px; border-radius: var(--radius-md); max-height: 50vh; overflow-y: auto; white-space: pre-wrap; font-family: var(--font-family); font-size: 0.95rem; line-height: 1.6;">
+                جاري التحميل...
+            </div>
+        </div>
     </div>
 
     <!-- نوافذ الحوار (Modals) -->
@@ -932,6 +950,35 @@
                     checkbox.checked = false;
                 }
             }
+        }
+
+        function openReportPage() {
+            const modal = document.getElementById('reportModal');
+            const area = document.getElementById('reportContentArea');
+            let textOutput = "📋 كشفيات ومتابعات مجمع ماجستي الطبي - د. سامي\n=====================================\n\n";
+            
+            let filtered = filterRecordsList(records);
+            filtered.forEach((r, idx) => {
+                textOutput += `${idx + 1}- العميل: ${r.patientName} | الجوال: ${r.patientPhone} | الملف: ${r.fileNumber}\n`;
+                textOutput += `الفرع: ${r.branch} | الإجراء: ${r.procedureType || '-'} | المنسق: ${r.coordinatorName}\n`;
+                textOutput += `الخدمة/الطلب: ${r.serviceRequired}\n`;
+                textOutput += `تواصل الإدارة: ${r.adminContactMethod || 'قيد الانتظار'} | الإجراء: ${r.actionTaken || '-'}\n`;
+                textOutput += `-------------------------------------\n`;
+            });
+
+            area.innerText = textOutput;
+            modal.classList.add('open');
+        }
+
+        function closeReportPage() {
+            document.getElementById('reportModal').classList.remove('open');
+        }
+
+        function copyReportText() {
+            const areaText = document.getElementById('reportContentArea').innerText;
+            navigator.clipboard.writeText(areaText).then(() => {
+                alert('تم نسخ الكشفيات بنجاح! يمكنك لصقها في أي مكان.');
+            });
         }
 
         document.getElementById('appointmentForm').addEventListener('submit', function(e) {
