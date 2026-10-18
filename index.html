@@ -395,9 +395,11 @@
         table th, table td { padding: 12px 10px; text-align: right; border-bottom: 1px solid var(--border-color); vertical-align: top; }
 
         .status-badge { padding: 4px 10px; border-radius: 20px; font-size: 0.78rem; font-weight: 700; color: #fff; display: inline-block; }
-        .badge-normal { background-color: var(--success-color); }
-        .badge-24h { background-color: var(--warning-color); }
-        .badge-48h { background-color: var(--danger-color); }
+        .badge-new { background-color: var(--success-color); }
+        .badge-done { background-color: #0284c7; }
+        .badge-pending { background-color: var(--warning-color); }
+        .badge-canceled { background-color: var(--danger-color); }
+        
         .badge-priority { background-color: var(--accent-purple); margin-bottom: 4px; }
         .badge-repeated { background-color: #e11d48; margin-bottom: 4px; }
         
@@ -700,7 +702,7 @@
                             <thead>
                                 <tr>
                                     <th>م</th>
-                                    <th>تاريخ ووقت الإضافة</th>
+                                    <th>تاريخ الإضافة</th>
                                     <th>الحالة والأولوية</th>
                                     <th>العميل</th>
                                     <th>رقم الجوال (واتساب / نسخ)</th>
@@ -1219,12 +1221,17 @@
             return res;
         }
 
-        function getDelayStatus(createdAt, actionTaken) {
-            if (actionTaken && actionTaken.trim() !== '') return { text: 'تم الإجراء', class: 'badge-normal' };
-            const diffHours = (new Date() - new Date(createdAt)) / (1000 * 60 * 60);
-            if (diffHours >= 48) return { text: 'تأخير +48 ساعة', class: 'badge-48h' };
-            if (diffHours >= 24) return { text: 'تأخير +24 ساعة', class: 'badge-24h' };
-            return { text: 'جديد', class: 'badge-normal' };
+        function getStatusDetails(createdAt, actionTaken, adminContactMethod) {
+            const hasAction = (actionTaken && actionTaken.trim() !== '') || (adminContactMethod && adminContactMethod !== 'قيد الانتظار');
+            
+            if (hasAction) {
+                if (adminContactMethod === 'تم إلغاء الموعد') return { text: 'تم الإلغاء', class: 'badge-canceled' };
+                if (adminContactMethod === 'معلق') return { text: 'معلق', class: 'badge-pending' };
+                if (adminContactMethod === 'لا يرد') return { text: 'لا يرد', class: 'badge-pending' };
+                return { text: 'تم الإجراء', class: 'badge-done' };
+            }
+            
+            return { text: 'جديد', class: 'badge-new' };
         }
 
         function formatWhatsAppNumber(phone) {
@@ -1236,7 +1243,7 @@
             return cleaned;
         }
 
-        function formatDateTime(isoString) {
+        function formatDateOnly(isoString) {
             if (!isoString) return '-';
             try {
                 const date = new Date(isoString);
@@ -1244,9 +1251,7 @@
                 const yyyy = date.getFullYear();
                 const mm = String(date.getMonth() + 1).padStart(2, '0');
                 const dd = String(date.getDate()).padStart(2, '0');
-                const hh = String(date.getHours()).padStart(2, '0');
-                const min = String(date.getMinutes()).padStart(2, '0');
-                return `${yyyy}-${mm}-${dd} ${hh}:${min}`;
+                return `${yyyy}-${mm}-${dd}`;
             } catch (e) {
                 return isoString;
             }
@@ -1290,26 +1295,26 @@
             const sorted = [...filteredRecords].sort((a, b) => b.isRecurring - a.isRecurring || new Date(b.createdAt) - new Date(a.createdAt));
 
             sorted.forEach((record, index) => {
-                const status = getDelayStatus(record.createdAt, record.actionTaken);
+                const currentAdminContact = record.adminContactMethod || 'قيد الانتظار';
+                const status = getStatusDetails(record.createdAt, record.actionTaken, currentAdminContact);
                 const hasPhone = record.patientPhone && record.patientPhone !== '-';
                 const formattedPhone = hasPhone ? formatWhatsAppNumber(record.patientPhone) : '';
-                const currentAdminContact = record.adminContactMethod || 'قيد الانتظار';
                 const isOther = currentAdminContact === 'أخرى' || currentAdminContact.startsWith('أخرى');
 
                 const tr = document.createElement('tr');
                 
-                const isUrgentAndNew = record.isRecurring && (!record.actionTaken || record.actionTaken.trim() === '');
+                const isUrgentAndNew = record.isRecurring && status.text === 'جديد';
                 if (isUrgentAndNew) {
                     tr.classList.add('row-urgent-new');
                 }
 
                 const isPlantProcedure = record.procedureType && record.procedureType.includes('زراعة');
                 const procedureBadgeClass = isPlantProcedure ? 'badge-procedure-plant' : 'badge-procedure';
-                const formattedCreatedAt = formatDateTime(record.createdAt);
+                const formattedDate = formatDateOnly(record.createdAt);
 
                 tr.innerHTML = `
                     <td style="text-align: center; font-weight: 700; color: var(--text-muted);">${index + 1}</td>
-                    <td style="white-space: nowrap; font-size: 0.82rem; color: var(--text-muted);">${formattedCreatedAt}</td>
+                    <td style="white-space: nowrap; font-size: 0.85rem; color: var(--text-muted);">${formattedDate}</td>
                     <td>
                         ${record.isRecurring ? '<span class="status-badge badge-priority">⭐ أولوية</span><br>' : ''}
                         ${record.isRepeatedRequest ? '<span class="status-badge badge-repeated">🔄 طلب متكرر</span><br>' : ''}
@@ -1462,7 +1467,8 @@
             let c24 = 0, c48 = 0;
             const now = new Date();
             records.forEach(r => {
-                if (!r.actionTaken || r.actionTaken.trim() === '') {
+                const hasAction = (r.actionTaken && r.actionTaken.trim() !== '') || (r.adminContactMethod && r.adminContactMethod !== 'قيد الانتظار');
+                if (!hasAction) {
                     const diffHours = (now - new Date(r.createdAt)) / (1000 * 60 * 60);
                     if (diffHours >= 48) c48++;
                     else if (diffHours >= 24) c24++;
@@ -1483,7 +1489,7 @@
             if (records.length === 0) return alert('لا توجد بيانات للتصدير');
             const dataToExport = records.map((r, index) => ({
                 "م": index + 1,
-                "تاريخ ووقت الإضافة": formatDateTime(r.createdAt),
+                "تاريخ الإضافة": formatDateOnly(r.createdAt),
                 "اسم العميل": r.patientName,
                 "الجوال": r.patientPhone,
                 "رقم الملف": r.fileNumber,
