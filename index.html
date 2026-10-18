@@ -416,25 +416,26 @@
             width: 100%; padding: 8px; border: 1px solid var(--border-color); border-radius: var(--radius-md); background: var(--bg-surface); color: var(--text-main); font-family: var(--font-family); font-size: 0.88rem;
         }
         
-        /* بلوك مقفول ومحدد الارتفاع لعمود تفاصيل الطلب */
-        .service-cell-content {
-            max-height: 85px;
-            overflow-y: auto;
+        /* خلية تفاصيل الطلب بشكل مرتب بدون سكرول وبدون تمدد مفرط */
+        .service-cell-box {
+            width: 230px;
             white-space: pre-wrap;
             word-break: break-word;
-            padding: 6px;
+            padding: 4px 6px;
             background: var(--bg-base);
-            border-radius: 6px;
+            border-radius: 4px;
             border: 1px solid var(--border-color);
-            font-size: 0.85rem;
+            font-size: 0.84rem;
+            line-height: 1.4;
         }
 
         textarea.table-input { resize: vertical; min-height: 60px; }
 
         .btn-save-action { background-color: var(--success-color); color: #fff; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; margin-bottom: 4px; }
+        .btn-edit-action { background-color: var(--primary-color); color: #fff; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; margin-bottom: 4px; }
         .btn-delete-action { background-color: var(--danger-color); color: #fff; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; }
 
-        /* تأثير الوميض البصري للحالات ذات الأولوية */
+        /* تأثير الوميض للحالات ذات الأولوية */
         @keyframes urgentPulse {
             0% { background-color: rgba(124, 58, 237, 0.15); }
             50% { background-color: rgba(124, 58, 237, 0.02); }
@@ -682,15 +683,15 @@
 
                 </div>
 
-                <!-- الصفحة الثانية: كشف العملاء المستقل -->
+                <!-- الصفحة الثانية: كشف العملاء المستقل تماماً عن الجدول الأساسي -->
                 <div id="page-clients" class="page-view hidden">
                     
                     <section class="dashboard-section">
                         <div class="section-header">
-                            <h2><i class="fa-solid fa-address-book"></i> كشف العملاء المفتوحين (الطلبات المعلقة)</h2>
+                            <h2><i class="fa-solid fa-address-book"></i> كشف العملاء المستقل (الطلبات المعلقة)</h2>
                             <div class="actions-toolbar">
                                 <button class="action-btn copy-btn" onclick="copyClientReport()"><i class="fa-solid fa-copy"></i> نسخ الكشف (واتساب)</button>
-                                <button class="action-btn clear-all" onclick="deleteClientsTimeRange()"><i class="fa-solid fa-trash"></i> حذف الفلاتر المختارة</button>
+                                <button class="action-btn clear-all" onclick="deleteClientsTimeRange()"><i class="fa-solid fa-trash"></i> حذف الكشف المحدد</button>
                                 <button class="action-btn restore-btn" onclick="requestRestoreAccess()"><i class="fa-solid fa-rotate-left"></i> استرجاع المحذوفات</button>
                             </div>
                         </div>
@@ -792,10 +793,77 @@
     <div class="modal" id="restoreModal">
         <div class="modal-content" style="max-width: 650px;">
             <div class="modal-header">
-                <h3><i class="fa-solid fa-rotate-left"></i> سلة المحذوفات والاسترجاع (بدون باسورد لكل عميل)</h3>
+                <h3><i class="fa-solid fa-rotate-left"></i> سلة المحذوفات والاسترجاع</h3>
                 <button class="close-modal-btn" onclick="closeRestoreModal()">&times;</button>
             </div>
             <div id="trashList" style="max-height: 400px; overflow-y: auto;"></div>
+        </div>
+    </div>
+
+    <!-- نافذة تعديل بيانات العميل -->
+    <div class="modal" id="editModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-pen-to-square"></i> تعديل بيانات العميل</h3>
+                <button class="close-modal-btn" onclick="closeEditModal()">&times;</button>
+            </div>
+            <form id="editForm" onsubmit="saveEditedRecord(event)">
+                <input type="hidden" id="editFirebaseKey">
+                <div class="form-grid">
+                    <div class="input-field">
+                        <label>اسم العميل *</label>
+                        <input type="text" id="editPatientName" required>
+                    </div>
+                    <div class="input-field">
+                        <label>رقم الجوال</label>
+                        <input type="tel" id="editPatientPhone">
+                    </div>
+                    <div class="input-field">
+                        <label>رقم الملف</label>
+                        <input type="text" id="editFileNumber">
+                    </div>
+                    <div class="input-field">
+                        <label>رقم الهوية / الإقامة</label>
+                        <input type="text" id="editIdNumber">
+                    </div>
+                    <div class="input-field">
+                        <label>الفرع *</label>
+                        <select id="editBranch" required>
+                            <option value="معشي">فرع معشي</option>
+                            <option value="الوسام">فرع الوسام</option>
+                        </select>
+                    </div>
+                    <div class="input-field">
+                        <label>طريقة التواصل *</label>
+                        <select id="editContactMethod" required>
+                            <option value="اتصال">اتصال هاتفي</option>
+                            <option value="شات">واتساب / شات</option>
+                            <option value="بالاستقبال">بالاستقبال</option>
+                            <option value="أخرى">أخرى</option>
+                        </select>
+                    </div>
+                    <div class="input-field">
+                        <label>اسم المنسق *</label>
+                        <input type="text" id="editCoordinatorName" required>
+                    </div>
+                    <div class="input-field">
+                        <label>نوع الإجراء *</label>
+                        <select id="editProcedureType" required>
+                            <option value="زراعة">زراعة</option>
+                            <option value="خلع">خلع</option>
+                            <option value="جراحه">جراحه</option>
+                            <option value="فك خياطه">فك خياطه</option>
+                            <option value="مراجعه">مراجعه</option>
+                            <option value="أخرى">أخرى</option>
+                        </select>
+                    </div>
+                    <div class="input-field full-width">
+                        <label>الخدمة المطلوبة / تفاصيل المشكلة والطلب *</label>
+                        <textarea id="editServiceRequired" required></textarea>
+                    </div>
+                </div>
+                <button type="submit" class="submit-btn" style="margin-top: 15px;"><i class="fa-solid fa-floppy-disk"></i> حفظ التعديلات</button>
+            </form>
         </div>
     </div>
 
@@ -805,9 +873,11 @@
         const database = firebase.database();
         const dbRef = database.ref('appointments');
         const trashRef = database.ref('trash');
+        const clientDeletedRef = database.ref('clientDeleted'); // لتخزين المحذوفات الخاصة بكشف العملاء بشكل مستقل
 
         let records = [];
         let deletedRecords = [];
+        let clientDeletedRecords = []; // سجل محذوفات كشف العملاء المستقل
         let clientHoursFilter = 'all';
 
         if (!localStorage.getItem('adminPassword')) {
@@ -855,6 +925,7 @@
         function saveLocal() { 
             localStorage.setItem('cachedAppointments', JSON.stringify(records));
             localStorage.setItem('cachedTrash', JSON.stringify(deletedRecords));
+            localStorage.setItem('cachedClientTrash', JSON.stringify(clientDeletedRecords));
         }
 
         const cached = localStorage.getItem('cachedAppointments');
@@ -863,11 +934,15 @@
         const cachedTrash = localStorage.getItem('cachedTrash');
         if (cachedTrash) { try { deletedRecords = JSON.parse(cachedTrash); } catch(e) { deletedRecords = []; } }
 
+        const cachedClientTrash = localStorage.getItem('cachedClientTrash');
+        if (cachedClientTrash) { try { clientDeletedRecords = JSON.parse(cachedClientTrash); } catch(e) { clientDeletedRecords = []; } }
+
         window.addEventListener('DOMContentLoaded', () => {
             const activePage = localStorage.getItem('activePage') || 'dashboard';
             switchPage(activePage);
         });
 
+        // مزامنة المواعيد الأساسية من Firebase
         dbRef.on('value', (snapshot) => {
             const data = snapshot.val();
             if (data) {
@@ -891,6 +966,18 @@
                 deletedRecords = cloudTrash;
             } else {
                 deletedRecords = [];
+            }
+            saveLocal();
+        });
+
+        clientDeletedRef.on('value', (snapshot) => {
+            const data = snapshot.val();
+            if (data) {
+                const cloudClientTrash = [];
+                for (let key in data) { cloudClientTrash.push({ firebaseKey: key, ...data[key] }); }
+                clientDeletedRecords = cloudClientTrash;
+            } else {
+                clientDeletedRecords = [];
             }
             saveLocal();
         });
@@ -955,7 +1042,6 @@
                 adminContactDetail: ''
             };
 
-            // الإضافة من الأعلى مباشرة
             records.unshift(newRecord);
             saveLocal();
             renderTable();
@@ -975,7 +1061,7 @@
             alert('تم حفظ الموعد بنجاح وإضافته في الأعلى!');
         });
 
-        /* جدول المواعيد مع الوميض والأولوية وتابة أخرى */
+        /* جدول المواعيد مع الوميض والأولوية وتابة أخرى ووظيفة التعديل والحذف المستقل */
         function renderTable() {
             const tbody = document.getElementById('tableBody');
             if (!tbody) return;
@@ -990,7 +1076,7 @@
                 }
 
                 const currentContact = record.adminContactMethod || 'قيد الانتظار';
-                const isOther = !['قيد الانتظار', 'تم التواصل', 'معلق', 'لا يرد', 'قيد الإجراء'].includes(currentContact);
+                const isOther = !['قيد الانتظار', 'قيد الإجراء', 'تم التواصل', 'معلق', 'لا يرد'].includes(currentContact);
                 const selectVal = isOther ? 'أخرى' : currentContact;
                 const otherDetail = isOther ? currentContact : (record.adminContactDetail || '');
 
@@ -1005,7 +1091,7 @@
                     <td>${record.patientPhone}</td>
                     <td>${record.fileNumber || '-'}</td>
                     <td><span class="badge-procedure">${record.procedureType || '-'}</span></td>
-                    <td><div class="service-cell-content">${record.serviceRequired}</div></td>
+                    <td><div class="service-cell-box">${record.serviceRequired}</div></td>
                     <td>${record.coordinatorName}</td>
                     <td>
                         <select class="table-input" id="adminContact_${record.firebaseKey}" onchange="handleContactChange('${record.firebaseKey}')">
@@ -1020,8 +1106,9 @@
                     </td>
                     <td><textarea class="table-input" id="action_${record.firebaseKey}">${record.actionTaken || ''}</textarea></td>
                     <td>
-                        <button class="btn-save-action" onclick="saveAdminUpdate('${record.firebaseKey}')"><i class="fa-solid fa-floppy-disk"></i></button>
-                        <button class="btn-delete-action" onclick="deleteRecord('${record.firebaseKey}')"><i class="fa-solid fa-trash"></i></button>
+                        <button class="btn-save-action" onclick="saveAdminUpdate('${record.firebaseKey}')" title="حفظ"><i class="fa-solid fa-floppy-disk"></i></button>
+                        <button class="btn-edit-action" onclick="openEditModal('${record.firebaseKey}')" title="تعديل"><i class="fa-solid fa-pen"></i></button>
+                        <button class="btn-delete-action" onclick="deleteRecord('${record.firebaseKey}')" title="حذف"><i class="fa-solid fa-trash"></i></button>
                     </td>
                 `;
                 tbody.appendChild(tr);
@@ -1065,6 +1152,67 @@
             alert('تم التحديث بنجاح!');
         }
 
+        /* دوال تعديل العميل */
+        function openEditModal(key) {
+            const rec = records.find(r => r.firebaseKey === key);
+            if (!rec) return;
+
+            document.getElementById('editFirebaseKey').value = rec.firebaseKey;
+            document.getElementById('editPatientName').value = rec.patientName || '';
+            document.getElementById('editPatientPhone').value = rec.patientPhone || '';
+            document.getElementById('editFileNumber').value = rec.fileNumber || '';
+            document.getElementById('editIdNumber').value = rec.idNumber || '';
+            document.getElementById('editBranch').value = rec.branch || 'معشي';
+            document.getElementById('editContactMethod').value = rec.contactMethod || 'اتصال';
+            document.getElementById('editCoordinatorName').value = rec.coordinatorName || '';
+            document.getElementById('editProcedureType').value = rec.procedureType || 'مراجعه';
+            document.getElementById('editServiceRequired').value = rec.serviceRequired || '';
+
+            document.getElementById('editModal').classList.add('open');
+        }
+
+        function closeEditModal() {
+            document.getElementById('editModal').classList.remove('open');
+        }
+
+        function saveEditedRecord(e) {
+            e.preventDefault();
+            const key = document.getElementById('editFirebaseKey').value;
+            let rec = records.find(r => r.firebaseKey === key);
+            if (!rec) return;
+
+            rec.patientName = document.getElementById('editPatientName').value.trim();
+            rec.patientPhone = document.getElementById('editPatientPhone').value.trim() || '-';
+            rec.fileNumber = document.getElementById('editFileNumber').value.trim() || '';
+            rec.idNumber = document.getElementById('editIdNumber').value.trim() || '';
+            rec.branch = document.getElementById('editBranch').value;
+            rec.contactMethod = document.getElementById('editContactMethod').value;
+            rec.coordinatorName = document.getElementById('editCoordinatorName').value.trim();
+            rec.procedureType = document.getElementById('editProcedureType').value;
+            rec.serviceRequired = document.getElementById('editServiceRequired').value.trim();
+
+            saveLocal();
+            renderTable();
+            updateKPIs();
+            renderClientReport();
+            closeEditModal();
+
+            if (navigator.onLine && !key.startsWith('local_')) {
+                dbRef.child(key).update({
+                    patientName: rec.patientName,
+                    patientPhone: rec.patientPhone,
+                    fileNumber: rec.fileNumber,
+                    idNumber: rec.idNumber,
+                    branch: rec.branch,
+                    contactMethod: rec.contactMethod,
+                    coordinatorName: rec.coordinatorName,
+                    procedureType: rec.procedureType,
+                    serviceRequired: rec.serviceRequired
+                });
+            }
+            alert('تم تعديل بيانات العميل بنجاح!');
+        }
+
         function deleteRecord(key) {
             const pass = prompt('أدخل كلمة مرور الإدارة للحذف:');
             if (pass === localStorage.getItem('adminPassword')) {
@@ -1088,7 +1236,7 @@
             }
         }
 
-        /* كشف العملاء بصيغة تكست متصل واحترافي */
+        /* كشف العملاء المستقل تماماً (حذف الفلاتر لا يؤثر على جدول المواعيد الأساسي) */
         function setClientTimeFilter(hours, btn) {
             clientHoursFilter = hours;
             btn.closest('.filter-tabs').querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
@@ -1125,6 +1273,7 @@
                 const key = (r.patientPhone && r.patientPhone !== '-') ? r.patientPhone : r.patientName;
                 if (!groupedClients[key]) {
                     groupedClients[key] = {
+                        firebaseKey: r.firebaseKey,
                         patientName: r.patientName,
                         patientPhone: r.patientPhone,
                         fileNumber: r.fileNumber,
@@ -1182,13 +1331,13 @@
             navigator.clipboard.writeText(reportText.trim()).then(() => alert('تم نسخ الكشف بصيغة تكست احترافية للواتساب بنجاح!'));
         }
 
-        /* حذف الفترة الزمنية من كشف العملاء */
+        /* حذف الفترة الزمنية من كشف العملاء بشكل مستقل تماماً (لا يؤثر على جدول المواعيد) */
         function deleteClientsTimeRange() {
             const pass = prompt('أدخل كلمة مرور الإدارة للحذف:');
             if (pass === localStorage.getItem('adminPassword')) {
                 const now = new Date();
                 let remaining = [];
-                let movedToTrash = [];
+                let movedToClientTrash = [];
 
                 records.forEach(r => {
                     const isPending = (!r.adminContactMethod || r.adminContactMethod === 'قيد الانتظار') && (!r.actionTaken || r.actionTaken.trim() === '');
@@ -1203,30 +1352,30 @@
                     }
 
                     if (shouldDelete) {
-                        movedToTrash.push(r);
+                        movedToClientTrash.push(r);
+                        // يحذف من كشف العملاء المفتوحين في السحابة إن وجد دون المساس بباقي السجلات المرتبطة بالجدول الرئيسي
                         if (!r.firebaseKey.startsWith('local_') && navigator.onLine) {
                             dbRef.child(r.firebaseKey).remove();
                         }
-                        const tRef = trashRef.push();
-                        trashRef.child(tRef.key).set(r);
+                        const ctRef = clientDeletedRef.push();
+                        clientDeletedRef.child(ctRef.key).set(r);
                     } else {
                         remaining.push(r);
                     }
                 });
 
                 records = remaining;
-                deletedRecords = movedToTrash.concat(deletedRecords);
                 saveLocal();
                 renderTable();
                 updateKPIs();
                 renderClientReport();
-                alert('تم حذف النطاق الزمني المحدد ونقله للمحذوفات بنجاح!');
+                alert('تم حذف العملاء من كشف العملاء بنجاح دون التأثير على سجلات جدول المواعيد الأساسية!');
             } else if (pass !== null) {
                 alert('كلمة المرور غير صحيحة!');
             }
         }
 
-        /* طلب باسورد واحد لفتح سلة المحذوفات بدلاً من الباسورد المتكرر */
+        /* طلب باسورد واحد لفتح سلة المحذوفات */
         function requestRestoreAccess() {
             document.getElementById('restorePassInput').value = '';
             document.getElementById('restoreAuthModal').classList.add('open');
@@ -1251,10 +1400,11 @@
             const trashList = document.getElementById('trashList');
             trashList.innerHTML = '';
 
-            if (deletedRecords.length === 0) {
+            let allTrash = [...deletedRecords, ...clientDeletedRecords];
+            if (allTrash.length === 0) {
                 trashList.innerHTML = '<div style="text-align:center; padding:20px; color:var(--text-muted);">سلة المحذوفات فارغة</div>';
             } else {
-                deletedRecords.forEach((item, idx) => {
+                allTrash.forEach((item, idx) => {
                     const div = document.createElement('div');
                     div.style.cssText = 'padding: 10px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;';
                     div.innerHTML = `
@@ -1273,8 +1423,15 @@
         function closeRestoreModal() { document.getElementById('restoreModal').classList.remove('open'); }
 
         function restoreRecord(idx) {
-            // استرجاع مباشر بدون باسورد لكل عميل بعد فتح السلة بالباسورد الموحد
-            const restored = deletedRecords.splice(idx, 1)[0];
+            let allTrash = [...deletedRecords, ...clientDeletedRecords];
+            const restored = allTrash[idx];
+            
+            if (deletedRecords.includes(restored)) {
+                deletedRecords.splice(deletedRecords.indexOf(restored), 1);
+            } else if (clientDeletedRecords.includes(restored)) {
+                clientDeletedRecords.splice(clientDeletedRecords.indexOf(restored), 1);
+            }
+
             const trashKey = restored.firebaseKey;
             delete restored.firebaseKey;
 
@@ -1283,13 +1440,14 @@
             renderTable();
             updateKPIs();
             renderClientReport();
-            openRestoreModal(); // تحديث قائمة السلة المفتوحة
+            openRestoreModal();
 
             if (navigator.onLine) {
                 const newRef = dbRef.push(restored);
                 restored.firebaseKey = newRef.key;
                 if (trashKey) {
                     trashRef.child(trashKey).remove();
+                    clientDeletedRef.child(trashKey).remove();
                 }
             }
             alert('تم استرجاع الحالة بنجاح!');
@@ -1330,7 +1488,7 @@
             });
         }
 
-        /* أدوات الإدارة */
+        /* أدوات الإدارة والنسخ الاحتياطي */
         function openClearModal() { document.getElementById('clearModal').classList.add('open'); }
         function closeClearModal() { document.getElementById('clearModal').classList.remove('open'); }
         function openPasswordModal() { document.getElementById('passwordModal').classList.add('open'); }
