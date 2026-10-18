@@ -509,10 +509,11 @@
             </div>
 
             <nav class="sidebar-menu">
-                <a href="#kpi-section" class="menu-item active"><i class="fa-solid fa-chart-pie"></i><span>مؤشرات الأداء</span></a>
-                <a href="#form-section" class="menu-item"><i class="fa-solid fa-calendar-plus"></i><span>إضافة موعد جديد</span></a>
-                <a href="#table-section" class="menu-item"><i class="fa-solid fa-list-check"></i><span>جدول المواعيد</span></a>
-                <a href="#tools-section" class="menu-item"><i class="fa-solid fa-database"></i><span>تصدير واستيراد وإدارة</span></a>
+                <a href="#kpi-section" class="menu-item active" onclick="switchPage('main', this)"><i class="fa-solid fa-chart-pie"></i><span>مؤشرات الأداء</span></a>
+                <a href="#form-section" class="menu-item" onclick="switchPage('main', this)"><i class="fa-solid fa-calendar-plus"></i><span>إضافة موعد جديد</span></a>
+                <a href="#table-section" class="menu-item" onclick="switchPage('main', this)"><i class="fa-solid fa-list-check"></i><span>جدول المواعيد</span></a>
+                <a href="#report-section" class="menu-item" onclick="switchPage('report', this)"><i class="fa-solid fa-file-lines"></i><span>صفحة الكشف</span></a>
+                <a href="#tools-section" class="menu-item" onclick="switchPage('main', this)"><i class="fa-solid fa-database"></i><span>تصدير واستيراد وإدارة</span></a>
             </nav>
 
             <div class="sidebar-footer">
@@ -537,7 +538,7 @@
                 </div>
             </header>
 
-            <div class="content-body">
+            <div class="content-body" id="mainContentBody">
                 
                 <section class="dashboard-section" id="kpi-section">
                     <div class="section-header">
@@ -727,6 +728,19 @@
                 </section>
 
             </div>
+
+            <!-- صفحة الكشف (مخفية افتراضياً وتظهر عند الاختيار) -->
+            <div class="content-body hidden" id="reportContentBody">
+                <section class="dashboard-section">
+                    <div class="section-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+                        <h2><i class="fa-solid fa-file-lines"></i> صفحة الكشف (حالات آخر 12 ساعة)</h2>
+                        <button class="action-btn excel" onclick="copyReportText()"><i class="fa-solid fa-copy"></i> نسخ الكشف كاملاً</button>
+                    </div>
+                    <div id="reportContainer" style="background: var(--bg-base); padding: 20px; border-radius: var(--radius-md); border: 1px solid var(--border-color); font-size: 1.05rem; line-height: 1.8; white-space: pre-wrap;">
+                        <!-- يتم تعبئة الكشف برمجياً هنا -->
+                    </div>
+                </section>
+            </div>
         </main>
     </div>
 
@@ -861,6 +875,7 @@
 
             updateActiveFilterUI();
             renderTable();
+            renderReport();
             updateKPIs();
         });
 
@@ -880,8 +895,26 @@
             }
             saveLocal();
             renderTable();
+            renderReport();
             updateKPIs();
         });
+
+        function switchPage(pageType, element) {
+            document.querySelectorAll('.sidebar-menu .menu-item').forEach(el => el.classList.remove('active'));
+            if (element) element.classList.add('active');
+
+            const mainBody = document.getElementById('mainContentBody');
+            const reportBody = document.getElementById('reportContentBody');
+
+            if (pageType === 'report') {
+                mainBody.classList.add('hidden');
+                reportBody.classList.remove('hidden');
+                renderReport();
+            } else {
+                reportBody.classList.add('hidden');
+                mainBody.classList.remove('hidden');
+            }
+        }
 
         function playNotificationSound() {
             try {
@@ -919,19 +952,16 @@
             document.getElementById('otherProcedureGroup').classList.toggle('hidden', proc !== 'أخرى');
         }
 
-        // دالة لتقسيم الاسم: أول 2 أو 3 كلمات في سطر والباقي في سطر تحته مباشرة
         function formatNameToTwoOrThreeLines(fullName) {
             if (!fullName) return '';
             const parts = fullName.trim().replace(/\s+/g, ' ').split(' ').filter(Boolean);
             if (parts.length === 0) return '';
 
-            // إذا كان الاسم يتكون من 4 كلمات أو أكثر، نجعل أول 3 كلمات في السطر الأول والباقي في السطر الثاني
             if (parts.length >= 4) {
                 const firstPart = parts.slice(0, 3).join(' ');
                 const secondPart = parts.slice(3).join(' ');
                 return `${firstPart}<br><span style="color:var(--text-muted); font-size:0.8rem;">${secondPart}</span>`;
             } else if (parts.length === 3) {
-                // إذا كان ثلاثياً، نجعل أول كلمتين في السطر الأول والكلمة الثالثة تحتها أو نعرضه كما هو
                 return `${parts[0]} ${parts[1]}<br><span style="color:var(--text-muted); font-size:0.8rem;">${parts[2]}</span>`;
             }
             return parts.join(' ');
@@ -981,6 +1011,7 @@
             records.unshift(newRecord);
             saveLocal();
             renderTable();
+            renderReport();
             updateKPIs();
 
             if (navigator.onLine) {
@@ -1030,6 +1061,7 @@
                             });
                             saveLocal();
                             renderTable();
+                            renderReport();
                             updateKPIs();
                             alert(`تم استيراد وحفظ ${importedArray.length} سجل بنجاح!`);
                         } else {
@@ -1082,6 +1114,7 @@
 
                         saveLocal();
                         renderTable();
+                        renderReport();
                         updateKPIs();
                         alert(`تم استيراد وحفظ ملف الـ Excel بنجاح!`);
                     } catch(err) {
@@ -1162,6 +1195,7 @@
             records = remainingRecords;
             saveLocal();
             renderTable();
+            renderReport();
             updateKPIs();
 
             if (navigator.onLine) {
@@ -1373,6 +1407,43 @@
             });
         }
 
+        function renderReport() {
+            const container = document.getElementById('reportContainer');
+            if (!container) return;
+
+            const now = new Date();
+            const twelveHoursAgo = new Date(now.getTime() - (12 * 60 * 60 * 1000));
+
+            const reportRecords = records.filter(r => new Date(r.createdAt) >= twelveHoursAgo);
+            
+            if (reportRecords.length === 0) {
+                container.innerHTML = 'لا توجد حالات مضافة خلال الـ 12 ساعة الماضية.';
+                return;
+            }
+
+            let htmlText = '';
+            reportRecords.forEach((r, idx) => {
+                const name = r.patientName || '-';
+                const fileNum = r.fileNumber || '-';
+                const phone = r.patientPhone || '-';
+                const idNum = r.idNumber || '-';
+                const service = r.serviceRequired || '-';
+
+                htmlText += `${idx + 1}- الاسم: ${name} | رقم الملف: ${fileNum}\nرقم الجوال: ${phone}\nرقم الهوية: ${idNum}\nالخدمة / تفاصيل الطلب: ${service}\n\n`;
+            });
+
+            container.innerText = htmlText.trim();
+        }
+
+        function copyReportText() {
+            const container = document.getElementById('reportContainer');
+            if (!container || !container.innerText) return alert('لا توجد بيانات للنسخ.');
+
+            navigator.clipboard.writeText(container.innerText).then(() => {
+                alert('تم نسخ الكشف كاملاً بنجاح! ✓');
+            });
+        }
+
         function saveAdminUpdate(key) {
             const actionVal = document.getElementById(`action_${key}`).value;
             const adminContactSelect = document.getElementById(`adminContact_${key}`).value;
@@ -1391,6 +1462,7 @@
 
                 saveLocal(); 
                 renderTable(); 
+                renderReport();
                 updateKPIs(); 
             }
 
@@ -1447,7 +1519,7 @@
             };
 
             const index = records.findIndex(r => r.firebaseKey === key);
-            if (index !== -1) { records[index] = { ...records[index], ...updatedData }; saveLocal(); renderTable(); updateKPIs(); }
+            if (index !== -1) { records[index] = { ...records[index], ...updatedData }; saveLocal(); renderTable(); renderReport(); updateKPIs(); }
 
             if (navigator.onLine && !key.startsWith('local_')) {
                 dbRef.child(key).update(updatedData).then(() => { closeEditModal(); alert('تم التعديل بنجاح!'); });
@@ -1459,6 +1531,7 @@
                 records = records.filter(r => r.firebaseKey !== key);
                 saveLocal();
                 renderTable();
+                renderReport();
                 updateKPIs();
                 if (navigator.onLine && !key.startsWith('local_')) dbRef.child(key).remove();
             }
