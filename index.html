@@ -1,5 +1,4 @@
- id="kpi-48h">0
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
@@ -726,7 +725,7 @@
 
             </div>
 
-            <!-- صفحة الكشف (شاشة عرض نصية مستقلة تماماً) -->
+            <!-- صفحة الكشف (شاشة عرض نصية مستقلة مع دمج خدمات المتكررين وزر تراجع) -->
             <div class="content-body hidden" id="reportContentBody">
                 <section class="dashboard-section">
                     <div class="section-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
@@ -739,6 +738,7 @@
                                 <option value="24">آخر 24 ساعة</option>
                             </select>
                             <button class="action-btn excel" onclick="copyReportText()"><i class="fa-solid fa-copy"></i> نسخ الكشف كاملاً</button>
+                            <button class="action-btn import" onclick="undoClearReport()" title="استرجاع النص المحذوف"><i class="fa-solid fa-rotate-left"></i> تراجع عن المسح</button>
                             <button class="action-btn clear-all" onclick="openClearReportModal()" style="padding: 10px 14px;"><i class="fa-solid fa-trash"></i> مسح الكشف (نص فقط)</button>
                         </div>
                     </div>
@@ -870,8 +870,8 @@
         let currentTimeFilter = 'all';
         let previousCount = 0;
 
-        // مصفوفة لتخزين مفاتيح العملاء الذين تم إخفاؤهم/حذفهم يدوياً من عرض الكشف النصي فقط
         let hiddenReportKeys = JSON.parse(localStorage.getItem('hiddenReportKeys') || '[]');
+        let lastHiddenReportKeysBackup = []; // لحفظ آخر عملية مسح للكشف بغرض التراجع (Undo)
 
         if (!localStorage.getItem('adminPassword')) {
             localStorage.setItem('adminPassword', '1234');
@@ -1282,7 +1282,8 @@
             const now = new Date();
             const timeLimit = new Date(now.getTime() - (hoursSelect * 60 * 60 * 1000));
 
-            // إخفاء الحالات الموجودة في هذه الفترة من الكشف النصي فقط دون حذفها من قاعدة البيانات أو الجدول الرئيسي
+            lastHiddenReportKeysBackup = [...hiddenReportKeys]; // حفظ النسخة الاحتياطية لتنفيذ زر التراجع
+
             records.forEach(r => {
                 const created = new Date(r.createdAt);
                 const hasAction = (r.actionTaken && r.actionTaken.trim() !== '') || (r.adminContactMethod && r.adminContactMethod !== 'قيد الانتظار');
@@ -1295,8 +1296,18 @@
 
             localStorage.setItem('hiddenReportKeys', JSON.stringify(hiddenReportKeys));
             renderReport();
-            alert('تم مسح النص المعروض للفترة بنجاح دون المساس ببيانات العملاء أو مؤشرات الأداء!');
+            alert('تم مسح النص المعروض للفترة بنجاح (يمكنك التراجع في أي وقت)!');
             closeClearReportModal();
+        }
+
+        function undoClearReport() {
+            if (lastHiddenReportKeysBackup.length === 0 && hiddenReportKeys.length === 0) {
+                return alert('لا يوجد مسح سابق للتراجع عنه.');
+            }
+            hiddenReportKeys = [...lastHiddenReportKeysBackup];
+            localStorage.setItem('hiddenReportKeys', JSON.stringify(hiddenReportKeys));
+            renderReport();
+            alert('تم التراجع واسترجاع الكشف بنجاح! ✓');
         }
 
         function setFilter(filterType, element) {
@@ -1501,7 +1512,7 @@
             const now = new Date();
             const timeLimit = new Date(now.getTime() - (hoursSelect * 60 * 60 * 1000));
 
-            // تصفية الحالات: ضمن الفترة، ولم تتم معالجتها، ولم يتم إخفاؤها يدوياً من عرض الكشف النصي
+            // تصفية الحالات: ضمن الفترة، ولم تتم معالجتها، ولم يتم إخفاؤها يدوياً
             const unprocessedRecords = records.filter(r => {
                 const created = new Date(r.createdAt);
                 const hasAction = (r.actionTaken && r.actionTaken.trim() !== '') || (r.adminContactMethod && r.adminContactMethod !== 'قيد الانتظار');
@@ -1509,8 +1520,8 @@
                 return created >= timeLimit && !hasAction && !isHidden;
             });
 
-            // استبعاد العملاء المتضررين (منع تكرار الاسم، رقم الجوال، أو رقم الهوية)
-            const uniqueMap = new Map();
+            // دمج الخدمات المطلوبة للعملاء المتكررين حسب تسلسل الإضافة
+            const mergedMap = new Map();
             unprocessedRecords.forEach(r => {
                 const cleanName = (r.patientName || '').trim().toLowerCase();
                 const cleanPhone = (r.patientPhone && r.patientPhone !== '-') ? r.patientPhone.replace(/\D/g, '') : '';
@@ -1518,12 +1529,21 @@
 
                 const uniqueKey = cleanPhone || cleanId || cleanName;
 
-                if (uniqueKey && !uniqueMap.has(uniqueKey)) {
-                    uniqueMap.set(uniqueKey, r);
+                if (uniqueKey) {
+                    if (!mergedMap.has(uniqueKey)) {
+                        mergedMap.set(uniqueKey, {
+                            ...r,
+                            allServices: [r.serviceRequired || '-']
+                        });
+                    } else {
+                        // دمج الخدمة المطلوبة الجديدة مع الخدمات السابقة للعميل المتكرر
+                        const existing = mergedMap.get(uniqueKey);
+                        existing.allServices.push(r.serviceRequired || '-');
+                    }
                 }
             });
 
-            const finalReportList = Array.from(uniqueMap.values());
+            const finalReportList = Array.from(mergedMap.values());
 
             if (finalReportList.length === 0) {
                 container.innerHTML = `لا توجد حالات جديدة أو قيد الانتظار معروضة خلال الـ ${hoursSelect} ساعات الماضية.`;
@@ -1536,9 +1556,9 @@
                 const fileNum = r.fileNumber || '-';
                 const phone = r.patientPhone || '-';
                 const idNum = r.idNumber || '-';
-                const service = r.serviceRequired || '-';
+                const combinedServices = r.allServices.join(' | ');
 
-                htmlText += `${idx + 1}- الاسم: ${name} | رقم الملف: ${fileNum}\nرقم الجوال: ${phone}\nرقم الهوية: ${idNum}\nالخدمة / تفاصيل الطلب: ${service}\n\n`;
+                htmlText += `${idx + 1}- الاسم: ${name} | رقم الملف: ${fileNum}\nرقم الجوال: ${phone}\nرقم الهوية: ${idNum}\nالخدمة / تفاصيل الطلب: ${combinedServices}\n\n`;
             });
 
             container.innerText = htmlText.trim();
