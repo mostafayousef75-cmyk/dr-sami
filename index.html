@@ -414,7 +414,7 @@
             display: inline-block;
         }
 
-        /* شارة مخصصة لتمييز نوع إجراء الزراعة בלون فريد ومميز */
+        /* شارة مخصصة لتمييز نوع إجراء الزراعة بلون فريد ومميز */
         .badge-procedure-plant {
             background-color: #0d9488 !important;
             color: #ffffff !important;
@@ -617,7 +617,7 @@
                                 <input type="text" id="coordinatorName" required placeholder="اسم المنسق المسؤول">
                             </div>
                             <div class="input-field">
-                                <label><i class="fa-solid fa-clock"></i> التاريخ والميعاد (اختياري)</label>
+                                <label><i class="fa-solid fa-clock"></i> موعد بطلب من العميل (اختياري)</label>
                                 <input type="datetime-local" id="appointmentDateTime">
                             </div>
                             <div class="input-field">
@@ -705,14 +705,14 @@
                                     <th>تاريخ الإضافة</th>
                                     <th>الحالة والأولوية</th>
                                     <th>العميل</th>
-                                    <th>رقم الجوال (واتساب / نسخ)</th>
+                                    <th>رقم الجوال</th>
                                     <th>رقم الملف</th>
                                     <th>رقم الهوية</th>
                                     <th>الفرع</th>
                                     <th>نوع الإجراء</th>
                                     <th>طريقة التواصل</th>
                                     <th style="min-width: 285px;">الخدمة / تفاصيل الطلب</th>
-                                    <th>المنسق</th>
+                                    <th>المنسق / الايجنت</th>
                                     <th style="min-width: 180px;">تواصل الإدارة</th>
                                     <th style="min-width: 220px;">إجراء الإدارة</th>
                                     <th>إجراءات</th>
@@ -806,8 +806,8 @@
                         </select>
                     </div>
                     <div class="input-field"><label>طريقة التواصل *</label><input type="text" id="editContactMethod" required></div>
-                    <div class="input-field"><label>اسم المنسق *</label><input type="text" id="editCoordinatorName" required></div>
-                    <div class="input-field"><label>التاريخ والميعاد</label><input type="datetime-local" id="editAppointmentDateTime"></div>
+                    <div class="input-field"><label>اسم المنسق / الايجنت *</label><input type="text" id="editCoordinatorName" required></div>
+                    <div class="input-field"><label>موعد بطلب من العميل (اختياري)</label><input type="datetime-local" id="editAppointmentDateTime"></div>
                     <div class="input-field full-width"><label>الخدمة المطلوبة / تفاصيل الطلب *</label><textarea id="editServiceRequired" required rows="3"></textarea></div>
                     <div class="input-field full-width">
                         <label class="priority-checkbox"><input type="checkbox" id="editIsRecurring"><span>إعطاء أولوية ⭐</span></label>
@@ -1038,8 +1038,8 @@
                                 procedureType: row["نوع الإجراء"] || "أخرى",
                                 contactMethod: row["طريقة التواصل"] || "اتصال",
                                 serviceRequired: row["الخدمة المطلوبة"] || row["تفاصيل الطلب"] || "-",
-                                appointmentDateTime: row["الموعد المقترح"] || "-",
-                                coordinatorName: row["اسم المنسق"] || "مسؤول الاستيراد",
+                                appointmentDateTime: row["موعد بطلب من العميل"] || row["الموعد المقترح"] || "-",
+                                coordinatorName: row["المنسق / الايجنت"] || row["اسم المنسق"] || "مسؤول الاستيراد",
                                 isRecurring: (row["أولوية"] === "نعم" || row["أولوية"] === true),
                                 isRepeatedRequest: (row["طلب متكرر"] === "نعم"),
                                 createdAt: row["تاريخ التسجيل"] || new Date().toISOString(),
@@ -1334,7 +1334,7 @@
                     <td>${record.branch}</td>
                     <td><span class="${procedureBadgeClass}">${record.procedureType || 'غير محدد'}</span></td>
                     <td>${record.contactMethod}</td>
-                    <td style="min-width: 285px; white-space: pre-wrap; word-break: break-word; line-height: 1.5;">${record.serviceRequired}${record.appointmentDateTime !== '-' ? `<br><small style="color:var(--primary-color);"><strong>الموعد:</strong> ${record.appointmentDateTime.replace('T', ' ')}</small>` : ''}</td>
+                    <td style="min-width: 285px; white-space: pre-wrap; word-break: break-word; line-height: 1.5;">${record.serviceRequired}${record.appointmentDateTime !== '-' ? `<br><small style="color:var(--primary-color);"><strong>الموعد المطلوبة من العميل:</strong> ${record.appointmentDateTime.replace('T', ' ')}</small>` : ''}</td>
                     <td>${record.coordinatorName}</td>
                     <td>
                         <select class="table-input" id="adminContact_${record.firebaseKey}" onchange="handleAdminContactChange('${record.firebaseKey}')">
@@ -1491,15 +1491,15 @@
                 "م": index + 1,
                 "تاريخ الإضافة": formatDateOnly(r.createdAt),
                 "اسم العميل": r.patientName,
-                "الجوال": r.patientPhone,
+                "رقم الجوال": r.patientPhone,
                 "رقم الملف": r.fileNumber,
                 "رقم الهوية": r.idNumber,
                 "الفرع": r.branch,
                 "نوع الإجراء": r.procedureType || '',
                 "طريقة التواصل": r.contactMethod,
                 "الخدمة المطلوبة": r.serviceRequired,
-                "الموعد المقترح": r.appointmentDateTime,
-                "اسم المنسق": r.coordinatorName,
+                "موعد بطلب من العميل": r.appointmentDateTime,
+                "المنسق / الايجنت": r.coordinatorName,
                 "أولوية": r.isRecurring ? "نعم" : "لا",
                 "طلب متكرر": r.isRepeatedRequest ? "نعم" : "لا",
                 "تواصل الإدارة": r.adminContactMethod || 'قيد الانتظار',
