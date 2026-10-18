@@ -390,26 +390,32 @@
             top: 0; 
             z-index: 10; 
             box-shadow: 0 2px 2px rgba(0,0,0,0.05);
+            padding: 10px 8px;
         }
 
-        table th, table td { padding: 12px 10px; text-align: right; border-bottom: 1px solid var(--border-color); vertical-align: top; }
+        table td { 
+            padding: 8px 8px; 
+            text-align: right; 
+            border-bottom: 1px solid var(--border-color); 
+            vertical-align: middle; 
+        }
 
-        .status-badge { padding: 4px 10px; border-radius: 20px; font-size: 0.78rem; font-weight: 700; color: #fff; display: inline-block; }
+        .status-badge { padding: 3px 8px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; color: #fff; display: inline-block; }
         .badge-new { background-color: var(--success-color); }
         .badge-done { background-color: #0284c7; }
         .badge-pending { background-color: var(--warning-color); }
         .badge-canceled { background-color: var(--danger-color); }
         
-        .badge-priority { background-color: var(--accent-purple); margin-bottom: 4px; }
-        .badge-repeated { background-color: #e11d48; margin-bottom: 4px; }
+        .badge-priority { background-color: var(--accent-purple); margin-bottom: 3px; }
+        .badge-repeated { background-color: #e11d48; margin-bottom: 3px; }
         
         /* شارة نوع الإجراء العادية */
         .badge-procedure {
             background-color: var(--primary-color) !important;
             color: #ffffff !important;
-            padding: 4px 10px;
+            padding: 3px 8px;
             border-radius: 20px;
-            font-size: 0.78rem;
+            font-size: 0.75rem;
             font-weight: 700;
             display: inline-block;
         }
@@ -418,9 +424,9 @@
         .badge-procedure-plant {
             background-color: #0d9488 !important;
             color: #ffffff !important;
-            padding: 4px 10px;
+            padding: 3px 8px;
             border-radius: 20px;
-            font-size: 0.78rem;
+            font-size: 0.75rem;
             font-weight: 700;
             display: inline-block;
         }
@@ -436,25 +442,25 @@
             background: var(--bg-base);
             border: 1px solid var(--border-color);
             color: var(--text-muted);
-            width: 32px;
-            height: 32px;
+            width: 28px;
+            height: 28px;
             border-radius: 6px;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            font-size: 0.9rem;
+            font-size: 0.8rem;
         }
         .copy-phone-btn:hover { background: var(--primary-color); color: #fff; border-color: var(--primary-color); }
 
         .table-input {
-            width: 100%; padding: 8px; border: 1px solid var(--border-color); border-radius: var(--radius-md); background: var(--bg-surface); color: var(--text-main); font-family: var(--font-family); font-size: 0.88rem; box-shadow: inset 0 1px 2px rgba(0,0,0,0.03);
+            width: 100%; padding: 5px 8px; border: 1px solid var(--border-color); border-radius: var(--radius-md); background: var(--bg-surface); color: var(--text-main); font-family: var(--font-family); font-size: 0.85rem; box-shadow: inset 0 1px 2px rgba(0,0,0,0.03);
         }
-        textarea.table-input { resize: vertical; min-height: 70px; }
+        textarea.table-input { resize: vertical; min-height: 50px; max-height: 100px; }
 
-        .btn-save-action { background-color: var(--success-color); color: #fff; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; margin-bottom: 4px; }
-        .btn-edit-action { background-color: var(--primary-color); color: #fff; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; margin-bottom: 4px; }
-        .btn-delete-action { background-color: var(--danger-color); color: #fff; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; }
+        .btn-save-action { background-color: var(--success-color); color: #fff; border: none; padding: 5px 8px; border-radius: 4px; cursor: pointer; margin-bottom: 3px; font-size: 0.8rem; }
+        .btn-edit-action { background-color: var(--primary-color); color: #fff; border: none; padding: 5px 8px; border-radius: 4px; cursor: pointer; margin-bottom: 3px; font-size: 0.8rem; }
+        .btn-delete-action { background-color: var(--danger-color); color: #fff; border: none; padding: 5px 8px; border-radius: 4px; cursor: pointer; font-size: 0.8rem; }
 
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 200; justify-content: center; align-items: center; padding: 15px; }
         .modal.open { display: flex; }
@@ -572,8 +578,8 @@
                     <form id="appointmentForm" class="modern-form">
                         <div class="form-grid">
                             <div class="input-field">
-                                <label><i class="fa-solid fa-user"></i> اسم العميل *</label>
-                                <input type="text" id="patientName" required placeholder="الاسم الكامل للعميل">
+                                <label><i class="fa-solid fa-user"></i> اسم العميل (ثنائي أو ثلاثي) *</label>
+                                <input type="text" id="patientName" required placeholder="مثال: محمد أحمد علي">
                             </div>
                             <div class="input-field">
                                 <label><i class="fa-solid fa-phone"></i> رقم الجوال</label>
@@ -710,8 +716,8 @@
                                     <th>طريقة التواصل</th>
                                     <th style="min-width: 285px;">الخدمة / تفاصيل الطلب</th>
                                     <th>المنسق / الايجنت</th>
-                                    <th style="min-width: 180px;">تواصل الإدارة</th>
-                                    <th style="min-width: 220px;">إجراء الإدارة</th>
+                                    <th style="min-width: 170px;">تواصل الإدارة</th>
+                                    <th style="min-width: 200px;">إجراء الإدارة</th>
                                     <th>إجراءات</th>
                                 </tr>
                             </thead>
@@ -783,7 +789,7 @@
             <form id="editForm">
                 <input type="hidden" id="editFirebaseKey">
                 <div class="form-grid">
-                    <div class="input-field"><label>اسم العميل *</label><input type="text" id="editPatientName" required></div>
+                    <div class="input-field"><label>اسم العميل (ثنائي أو ثلاثي) *</label><input type="text" id="editPatientName" required></div>
                     <div class="input-field"><label>رقم الجوال</label><input type="tel" id="editPatientPhone"></div>
                     <div class="input-field"><label>رقم الملف</label><input type="text" id="editFileNumber"></div>
                     <div class="input-field"><label>رقم الهوية</label><input type="text" id="editIdNumber"></div>
@@ -913,9 +919,22 @@
             document.getElementById('otherProcedureGroup').classList.toggle('hidden', proc !== 'أخرى');
         }
 
+        function formatNameToTwoOrThreeParts(fullName) {
+            if (!fullName) return '';
+            const parts = fullName.trim().replace(/\s+/g, ' ').split(' ').filter(Boolean);
+            if (parts.length >= 3) {
+                return `${parts[0]} ${parts[1]} ${parts[2]}`;
+            } else if (parts.length === 2) {
+                return `${parts[0]} ${parts[1]}`;
+            }
+            return parts.join(' ');
+        }
+
         document.getElementById('appointmentForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            const patientNameVal = document.getElementById('patientName').value.trim().replace(/\s+/g, ' ');
+            const rawName = document.getElementById('patientName').value;
+            const patientNameVal = formatNameToTwoOrThreeParts(rawName);
+            
             const patientPhoneVal = document.getElementById('patientPhone').value.trim() || '-';
             const cleanNewPhone = patientPhoneVal !== '-' ? patientPhoneVal.replace(/\D/g, '') : '';
 
@@ -987,7 +1006,7 @@
                         if (Array.isArray(importedArray)) {
                             importedArray.forEach(item => {
                                 const cleanItem = { ...item };
-                                if(cleanItem.patientName) cleanItem.patientName = cleanItem.patientName.replace(/\s+/g, ' ');
+                                if(cleanItem.patientName) cleanItem.patientName = formatNameToTwoOrThreeParts(cleanItem.patientName);
                                 const originalKey = cleanItem.firebaseKey && !cleanItem.firebaseKey.startsWith('local_') ? cleanItem.firebaseKey : null;
                                 delete cleanItem.firebaseKey;
 
@@ -1029,7 +1048,7 @@
                         jsonArr.forEach(row => {
                             const rawName = row["اسم العميل"] || row["PatientName"] || "مستورد";
                             const newRec = {
-                                patientName: String(rawName).replace(/\s+/g, ' '),
+                                patientName: formatNameToTwoOrThreeParts(String(rawName)),
                                 patientPhone: String(row["الجوال"] || row["الهاتف"] || row["Phone"] || "-"),
                                 fileNumber: String(row["رقم الملف"] || "-"),
                                 idNumber: String(row["رقم الهوية"] || "-"),
@@ -1301,7 +1320,7 @@
                 const procedureBadgeClass = isPlantProcedure ? 'badge-procedure-plant' : 'badge-procedure';
                 const formattedDate = formatDateOnly(record.createdAt);
                 
-                const cleanName = record.patientName ? record.patientName.replace(/\s+/g, ' ') : '';
+                const cleanName = record.patientName ? formatNameToTwoOrThreeParts(record.patientName) : '';
 
                 tr.innerHTML = `
                     <td style="text-align: center; font-weight: 700; color: var(--text-muted);">${index + 1}</td>
@@ -1336,9 +1355,9 @@
                             <option value="تم إلغاء الموعد" ${currentAdminContact === 'تم إلغاء الموعد' ? 'selected' : ''}>تم إلغاء الموعد 🚫</option>
                             <option value="أخرى" ${isOther ? 'selected' : ''}>أخرى</option>
                         </select>
-                        <input type="text" class="table-input ${isOther ? '' : 'hidden'}" id="adminContactDetail_${record.firebaseKey}" value="${record.adminContactDetail || ''}" placeholder="اكتب تفاصيل التواصل..." style="margin-top: 5px;">
+                        <input type="text" class="table-input ${isOther ? '' : 'hidden'}" id="adminContactDetail_${record.firebaseKey}" value="${record.adminContactDetail || ''}" placeholder="اكتب تفاصيل التواصل..." style="margin-top: 4px;">
                     </td>
-                    <td><textarea class="table-input" id="action_${record.firebaseKey}" placeholder="اكتب إجراء الإدارة..." style="min-height: 85px;">${record.actionTaken || ''}</textarea></td>
+                    <td><textarea class="table-input" id="action_${record.firebaseKey}" placeholder="اكتب إجراء الإدارة..." style="min-height: 50px;">${record.actionTaken || ''}</textarea></td>
                     <td>
                         <button class="btn-save-action" onclick="saveAdminUpdate('${record.firebaseKey}')" title="حفظ"><i class="fa-solid fa-floppy-disk"></i></button>
                         <button class="btn-edit-action" onclick="openEditModal('${record.firebaseKey}')" title="تعديل"><i class="fa-solid fa-pen-to-square"></i></button>
@@ -1406,7 +1425,9 @@
         document.getElementById('editForm').addEventListener('submit', function(e) {
             e.preventDefault();
             const key = document.getElementById('editFirebaseKey').value;
-            const updatedNameVal = document.getElementById('editPatientName').value.trim().replace(/\s+/g, ' ');
+            const rawEditName = document.getElementById('editPatientName').value;
+            const updatedNameVal = formatNameToTwoOrThreeParts(rawEditName);
+
             const updatedData = {
                 patientName: updatedNameVal,
                 patientPhone: document.getElementById('editPatientPhone').value.trim() || '-',
