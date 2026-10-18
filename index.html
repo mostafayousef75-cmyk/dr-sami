@@ -578,7 +578,7 @@
                     <form id="appointmentForm" class="modern-form">
                         <div class="form-grid">
                             <div class="input-field">
-                                <label><i class="fa-solid fa-user"></i> اسم العميل (ثنائي أو ثلاثي) *</label>
+                                <label><i class="fa-solid fa-user"></i> اسم العميل *</label>
                                 <input type="text" id="patientName" required placeholder="مثال: محمد أحمد علي">
                             </div>
                             <div class="input-field">
@@ -789,7 +789,7 @@
             <form id="editForm">
                 <input type="hidden" id="editFirebaseKey">
                 <div class="form-grid">
-                    <div class="input-field"><label>اسم العميل (ثنائي أو ثلاثي) *</label><input type="text" id="editPatientName" required></div>
+                    <div class="input-field"><label>اسم العميل *</label><input type="text" id="editPatientName" required></div>
                     <div class="input-field"><label>رقم الجوال</label><input type="tel" id="editPatientPhone"></div>
                     <div class="input-field"><label>رقم الملف</label><input type="text" id="editFileNumber"></div>
                     <div class="input-field"><label>رقم الهوية</label><input type="text" id="editIdNumber"></div>
@@ -919,22 +919,27 @@
             document.getElementById('otherProcedureGroup').classList.toggle('hidden', proc !== 'أخرى');
         }
 
-        function formatNameToTwoOrThreeParts(fullName) {
+        // دالة لتقسيم الاسم: أول 2 أو 3 كلمات في سطر والباقي في سطر تحته مباشرة
+        function formatNameToTwoOrThreeLines(fullName) {
             if (!fullName) return '';
             const parts = fullName.trim().replace(/\s+/g, ' ').split(' ').filter(Boolean);
-            if (parts.length >= 3) {
-                return `${parts[0]} ${parts[1]} ${parts[2]}`;
-            } else if (parts.length === 2) {
-                return `${parts[0]} ${parts[1]}`;
+            if (parts.length === 0) return '';
+
+            // إذا كان الاسم يتكون من 4 كلمات أو أكثر، نجعل أول 3 كلمات في السطر الأول والباقي في السطر الثاني
+            if (parts.length >= 4) {
+                const firstPart = parts.slice(0, 3).join(' ');
+                const secondPart = parts.slice(3).join(' ');
+                return `${firstPart}<br><span style="color:var(--text-muted); font-size:0.8rem;">${secondPart}</span>`;
+            } else if (parts.length === 3) {
+                // إذا كان ثلاثياً، نجعل أول كلمتين في السطر الأول والكلمة الثالثة تحتها أو نعرضه كما هو
+                return `${parts[0]} ${parts[1]}<br><span style="color:var(--text-muted); font-size:0.8rem;">${parts[2]}</span>`;
             }
             return parts.join(' ');
         }
 
         document.getElementById('appointmentForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            const rawName = document.getElementById('patientName').value;
-            const patientNameVal = formatNameToTwoOrThreeParts(rawName);
-            
+            const patientNameVal = document.getElementById('patientName').value.trim().replace(/\s+/g, ' ');
             const patientPhoneVal = document.getElementById('patientPhone').value.trim() || '-';
             const cleanNewPhone = patientPhoneVal !== '-' ? patientPhoneVal.replace(/\D/g, '') : '';
 
@@ -1006,7 +1011,7 @@
                         if (Array.isArray(importedArray)) {
                             importedArray.forEach(item => {
                                 const cleanItem = { ...item };
-                                if(cleanItem.patientName) cleanItem.patientName = formatNameToTwoOrThreeParts(cleanItem.patientName);
+                                if(cleanItem.patientName) cleanItem.patientName = cleanItem.patientName.replace(/\s+/g, ' ');
                                 const originalKey = cleanItem.firebaseKey && !cleanItem.firebaseKey.startsWith('local_') ? cleanItem.firebaseKey : null;
                                 delete cleanItem.firebaseKey;
 
@@ -1048,7 +1053,7 @@
                         jsonArr.forEach(row => {
                             const rawName = row["اسم العميل"] || row["PatientName"] || "مستورد";
                             const newRec = {
-                                patientName: formatNameToTwoOrThreeParts(String(rawName)),
+                                patientName: String(rawName).replace(/\s+/g, ' '),
                                 patientPhone: String(row["الجوال"] || row["الهاتف"] || row["Phone"] || "-"),
                                 fileNumber: String(row["رقم الملف"] || "-"),
                                 idNumber: String(row["رقم الهوية"] || "-"),
@@ -1320,7 +1325,7 @@
                 const procedureBadgeClass = isPlantProcedure ? 'badge-procedure-plant' : 'badge-procedure';
                 const formattedDate = formatDateOnly(record.createdAt);
                 
-                const cleanName = record.patientName ? formatNameToTwoOrThreeParts(record.patientName) : '';
+                const formattedNameHtml = record.patientName ? formatNameToTwoOrThreeLines(record.patientName) : '';
 
                 tr.innerHTML = `
                     <td style="text-align: center; font-weight: 700; color: var(--text-muted);">${index + 1}</td>
@@ -1330,7 +1335,7 @@
                         ${record.isRepeatedRequest ? '<span class="status-badge badge-repeated">🔄 طلب متكرر</span><br>' : ''}
                         <span class="status-badge ${status.class}">${status.text}</span>
                     </td>
-                    <td><strong style="white-space: nowrap; display: inline-block;">${cleanName}</strong></td>
+                    <td><strong style="line-height: 1.4; display: block;">${formattedNameHtml}</strong></td>
                     <td>
                         ${hasPhone ? `
                             <div class="phone-cell-wrapper">
@@ -1425,8 +1430,7 @@
         document.getElementById('editForm').addEventListener('submit', function(e) {
             e.preventDefault();
             const key = document.getElementById('editFirebaseKey').value;
-            const rawEditName = document.getElementById('editPatientName').value;
-            const updatedNameVal = formatNameToTwoOrThreeParts(rawEditName);
+            const updatedNameVal = document.getElementById('editPatientName').value.trim().replace(/\s+/g, ' ');
 
             const updatedData = {
                 patientName: updatedNameVal,
