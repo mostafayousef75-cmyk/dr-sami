@@ -640,8 +640,8 @@
                             </div>
                             <div class="input-field full-width">
                                 <label class="priority-checkbox">
-                                    <input type="checkbox" id="isRecurring">
-                                    <span>إعطاء أولوية ⭐</span>
+                                    <input type="checkbox" id="isRecurring" onchange="verifyPriorityPassword(this)">
+                                    <span>إعطاء أولوية ⭐ (محمي بكلمة مرور الإدارة)</span>
                                 </label>
                             </div>
                         </div>
@@ -808,7 +808,7 @@
                     <div class="input-field"><label>موعد بطلب من العميل (اختياري)</label><input type="datetime-local" id="editAppointmentDateTime"></div>
                     <div class="input-field full-width"><label>الخدمة المطلوبة / تفاصيل الطلب *</label><textarea id="editServiceRequired" required rows="3"></textarea></div>
                     <div class="input-field full-width">
-                        <label class="priority-checkbox"><input type="checkbox" id="editIsRecurring"><span>إعطاء أولوية ⭐</span></label>
+                        <label class="priority-checkbox"><input type="checkbox" id="editIsRecurring" onchange="verifyPriorityPasswordEdit(this)"><span>إعطاء أولوية ⭐ (محمي بكلمة المرور)</span></label>
                     </div>
                 </div>
                 <button type="submit" class="submit-btn" style="margin-top: 15px;"><i class="fa-solid fa-floppy-disk"></i> حفظ التعديلات</button>
@@ -912,6 +912,26 @@
         function toggleOtherProcedureInput() {
             const proc = document.getElementById('procedureType').value;
             document.getElementById('otherProcedureGroup').classList.toggle('hidden', proc !== 'أخرى');
+        }
+
+        function verifyPriorityPassword(checkbox) {
+            if (checkbox.checked) {
+                const pass = prompt('أدخل كلمة المرور الخاصة بالإدارة لتفعيل الأولوية:');
+                if (pass !== localStorage.getItem('adminPassword')) {
+                    alert('كلمة المرور غير صحيحة!');
+                    checkbox.checked = false;
+                }
+            }
+        }
+
+        function verifyPriorityPasswordEdit(checkbox) {
+            if (checkbox.checked) {
+                const pass = prompt('أدخل كلمة المرور الخاصة بالإدارة لتفعيل الأولوية:');
+                if (pass !== localStorage.getItem('adminPassword')) {
+                    alert('كلمة المرور غير صحيحة!');
+                    checkbox.checked = false;
+                }
+            }
         }
 
         document.getElementById('appointmentForm').addEventListener('submit', function(e) {
