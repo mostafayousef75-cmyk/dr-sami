@@ -470,7 +470,7 @@
                 -webkit-overflow-scrolling: touch;
             }
             table {
-                min-width: 1200px;
+                min-width: 1300px;
             }
         }
 
@@ -699,6 +699,8 @@
                         <table id="requestsTable">
                             <thead>
                                 <tr>
+                                    <th>م</th>
+                                    <th>تاريخ ووقت الإضافة</th>
                                     <th>الحالة والأولوية</th>
                                     <th>العميل</th>
                                     <th>رقم الجوال (واتساب / نسخ)</th>
@@ -1234,6 +1236,22 @@
             return cleaned;
         }
 
+        function formatDateTime(isoString) {
+            if (!isoString) return '-';
+            try {
+                const date = new Date(isoString);
+                if (isNaN(date.getTime())) return isoString;
+                const yyyy = date.getFullYear();
+                const mm = String(date.getMonth() + 1).padStart(2, '0');
+                const dd = String(date.getDate()).padStart(2, '0');
+                const hh = String(date.getHours()).padStart(2, '0');
+                const min = String(date.getMinutes()).padStart(2, '0');
+                return `${yyyy}-${mm}-${dd} ${hh}:${min}`;
+            } catch (e) {
+                return isoString;
+            }
+        }
+
         function copyPhoneNumber(phone, event) {
             event.stopPropagation();
             if (!phone || phone === '-') return;
@@ -1269,9 +1287,9 @@
             tbody.innerHTML = '';
 
             let filteredRecords = filterRecordsList(records);
-            const sorted = [...filteredRecords].sort((a, b) => b.isRecurring - a.isRecurring || new Date(b.createdAt) - new Date(b.createdAt));
+            const sorted = [...filteredRecords].sort((a, b) => b.isRecurring - a.isRecurring || new Date(b.createdAt) - new Date(a.createdAt));
 
-            sorted.forEach(record => {
+            sorted.forEach((record, index) => {
                 const status = getDelayStatus(record.createdAt, record.actionTaken);
                 const hasPhone = record.patientPhone && record.patientPhone !== '-';
                 const formattedPhone = hasPhone ? formatWhatsAppNumber(record.patientPhone) : '';
@@ -1287,8 +1305,11 @@
 
                 const isPlantProcedure = record.procedureType && record.procedureType.includes('زراعة');
                 const procedureBadgeClass = isPlantProcedure ? 'badge-procedure-plant' : 'badge-procedure';
+                const formattedCreatedAt = formatDateTime(record.createdAt);
 
                 tr.innerHTML = `
+                    <td style="text-align: center; font-weight: 700; color: var(--text-muted);">${index + 1}</td>
+                    <td style="white-space: nowrap; font-size: 0.82rem; color: var(--text-muted);">${formattedCreatedAt}</td>
                     <td>
                         ${record.isRecurring ? '<span class="status-badge badge-priority">⭐ أولوية</span><br>' : ''}
                         ${record.isRepeatedRequest ? '<span class="status-badge badge-repeated">🔄 طلب متكرر</span><br>' : ''}
@@ -1460,7 +1481,9 @@
 
         function exportToExcel() {
             if (records.length === 0) return alert('لا توجد بيانات للتصدير');
-            const dataToExport = records.map(r => ({
+            const dataToExport = records.map((r, index) => ({
+                "م": index + 1,
+                "تاريخ ووقت الإضافة": formatDateTime(r.createdAt),
                 "اسم العميل": r.patientName,
                 "الجوال": r.patientPhone,
                 "رقم الملف": r.fileNumber,
@@ -1473,7 +1496,6 @@
                 "اسم المنسق": r.coordinatorName,
                 "أولوية": r.isRecurring ? "نعم" : "لا",
                 "طلب متكرر": r.isRepeatedRequest ? "نعم" : "لا",
-                "تاريخ التسجيل": r.createdAt,
                 "تواصل الإدارة": r.adminContactMethod || 'قيد الانتظار',
                 "إجراء الإدارة": r.actionTaken || ''
             }));
