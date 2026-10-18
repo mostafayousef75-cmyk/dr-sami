@@ -398,16 +398,12 @@
         .badge-normal { background-color: var(--success-color); }
         .badge-24h { background-color: var(--warning-color); }
         .badge-48h { background-color: var(--danger-color); }
-        
-        /* شارة الحالات التي لم يتم إجراء شيء لها بعد */
-        .badge-pending-action { background-color: #f59e0b !important; color: #ffffff !important; }
-
         .badge-priority { background-color: var(--accent-purple); margin-bottom: 4px; }
         .badge-repeated { background-color: #e11d48; margin-bottom: 4px; }
         
-        /* شارة نوع الإجراء الافتراضية (باللون الأصفر الداكن) */
+        /* شارة نوع الإجراء العادية */
         .badge-procedure {
-            background-color: #ca8a04 !important;
+            background-color: var(--primary-color) !important;
             color: #ffffff !important;
             padding: 4px 10px;
             border-radius: 20px;
@@ -416,7 +412,7 @@
             display: inline-block;
         }
 
-        /* شارة مخصصة لتمييز نوع إجراء الزراعة בלون مختلف تماماً */
+        /* شارة مخصصة لتمييز نوع إجراء الزراعة בלون فريد ومميز */
         .badge-procedure-plant {
             background-color: #0d9488 !important;
             color: #ffffff !important;
@@ -931,10 +927,10 @@
 
             let priorityStatus = document.getElementById('isRecurring').checked || isRepeated;
             const contactMethodVal = document.getElementById('contactMethod').value;
-            const finalContactMethod = contactMethodVal === 'أخرى' ? `أخرى (${document.getElementById('otherContactDetail').value})` : contactMethodVal;
+            const finalContactMethod = contactMethodVal === 'أخرى' ? `${document.getElementById('otherContactDetail').value}` : contactMethodVal;
 
             const procedureVal = document.getElementById('procedureType').value;
-            const finalProcedureType = procedureVal === 'أخرى' ? `أخرى (${document.getElementById('otherProcedureDetail').value})` : procedureVal;
+            const finalProcedureType = procedureVal === 'أخرى' ? `${document.getElementById('otherProcedureDetail').value}` : procedureVal;
 
             const tempKey = 'local_' + Date.now();
             const newRecord = {
@@ -1226,7 +1222,7 @@
             const diffHours = (new Date() - new Date(createdAt)) / (1000 * 60 * 60);
             if (diffHours >= 48) return { text: 'تأخير +48 ساعة', class: 'badge-48h' };
             if (diffHours >= 24) return { text: 'تأخير +24 ساعة', class: 'badge-24h' };
-            return { text: 'لم يتم إجراء (جديد)', class: 'badge-pending-action' };
+            return { text: 'جديد', class: 'badge-normal' };
         }
 
         function formatWhatsAppNumber(phone) {
@@ -1273,7 +1269,7 @@
             tbody.innerHTML = '';
 
             let filteredRecords = filterRecordsList(records);
-            const sorted = [...filteredRecords].sort((a, b) => b.isRecurring - a.isRecurring || new Date(b.createdAt) - new Date(a.createdAt));
+            const sorted = [...filteredRecords].sort((a, b) => b.isRecurring - a.isRecurring || new Date(b.createdAt) - new Date(b.createdAt));
 
             sorted.forEach(record => {
                 const status = getDelayStatus(record.createdAt, record.actionTaken);
@@ -1340,7 +1336,7 @@
             const actionVal = document.getElementById(`action_${key}`).value;
             const adminContactSelect = document.getElementById(`adminContact_${key}`).value;
             const adminContactDetail = document.getElementById(`adminContactDetail_${key}`).value;
-            const finalAdminContact = adminContactSelect === 'أخرى' && adminContactDetail.trim() !== '' ? `أخرى (${adminContactDetail.trim()})` : adminContactSelect;
+            const finalAdminContact = adminContactSelect === 'أخرى' && adminContactDetail.trim() !== '' ? `${adminContactDetail.trim()}` : adminContactSelect;
 
             let rec = records.find(r => r.firebaseKey === key);
             if (rec) { 
