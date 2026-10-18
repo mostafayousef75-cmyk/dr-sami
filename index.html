@@ -71,7 +71,7 @@
             position: relative;
         }
 
-        /* القائمة الجانبية الموحدة */
+        /* الشريط الجانبي */
         .sidebar {
             width: 270px;
             background-color: var(--bg-sidebar);
@@ -423,6 +423,19 @@
         .table-input {
             width: 100%; padding: 8px; border: 1px solid var(--border-color); border-radius: var(--radius-md); background: var(--bg-surface); color: var(--text-main); font-family: var(--font-family); font-size: 0.88rem;
         }
+        
+        /* تنسيق عمود تفاصيل الطلب ليكون منسقاً وبدون امتداد مفرط لأسفل */
+        .service-cell-content {
+            max-height: 100px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            word-break: break-word;
+            padding: 4px;
+            background: var(--bg-base);
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+        }
+
         textarea.table-input { resize: vertical; min-height: 70px; }
 
         .btn-save-action { background-color: var(--success-color); color: #fff; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; margin-bottom: 4px; }
@@ -705,7 +718,7 @@
                         <div class="section-header">
                             <h2><i class="fa-solid fa-address-book"></i> كشف العملاء المفتوحين (الطلبات المعلقة)</h2>
                             <div class="actions-toolbar">
-                                <button class="action-btn copy-btn" onclick="copyClientReport()"><i class="fa-solid fa-copy"></i> نسخ الكشف بالكامل</button>
+                                <button class="action-btn copy-btn" onclick="copyClientReport()"><i class="fa-solid fa-copy"></i> نسخ الكشف (واتساب)</button>
                                 <button class="action-btn clear-all" onclick="deleteClientsTimeRange()"><i class="fa-solid fa-trash"></i> حذف الفلاتر المختارة</button>
                                 <button class="action-btn restore-btn" onclick="openRestoreModal()"><i class="fa-solid fa-rotate-left"></i> استرجاع المحذوفات</button>
                             </div>
@@ -804,6 +817,7 @@
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
         const dbRef = database.ref('appointments');
+        const trashRef = database.ref('trash');
 
         let records = [];
         let deletedRecords = [];
@@ -837,6 +851,8 @@
             document.querySelectorAll('.page-view').forEach(p => p.classList.add('hidden'));
             document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active'));
 
+            localStorage.setItem('activePage', page);
+
             if (page === 'dashboard') {
                 document.getElementById('page-dashboard').classList.remove('hidden');
                 document.getElementById('menu-dashboard').classList.add('active');
@@ -860,6 +876,13 @@
         const cachedTrash = localStorage.getItem('cachedTrash');
         if (cachedTrash) { try { deletedRecords = JSON.parse(cachedTrash); } catch(e) { deletedRecords = []; } }
 
+        // استرجاع الصفحة النشطة عند عمل Refresh
+        window.addEventListener('DOMContentLoaded', () => {
+            const activePage = localStorage.getItem('activePage') || 'dashboard';
+            switchPage(activePage);
+        });
+
+        // مزامنة البيانات من Firebase
         dbRef.on('value', (snapshot) => {
             const data = snapshot.val();
             if (data) {
@@ -873,6 +896,18 @@
             renderTable();
             updateKPIs();
             renderClientReport();
+        });
+
+        trashRef.on('value', (snapshot) => {
+            const data = snapshot.val();
+            if (data) {
+                const cloudTrash = [];
+                for (let key in data) { cloudTrash.push({ firebaseKey: key, ...data[key] }); }
+                deletedRecords = cloudTrash;
+            } else {
+                deletedRecords = [];
+            }
+            saveLocal();
         });
 
         /* التحقق من كلمة المرور لتحديد الأولوية */
@@ -920,8 +955,8 @@
                 firebaseKey: tempKey,
                 patientName: patientNameVal,
                 patientPhone: patientPhoneVal,
-                fileNumber: document.getElementById('fileNumber').value || '-',
-                idNumber: document.getElementById('idNumber').value || '-',
+                fileNumber: document.getElementById('fileNumber').value.trim() || '',
+                idNumber: document.getElementById('idNumber').value.trim() || '',
                 branch: document.getElementById('branch').value,
                 procedureType: document.getElementById('procedureType').value,
                 contactMethod: document.getElementById('contactMethod').value,
@@ -954,13 +989,16 @@
             alert('تم حفظ الموعد بنجاح!');
         });
 
-        /* جدول المواعيد */
+        /* جدول المواعيد (مع تثبيت الأولوية في الأعلى) */
         function renderTable() {
             const tbody = document.getElementById('tableBody');
             if (!tbody) return;
             tbody.innerHTML = '';
 
-            records.forEach((record, index) => {
+            // فرز الحالات بحيث تصعد الأولوية إلى الأعلى دائماً
+            const sortedRecords = [...records].sort((a, b) => (b.isRecurring === true) - (a.isRecurring === true));
+
+            sortedRecords.forEach((record, index) => {
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
                     <td>${index + 1}</td>
@@ -971,9 +1009,9 @@
                     </td>
                     <td><strong>${record.patientName}</strong></td>
                     <td>${record.patientPhone}</td>
-                    <td>${record.fileNumber}</td>
+                    <td>${record.fileNumber || '-'}</td>
                     <td><span class="badge-procedure">${record.procedureType || '-'}</span></td>
-                    <td style="white-space: pre-wrap;">${record.serviceRequired}</td>
+                    <td><div class="service-cell-content">${record.serviceRequired}</div></td>
                     <td>${record.coordinatorName}</td>
                     <td>
                         <select class="table-input" id="adminContact_${record.firebaseKey}">
@@ -1018,13 +1056,18 @@
             if (pass === localStorage.getItem('adminPassword')) {
                 const itemIdx = records.findIndex(r => r.firebaseKey === key);
                 if (itemIdx !== -1) {
-                    deletedRecords.unshift(records[itemIdx]);
-                    records.splice(itemIdx, 1);
+                    const deletedItem = records.splice(itemIdx, 1)[0];
+                    deletedRecords.unshift(deletedItem);
                     saveLocal();
                     renderTable();
                     updateKPIs();
                     renderClientReport();
-                    if (navigator.onLine && !key.startsWith('local_')) dbRef.child(key).remove();
+
+                    if (navigator.onLine && !key.startsWith('local_')) {
+                        dbRef.child(key).remove();
+                        const tRef = trashRef.push();
+                        trashRef.child(tRef.key).set(deletedItem);
+                    }
                 }
             } else if (pass !== null) {
                 alert('كلمة المرور غير صحيحة!');
@@ -1039,19 +1082,13 @@
             renderClientReport();
         }
 
-        function renderClientReport() {
-            const container = document.getElementById('clientReportList');
-            if (!container) return;
-            container.innerHTML = '';
-
-            // تصفية العملاء غير المتواصل معهم فقط (قيد الانتظار وبدون إجراء إدارة)
+        function getOpenFilteredRecords() {
             let openRecords = records.filter(r => {
                 const isPending = !r.adminContactMethod || r.adminContactMethod === 'قيد الانتظار';
                 const noAction = !r.actionTaken || r.actionTaken.trim() === '';
                 return isPending && noAction;
             });
 
-            // الفلترة بالوقت
             if (clientHoursFilter !== 'all') {
                 const now = new Date();
                 openRecords = openRecords.filter(r => {
@@ -1059,8 +1096,16 @@
                     return diffHours <= parseFloat(clientHoursFilter);
                 });
             }
+            return openRecords;
+        }
 
-            // تجميع وتوحيد الطلبات لكل عميل متكرر
+        function renderClientReport() {
+            const container = document.getElementById('clientReportList');
+            if (!container) return;
+            container.innerHTML = '';
+
+            let openRecords = getOpenFilteredRecords();
+
             const groupedClients = {};
             openRecords.forEach(r => {
                 const key = (r.patientPhone && r.patientPhone !== '-') ? r.patientPhone : r.patientName;
@@ -1100,7 +1145,7 @@
                     <div class="client-card-header">
                         <div class="client-title">
                             <span>${index + 1}. ${client.patientName}</span>
-                            <span class="client-file">ملف: ${client.fileNumber}</span>
+                            ${client.fileNumber ? `<span class="client-file">ملف: ${client.fileNumber}</span>` : ''}
                         </div>
                     </div>
                     <div class="client-info-row">
@@ -1118,14 +1163,9 @@
             });
         }
 
-        /* نسخ كشف العملاء المفتوحين */
+        /* نسخ كشف العملاء المفتوحين بشكل احترافي للواتساب (تجاهل الملف غير المسجل) */
         function copyClientReport() {
-            let openRecords = records.filter(r => (!r.adminContactMethod || r.adminContactMethod === 'قيد الانتظار') && (!r.actionTaken || r.actionTaken.trim() === ''));
-
-            if (clientHoursFilter !== 'all') {
-                const now = new Date();
-                openRecords = openRecords.filter(r => (now - new Date(r.createdAt)) / (1000 * 60 * 60) <= parseFloat(clientHoursFilter));
-            }
+            let openRecords = getOpenFilteredRecords();
 
             const groupedClients = {};
             openRecords.forEach(r => {
@@ -1139,40 +1179,64 @@
             const keys = Object.keys(groupedClients);
             if (keys.length === 0) return alert('لا يوجد عملاء لنسخ الكشف!');
 
-            let reportText = `📋 **كشف العملاء والطلبات المعلقة**\n----------------------------------\n`;
-            keys.forEach((k, idx) => {
-                const c = groupedClients[k];
-                reportText += `${idx + 1}- اسم العميل: ${c.patientName} (ملف: ${c.fileNumber})\n   رقم الجوال: ${c.patientPhone}\n   الخدمة المطلوبة / المشكلة:\n   - ${c.services.join('\n   - ')}\n----------------------------------\n`;
+            let reportText = `📋 *كشف العملاء والطلبات المعلقة*\n----------------------------------\n`;
+            keys.forEach((cKey, idx) => {
+                const c = groupedClients[cKey];
+                reportText += `${idx + 1}- اسم العميل: ${c.patientName}`;
+                if (c.fileNumber && c.fileNumber.trim() !== '') {
+                    reportText += ` (ملف: ${c.fileNumber})`;
+                }
+                reportText += `\n   رقم الجوال: ${c.patientPhone}\n   الخدمة المطلوبة / المشكلة:\n   - ${c.services.join('\n   - ')}\n----------------------------------\n`;
             });
 
-            navigator.clipboard.writeText(reportText).then(() => alert('تم نسخ كشف العملاء بنجاح!'));
+            navigator.clipboard.writeText(reportText).then(() => alert('تم نسخ كشف العملاء بنجاح وجاهز للإلصاق في الواتساب!'));
         }
 
-        /* حذف الفترة الزمنية من كشف العملاء */
+        /* حذف الفترة الزمنية من كشف العملاء مع سلة المحذوفات */
         function deleteClientsTimeRange() {
             const pass = prompt('أدخل كلمة مرور الإدارة للحذف:');
             if (pass === localStorage.getItem('adminPassword')) {
                 const now = new Date();
-                records = records.filter(r => {
+                let remaining = [];
+                let movedToTrash = [];
+
+                records.forEach(r => {
                     const isPending = (!r.adminContactMethod || r.adminContactMethod === 'قيد الانتظار') && (!r.actionTaken || r.actionTaken.trim() === '');
+                    let shouldDelete = false;
                     if (isPending) {
-                        if (clientHoursFilter === 'all') return false; // حذف الكل
-                        const diffHours = (now - new Date(r.createdAt)) / (1000 * 60 * 60);
-                        if (diffHours <= parseFloat(clientHoursFilter)) return false; // حذف النطاق المختار
+                        if (clientHoursFilter === 'all') {
+                            shouldDelete = true;
+                        } else {
+                            const diffHours = (now - new Date(r.createdAt)) / (1000 * 60 * 60);
+                            if (diffHours <= parseFloat(clientHoursFilter)) shouldDelete = true;
+                        }
                     }
-                    return true;
+
+                    if (shouldDelete) {
+                        movedToTrash.push(r);
+                        if (!r.firebaseKey.startsWith('local_') && navigator.onLine) {
+                            dbRef.child(r.firebaseKey).remove();
+                            const tRef = trashRef.push();
+                            trashRef.child(tRef.key).set(r);
+                        }
+                    } else {
+                        remaining.push(r);
+                    }
                 });
+
+                records = remaining;
+                deletedRecords = movedToTrash.concat(deletedRecords);
                 saveLocal();
                 renderTable();
                 updateKPIs();
                 renderClientReport();
-                alert('تم حذف النطاق الزمني المحدد بنجاح!');
+                alert('تم حذف النطاق الزمني المحدد ونقله للمحذوفات بنجاح!');
             } else if (pass !== null) {
                 alert('كلمة المرور غير صحيحة!');
             }
         }
 
-        /* الاسترجاع من سلة المحذوفات */
+        /* الاسترجاع من سلة المحذوفات بشكل كامل وسليم */
         function openRestoreModal() {
             const modal = document.getElementById('restoreModal');
             const trashList = document.getElementById('trashList');
@@ -1187,7 +1251,7 @@
                     div.innerHTML = `
                         <div>
                             <strong>${item.patientName}</strong> (${item.patientPhone})<br>
-                            <small>${item.serviceRequired}</small>
+                            <small>${item.serviceRequired || '-'}</small>
                         </div>
                         <button class="btn-save-action" onclick="restoreRecord(${idx})">استرجاع</button>
                     `;
@@ -1203,12 +1267,25 @@
             const pass = prompt('أدخل كلمة مرور الإدارة للاسترجاع:');
             if (pass === localStorage.getItem('adminPassword')) {
                 const restored = deletedRecords.splice(idx, 1)[0];
+                const originalKey = restored.firebaseKey;
+                delete restored.firebaseKey;
+
                 records.unshift(restored);
                 saveLocal();
                 renderTable();
                 updateKPIs();
                 renderClientReport();
                 closeRestoreModal();
+
+                if (navigator.onLine) {
+                    const newRef = dbRef.push(restored);
+                    restored.firebaseKey = newRef.key;
+                    if (originalKey && !originalKey.startsWith('local_')) {
+                        trashRef.orderByChild('patientName').equalTo(restored.patientName).once('child_added', snapshot => {
+                            snapshot.ref.remove();
+                        });
+                    }
+                }
                 alert('تم استرجاع الحالة بنجاح!');
             } else if (pass !== null) {
                 alert('كلمة المرور غير صحيحة!');
@@ -1221,6 +1298,21 @@
             document.getElementById('kpi-recurring').innerText = records.filter(r => r.isRecurring).length;
             document.getElementById('kpi-repeated').innerText = records.filter(r => r.isRepeatedRequest).length;
             document.getElementById('kpi-plants').innerText = records.filter(r => (r.procedureType && r.procedureType.includes('زراعة'))).length;
+            
+            let c24 = 0, c48 = 0;
+            const now = new Date();
+            records.forEach(r => {
+                const hasAction = (r.actionTaken && r.actionTaken.trim() !== '') || (r.adminContactMethod && r.adminContactMethod !== 'قيد الانتظار');
+                if (!hasAction) {
+                    const diffHours = (now - new Date(r.createdAt)) / (1000 * 60 * 60);
+                    if (diffHours >= 48) c48++;
+                    else if (diffHours >= 24) c24++;
+                }
+            });
+            const k24 = document.getElementById('kpi-24h');
+            const k48 = document.getElementById('kpi-48h');
+            if (k24) k24.innerText = c24;
+            if (k48) k48.innerText = c48;
         }
 
         function formatDateOnly(isoString) {
@@ -1260,6 +1352,7 @@
                 updateKPIs();
                 renderClientReport();
                 closeClearModal();
+                if (navigator.onLine) dbRef.set(null);
                 alert('تم مسح البيانات بنجاح!');
             } else { alert('كلمة المرور غير صحيحة!'); }
         }
