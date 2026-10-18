@@ -1,3 +1,4 @@
+ id="kpi-48h">0
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -725,11 +726,11 @@
 
             </div>
 
-            <!-- صفحة الكشف -->
+            <!-- صفحة الكشف (شاشة عرض نصية مستقلة تماماً) -->
             <div class="content-body hidden" id="reportContentBody">
                 <section class="dashboard-section">
                     <div class="section-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
-                        <h2><i class="fa-solid fa-file-lines"></i> صفحة الكشف (الحالات الجديدة وغير المُعالجة)</h2>
+                        <h2><i class="fa-solid fa-file-lines"></i> صفحة الكشف (شاشة عرض نصية مستقلة)</h2>
                         <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
                             <select id="reportPeriodSelect" class="table-input" style="width: 160px;" onchange="renderReport()">
                                 <option value="6">آخر 6 ساعات</option>
@@ -738,7 +739,7 @@
                                 <option value="24">آخر 24 ساعة</option>
                             </select>
                             <button class="action-btn excel" onclick="copyReportText()"><i class="fa-solid fa-copy"></i> نسخ الكشف كاملاً</button>
-                            <button class="action-btn clear-all" onclick="openClearReportModal()" style="padding: 10px 14px;"><i class="fa-solid fa-trash"></i> مسح الفترة</button>
+                            <button class="action-btn clear-all" onclick="openClearReportModal()" style="padding: 10px 14px;"><i class="fa-solid fa-trash"></i> مسح الكشف (نص فقط)</button>
                         </div>
                     </div>
                     <div id="reportContainer" style="background: var(--bg-base); padding: 20px; border-radius: var(--radius-md); border: 1px solid var(--border-color); font-size: 1.05rem; line-height: 1.8; white-space: pre-wrap;">
@@ -780,7 +781,7 @@
     <div class="modal" id="clearReportModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3><i class="fa-solid fa-shield-halved"></i> تأكيد مسح الفترة الحالية</h3>
+                <h3><i class="fa-solid fa-shield-halved"></i> مسح النص المعروض في الكشف</h3>
                 <button class="close-modal-btn" onclick="closeClearReportModal()">&times;</button>
             </div>
             <div class="form-grid">
@@ -790,7 +791,7 @@
                 </div>
             </div>
             <button type="button" class="submit-btn" style="background-color: var(--danger-color); margin-top: 15px;" onclick="executeClearReportPeriod()">
-                <i class="fa-solid fa-trash"></i> تأكيد مسح الفترة
+                <i class="fa-solid fa-trash"></i> مسح النص المعروض فقط
             </button>
         </div>
     </div>
@@ -869,6 +870,9 @@
         let currentTimeFilter = 'all';
         let previousCount = 0;
 
+        // مصفوفة لتخزين مفاتيح العملاء الذين تم إخفاؤهم/حذفهم يدوياً من عرض الكشف النصي فقط
+        let hiddenReportKeys = JSON.parse(localStorage.getItem('hiddenReportKeys') || '[]');
+
         if (!localStorage.getItem('adminPassword')) {
             localStorage.setItem('adminPassword', '1234');
         }
@@ -889,7 +893,6 @@
         const cached = localStorage.getItem('cachedAppointments');
         if (cached) { try { records = JSON.parse(cached); } catch(e) { records = []; } }
 
-        // التحقق من الصفحة الحالية عند إعادة التحميل (Refresh) لمنع ضياع مكان المستخدم
         window.addEventListener('DOMContentLoaded', () => {
             const savedFilter = localStorage.getItem('savedFilter');
             const savedTimeFilter = localStorage.getItem('savedTimeFilter');
@@ -902,7 +905,6 @@
             renderReport();
             updateKPIs();
 
-            // فحص الرابط أو الهاش للحفاظ على الصفحة الحالية عند الـ Refresh
             const currentHash = window.location.hash;
             if (currentHash === '#report') {
                 switchPage('report', document.querySelector('.sidebar-menu .menu-item[href="#report"]'));
@@ -953,7 +955,7 @@
             if (pageType === 'report') {
                 mainBody.classList.add('hidden');
                 reportBody.classList.remove('hidden');
-                headingTitle.innerText = 'صفحة الكشف والمتابعة الدورية';
+                headingTitle.innerText = 'صفحة الكشف (شاشة عرض نصية مستقلة)';
                 window.location.hash = 'report';
                 renderReport();
             } else {
@@ -1280,21 +1282,20 @@
             const now = new Date();
             const timeLimit = new Date(now.getTime() - (hoursSelect * 60 * 60 * 1000));
 
-            // حذف الحالات ضمن الفترة التي لم يتم معالجتها
-            records = records.filter(r => {
+            // إخفاء الحالات الموجودة في هذه الفترة من الكشف النصي فقط دون حذفها من قاعدة البيانات أو الجدول الرئيسي
+            records.forEach(r => {
                 const created = new Date(r.createdAt);
                 const hasAction = (r.actionTaken && r.actionTaken.trim() !== '') || (r.adminContactMethod && r.adminContactMethod !== 'قيد الانتظار');
                 if (created >= timeLimit && !hasAction) {
-                    return false;
+                    if (!hiddenReportKeys.includes(r.firebaseKey)) {
+                        hiddenReportKeys.push(r.firebaseKey);
+                    }
                 }
-                return true;
             });
 
-            saveLocal();
-            renderTable();
+            localStorage.setItem('hiddenReportKeys', JSON.stringify(hiddenReportKeys));
             renderReport();
-            updateKPIs();
-            alert('تم مسح وإزالة حالات هذه الفترة بنجاح!');
+            alert('تم مسح النص المعروض للفترة بنجاح دون المساس ببيانات العملاء أو مؤشرات الأداء!');
             closeClearReportModal();
         }
 
@@ -1476,7 +1477,7 @@
                             <option value="تم التواصل" ${currentAdminContact === 'تم التواصل' ? 'selected' : ''}>تم التواصل ✅</option>
                             <option value="معلق" ${currentAdminContact === 'معلق' ? 'selected' : ''}>معلق 🟡</option>
                             <option value="لا يرد" ${currentAdminContact === 'لا يرد' ? 'selected' : ''}>لا يرد ❌</option>
-                            <option value="تم إلغاء الموعد" ${currentAdminContact === 'تم إلغاء الموعد' ? 'selected' : ''}>تم إلغاء الموعد 🚫</option> مفترض
+                            <option value="تم إلغاء الموعد" ${currentAdminContact === 'تم إلغاء الموعد' ? 'selected' : ''}>تم إلغاء الموعد 🚫</option>
                             <option value="أخرى" ${isOther ? 'selected' : ''}>أخرى</option>
                         </select>
                         <input type="text" class="table-input ${isOther ? '' : 'hidden'}" id="adminContactDetail_${record.firebaseKey}" value="${record.adminContactDetail || ''}" placeholder="اكتب تفاصيل التواصل..." style="margin-top: 4px;">
@@ -1500,21 +1501,21 @@
             const now = new Date();
             const timeLimit = new Date(now.getTime() - (hoursSelect * 60 * 60 * 1000));
 
-            // تصفية الحالات: ضمن الفترة، ولم تتم معالجتها
+            // تصفية الحالات: ضمن الفترة، ولم تتم معالجتها، ولم يتم إخفاؤها يدوياً من عرض الكشف النصي
             const unprocessedRecords = records.filter(r => {
                 const created = new Date(r.createdAt);
                 const hasAction = (r.actionTaken && r.actionTaken.trim() !== '') || (r.adminContactMethod && r.adminContactMethod !== 'قيد الانتظار');
-                return created >= timeLimit && !hasAction;
+                const isHidden = hiddenReportKeys.includes(r.firebaseKey);
+                return created >= timeLimit && !hasAction && !isHidden;
             });
 
-            // استبعاد العملاء المتضررين (منع تكرار الاسم، أو رقم الجوال، أو رقم الهوية)
+            // استبعاد العملاء المتضررين (منع تكرار الاسم، رقم الجوال، أو رقم الهوية)
             const uniqueMap = new Map();
             unprocessedRecords.forEach(r => {
                 const cleanName = (r.patientName || '').trim().toLowerCase();
                 const cleanPhone = (r.patientPhone && r.patientPhone !== '-') ? r.patientPhone.replace(/\D/g, '') : '';
                 const cleanId = (r.idNumber && r.idNumber !== '-') ? r.idNumber.trim() : '';
 
-                // مفتاح فريد لمنع التكرار بناءً على الاسم أو الجوال أو الهوية
                 const uniqueKey = cleanPhone || cleanId || cleanName;
 
                 if (uniqueKey && !uniqueMap.has(uniqueKey)) {
@@ -1525,7 +1526,7 @@
             const finalReportList = Array.from(uniqueMap.values());
 
             if (finalReportList.length === 0) {
-                container.innerHTML = `لا توجد حالات جديدة أو قيد الانتظار خلال الـ ${hoursSelect} ساعات الماضية.`;
+                container.innerHTML = `لا توجد حالات جديدة أو قيد الانتظار معروضة خلال الـ ${hoursSelect} ساعات الماضية.`;
                 return;
             }
 
@@ -1635,7 +1636,7 @@
         });
 
         function deleteRecord(key) {
-            if (confirm('هل أنت متأكد من الحذف النهائي؟')) {
+            if (confirm('هل أنت متأكد من الحذف النهائي من النظام؟')) {
                 records = records.filter(r => r.firebaseKey !== key);
                 saveLocal();
                 renderTable();
