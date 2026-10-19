@@ -617,6 +617,47 @@
             border-color: #cbd5e1;
         }
 
+        /* تنسيق خاص بسلة المحذوفات المصغرة جداً لتناسب الموبايل */
+        .trash-item-card {
+            background: var(--bg-base);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 10px 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .trash-item-info {
+            font-size: 0.88rem;
+            color: var(--text-main);
+            line-height: 1.4;
+            word-break: break-word;
+        }
+
+        .trash-btn-group {
+            display: flex;
+            gap: 6px;
+            justify-content: flex-end;
+            border-top: 1px dashed var(--border-color);
+            padding-top: 6px;
+        }
+
+        .btn-trash-micro {
+            padding: 3px 8px !important;
+            font-size: 0.75rem !important;
+            border-radius: 4px !important;
+            border: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-weight: 600;
+            color: #fff;
+        }
+        .btn-trash-micro.restore { background-color: var(--success-color); }
+        .btn-trash-micro.delete { background-color: var(--danger-color); }
+
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 2000; justify-content: center; align-items: center; padding: 15px; }
         .modal.open { display: flex; }
         .modal-content { background: var(--bg-surface); border-radius: var(--radius-lg); width: 100%; max-width: 520px; max-height: 90vh; overflow-y: auto; padding: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); border: 1px solid var(--border-color); color: var(--text-main); }
@@ -1010,9 +1051,9 @@
         </div>
     </div>
 
-    <!-- نافذة سلة المحذوفات المصممة خصيصاً للموبايل لضمان ظهور بيانات العميل بوضوح -->
+    <!-- نافذة سلة المحذوفات المصممة بأزرار مصغرة وألوان مريحة للموبايل -->
     <div class="modal" id="restoreModal">
-        <div class="modal-content" style="max-width: 500px;">
+        <div class="modal-content" style="max-width: 480px;">
             <div class="modal-header">
                 <h3><i class="fa-solid fa-rotate-left"></i> سلة المحذوفات والاسترجاع</h3>
                 <button class="close-modal-btn" onclick="closeRestoreModal()">&times;</button>
@@ -1285,7 +1326,6 @@
             setTimeout(() => { toast.classList.remove('show'); }, 3500);
         }
 
-        // استخدام sessionStorage لطلب كلمة المرور مرة واحدة فقط في الجلسة أو عند إعادة فتح المتصفح/انقطاع الاتصال
         let universalAuthCallback = null;
 
         function requireAdminAuth(callback) {
@@ -1442,8 +1482,7 @@
             }).length;
 
             const percentage = Math.round((completedToday / totalToday) * 100);
-            document.getElementById('progressText').innerText = `${percentage}% (${completedToday} من ${totalToday} حالات مُنجزة)`;
-            document.getElementById('progressBarFill').style.width = `${percentage}%`;
+            document.getElementById('progressText').innerText = `${percentage}\% (${completedToday} من ${totalToday} حالات مُنجزة)`; document.getElementById('progressBarFill').style.width = `${percentage}%`;
         }
 
         function renderTable() {
@@ -1692,7 +1731,8 @@
                     const itemIdx = records.findIndex(r => r.firebaseKey === key);
                     if (itemIdx !== -1) {
                         const deletedItem = records.splice(itemIdx, 1)[0];
-                        deletedRecords.unshift(deletedItem); // إضافته في الأعلى دائماً
+                        deletedItem.deletedAt = new Date().toISOString(); // إتاحة وقت الحذف للترتيب
+                        deletedRecords.unshift(deletedItem); 
                         saveLocal();
                         renderTable();
                         updateKPIs();
@@ -1857,12 +1897,13 @@
 
             records.forEach(r => {
                 if (keysToDelete.includes(r.firebaseKey)) {
+                    r.deletedAt = new Date().toISOString();
                     if (!r.firebaseKey.startsWith('local_') && navigator.onLine) {
                         dbRef.child(r.firebaseKey).remove();
                     }
                     const ctRef = clientDeletedRef.push();
                     clientDeletedRef.child(ctRef.key).set(r);
-                    clientDeletedRecords.unshift(r); // إضافته في الأعلى بدلاً من الأسفل
+                    clientDeletedRecords.unshift(r);
                 } else {
                     remaining.push(r);
                 }
@@ -1899,6 +1940,7 @@
                 }
 
                 if (shouldDelete) {
+                    r.deletedAt = new Date().toISOString();
                     if (!r.firebaseKey.startsWith('local_') && navigator.onLine) {
                         dbRef.child(r.firebaseKey).remove();
                     }
@@ -1930,25 +1972,40 @@
             trashList.innerHTML = '';
 
             let allTrash = [...deletedRecords, ...clientDeletedRecords];
+
+            // الترتيب الصارم: الأحدث حذفا يظهر في الأعلى فوراً (حتى بعد الـ Refresh)
+            allTrash.sort((a, b) => {
+                const timeA = new Date(a.deletedAt || a.createdAt || 0).getTime();
+                const timeB = new Date(b.deletedAt || b.createdAt || 0).getTime();
+                return timeB - timeA;
+            });
             
             if (allTrash.length === 0) {
                 trashList.innerHTML = '<div style="text-align:center; padding:20px; color:var(--text-muted);">سلة المحذوفات فارغة</div>';
             } else {
                 allTrash.forEach((item, idx) => {
-                    const div = document.createElement('div');
-                    // تصميم عمودي مرن للموبايل: بيانات العميل في الأعلى بارزة، والأزرار الصغيرة في الأسفل بجانب بعضها
-                    div.style.cssText = 'background: var(--bg-base); border: 1px solid var(--border-color); border-radius: 8px; padding: 10px; display: flex; flex-direction: column; gap: 8px;';
-                    div.innerHTML = `
-                        <div style="word-break: break-word; line-height: 1.4;">
-                            <strong style="color:var(--text-main); font-size: 0.95rem;">${item.patientName}</strong> <span style="color:var(--text-muted); font-size: 0.85rem;">(${item.patientPhone})</span><br>
-                            <small style="color:var(--text-muted); font-size: 0.82rem;">${item.serviceRequired || '-'}</small>
+                    const card = document.createElement('div');
+                    card.className = 'trash-item-card';
+
+                    const phoneStr = (item.patientPhone && item.patientPhone !== '-') ? item.patientPhone : '-';
+                    const serviceStr = item.serviceRequired || '-';
+
+                    card.innerHTML = `
+                        <div class="trash-item-info">
+                            <strong style="color:var(--text-main); font-size: 0.95rem;">${item.patientName}</strong> 
+                            <span style="color:var(--text-muted); font-size:0.85rem;">(${phoneStr})</span>
+                            <div style="font-size:0.82rem; color:var(--text-muted); margin-top:3px;">${serviceStr}</div>
                         </div>
-                        <div style="display: flex; gap: 6px; justify-content: flex-end; border-top: 1px solid var(--border-color); padding-top: 6px;">
-                            <button class="btn-save-action" onclick="restoreRecord(${idx})" style="padding: 4px 10px; font-size: 0.78rem;" title="استرجاع"><i class="fa-solid fa-rotate-left"></i> استرجاع</button>
-                            <button class="action-btn select-del-btn" onclick="permanentDeleteRecord(${idx})" style="padding: 4px 10px; font-size: 0.78rem;" title="حذف نهائي"><i class="fa-solid fa-trash-can"></i> حذف نهائي</button>
+                        <div class="trash-btn-group">
+                            <button class="btn-trash-micro restore" onclick="restoreRecord(${idx})" title="استرجاع الحالة">
+                                <i class="fa-solid fa-rotate-left"></i> استرجاع
+                            </button>
+                            <button class="btn-trash-micro delete" onclick="permanentDeleteRecord(${idx})" title="حذف نهائي من النظام">
+                                <i class="fa-solid fa-trash-can"></i> حذف نهائي
+                            </button>
                         </div>
                     `;
-                    trashList.appendChild(div);
+                    trashList.appendChild(card);
                 });
             }
             modal.classList.add('open');
@@ -1958,6 +2015,12 @@
 
         function restoreRecord(idx) {
             let allTrash = [...deletedRecords, ...clientDeletedRecords];
+            allTrash.sort((a, b) => {
+                const timeA = new Date(a.deletedAt || a.createdAt || 0).getTime();
+                const timeB = new Date(b.deletedAt || b.createdAt || 0).getTime();
+                return timeB - timeA;
+            });
+
             const restored = allTrash[idx];
             
             if (deletedRecords.includes(restored)) {
@@ -1968,6 +2031,7 @@
 
             const trashKey = restored.firebaseKey;
             delete restored.firebaseKey;
+            delete restored.deletedAt;
 
             records.unshift(restored);
             saveLocal();
@@ -1990,6 +2054,12 @@
         function permanentDeleteRecord(idx) {
             if (confirm('هل أنت متأكد من الحذف النهائي لهذا السجل؟ لا يمكن استرجاعه بعد الآن.')) {
                 let allTrash = [...deletedRecords, ...clientDeletedRecords];
+                allTrash.sort((a, b) => {
+                    const timeA = new Date(a.deletedAt || a.createdAt || 0).getTime();
+                    const timeB = new Date(b.deletedAt || b.createdAt || 0).getTime();
+                    return timeB - timeA;
+                });
+
                 const target = allTrash[idx];
 
                 if (deletedRecords.includes(target)) {
