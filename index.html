@@ -617,7 +617,6 @@
             border-color: #cbd5e1;
         }
 
-        /* شارة العميل المتكرر في صفحة الكشف */
         .client-repeated-badge {
             background-color: #e11d48;
             color: #ffffff;
@@ -631,7 +630,6 @@
             box-shadow: 0 0 8px rgba(225, 29, 72, 0.4);
         }
 
-        /* أزرار الإجراءات داخل بطاقة العميل */
         .client-actions-row {
             display: flex;
             gap: 6px;
@@ -914,7 +912,9 @@
                                     <button class="filter-tab" data-filter="extraction" onclick="setDashboardFilter('extraction', this)">حالات الخلع 🩺</button>
                                     <button class="filter-tab" data-filter="review" onclick="setDashboardFilter('review', this)">حالات المراجعة 📋</button>
                                     <button class="filter-tab" data-filter="inquiries" onclick="setDashboardFilter('inquiries', this)">استفسارات 💬</button>
-                                    <button class="filter-tab" data-filter="no_inquiries" onclick="setDashboardFilter('no_inquiries', this)">بدون الاستفسارات 🚫💬</button>
+                                    <button class="filter-tab" data-filter="no_inquiries" onclick="setDashboardFilter('no_inquiries', this)">الكشفيات والمواعيد 🩺📅</button>
+                                    <button class="filter-tab" data-filter="admin_pending" onclick="setDashboardFilter('admin_pending', this)" style="border-color: var(--warning-color); color: var(--warning-color);">قيد انتظار الإدارة ⏳</button>
+                                    <button class="filter-tab" data-filter="admin_done" onclick="setDashboardFilter('admin_done', this)" style="border-color: var(--success-color); color: var(--success-color);">تم عليها إجراء الإدارة ✅</button>
                                 </div>
                             </div>
                             <div class="filter-row" style="border-top: 1px dashed var(--border-color); padding-top: 8px;">
@@ -1211,10 +1211,10 @@
         }
 
         function saveLocal() { 
-            localStorage.setItem('cachedAppointments_v7', JSON.stringify(records));
+            localStorage.setItem('cachedAppointments_v8', JSON.stringify(records));
         }
 
-        const cached = localStorage.getItem('cachedAppointments_v7');
+        const cached = localStorage.getItem('cachedAppointments_v8');
         if (cached) { try { records = JSON.parse(cached); lastKnownRecordsCount = records.length; } catch(e) { records = []; } }
 
         function syncFilterTabsUI() {
@@ -1451,7 +1451,7 @@
             const completedToday = todayRecords.filter(r => {
                 const contact = r.adminContactMethod || 'قيد الانتظار';
                 const hasAction = r.actionTaken && r.actionTaken.trim() !== '';
-                return contact === 'تم التواصل' || hasAction;
+                return contact !== 'قيد الانتظار' || hasAction;
             }).length;
 
             const percentage = Math.round((completedToday / totalToday) * 100);
@@ -1483,6 +1483,20 @@
                 filteredList = filteredList.filter(r => r.procedureType && r.procedureType.includes('استفسارات'));
             } else if (dashboardFilter === 'no_inquiries') {
                 filteredList = filteredList.filter(r => !r.procedureType || !r.procedureType.includes('استفسارات'));
+            } else if (dashboardFilter === 'admin_pending') {
+                // لم يتم التغيير في تواصل الإدارة ولم يكتب أي خيار في إجراء الإدارة
+                filteredList = filteredList.filter(r => {
+                    const contact = (!r.adminContactMethod || r.adminContactMethod === 'قيد الانتظار');
+                    const noAction = (!r.actionTaken || r.actionTaken.trim() === '');
+                    return contact && noAction;
+                });
+            } else if (dashboardFilter === 'admin_done') {
+                // تم التغيير إما بتعديل تواصل الإدارة أو كتابة نص في إجراء الإدارة
+                filteredList = filteredList.filter(r => {
+                    const hasContactChange = (r.adminContactMethod && r.adminContactMethod !== 'قيد الانتظار');
+                    const hasAction = (r.actionTaken && r.actionTaken.trim() !== '');
+                    return hasContactChange || hasAction;
+                });
             }
 
             if (dashboardTimeFilter === 'today') {
@@ -1921,7 +1935,6 @@
             });
         }
 
-        // إحصاء ودمج الحالات المكررة لصفحة الكشف
         function renderClientReport() {
             const container = document.getElementById('clientReportList');
             if (!container) return;
@@ -1929,7 +1942,6 @@
 
             let openRecords = getOpenFilteredRecords();
 
-            // فلتر البحث بصفحة الكشف
             const searchInputEl = document.getElementById('clientSearchInput');
             if (searchInputEl) {
                 const searchVal = searchInputEl.value.trim().toLowerCase();
@@ -1950,7 +1962,6 @@
                 return;
             }
 
-            // تجميع وتجميع الحالات حسب العميل (رقم الجوال أو الاسم)
             const groupedMap = new Map();
 
             openRecords.forEach(record => {
@@ -1963,11 +1974,9 @@
                 groupedMap.get(groupKey).push(record);
             });
 
-            // تحويل الخريطة إلى قائمة مدمجة لصفحة الكشف
             let consolidatedList = [];
 
             groupedMap.forEach((groupRecords) => {
-                // ترتيب سجلات نفس العميل من الأحدث للأقدم
                 groupRecords.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
                 const mainRecord = groupRecords[0];
@@ -1975,7 +1984,6 @@
                 const isRepeatedGroup = groupRecords.length > 1 || groupRecords.some(r => r.isRepeatedRequest);
                 const isCopiedGroup = groupRecords.every(r => r.isCopied);
 
-                // دمج النصوص البرمجية والخدمات المطلوبة فريدة من دون تكرار متطابق
                 const uniqueServices = [];
                 groupRecords.forEach(r => {
                     const txt = (r.serviceRequired || '').trim();
@@ -1996,7 +2004,6 @@
                 });
             });
 
-            // ترتيب القائمة المدمجة للأحدث أولاً المنسوخ بالأسفل
             consolidatedList.sort((a, b) => {
                 if (a.isCopied && !b.isCopied) return 1;
                 if (!a.isCopied && b.isCopied) return -1;
@@ -2053,7 +2060,6 @@
                 return alert('لا يوجد عملاء حالياً للنسخ!');
             }
 
-            // تجميع السجلات غير المنسوخة
             const groupedMap = new Map();
             openRecords.filter(r => !r.isCopied).forEach(record => {
                 const cleanPhone = (record.patientPhone && record.patientPhone !== '-') ? record.patientPhone.replace(/\D/g, '') : '';
