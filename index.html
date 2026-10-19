@@ -384,6 +384,7 @@
         .action-btn.settings { background-color: #475569; }
         .action-btn.copy-btn { background-color: #16a34a; }
         .action-btn.select-del-btn { background-color: #dc2626; }
+        .action-btn.trash-view-btn { background-color: #d97706; }
 
         .filter-container-box {
             background: var(--bg-base);
@@ -616,26 +617,26 @@
             border-color: #cbd5e1;
         }
 
-        /* أزرار الإجراءات داخل بطاقة العميل في صفحة الكشف */
+        /* أزرار الإجراءات داخل بطاقة العميل (أصغر حجماً) */
         .client-actions-row {
             display: flex;
-            gap: 8px;
-            margin-top: 5px;
+            gap: 6px;
+            margin-top: 6px;
             justify-content: flex-start;
             flex-wrap: wrap;
         }
         .btn-client-action {
-            padding: 5px 12px;
-            border-radius: 6px;
+            padding: 3px 8px;
+            border-radius: 4px;
             border: none;
             color: #fff;
             font-family: var(--font-family);
-            font-size: 0.8rem;
-            font-weight: 700;
+            font-size: 0.75rem;
+            font-weight: 600;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
-            gap: 5px;
+            gap: 4px;
         }
         .btn-client-action.restore { background-color: var(--success-color); }
         .btn-client-action.permanent-delete { background-color: var(--danger-color); }
@@ -960,9 +961,10 @@
                                     <option value="720">شهر</option>
                                 </select>
 
-                                <button class="action-btn copy-btn" onclick="copyClientReport()"><i class="fa-solid fa-copy"></i> نسخ الكشف كاملاً</button>
+                                <button class="action-btn copy-btn" onclick="copyClientReport()"><i class="fa-solid fa-copy"></i> نسخ الكشف</button>
                                 <button class="action-btn select-del-btn" onclick="requestDeleteSelectedAccess()"><i class="fa-solid fa-trash-can"></i> حذف المحددين</button>
                                 <button class="action-btn clear-all" onclick="requestDeleteRangeAccess()"><i class="fa-solid fa-trash"></i> مسح الفترة</button>
+                                <button class="action-btn trash-view-btn" onclick="openTrashModal()"><i class="fa-solid fa-rotate-left"></i> سلة المحذوفات والاسترجاع</button>
                             </div>
                         </div>
 
@@ -974,6 +976,19 @@
 
             </div>
         </main>
+    </div>
+
+    <!-- نافذة سلة المحذوفات والاسترجاع -->
+    <div class="modal" id="trashModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-rotate-left"></i> سلة المحذوفات والاسترجاع</h3>
+                <button class="close-modal-btn" onclick="closeTrashModal()">&times;</button>
+            </div>
+            <div id="trashModalList" style="display: flex; flex-direction: column; gap: 10px; max-height: 60vh; overflow-y: auto;">
+                <!-- المحذوفات تظهر هنا -->
+            </div>
+        </div>
     </div>
 
     <!-- نافذة إدخال كلمة المرور الموحدة -->
@@ -1112,16 +1127,6 @@
     </div>
 
     <script>
-        // تنظيف الكاش القديم فوراً عند التشغيل لمنع تداخل النسخ القديمة
-        (function forceClearOldCache() {
-            try {
-                if (localStorage.getItem('cachedTrash') || localStorage.getItem('cachedClientTrash')) {
-                    localStorage.removeItem('cachedTrash');
-                    localStorage.removeItem('cachedClientTrash');
-                }
-            } catch(e) {}
-        })();
-
         const firebaseConfig = { databaseURL: "https://dr-sami-default-rtdb.firebaseio.com/" };
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
@@ -1185,10 +1190,10 @@
         }
 
         function saveLocal() { 
-            localStorage.setItem('cachedAppointments_v2', JSON.stringify(records));
+            localStorage.setItem('cachedAppointments_v3', JSON.stringify(records));
         }
 
-        const cached = localStorage.getItem('cachedAppointments_v2');
+        const cached = localStorage.getItem('cachedAppointments_v3');
         if (cached) { try { records = JSON.parse(cached); lastKnownRecordsCount = records.length; } catch(e) { records = []; } }
 
         function syncFilterTabsUI() {
@@ -1248,6 +1253,7 @@
             updateKPIs();
             updateDailyProgress();
             renderClientReport();
+            renderTrashModalList();
         });
 
         function playBeepAndShowToast(msg) {
@@ -1750,7 +1756,7 @@
             });
         }
 
-        // إخفاء العميل مؤقتاً من صفحة الكشف (استرجاع)
+        // إخفاء العميل مؤقتاً من صفحة الكشف وإرساله لسلة المحذوفات
         function hideClientFromReport(key) {
             requireAdminAuth(() => {
                 let rec = records.find(r => r.firebaseKey === key);
@@ -1758,15 +1764,31 @@
                     rec.isHiddenFromClients = true;
                     saveLocal();
                     renderClientReport();
+                    renderTrashModalList();
                     if (navigator.onLine && !key.startsWith('local_')) {
                         dbRef.child(key).update({ isHiddenFromClients: true });
                     }
-                    alert('تم استرجاع العميل من صفحة الكشف بنجاح!');
                 }
             });
         }
 
-        // الحذف النهائي المباشر من صفحة الكشف
+        // استرجاع العميل من سلة المحذوفات لصفحة الكشف
+        function restoreClientToReport(key) {
+            requireAdminAuth(() => {
+                let rec = records.find(r => r.firebaseKey === key);
+                if (rec) {
+                    rec.isHiddenFromClients = false;
+                    saveLocal();
+                    renderClientReport();
+                    renderTrashModalList();
+                    if (navigator.onLine && !key.startsWith('local_')) {
+                        dbRef.child(key).update({ isHiddenFromClients: false });
+                    }
+                }
+            });
+        }
+
+        // الحذف النهائي المباشر (إزالة نهائية من المصفوفة والسحابة بدون عودة بعد الريفرش)
         function permanentDeleteClientFromReport(key) {
             requireAdminAuth(() => {
                 if (confirm('⚠️ تنبيه: هل أنت متأكد من الحذف النهائي لهذا العميل من النظام بالكامل؟ لا يمكن استرجاعه بعد الآن.')) {
@@ -1778,6 +1800,7 @@
                         updateKPIs();
                         updateDailyProgress();
                         renderClientReport();
+                        renderTrashModalList();
 
                         if (navigator.onLine && !key.startsWith('local_')) {
                             dbRef.child(key).remove();
@@ -1785,6 +1808,61 @@
                         alert('تم الحذف النهائي للعميل بنجاح.');
                     }
                 }
+            });
+        }
+
+        function openTrashModal() {
+            renderTrashModalList();
+            document.getElementById('trashModal').classList.add('open');
+        }
+
+        function closeTrashModal() {
+            document.getElementById('trashModal').classList.remove('open');
+        }
+
+        function renderTrashModalList() {
+            const trashContainer = document.getElementById('trashModalList');
+            if (!trashContainer) return;
+            trashContainer.innerHTML = '';
+
+            let hiddenRecords = records.filter(r => r.isHiddenFromClients);
+
+            if (hiddenRecords.length === 0) {
+                trashContainer.innerHTML = '<div style="text-align:center; padding:20px; color:var(--text-muted); font-size:0.9rem;">سلة المحذوفات فارغة تماماً</div>';
+                return;
+            }
+
+            // الترتيب من الأحدث للأقدم (من فوق لتحت)
+            hiddenRecords.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+            hiddenRecords.forEach((item, index) => {
+                const card = document.createElement('div');
+                card.className = 'client-card-wrapper';
+
+                const fileStr = (item.fileNumber && item.fileNumber !== '-') ? ` ${item.fileNumber}` : '';
+                const phoneStr = (item.patientPhone && item.patientPhone !== '-') ? item.patientPhone : '-';
+                const serviceStr = item.serviceRequired || '-';
+                const dateTimeStr = formatDateTimeFullCustom(item.createdAt);
+
+                card.innerHTML = `
+                    <div class="client-card-header">
+                        <div class="client-title">
+                            <span>${index + 1}- ${item.patientName}${fileStr}</span>
+                        </div>
+                        ${dateTimeStr ? `<span class="client-datetime-badge"><i class="fa-regular fa-clock"></i> ${dateTimeStr}</span>` : ''}
+                    </div>
+                    <div class="client-info-row"><span class="info-label">رقم الجوال:</span> ${phoneStr}</div>
+                    <div class="client-info-row">${serviceStr}</div>
+                    <div class="client-actions-row">
+                        <button class="btn-client-action restore" onclick="restoreClientToReport('${item.firebaseKey}')">
+                            <i class="fa-solid fa-rotate-left"></i> استرجاع
+                        </button>
+                        <button class="btn-client-action permanent-delete" onclick="permanentDeleteClientFromReport('${item.firebaseKey}')">
+                            <i class="fa-solid fa-trash-can"></i> حذف نهائي
+                        </button>
+                    </div>
+                `;
+                trashContainer.appendChild(card);
             });
         }
 
@@ -1884,6 +1962,7 @@
                     updateKPIs();
                     updateDailyProgress();
                     renderClientReport();
+                    renderTrashModalList();
 
                     keysToDelete.forEach(k => {
                         if (navigator.onLine && !k.startsWith('local_')) {
@@ -1931,6 +2010,7 @@
             updateKPIs();
             updateDailyProgress();
             renderClientReport();
+            renderTrashModalList();
 
             keysToDelete.forEach(k => {
                 if (navigator.onLine) {
@@ -2006,6 +2086,7 @@
                 updateKPIs();
                 updateDailyProgress();
                 renderClientReport();
+                renderTrashModalList();
                 closeClearModal();
                 if (navigator.onLine) dbRef.set(null);
             } else { alert('كلمة المرور غير صحيحة!'); }
@@ -2046,6 +2127,7 @@
                             updateKPIs(); 
                             updateDailyProgress(); 
                             renderClientReport();
+                            renderTrashModalList();
                             alert('تم استيراد وحفظ ملف JSON وسحابة Firebase بنجاح!');
                         }
                     } catch(err) { alert('خطأ في تحليل ملف الـ JSON'); }
@@ -2076,9 +2158,9 @@
                                     isRecurring: !!row.isRecurring,
                                     isRepeatedRequest: !!row.isRepeatedRequest,
                                     createdAt: row.createdAt || new Date().toISOString(),
-                                    actionTaken: row.actionTaken || '',
-                                    adminContactMethod: row.adminContactMethod || 'قيد الانتظار',
-                                    adminContactDetail: row.adminContactDetail || '',
+                                    actionTaken: '',
+                                    adminContactMethod: 'قيد الانتظار',
+                                    adminContactDetail: '',
                                     isCopied: false,
                                     isHiddenFromClients: false
                                 };
@@ -2094,6 +2176,7 @@
                             updateKPIs();
                             updateDailyProgress();
                             renderClientReport();
+                            renderTrashModalList();
                             alert('تم استيراد وحفظ ملف الـ Excel وسحابة Firebase بنجاح!');
                         } else {
                             alert('ملف الـ Excel فارغ أو لا يحتوي على بيانات مطابقة.');
