@@ -21,12 +21,13 @@
     <style>
         :root {
             --font-family: 'Tajawal', sans-serif;
-            --bg-base: #f4f6fb;
-            --bg-surface: #ffffff;
+            --bg-base: #0a0e17;
+            --bg-surface: #111827;
+            --bg-card: #050811;
             --bg-sidebar: #0f172a;
-            --text-main: #1e293b;
-            --text-muted: #64748b;
-            --border-color: #e2e8f0;
+            --text-main: #ffffff;
+            --text-muted: #94a3b8;
+            --border-color: #1e293b;
             
             --primary-color: #2563eb;
             --primary-hover: #1d4ed8;
@@ -35,18 +36,19 @@
             --danger-color: #dc2626;
             --success-color: #16a34a;
 
-            --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.5);
             --radius-lg: 12px;
             --radius-md: 8px;
         }
 
-        body.dark-theme {
-            --bg-base: #090d16;
-            --bg-surface: #151c2c;
-            --bg-sidebar: #0b1120;
-            --text-main: #f1f5f9;
-            --text-muted: #94a3b8;
-            --border-color: #26334d;
+        body.light-theme {
+            --bg-base: #f4f6fb;
+            --bg-surface: #ffffff;
+            --bg-card: #ffffff;
+            --bg-sidebar: #0f172a;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
         }
 
         * {
@@ -156,9 +158,10 @@
         }
 
         .menu-item.active {
-            background-color: var(--primary-color);
+            background-color: #1e293b;
             color: #ffffff;
-            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+            border: 1px solid var(--primary-color);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
         }
 
         .cloud-badge {
@@ -205,7 +208,7 @@
             gap: 15px;
         }
 
-        .header-title h1 { font-size: 1.3rem; font-weight: 700; }
+        .header-title h1 { font-size: 1.3rem; font-weight: 700; color: #ffffff; }
 
         .open-sidebar-btn {
             background: var(--primary-color);
@@ -269,8 +272,8 @@
         }
 
         .section-header h2 {
-            font-size: 1.1rem;
-            color: var(--primary-color);
+            font-size: 1.2rem;
+            color: #ffffff;
             display: flex;
             align-items: center;
             gap: 10px;
@@ -305,15 +308,8 @@
             font-size: 1.4rem; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: var(--bg-base);
         }
 
-        .kpi-card.blue .kpi-icon-box { color: var(--primary-color); }
-        .kpi-card.purple .kpi-icon-box { color: var(--accent-purple); }
-        .kpi-card.pink .kpi-icon-box { color: #e11d48; }
-        .kpi-card.teal .kpi-icon-box { color: #0d9488; }
-        .kpi-card.warning .kpi-icon-box { color: var(--warning-color); }
-        .kpi-card.indigo .kpi-icon-box { color: #4f46e5; }
-
         .kpi-info h3 { font-size: 0.8rem; color: var(--text-muted); font-weight: 500; }
-        .kpi-value { font-size: 1.3rem; font-weight: 800; }
+        .kpi-value { font-size: 1.3rem; font-weight: 800; color: #fff; }
 
         /* Form */
         .form-grid {
@@ -326,13 +322,12 @@
         .input-field.full-width { grid-column: 1 / -1; }
         .input-field label { font-size: 0.85rem; font-weight: 600; color: var(--text-main); }
         .input-field input, .input-field select, .input-field textarea {
-            padding: 8px 10px; border: 1px solid var(--border-color); border-radius: var(--radius-md); background-color: var(--bg-surface); color: var(--text-main); outline: none; font-family: var(--font-family); font-size: 0.88rem;
+            padding: 8px 10px; border: 1px solid var(--border-color); border-radius: var(--radius-md); background-color: var(--bg-base); color: #ffffff; outline: none; font-family: var(--font-family); font-size: 0.88rem;
         }
         .input-field textarea { resize: vertical; min-height: 65px; }
-        .input-field input:focus, .input-field select:focus, .input-field textarea:focus { border-color: var(--primary-color); }
 
         .priority-checkbox {
-            display: flex; align-items: center; gap: 10px; cursor: pointer; background: rgba(124, 58, 237, 0.08); padding: 8px 12px; border-radius: var(--radius-md); border: 1px dashed var(--accent-purple); width: 100%;
+            display: flex; align-items: center; gap: 10px; cursor: pointer; background: rgba(124, 58, 237, 0.1); padding: 8px 12px; border-radius: var(--radius-md); border: 1px dashed var(--accent-purple); width: 100%; color: #fff;
         }
 
         .submit-btn {
@@ -341,17 +336,18 @@
         .submit-btn:hover { background-color: var(--primary-hover); }
 
         /* Toolbar Buttons */
-        .actions-toolbar { display: flex; gap: 10px; flex-wrap: wrap; }
+        .actions-toolbar { display: flex; gap: 8px; flex-wrap: wrap; }
         .action-btn {
-            padding: 8px 14px; border-radius: var(--radius-md); border: none; color: white; font-family: var(--font-family); font-size: 0.85rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; text-decoration: none;
+            padding: 7px 14px; border-radius: var(--radius-md); border: none; color: white; font-family: var(--font-family); font-size: 0.85rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; text-decoration: none;
         }
         .action-btn.excel { background-color: #107c41; }
         .action-btn.json { background-color: #6366f1; }
         .action-btn.import { background-color: #0284c7; }
         .action-btn.clear-all { background-color: #dc2626; }
         .action-btn.settings { background-color: #475569; }
-        .action-btn.copy-btn { background-color: #0d9488; }
+        .action-btn.copy-btn { background-color: #16a34a; }
         .action-btn.restore-btn { background-color: #d97706; }
+        .action-btn.select-del-btn { background-color: #dc2626; }
 
         /* Filter Box */
         .filter-container-box {
@@ -370,18 +366,17 @@
 
         .filter-tabs { display: flex; gap: 6px; flex-wrap: wrap; }
         .filter-tab {
-            padding: 5px 12px; border-radius: 20px; border: 1px solid var(--border-color); background: var(--bg-surface); color: var(--text-main); font-family: var(--font-family); font-size: 0.8rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 5px;
+            padding: 5px 12px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-surface); color: var(--text-main); font-family: var(--font-family); font-size: 0.8rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 5px;
         }
-        .filter-tab:hover { border-color: var(--primary-color); color: var(--primary-color); }
         .filter-tab.active { background-color: var(--primary-color); color: white; border-color: var(--primary-color); }
 
         .search-field { position: relative; min-width: 240px; }
         .search-field input {
-            width: 100%; padding: 7px 34px 7px 10px; border: 1px solid var(--border-color); border-radius: var(--radius-md); background-color: var(--bg-surface); color: var(--text-main); font-family: var(--font-family); font-size: 0.85rem;
+            width: 100%; padding: 7px 34px 7px 10px; border: 1px solid var(--border-color); border-radius: var(--radius-md); background-color: var(--bg-base); color: #ffffff; font-family: var(--font-family); font-size: 0.85rem;
         }
         .search-field i { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); color: var(--text-muted); }
 
-        /* Table Design (Compact) */
+        /* Table Design */
         .table-container { 
             max-height: 550px; 
             overflow-y: auto; 
@@ -405,29 +400,9 @@
 
         .status-badge { padding: 3px 8px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; color: #fff; display: inline-block; }
         .badge-new { background-color: var(--success-color); }
-        
-        .badge-procedure-plant { 
-            background-color: #0d9488; 
-            color: #fff; 
-            padding: 3px 8px; 
-            border-radius: 20px; 
-            font-size: 0.75rem; 
-            font-weight: 700; 
-            display: inline-block; 
-            box-shadow: 0 0 6px rgba(13, 148, 136, 0.4);
-        }
-        .badge-procedure { 
-            background-color: var(--primary-color); 
-            color: #fff; 
-            padding: 3px 8px; 
-            border-radius: 20px; 
-            font-size: 0.75rem; 
-            font-weight: 700; 
-            display: inline-block; 
-        }
 
         .table-input {
-            width: 100%; padding: 6px; border: 1px solid var(--border-color); border-radius: var(--radius-md); background: var(--bg-surface); color: var(--text-main); font-family: var(--font-family); font-size: 0.85rem;
+            width: 100%; padding: 6px; border: 1px solid var(--border-color); border-radius: var(--radius-md); background: var(--bg-base); color: #ffffff; font-family: var(--font-family); font-size: 0.85rem;
         }
         
         .service-cell-box {
@@ -440,22 +415,14 @@
             border: 1px solid var(--border-color);
             font-size: 0.82rem;
             line-height: 1.3;
+            color: #ffffff;
         }
 
         textarea.table-input { resize: vertical; min-height: 45px; }
 
-        .btn-save-action { background-color: var(--success-color); color: #fff; border: none; padding: 5px 8px; border-radius: 4px; cursor: pointer; margin-bottom: 2px; }
-        .btn-edit-action { background-color: var(--primary-color); color: #fff; border: none; padding: 5px 8px; border-radius: 4px; cursor: pointer; margin-bottom: 2px; }
+        .btn-save-action { background-color: var(--success-color); color: #fff; border: none; padding: 5px 8px; border-radius: 4px; cursor: pointer; }
+        .btn-edit-action { background-color: var(--primary-color); color: #fff; border: none; padding: 5px 8px; border-radius: 4px; cursor: pointer; }
         .btn-delete-action { background-color: var(--danger-color); color: #fff; border: none; padding: 5px 8px; border-radius: 4px; cursor: pointer; }
-
-        @keyframes urgentPulse {
-            0% { background-color: rgba(124, 58, 237, 0.15); }
-            50% { background-color: rgba(124, 58, 237, 0.02); }
-            100% { background-color: rgba(124, 58, 237, 0.15); }
-        }
-        .row-priority-pulse {
-            animation: urgentPulse 1.8s infinite ease-in-out;
-        }
 
         #notificationToast {
             position: fixed;
@@ -465,7 +432,7 @@
             color: #fff;
             padding: 12px 18px;
             border-radius: var(--radius-md);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
             z-index: 9999;
             font-weight: 700;
             display: flex;
@@ -475,50 +442,80 @@
             opacity: 0;
             transition: transform 0.3s ease, opacity 0.3s ease;
         }
-        #notificationToast.show {
-            transform: translateY(0);
-            opacity: 1;
+        #notificationToast.show { transform: translateY(0); opacity: 1; }
+
+        /* =========================================================
+           تصميم كشف العملاء المطور المطابق تماماً لصورة العميل
+        ========================================================= */
+        .client-report-container {
+            background-color: #030712;
+            border: 1px solid #1e293b;
+            border-radius: var(--radius-lg);
+            padding: 15px;
         }
 
-        /* كشف العملاء مضغوط ومقارب لبعضه مع وقت إنجليزي واضح في المنتصف */
-        .client-card-box {
-            background: var(--bg-surface);
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius-md);
-            padding: 10px 14px;
-            margin-bottom: 8px; /* مسافة قريبة جداً ومريحة */
-            border-right: 4px solid var(--primary-color);
+        .client-card-wrapper {
+            background-color: #090d16;
+            border: 1px solid #1d283a;
+            border-radius: 6px;
+            padding: 16px;
+            margin-bottom: 12px;
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 12px;
-        }
-        .client-card-content {
-            white-space: pre-wrap;
+            flex-direction: column;
+            gap: 6px;
+            color: #ffffff;
             font-family: var(--font-family);
-            font-size: 0.9rem;
-            line-height: 1.4;
-            flex: 1;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.4);
         }
-        /* تصميم وقت الإضافة الإنجليزي في المساحة الفارغة بالمنتصف */
-        .client-meta-time {
+
+        .client-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 1rem;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        .client-card-header .client-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #ffffff;
+        }
+
+        .client-card-header .client-select-chk {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: var(--primary-color);
+        }
+
+        .client-info-row {
+            font-size: 0.92rem;
+            color: #ffffff;
+            line-height: 1.6;
+        }
+
+        .client-info-row .info-label {
+            color: #94a3b8;
+        }
+
+        .en-time-badge {
             font-family: Arial, sans-serif;
             font-size: 0.8rem;
-            font-weight: 700;
-            color: var(--primary-color);
-            background: rgba(37, 99, 235, 0.08);
+            font-weight: 600;
+            color: #38bdf8;
+            background: rgba(56, 189, 248, 0.1);
             padding: 2px 8px;
             border-radius: 4px;
-            border: 1px solid rgba(37, 99, 235, 0.2);
-            display: inline-block;
-            margin: 0 15px;
             direction: ltr;
-            text-align: left;
+            display: inline-block;
         }
 
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 200; justify-content: center; align-items: center; padding: 15px; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 200; justify-content: center; align-items: center; padding: 15px; }
         .modal.open { display: flex; }
-        .modal-content { background: var(--bg-surface); border-radius: var(--radius-lg); width: 100%; max-width: 520px; max-height: 90vh; overflow-y: auto; padding: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); border: 1px solid var(--border-color); }
+        .modal-content { background: var(--bg-surface); border-radius: var(--radius-lg); width: 100%; max-width: 520px; max-height: 90vh; overflow-y: auto; padding: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); border: 1px solid var(--border-color); color: #fff; }
         .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid var(--border-color); padding-bottom: 8px; }
         .modal-header h3 { color: var(--primary-color); font-size: 1.1rem; }
         .close-modal-btn { background: none; border: none; font-size: 1.3rem; color: var(--text-muted); cursor: pointer; }
@@ -545,7 +542,7 @@
                     <div class="brand-icon"><i class="fa-solid fa-hospital"></i></div>
                     <div class="brand-text">
                         <h2>مجمع ماجستي</h2>
-                        <p>د. سامي - النظام الطبي</p>
+                        <p>د. سامي - التنسيق الطبي</p>
                     </div>
                 </div>
                 <button class="toggle-sidebar-btn" onclick="toggleSidebar()" title="توسيع الشاشة">
@@ -554,13 +551,13 @@
             </div>
 
             <nav class="sidebar-menu">
-                <div class="menu-item active" id="menu-dashboard" onclick="switchPage('dashboard')">
+                <div class="menu-item" id="menu-dashboard" onclick="switchPage('dashboard')">
                     <i class="fa-solid fa-chart-line"></i>
-                    <span>مؤشر الأداء وجدول المواعيد</span>
+                    <span>مؤشرات الأداء والمواعيد</span>
                 </div>
-                <div class="menu-item" id="menu-clients" onclick="switchPage('clients')">
-                    <i class="fa-solid fa-address-book"></i>
-                    <span>كشف العملاء</span>
+                <div class="menu-item active" id="menu-clients" onclick="switchPage('clients')">
+                    <i class="fa-solid fa-file-lines"></i>
+                    <span>صفحة الكشف</span>
                 </div>
             </nav>
 
@@ -577,18 +574,19 @@
                     <button class="open-sidebar-btn hidden" id="openSidebarBtn" onclick="toggleSidebar()">
                         <i class="fa-solid fa-bars"></i> القائمة
                     </button>
-                    <h1 id="pageTitle">مؤشر الأداء وجدول المواعيد</h1>
+                    <h1 id="pageTitle">صفحة الكشف والمتابعة الدورية</h1>
                 </div>
                 <div class="header-actions">
                     <button class="theme-toggle-btn" id="themeToggleBtn" onclick="toggleTheme()" title="تبديل المظهر">
-                        <i class="fa-solid fa-moon" id="themeIcon"></i>
+                        <i class="fa-solid fa-sun" id="themeIcon"></i>
                     </button>
                 </div>
             </header>
 
             <div class="content-body">
                 
-                <div id="page-dashboard" class="page-view">
+                <!-- صفحة مؤشر الأداء -->
+                <div id="page-dashboard" class="page-view hidden">
                     
                     <section class="dashboard-section">
                         <div class="section-header">
@@ -718,7 +716,6 @@
                             </div>
                         </div>
 
-                        <!-- فلاتر على صفين منظمين -->
                         <div class="filter-container-box">
                             <div class="filter-row">
                                 <span class="filter-label"><i class="fa-solid fa-filter"></i> فلاتر الحالات:</span>
@@ -767,34 +764,41 @@
 
                 </div>
 
-                <!-- صفحة كشف العملاء المستقل -->
-                <div id="page-clients" class="page-view hidden">
+                <!-- =========================================================
+                     صفحة كشف العملاء المصممة بنفس الواجهة الداكنة المطلوبة
+                ========================================================= -->
+                <div id="page-clients" class="page-view">
                     
-                    <section class="dashboard-section">
-                        <div class="section-header">
-                            <h2><i class="fa-solid fa-address-book"></i> كشف العملاء المستقل (الطلبات المعلقة)</h2>
-                            <div class="actions-toolbar">
-                                <button class="action-btn copy-btn" onclick="copyClientReport()"><i class="fa-solid fa-copy"></i> نسخ الكشف (واتساب)</button>
-                                <button class="action-btn clear-all" onclick="deleteSelectedClients()"><i class="fa-solid fa-square-check"></i> حذف العملاء المحددين</button>
-                                <button class="action-btn clear-all" onclick="deleteClientsTimeRange()"><i class="fa-solid fa-trash"></i> حذف الكشف المحدد</button>
-                                <button class="action-btn restore-btn" onclick="requestRestoreAccess()"><i class="fa-solid fa-rotate-left"></i> استرجاع المحذوفات</button>
+                    <section class="dashboard-section" style="background-color: #0d1322; border-color: #1e293b;">
+                        
+                        <!-- الشريط العلوي والتمرير والأزرار متطابقة مع الصورة -->
+                        <div style="display: flex; justify-content: space-between; align-items: center; background: #080d1a; padding: 12px 18px; border-radius: 8px; border: 1px solid #1d283a; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <h2 style="font-size: 1.1rem; color: #2563eb; font-weight: 700;">
+                                    <i class="fa-solid fa-file-lines"></i> صفحة الكشف (الحالات الجديدة وغير المعالجة)
+                                </h2>
+                            </div>
+                            
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <!-- زر الفلتر للوقت -->
+                                <select id="clientHoursSelect" onchange="setClientTimeFilterSelect(this.value)" style="background: #0f172a; color: #fff; border: 1px solid #334155; padding: 6px 12px; border-radius: 6px; font-family: var(--font-family); font-size: 0.85rem; cursor: pointer;">
+                                    <option value="all">كل الأوقات</option>
+                                    <option value="6">آخر 6 ساعات</option>
+                                    <option value="8" selected>آخر 8 ساعات</option>
+                                    <option value="12">آخر 12 ساعة</option>
+                                    <option value="24">آخر 24 ساعة</option>
+                                </select>
+
+                                <button class="action-btn copy-btn" onclick="copyClientReport()"><i class="fa-solid fa-copy"></i> نسخ الكشف كاملاً</button>
+                                <button class="action-btn select-del-btn" onclick="deleteSelectedClients()"><i class="fa-solid fa-trash-can"></i> حذف المحددين</button>
+                                <button class="action-btn clear-all" onclick="deleteClientsTimeRange()"><i class="fa-solid fa-trash"></i> مسح الفترة</button>
+                                <button class="action-btn restore-btn" onclick="requestRestoreAccess()"><i class="fa-solid fa-rotate-left"></i> استرجاع</button>
                             </div>
                         </div>
 
-                        <div class="filter-container-box">
-                            <div class="filter-row">
-                                <span class="filter-label"><i class="fa-solid fa-clock"></i> فلتر الساعات:</span>
-                                <div class="filter-tabs">
-                                    <button class="filter-tab active" onclick="setClientTimeFilter('all', this)">الكل</button>
-                                    <button class="filter-tab" onclick="setClientTimeFilter(6, this)">آخر 6 ساعات</button>
-                                    <button class="filter-tab" onclick="setClientTimeFilter(8, this)">آخر 8 ساعات</button>
-                                    <button class="filter-tab" onclick="setClientTimeFilter(12, this)">آخر 12 ساعة</button>
-                                    <button class="filter-tab" onclick="setClientTimeFilter(24, this)">آخر 24 ساعة</button>
-                                </div>
-                            </div>
-                        </div>
+                        <!-- قائمة كشف العملاء بطابع الأبيض والأسود والخلفية الداكنة -->
+                        <div id="clientReportList" class="client-report-container"></div>
 
-                        <div id="clientReportList"></div>
                     </section>
 
                 </div>
@@ -885,7 +889,6 @@
         </div>
     </div>
 
-    <!-- نافذة تعديل بيانات العميل المحمية بالكلمة السرية للأولوية -->
     <div class="modal" id="editModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -971,24 +974,18 @@
         let clientDeletedRecords = [];
         let dashboardFilter = 'all';
         let dashboardTimeFilter = 'all';
-        let clientHoursFilter = 'all';
+        let clientHoursFilter = '8';
         let originalEditPriorityState = false;
 
         if (!localStorage.getItem('adminPassword')) {
             localStorage.setItem('adminPassword', '1234');
         }
 
-        const savedTheme = localStorage.getItem('theme');
-        if (savedTheme === 'dark') {
-            document.body.classList.add('dark-theme');
-            document.getElementById('themeIcon').classList.replace('fa-moon', 'fa-sun');
-        }
-
         function toggleTheme() {
-            document.body.classList.toggle('dark-theme');
-            const isDark = document.body.classList.contains('dark-theme');
-            localStorage.setItem('theme', isDark ? 'dark' : 'light');
-            document.getElementById('themeIcon').classList.replace(isDark ? 'fa-moon' : 'fa-sun', isDark ? 'fa-sun' : 'fa-moon');
+            document.body.classList.toggle('light-theme');
+            const isLight = document.body.classList.contains('light-theme');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            document.getElementById('themeIcon').classList.replace(isLight ? 'fa-sun' : 'fa-moon', isLight ? 'fa-moon' : 'fa-sun');
         }
 
         function toggleSidebar() {
@@ -1007,11 +1004,11 @@
             if (page === 'dashboard') {
                 document.getElementById('page-dashboard').classList.remove('hidden');
                 document.getElementById('menu-dashboard').classList.add('active');
-                document.getElementById('pageTitle').innerText = 'مؤشر الأداء وجدول المواعيد';
+                document.getElementById('pageTitle').innerText = 'مؤشرات الأداء وجدول المواعيد';
             } else if (page === 'clients') {
                 document.getElementById('page-clients').classList.remove('hidden');
                 document.getElementById('menu-clients').classList.add('active');
-                document.getElementById('pageTitle').innerText = 'كشف العملاء المستقل';
+                document.getElementById('pageTitle').innerText = 'صفحة الكشف والمتابعة الدورية';
                 renderClientReport();
             }
         }
@@ -1032,7 +1029,7 @@
         if (cachedClientTrash) { try { clientDeletedRecords = JSON.parse(cachedClientTrash); } catch(e) { clientDeletedRecords = []; } }
 
         window.addEventListener('DOMContentLoaded', () => {
-            const activePage = localStorage.getItem('activePage') || 'dashboard';
+            const activePage = localStorage.getItem('activePage') || 'clients';
             switchPage(activePage);
         });
 
@@ -1144,8 +1141,8 @@
                 firebaseKey: tempKey,
                 patientName: patientNameVal,
                 patientPhone: patientPhoneVal,
-                fileNumber: document.getElementById('fileNumber').value.trim() || '',
-                idNumber: document.getElementById('idNumber').value.trim() || '',
+                fileNumber: document.getElementById('fileNumber').value.trim() || '-',
+                idNumber: document.getElementById('idNumber').value.trim() || '-',
                 branch: document.getElementById('branch').value,
                 procedureType: document.getElementById('procedureType').value,
                 contactMethod: document.getElementById('contactMethod').value,
@@ -1175,7 +1172,7 @@
             }
 
             this.reset();
-            playBeepAndShowToast('⚠️ تنبيه: تم تسجيل موعد وعميل جديد وإضافته في أعلى الجدول!');
+            playBeepAndShowToast('⚠️ تم إضافة العميل والموعد بنجاح!');
         });
 
         function setDashboardFilter(filterType, btn) {
@@ -1229,41 +1226,27 @@
                 });
             }
 
-            filteredList.sort((a, b) => {
-                if (b.isRecurring !== a.isRecurring) {
-                    return (b.isRecurring === true) - (a.isRecurring === true);
-                }
-                return new Date(b.createdAt) - new Date(a.createdAt);
-            });
+            filteredList.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
             filteredList.forEach((record, index) => {
                 const tr = document.createElement('tr');
-                if (record.isRecurring) {
-                    tr.classList.add('row-priority-pulse');
-                }
 
                 const currentContact = record.adminContactMethod || 'قيد الانتظار';
                 const isOther = !['قيد الانتظار', 'قيد الإجراء', 'تم التواصل', 'معلق', 'لا يرد'].includes(currentContact);
                 const selectVal = isOther ? 'أخرى' : currentContact;
                 const otherDetail = isOther ? currentContact : (record.adminContactDetail || '');
 
-                let procBadgeClass = 'badge-procedure';
-                if (record.procedureType && record.procedureType.includes('زراعة')) {
-                    procBadgeClass = 'badge-procedure-plant';
-                }
-
                 tr.innerHTML = `
                     <td>${index + 1}</td>
                     <td>${formatDateOnly(record.createdAt)}</td>
                     <td>
-                        ${record.isRecurring ? '<span class="status-badge" style="background-color: var(--accent-purple); color:#fff; padding:3px 8px; border-radius:10px; font-size:0.75rem; margin-bottom:3px; display:inline-block;">⭐ أولوية</span><br>' : ''}
-                        ${record.isRepeatedRequest ? '<span class="status-badge" style="background-color: #e11d48; color:#fff; padding:3px 8px; border-radius:10px; font-size:0.75rem; margin-bottom:3px; display:inline-block;">🔄 متكررة</span><br>' : ''}
+                        ${record.isRecurring ? '<span class="status-badge" style="background-color: var(--accent-purple);">⭐ أولوية</span><br>' : ''}
                         <span class="status-badge badge-new">${selectVal}</span>
                     </td>
                     <td><strong>${record.patientName}</strong></td>
                     <td>${record.patientPhone}</td>
                     <td>${record.fileNumber || '-'}</td>
-                    <td><span class="${procBadgeClass}">${record.procedureType || '-'}</span></td>
+                    <td>${record.procedureType || '-'}</td>
                     <td><div class="service-cell-box">${record.serviceRequired}</div></td>
                     <td>${record.coordinatorName}</td>
                     <td>
@@ -1275,13 +1258,13 @@
                             <option value="لا يرد" ${selectVal === 'لا يرد' ? 'selected' : ''}>لا يرد ❌</option>
                             <option value="أخرى" ${selectVal === 'أخرى' ? 'selected' : ''}>أخرى ✍️</option>
                         </select>
-                        <input type="text" class="table-input" id="adminOther_${record.firebaseKey}" placeholder="اكتب التفاصيل..." value="${otherDetail}" style="margin-top: 5px; ${selectVal === 'أخرى' ? '' : 'display:none;'}">
+                        <input type="text" class="table-input" id="adminOther_${record.firebaseKey}" placeholder="التفاصيل..." value="${otherDetail}" style="margin-top: 5px; ${selectVal === 'أخرى' ? '' : 'display:none;'}">
                     </td>
                     <td><textarea class="table-input" id="action_${record.firebaseKey}">${record.actionTaken || ''}</textarea></td>
                     <td>
                         <button class="btn-save-action" onclick="saveAdminUpdate('${record.firebaseKey}')" title="حفظ"><i class="fa-solid fa-floppy-disk"></i></button>
                         <button class="btn-edit-action" onclick="openEditModal('${record.firebaseKey}')" title="تعديل"><i class="fa-solid fa-pen"></i></button>
-                        <button class="btn-delete-action" onclick="deleteRecord('${record.firebaseKey}')" title="حذف مباشر"><i class="fa-solid fa-trash"></i></button>
+                        <button class="btn-delete-action" onclick="deleteRecord('${record.firebaseKey}')" title="حذف"><i class="fa-solid fa-trash"></i></button>
                     </td>
                 `;
                 tbody.appendChild(tr);
@@ -1357,8 +1340,8 @@
 
             rec.patientName = document.getElementById('editPatientName').value.trim();
             rec.patientPhone = document.getElementById('editPatientPhone').value.trim() || '-';
-            rec.fileNumber = document.getElementById('editFileNumber').value.trim() || '';
-            rec.idNumber = document.getElementById('editIdNumber').value.trim() || '';
+            rec.fileNumber = document.getElementById('editFileNumber').value.trim() || '-';
+            rec.idNumber = document.getElementById('editIdNumber').value.trim() || '-';
             rec.branch = document.getElementById('editBranch').value;
             rec.contactMethod = document.getElementById('editContactMethod').value;
             rec.coordinatorName = document.getElementById('editCoordinatorName').value.trim();
@@ -1386,7 +1369,7 @@
                     isRecurring: rec.isRecurring
                 });
             }
-            alert('تم تعديل بيانات العميل بنجاح!');
+            alert('تم تعديل البيانات بنجاح!');
         }
 
         function saveEditedRecord(e) {
@@ -1394,11 +1377,11 @@
             const currentUIState = document.getElementById('editIsRecurring').checked;
 
             if (currentUIState !== originalEditPriorityState) {
-                let pass = prompt('لقد قمت بتعديل حالة "الأولوية ⭐". يرجى إدخال كلمة مرور الإدارة للاستمرار:');
+                let pass = prompt('يرجى إدخال كلمة مرور الإدارة للاستمرار:');
                 if (pass === localStorage.getItem('adminPassword')) {
                     executeActualEdit();
                 } else if (pass !== null) {
-                    alert('كلمة المرور غير صحيحة! تم إلغاء عملية الحفظ والتعديل.');
+                    alert('كلمة المرور غير صحيحة!');
                 }
             } else {
                 executeActualEdit();
@@ -1425,11 +1408,11 @@
             }
         }
 
-        /* كشف العملاء المستقل */
-        function setClientTimeFilter(hours, btn) {
+        /* =========================================================
+           وظائف صفحة كشف العملاء الجديدة والمطابقة للصورة
+        ========================================================= */
+        function setClientTimeFilterSelect(hours) {
             clientHoursFilter = hours;
-            btn.closest('.filter-tabs').querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
-            btn.classList.add('active');
             renderClientReport();
         }
 
@@ -1450,14 +1433,13 @@
             return openRecords;
         }
 
-        /* دالة تنسيق الوقت والتاريخ باللغة الإنجليزية للمشاهدة فقط */
-        function formatDateTimeEnglish(isoString) {
+        /* دالة تحويل التاريخ والوقت إلى الإنجليزية بنفس الشكل المطلوب */
+        function formatEnglishTime(isoString) {
             if (!isoString) return '';
             try {
                 const d = new Date(isoString);
-                const options = { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true };
-                return d.toLocaleString('en-US', options);
-            } catch(e) { return isoString; }
+                return d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
+            } catch(e) { return ''; }
         }
 
         function renderClientReport() {
@@ -1467,108 +1449,66 @@
 
             let openRecords = getOpenFilteredRecords();
 
-            const groupedClients = {};
-            openRecords.forEach(r => {
-                const key = (r.patientPhone && r.patientPhone !== '-') ? r.patientPhone : r.patientName;
-                if (!groupedClients[key]) {
-                    groupedClients[key] = {
-                        firebaseKey: r.firebaseKey,
-                        patientName: r.patientName,
-                        patientPhone: r.patientPhone,
-                        fileNumber: r.fileNumber,
-                        createdAt: r.createdAt,
-                        services: []
-                    };
-                }
-                groupedClients[key].services.push(r.serviceRequired);
-            });
-
-            const keys = Object.keys(groupedClients);
-            if (keys.length === 0) {
-                container.innerHTML = '<div style="text-align:center; padding:25px; color:var(--text-muted);">لا يوجد عملاء معلقين في هذه الفترة الزمنية 🎉</div>';
+            if (openRecords.length === 0) {
+                container.innerHTML = '<div style="text-align:center; padding:30px; color:#94a3b8; font-size:1rem;">لا توجد حالات جديدة أو معلقة في الوقت الحالي 🎉</div>';
                 return;
             }
 
-            keys.forEach((k, index) => {
-                const client = groupedClients[k];
+            openRecords.forEach((item, index) => {
                 const card = document.createElement('div');
-                card.className = 'client-card-box';
+                card.className = 'client-card-wrapper';
 
-                let filePart = (client.fileNumber && client.fileNumber.trim() !== '') ? ` ${client.fileNumber}` : '';
-                let textForScreen = `${index + 1}.${client.patientName}${filePart}\nالجوال / ${client.patientPhone}\n` + client.services.join('\n');
+                const fileStr = (item.fileNumber && item.fileNumber !== '-') ? ` | رقم الملف: ${item.fileNumber}` : ' | رقم الملف: -';
+                const idStr = (item.idNumber && item.idNumber !== '-') ? item.idNumber : '-';
+                const phoneStr = (item.patientPhone && item.patientPhone !== '-') ? item.patientPhone : '-';
+                const serviceStr = item.serviceRequired || '-';
+                const enTimeStr = formatEnglishTime(item.createdAt);
 
                 card.innerHTML = `
-                    <div style="display: flex; align-items: center; gap: 10px;">
-                        <input type="checkbox" class="client-select-checkbox" data-key="${client.firebaseKey}" style="width: 17px; height: 17px; cursor: pointer;" title="تحديد للحذف">
-                    </div>
-                    <div class="client-card-content">
-                        <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap;">
-                            <div class="pure-text-content" style="white-space: pre-wrap; font-weight: 500;">${textForScreen}</div>
-                            <span class="client-meta-time"><i class="fa-regular fa-clock"></i> ${formatDateTimeEnglish(client.createdAt)}</span>
+                    <div class="client-card-header">
+                        <div class="client-title">
+                            <input type="checkbox" class="client-select-chk" data-key="${item.firebaseKey}">
+                            <span>${index + 1}- الاسم: ${item.patientName}${fileStr}</span>
                         </div>
+                        ${enTimeStr ? `<span class="en-time-badge"><i class="fa-regular fa-clock"></i> ${enTimeStr}</span>` : ''}
                     </div>
-                    <button class="btn-delete-action" onclick="deleteSingleClientFromReport('${client.firebaseKey}')" title="حذف العميل"><i class="fa-solid fa-trash"></i></button>
+                    <div class="client-info-row">
+                        <span class="info-label">رقم الجوال:</span> ${phoneStr}
+                    </div>
+                    <div class="client-info-row">
+                        <span class="info-label">رقم الهوية:</span> ${idStr}
+                    </div>
+                    <div class="client-info-row">
+                        <span class="info-label">الخدمة / تفاصيل الطلب:</span> ${serviceStr}
+                    </div>
                 `;
                 container.appendChild(card);
             });
         }
 
-        /* نسخ كشف العملاء للواتساب نظيف تماماً بدون تواريخ */
+        /* نسخ كشف العملاء بأسلوب النص التكست المباشر للواتساب */
         function copyClientReport() {
             let openRecords = getOpenFilteredRecords();
-
-            const groupedClients = {};
-            openRecords.forEach(r => {
-                const key = (r.patientPhone && r.patientPhone !== '-') ? r.patientPhone : r.patientName;
-                if (!groupedClients[key]) {
-                    groupedClients[key] = { patientName: r.patientName, patientPhone: r.patientPhone, fileNumber: r.fileNumber, services: [] };
-                }
-                groupedClients[key].services.push(r.serviceRequired);
-            });
-
-            const keys = Object.keys(groupedClients);
-            if (keys.length === 0) return alert('لا يوجد عملاء لنسخ الكشف!');
+            if (openRecords.length === 0) return alert('لا يوجد عملاء لنسخ الكشف!');
 
             let reportText = ``;
-            keys.forEach((cKey, idx) => {
-                const c = groupedClients[cKey];
-                reportText += `${idx + 1}. ${c.patientName}`;
-                if (c.fileNumber && c.fileNumber.trim() !== '') {
-                    reportText += ` ${c.fileNumber}`;
-                }
-                reportText += `\nالجوال / ${c.patientPhone}\n${c.services.join('\n')}\n\n`;
+            openRecords.forEach((item, idx) => {
+                const fileStr = (item.fileNumber && item.fileNumber !== '-') ? ` | رقم الملف: ${item.fileNumber}` : ' | رقم الملف: -';
+                const idStr = (item.idNumber && item.idNumber !== '-') ? item.idNumber : '-';
+                const phoneStr = (item.patientPhone && item.patientPhone !== '-') ? item.patientPhone : '-';
+                const serviceStr = item.serviceRequired || '-';
+
+                reportText += `${idx + 1}- الاسم: ${item.patientName}${fileStr}\nرقم الجوال: ${phoneStr}\nرقم الهوية: ${idStr}\nالخدمة / تفاصيل الطلب: ${serviceStr}\n\n`;
             });
 
-            navigator.clipboard.writeText(reportText.trim()).then(() => alert('تم نسخ الكشف بصيغة تكست احترافية للواتساب بنجاح!'));
+            navigator.clipboard.writeText(reportText.trim()).then(() => alert('تم نسخ الكشف كاملاً بنجاح!'));
         }
 
-        function deleteSingleClientFromReport(key) {
-            if (confirm('هل أنت متأكد من حذف هذا العميل من الكشف؟')) {
-                let remaining = [];
-                records.forEach(r => {
-                    if (r.firebaseKey === key) {
-                        if (!r.firebaseKey.startsWith('local_') && navigator.onLine) {
-                            dbRef.child(r.firebaseKey).remove();
-                        }
-                        const ctRef = clientDeletedRef.push();
-                        clientDeletedRef.child(ctRef.key).set(r);
-                    } else {
-                        remaining.push(r);
-                    }
-                });
-                records = remaining;
-                saveLocal();
-                renderTable();
-                updateKPIs();
-                renderClientReport();
-                alert('تم حذف العميل بنجاح!');
-            }
-        }
-
+        /* حذف العملاء المحددين عبر Select Checkbox */
         function deleteSelectedClients() {
-            const checkboxes = document.querySelectorAll('.client-select-checkbox:checked');
+            const checkboxes = document.querySelectorAll('.client-select-chk:checked');
             if (checkboxes.length === 0) {
-                return alert('يرجى تحديد عميل واحد على الأقل للحذف!');
+                return alert('يرجى اختيار عميل واحد على الأقل من الخانات المحددة!');
             }
 
             if (confirm(`هل أنت متأكد من حذف عدد (${checkboxes.length}) من العملاء المحددين؟`)) {
@@ -1597,7 +1537,7 @@
         }
 
         function deleteClientsTimeRange() {
-            if (confirm('هل أنت متأكد من حذف الحالات المعروضة في الكشف الحالي؟')) {
+            if (confirm('هل أنت متأكد من مسح كافة الكشف للفترة المحددة؟')) {
                 const now = new Date();
                 let remaining = [];
 
@@ -1629,7 +1569,7 @@
                 renderTable();
                 updateKPIs();
                 renderClientReport();
-                alert('تم حذف العملاء من كشف العملاء بنجاح دون التأثير على الجدول الأساسي!');
+                alert('تم مسح الكشف المحدّد بنجاح!');
             }
         }
 
