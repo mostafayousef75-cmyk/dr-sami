@@ -299,7 +299,7 @@
         .kpi-card.pink { border-color: #e11d48; }
         .kpi-card.teal { border-color: #0d9488; }
         .kpi-card.warning { border-color: var(--warning-color); }
-        .kpi-card.danger { border-color: var(--danger-color); }
+        .kpi-card.indigo { border-color: #4f46e5; }
 
         .kpi-icon-box {
             font-size: 1.6rem; width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: var(--bg-base);
@@ -310,7 +310,7 @@
         .kpi-card.pink .kpi-icon-box { color: #e11d48; }
         .kpi-card.teal .kpi-icon-box { color: #0d9488; }
         .kpi-card.warning .kpi-icon-box { color: var(--warning-color); }
-        .kpi-card.danger .kpi-icon-box { color: var(--danger-color); }
+        .kpi-card.indigo .kpi-icon-box { color: #4f46e5; }
 
         .kpi-info h3 { font-size: 0.83rem; color: var(--text-muted); font-weight: 500; }
         .kpi-value { font-size: 1.5rem; font-weight: 800; }
@@ -353,7 +353,7 @@
         .action-btn.copy-btn { background-color: #0d9488; }
         .action-btn.restore-btn { background-color: #d97706; }
 
-        /* Filter Box - تصميم احترافي على صفين */
+        /* Filter Box - صفين منظمين */
         .filter-container-box {
             background: var(--bg-base);
             border: 1px solid var(--border-color);
@@ -458,7 +458,7 @@
             animation: urgentPulse 1.8s infinite ease-in-out;
         }
 
-        /* تصميم الإشعار التنبيهي عند إضافة عميل */
+        /* تصميم الإشعار التنبيهي الصوتي والبصري */
         #notificationToast {
             position: fixed;
             bottom: 25px;
@@ -510,7 +510,7 @@
 </head>
 <body>
 
-    <!-- إشعار تنبيهي فوري للإضافة -->
+    <!-- إشعار تنبيهي بصري -->
     <div id="notificationToast">
         <i class="fa-solid fa-circle-check" style="font-size: 1.2rem;"></i>
         <span id="toastMessage">تمت إضافة عميل جديد بنجاح!</span>
@@ -591,12 +591,12 @@
                                 <div class="kpi-info"><h3>حالات الزراعة</h3><span class="kpi-value" id="kpi-plants">0</span></div>
                             </div>
                             <div class="kpi-card warning">
-                                <div class="kpi-icon-box"><i class="fa-solid fa-clock-rotate-left"></i></div>
-                                <div class="kpi-info"><h3>تأخير +24 ساعة</h3><span class="kpi-value" id="kpi-24h">0</span></div>
+                                <div class="kpi-icon-box"><i class="fa-solid fa-stethoscope"></i></div>
+                                <div class="kpi-info"><h3>حالات الخلع</h3><span class="kpi-value" id="kpi-extractions">0</span></div>
                             </div>
-                            <div class="kpi-card danger">
-                                <div class="kpi-icon-box"><i class="fa-solid fa-triangle-exclamation"></i></div>
-                                <div class="kpi-info"><h3>تأخير +48 ساعة</h3><span class="kpi-value" id="kpi-48h">0</span></div>
+                            <div class="kpi-card indigo">
+                                <div class="kpi-icon-box"><i class="fa-solid fa-clipboard-list"></i></div>
+                                <div class="kpi-info"><h3>حالات المراجعة</h3><span class="kpi-value" id="kpi-reviews">0</span></div>
                             </div>
                         </div>
                     </section>
@@ -697,9 +697,8 @@
                             </div>
                         </div>
 
-                        <!-- فلاتر احترافية على صفين -->
+                        <!-- فلاتر على صفين منظمين -->
                         <div class="filter-container-box">
-                            <!-- الصف الأول: الحالات وأنواع الإجراءات -->
                             <div class="filter-row">
                                 <span class="filter-label"><i class="fa-solid fa-filter"></i> فلاتر الحالات:</span>
                                 <div class="filter-tabs">
@@ -711,7 +710,6 @@
                                     <button class="filter-tab" onclick="setDashboardFilter('review', this)">حالات المراجعة 📋</button>
                                 </div>
                             </div>
-                            <!-- الصف الثاني: الفلاتر الزمنية -->
                             <div class="filter-row" style="border-top: 1px dashed var(--border-color); padding-top: 10px;">
                                 <span class="filter-label"><i class="fa-solid fa-clock"></i> النطاق الزمني:</span>
                                 <div class="filter-tabs">
@@ -792,7 +790,7 @@
             </div>
             <div class="form-grid">
                 <div class="input-field full-width">
-                    <label>أدخل كلمة مرور الموقع لإعطاء أولوية *</label>
+                    <label>أدخل كلمة مرور الموقع لتفعيل الأولوية *</label>
                     <input type="password" id="authPassInput" placeholder="كلمة المرور">
                 </div>
             </div>
@@ -865,7 +863,7 @@
         </div>
     </div>
 
-    <!-- نافذة تعديل بيانات العميل مع التحقق بباسورد الموقع لخيار الأولوية -->
+    <!-- نافذة تعديل بيانات العميل مع حماية خانة الأولوية بكلمة المرور -->
     <div class="modal" id="editModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -926,6 +924,7 @@
                         <label>الخدمة المطلوبة / تفاصيل المشكلة والطلب *</label>
                         <textarea id="editServiceRequired" required></textarea>
                     </div>
+                    <!-- حماية خانة الأولوية في التعديل بباسورد الإدارة -->
                     <div class="input-field full-width">
                         <label class="priority-checkbox">
                             <input type="checkbox" id="editIsRecurring" onchange="checkEditPriorityAuth(this)">
@@ -1054,14 +1053,25 @@
             saveLocal();
         });
 
-        /* إشعار تنبيهي للإضافة الناجحة */
-        function showToast(message) {
+        /* دالة تشغيل التنبيه الصوتي الرقمي (Beep Sound) + التنبيه البصري */
+        function playBeepAndShowToast(msg) {
+            try {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(587.33, audioCtx.currentTime); // نغة D5 التنبيهية
+                gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.25);
+            } catch(e) { console.log('Audio Context blocked'); }
+
             const toast = document.getElementById('notificationToast');
-            document.getElementById('toastMessage').innerText = message;
+            document.getElementById('toastMessage').innerText = msg;
             toast.classList.add('show');
-            setTimeout(() => {
-                toast.classList.remove('show');
-            }, 3500);
+            setTimeout(() => { toast.classList.remove('show'); }, 3500);
         }
 
         let pendingPriorityCheckbox = null;
@@ -1146,6 +1156,7 @@
                 adminContactDetail: ''
             };
 
+            // يظهر الجديد في أعلى الجدول دائماً
             records.unshift(newRecord);
             saveLocal();
             renderTable();
@@ -1162,7 +1173,7 @@
             }
 
             this.reset();
-            showToast('تمت إضافة العميل والموعد الجديد بنجاح!');
+            playBeepAndShowToast('⚠️ تنبيه: تم تسجيل موعد وعميل جديد وإضافته في أعلى الجدول!');
         });
 
         /* فلاتر الجدول الأساسي */
@@ -1180,7 +1191,7 @@
             renderTable();
         }
 
-        /* جدول المواعيد مع شارة الحالات المتكررة والفلترة على صفين */
+        /* جدول المواعيد (مع تثبيت الجديد في الأعلى والحذف المباشر بدون باسورد) */
         function renderTable() {
             const tbody = document.getElementById('tableBody');
             if (!tbody) return;
@@ -1189,7 +1200,6 @@
             let filteredList = [...records];
             const now = new Date();
 
-            // تطبيق فلتر الحالات والنوع
             if (dashboardFilter === 'priority') {
                 filteredList = filteredList.filter(r => r.isRecurring);
             } else if (dashboardFilter === 'repeated') {
@@ -1202,7 +1212,6 @@
                 filteredList = filteredList.filter(r => r.procedureType && r.procedureType.includes('مراجعه'));
             }
 
-            // تطبيق الفلتر الزمني
             if (dashboardTimeFilter === 'today') {
                 filteredList = filteredList.filter(r => {
                     const d = new Date(r.createdAt);
@@ -1220,11 +1229,12 @@
                 });
             }
 
+            // ترتيب بحيث الأولوية في الأعلى ثم الأحدث ضاف أولاً
             filteredList.sort((a, b) => {
                 if (b.isRecurring !== a.isRecurring) {
                     return (b.isRecurring === true) - (a.isRecurring === true);
                 }
-                return new Date(b.createdAt) - new Date(b.createdAt); // الترتيب تصاعدي صحيح للإضافات
+                return new Date(b.createdAt) - new Date(a.createdAt);
             });
 
             filteredList.forEach((record, index) => {
@@ -1238,7 +1248,6 @@
                 const selectVal = isOther ? 'أخرى' : currentContact;
                 const otherDetail = isOther ? currentContact : (record.adminContactDetail || '');
 
-                // تصميم نوع الإجراء مع تمييز الزراعـة بلون خاص
                 let procBadgeClass = 'badge-procedure';
                 if (record.procedureType && record.procedureType.includes('زراعة')) {
                     procBadgeClass = 'badge-procedure-plant';
@@ -1273,7 +1282,7 @@
                     <td>
                         <button class="btn-save-action" onclick="saveAdminUpdate('${record.firebaseKey}')" title="حفظ"><i class="fa-solid fa-floppy-disk"></i></button>
                         <button class="btn-edit-action" onclick="openEditModal('${record.firebaseKey}')" title="تعديل"><i class="fa-solid fa-pen"></i></button>
-                        <button class="btn-delete-action" onclick="deleteRecord('${record.firebaseKey}')" title="حذف"><i class="fa-solid fa-trash"></i></button>
+                        <button class="btn-delete-action" onclick="deleteRecord('${record.firebaseKey}')" title="حذف مباشر"><i class="fa-solid fa-trash"></i></button>
                     </td>
                 `;
                 tbody.appendChild(tr);
@@ -1380,9 +1389,9 @@
             alert('تم تعديل بيانات العميل بنجاح!');
         }
 
+        /* الحذف مباشر بدون باسورد كما طلبت */
         function deleteRecord(key) {
-            const pass = prompt('أدخل كلمة مرور الإدارة للحذف:');
-            if (pass === localStorage.getItem('adminPassword')) {
+            if (confirm('هل أنت متأكد من حذف هذا العميل؟')) {
                 const itemIdx = records.findIndex(r => r.firebaseKey === key);
                 if (itemIdx !== -1) {
                     const deletedItem = records.splice(itemIdx, 1)[0];
@@ -1398,8 +1407,6 @@
                     const tRef = trashRef.push();
                     trashRef.child(tRef.key).set(deletedItem);
                 }
-            } else if (pass !== null) {
-                alert('كلمة المرور غير صحيحة!');
             }
         }
 
@@ -1498,8 +1505,7 @@
         }
 
         function deleteClientsTimeRange() {
-            const pass = prompt('أدخل كلمة مرور الإدارة للحذف:');
-            if (pass === localStorage.getItem('adminPassword')) {
+            if (confirm('هل أنت متأكد من حذف الحالات المعروضة في الكشف الحالي؟')) {
                 const now = new Date();
                 let remaining = [];
                 let movedToClientTrash = [];
@@ -1533,9 +1539,7 @@
                 renderTable();
                 updateKPIs();
                 renderClientReport();
-                alert('تم حذف العملاء من كشف العملاء بنجاح دون التأثير على سجلات جدول المواعيد الأساسية!');
-            } else if (pass !== null) {
-                alert('كلمة المرور غير صحيحة!');
+                alert('تم حذف العملاء من كشف العملاء بنجاح دون التأثير على الجدول الأساسي!');
             }
         }
 
@@ -1616,26 +1620,20 @@
             alert('تم استرجاع الحالة بنجاح!');
         }
 
+        /* تحديث المؤشرات (KPIs الجديدة) */
         function updateKPIs() {
             document.getElementById('kpi-total').innerText = records.length;
             document.getElementById('kpi-recurring').innerText = records.filter(r => r.isRecurring).length;
             document.getElementById('kpi-repeated').innerText = records.filter(r => r.isRepeatedRequest).length;
             document.getElementById('kpi-plants').innerText = records.filter(r => (r.procedureType && r.procedureType.includes('زراعة'))).length;
             
-            let c24 = 0, c48 = 0;
-            const now = new Date();
-            records.forEach(r => {
-                const hasAction = (r.actionTaken && r.actionTaken.trim() !== '') || (r.adminContactMethod && r.adminContactMethod !== 'قيد الانتظار');
-                if (!hasAction) {
-                    const diffHours = (now - new Date(r.createdAt)) / (1000 * 60 * 60);
-                    if (diffHours >= 48) c48++;
-                    else if (diffHours >= 24) c24++;
-                }
-            });
-            const k24 = document.getElementById('kpi-24h');
-            const k48 = document.getElementById('kpi-48h');
-            if (k24) k24.innerText = c24;
-            if (k48) k48.innerText = c48;
+            const extractionsCount = records.filter(r => r.procedureType && r.procedureType.includes('خلع')).length;
+            const reviewsCount = records.filter(r => r.procedureType && r.procedureType.includes('مراجعه')).length;
+
+            const kExt = document.getElementById('kpi-extractions');
+            const kRev = document.getElementById('kpi-reviews');
+            if (kExt) kExt.innerText = extractionsCount;
+            if (kRev) kRev.innerText = reviewsCount;
         }
 
         function formatDateOnly(isoString) {
