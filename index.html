@@ -1112,6 +1112,16 @@
     </div>
 
     <script>
+        // تنظيف الكاش القديم فوراً عند التشغيل لمنع تداخل النسخ القديمة
+        (function forceClearOldCache() {
+            try {
+                if (localStorage.getItem('cachedTrash') || localStorage.getItem('cachedClientTrash')) {
+                    localStorage.removeItem('cachedTrash');
+                    localStorage.removeItem('cachedClientTrash');
+                }
+            } catch(e) {}
+        })();
+
         const firebaseConfig = { databaseURL: "https://dr-sami-default-rtdb.firebaseio.com/" };
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
@@ -1175,10 +1185,10 @@
         }
 
         function saveLocal() { 
-            localStorage.setItem('cachedAppointments', JSON.stringify(records));
+            localStorage.setItem('cachedAppointments_v2', JSON.stringify(records));
         }
 
-        const cached = localStorage.getItem('cachedAppointments');
+        const cached = localStorage.getItem('cachedAppointments_v2');
         if (cached) { try { records = JSON.parse(cached); lastKnownRecordsCount = records.length; } catch(e) { records = []; } }
 
         function syncFilterTabsUI() {
