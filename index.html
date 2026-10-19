@@ -1211,10 +1211,10 @@
         }
 
         function saveLocal() { 
-            localStorage.setItem('cachedAppointments_v6', JSON.stringify(records));
+            localStorage.setItem('cachedAppointments_v7', JSON.stringify(records));
         }
 
-        const cached = localStorage.getItem('cachedAppointments_v6');
+        const cached = localStorage.getItem('cachedAppointments_v7');
         if (cached) { try { records = JSON.parse(cached); lastKnownRecordsCount = records.length; } catch(e) { records = []; } }
 
         function syncFilterTabsUI() {
@@ -1575,7 +1575,6 @@
                 `;
                 tbody.appendChild(tr);
             });
-            // إعادة تطبيق البحث إن وجد لضمان استمراره
             filterTable();
         }
 
@@ -1765,34 +1764,60 @@
             } catch(e) { return isoString; }
         }
 
-        function toggleCopiedStatus(key) {
+        function toggleCopiedStatusGroup(keysArray) {
             requireAdminAuth(() => {
-                const rec = records.find(r => r.firebaseKey === key);
-                if (rec) {
-                    rec.isCopied = !rec.isCopied;
-                    saveLocal();
-                    renderClientReport();
-
-                    if (navigator.onLine && !key.startsWith('local_')) {
-                        dbRef.child(key).update({ isCopied: rec.isCopied });
+                const targetState = !records.find(r => keysArray.includes(r.firebaseKey))?.isCopied;
+                keysArray.forEach(k => {
+                    const rec = records.find(r => r.firebaseKey === k);
+                    if (rec) {
+                        rec.isCopied = targetState;
+                        if (navigator.onLine && !k.startsWith('local_')) {
+                            dbRef.child(k).update({ isCopied: targetState });
+                        }
                     }
-                }
+                });
+                saveLocal();
+                renderClientReport();
             });
         }
 
-        function hideClientFromReport(key) {
+        function hideClientGroupFromReport(keysArray) {
             requireAdminAuth(() => {
-                let rec = records.find(r => r.firebaseKey === key);
-                if (rec) {
-                    rec.isHiddenFromClients = true;
-                    rec.deletedAt = new Date().toISOString();
+                const nowIso = new Date().toISOString();
+                keysArray.forEach(k => {
+                    let rec = records.find(r => r.firebaseKey === k);
+                    if (rec) {
+                        rec.isHiddenFromClients = true;
+                        rec.deletedAt = nowIso;
+                        if (navigator.onLine && !k.startsWith('local_')) {
+                            dbRef.child(k).update({ isHiddenFromClients: true, deletedAt: nowIso });
+                        }
+                    }
+                });
+                saveLocal();
+                renderClientReport();
+                renderTrashModalList();
+                playBeepAndShowToast('🗑️ تم نقل الطلبات إلى سلة المحذوفات بنجاح!');
+            });
+        }
+
+        function permanentDeleteGroupFromReport(keysArray) {
+            requireAdminAuth(() => {
+                if (confirm('⚠️ تنبيه: هل أنت متأكد من الحذف النهائي للعميل وجميع طلباته المكررة من النظام بالكامل؟')) {
+                    records = records.filter(r => !keysArray.includes(r.firebaseKey));
                     saveLocal();
+                    renderTable();
+                    updateKPIs();
+                    updateDailyProgress();
                     renderClientReport();
                     renderTrashModalList();
-                    if (navigator.onLine && !key.startsWith('local_')) {
-                        dbRef.child(key).update({ isHiddenFromClients: true, deletedAt: rec.deletedAt });
-                    }
-                    playBeepAndShowToast('🗑️ تم نقل العميل إلى سلة المحذوفات بنجاح!');
+
+                    keysArray.forEach(k => {
+                        if (navigator.onLine && !k.startsWith('local_')) {
+                            dbRef.child(k).remove();
+                        }
+                    });
+                    alert('تم الحذف النهائي للعميل وجميع طلباته المنسوبة إليه.');
                 }
             });
         }
@@ -1896,6 +1921,7 @@
             });
         }
 
+        // إحصاء ودمج الحالات المكررة لصفحة الكشف
         function renderClientReport() {
             const container = document.getElementById('clientReportList');
             if (!container) return;
@@ -1924,32 +1950,78 @@
                 return;
             }
 
-            openRecords.sort((a, b) => {
-                if (a.isCopied && !b.isCopied) return 1;
-                if (!a.isCopied && b.isCopied) return -1;
-                return new Date(b.createdAt) - new Date(a.createdAt);
+            // تجميع وتجميع الحالات حسب العميل (رقم الجوال أو الاسم)
+            const groupedMap = new Map();
+
+            openRecords.forEach(record => {
+                const cleanPhone = (record.patientPhone && record.patientPhone !== '-') ? record.patientPhone.replace(/\D/g, '') : '';
+                const groupKey = (cleanPhone.length >= 8) ? cleanPhone : (record.patientName || '').trim().toLowerCase();
+
+                if (!groupedMap.has(groupKey)) {
+                    groupedMap.set(groupKey, []);
+                }
+                groupedMap.get(groupKey).push(record);
             });
 
-            openRecords.forEach((item, index) => {
+            // تحويل الخريطة إلى قائمة مدمجة لصفحة الكشف
+            let consolidatedList = [];
+
+            groupedMap.forEach((groupRecords) => {
+                // ترتيب سجلات نفس العميل من الأحدث للأقدم
+                groupRecords.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+                const mainRecord = groupRecords[0];
+                const allKeys = groupRecords.map(r => r.firebaseKey);
+                const isRepeatedGroup = groupRecords.length > 1 || groupRecords.some(r => r.isRepeatedRequest);
+                const isCopiedGroup = groupRecords.every(r => r.isCopied);
+
+                // دمج النصوص البرمجية والخدمات المطلوبة فريدة من دون تكرار متطابق
+                const uniqueServices = [];
+                groupRecords.forEach(r => {
+                    const txt = (r.serviceRequired || '').trim();
+                    if (txt && !uniqueServices.includes(txt)) {
+                        uniqueServices.push(txt);
+                    }
+                });
+
+                const combinedServicesStr = uniqueServices.join(' / ');
+
+                consolidatedList.push({
+                    mainRecord: mainRecord,
+                    allKeys: allKeys,
+                    servicesCombined: combinedServicesStr,
+                    isRepeated: isRepeatedGroup,
+                    isCopied: isCopiedGroup,
+                    latestCreatedAt: mainRecord.createdAt
+                });
+            });
+
+            // ترتيب القائمة المدمجة للأحدث أولاً المنسوخ بالأسفل
+            consolidatedList.sort((a, b) => {
+                if (a.isCopied && !b.isCopied) return 1;
+                if (!a.isCopied && b.isCopied) return -1;
+                return new Date(b.latestCreatedAt) - new Date(a.latestCreatedAt);
+            });
+
+            consolidatedList.forEach((item, index) => {
                 const card = document.createElement('div');
-                const isCopied = !!item.isCopied;
+                const rec = item.mainRecord;
+                const isCopied = item.isCopied;
                 card.className = `client-card-wrapper ${isCopied ? 'is-copied' : ''}`;
 
-                const fileStr = (item.fileNumber && item.fileNumber !== '-') ? ` ${item.fileNumber}` : '';
-                const idStr = (item.idNumber && item.idNumber !== '-') ? item.idNumber : '';
-                const phoneStr = (item.patientPhone && item.patientPhone !== '-') ? item.patientPhone : '-';
-                const serviceStr = item.serviceRequired || '-';
-                const dateTimeStr = formatDateTimeFullCustom(item.createdAt);
-
-                // فحص هل العميل متكرر من قبل
-                const isRepeated = !!item.isRepeatedRequest;
+                const fileStr = (rec.fileNumber && rec.fileNumber !== '-') ? ` ${rec.fileNumber}` : '';
+                const idStr = (rec.idNumber && rec.idNumber !== '-') ? rec.idNumber : '';
+                const phoneStr = (rec.patientPhone && rec.patientPhone !== '-') ? rec.patientPhone : '-';
+                const serviceStr = item.servicesCombined || '-';
+                const dateTimeStr = formatDateTimeFullCustom(item.latestCreatedAt);
+                const keysJsonStr = JSON.stringify(item.allKeys).replace(/"/g, '&quot;');
 
                 card.innerHTML = `
                     <div class="client-card-header">
                         <div class="client-title">
-                            <input type="checkbox" class="client-select-chk" data-key="${item.firebaseKey}">
-                            <span>${index + 1}-${item.patientName}${fileStr}</span>${isRepeated ? `<span class="client-repeated-badge"><i class="fa-solid fa-rotate-right"></i> متكرر</span>` : ''}
-                            <button class="copied-btn ${isCopied ? 'active' : ''}" onclick="toggleCopiedStatus('${item.firebaseKey}')">
+                            <input type="checkbox" class="client-select-chk" data-keys="${keysJsonStr}">
+                            <span>${index + 1}-${rec.patientName}${fileStr}</span>${item.isRepeated ? `<span class="client-repeated-badge"><i class="fa-solid fa-rotate-right"></i> متكرر</span>` : ''}
+                            <button class="copied-btn ${isCopied ? 'active' : ''}" onclick="toggleCopiedStatusGroup(${keysJsonStr})">
                                 <i class="fa-solid ${isCopied ? 'fa-circle-check' : 'fa-check'}"></i> ${isCopied ? 'تم النسخ ✅' : 'تعليم كمنسوخ'}
                             </button>
                         </div>
@@ -1963,10 +2035,10 @@
                         ${serviceStr}
                     </div>
                     <div class="client-actions-row">
-                        <button class="btn-client-action delete-to-trash" onclick="hideClientFromReport('${item.firebaseKey}')">
+                        <button class="btn-client-action delete-to-trash" onclick="hideClientGroupFromReport(${keysJsonStr})">
                             <i class="fa-solid fa-trash"></i> حذف
                         </button>
-                        <button class="btn-client-action permanent-delete" onclick="permanentDeleteClientFromReport('${item.firebaseKey}')">
+                        <button class="btn-client-action permanent-delete" onclick="permanentDeleteGroupFromReport(${keysJsonStr})">
                             <i class="fa-solid fa-trash-can"></i> حذف نهائي
                         </button>
                     </div>
@@ -1977,23 +2049,49 @@
 
         function copyClientReport() {
             let openRecords = getOpenFilteredRecords();
-            let uncopiedRecords = openRecords.filter(r => !r.isCopied);
+            if (openRecords.length === 0) {
+                return alert('لا يوجد عملاء حالياً للنسخ!');
+            }
 
-            if (uncopiedRecords.length === 0) {
+            // تجميع السجلات غير المنسوخة
+            const groupedMap = new Map();
+            openRecords.filter(r => !r.isCopied).forEach(record => {
+                const cleanPhone = (record.patientPhone && record.patientPhone !== '-') ? record.patientPhone.replace(/\D/g, '') : '';
+                const groupKey = (cleanPhone.length >= 8) ? cleanPhone : (record.patientName || '').trim().toLowerCase();
+
+                if (!groupedMap.has(groupKey)) {
+                    groupedMap.set(groupKey, []);
+                }
+                groupedMap.get(groupKey).push(record);
+            });
+
+            if (groupedMap.size === 0) {
                 return alert('جميع العملاء الموجودين تم وضع علامة "تم النسخ" عليهم سابقاً!');
             }
 
             let reportText = ``;
-            uncopiedRecords.forEach((item, idx) => {
+            let idx = 1;
+
+            groupedMap.forEach((groupRecords) => {
+                groupRecords.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                const item = groupRecords[0];
+
                 const fileStr = (item.fileNumber && item.fileNumber !== '-') ? ` ${item.fileNumber}` : '';
                 const idStr = (item.idNumber && item.idNumber !== '-') ? `رقم الهوية: ${item.idNumber}\n` : '';
                 const phoneStr = (item.patientPhone && item.patientPhone !== '-') ? item.patientPhone : '-';
-                const serviceStr = item.serviceRequired || '-';
 
-                reportText += `${idx + 1}- ${item.patientName}${fileStr}\nرقم الجوال: ${phoneStr}\n${idStr}${serviceStr}\n\n`;
+                const uniqueServices = [];
+                groupRecords.forEach(r => {
+                    const txt = (r.serviceRequired || '').trim();
+                    if (txt && !uniqueServices.includes(txt)) uniqueServices.push(txt);
+                });
+                const serviceStr = uniqueServices.join(' / ') || '-';
+
+                reportText += `${idx}- ${item.patientName}${fileStr}\nرقم الجوال: ${phoneStr}\n${idStr}${serviceStr}\n\n`;
+                idx++;
             });
 
-            navigator.clipboard.writeText(reportText.trim()).then(() => alert(`تم نسخ (${uncopiedRecords.length}) عميل جديد بنجاح واستبعاد المنسوخين سابقاً!`));
+            navigator.clipboard.writeText(reportText.trim()).then(() => alert(`تم نسخ (${groupedMap.size}) عميل بنجاح واستبعاد المنسوخين سابقاً!`));
         }
 
         function requestDeleteSelectedAccess() {
@@ -2003,7 +2101,17 @@
             }
             requireAdminAuth(() => {
                 if (confirm('هل أنت متأكد من الحذف النهائي للعملاء المحددين من النظام بالكامل؟')) {
-                    const keysToDelete = Array.from(checkboxes).map(cb => cb.getAttribute('data-key'));
+                    let keysToDelete = [];
+                    checkboxes.forEach(cb => {
+                        const attr = cb.getAttribute('data-keys');
+                        if (attr) {
+                            try {
+                                const parsed = JSON.parse(attr);
+                                keysToDelete = keysToDelete.concat(parsed);
+                            } catch(e) {}
+                        }
+                    });
+
                     records = records.filter(r => !keysToDelete.includes(r.firebaseKey));
                     saveLocal();
                     renderTable();
