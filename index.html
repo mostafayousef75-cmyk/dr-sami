@@ -404,8 +404,25 @@
 
         table th, table td { padding: 8px 8px; text-align: right; border-bottom: 1px solid var(--border-color); vertical-align: middle; color: var(--text-main); }
 
-        .status-badge { padding: 3px 8px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; color: #fff; display: inline-block; }
-        .badge-new { background-color: var(--success-color); }
+        /* شارات الحالة والأولوية الملونة والمخصصة */
+        .status-badge { padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; color: #fff; display: inline-block; margin-bottom: 2px; }
+        .badge-priority { background-color: #7c3aed; box-shadow: 0 0 8px rgba(124, 58, 237, 0.4); }
+        .badge-repeated { background-color: #e11d48; }
+        .badge-pending { background-color: #d97706; }
+        .badge-inprogress { background-color: #2563eb; }
+        .badge-completed { background-color: #16a34a; }
+        .badge-suspended { background-color: #ca8a04; }
+        .badge-noresponse { background-color: #475569; }
+        .badge-other { background-color: #0d9488; }
+
+        /* شارات أنواع الإجراءات الملونة والاحترافية */
+        .proc-badge { padding: 4px 10px; border-radius: 6px; font-size: 0.8rem; font-weight: 700; display: inline-block; text-align: center; }
+        .proc-plant { background-color: #0d9488; color: #ffffff; border: 1px solid #14b8a6; box-shadow: 0 0 10px rgba(13, 148, 136, 0.3); } /* تميز الزراعة بلون مختلف وجذاب */
+        .proc-extraction { background-color: #c2410c; color: #ffffff; } /* خلع */
+        .proc-surgery { background-color: #b91c1c; color: #ffffff; } /* جراحة */
+        .proc-stitches { background-color: #7e22ce; color: #ffffff; } /* فك خياطة */
+        .proc-review { background-color: #4f46e5; color: #ffffff; } /* مراجعة */
+        .proc-default { background-color: #334155; color: #ffffff; } /* أخرى */
 
         .table-input {
             width: 100%; padding: 6px; border: 1px solid var(--border-color); border-radius: var(--radius-md); background: var(--bg-base); color: var(--text-main); font-family: var(--font-family); font-size: 0.85rem;
@@ -430,7 +447,6 @@
         .btn-edit-action { background-color: var(--primary-color); color: #fff; border: none; padding: 5px 8px; border-radius: 4px; cursor: pointer; }
         .btn-delete-action { background-color: var(--danger-color); color: #fff; border: none; padding: 5px 8px; border-radius: 4px; cursor: pointer; }
 
-        /* تأثير الوميض للحالات ذات الأولوية */
         @keyframes priorityPulse {
             0% { background-color: rgba(124, 58, 237, 0.25); }
             50% { background-color: rgba(124, 58, 237, 0.05); }
@@ -514,7 +530,6 @@
             color: var(--text-muted);
         }
 
-        /* تنسيق التاريخ والوقت (اليوم/الشهر/السنة + وقت 12 ساعة) */
         .client-datetime-badge {
             font-family: Arial, sans-serif;
             font-size: 0.85rem;
@@ -571,11 +586,11 @@
             </div>
 
             <nav class="sidebar-menu">
-                <div class="menu-item" id="menu-dashboard" onclick="switchPage('dashboard')">
+                <div class="menu-item active" id="menu-dashboard" onclick="switchPage('dashboard')">
                     <i class="fa-solid fa-chart-line"></i>
                     <span>مؤشر الأداء والمواعيد</span>
                 </div>
-                <div class="menu-item active" id="menu-clients" onclick="switchPage('clients')">
+                <div class="menu-item" id="menu-clients" onclick="switchPage('clients')">
                     <i class="fa-solid fa-file-lines"></i>
                     <span>صفحة الكشف</span>
                 </div>
@@ -594,7 +609,7 @@
                     <button class="open-sidebar-btn hidden" id="openSidebarBtn" onclick="toggleSidebar()">
                         <i class="fa-solid fa-bars"></i> القائمة
                     </button>
-                    <h1 id="pageTitle">صفحة الكشف</h1>
+                    <h1 id="pageTitle">مؤشر الأداء والمواعيد</h1>
                 </div>
                 <div class="header-actions">
                     <button class="theme-toggle-btn" id="themeToggleBtn" onclick="toggleTheme()" title="تبديل المظهر">
@@ -606,7 +621,7 @@
             <div class="content-body">
                 
                 <!-- صفحة مؤشر الأداء وجدول المواعيد -->
-                <div id="page-dashboard" class="page-view hidden">
+                <div id="page-dashboard" class="page-view">
                     
                     <section class="dashboard-section">
                         <div class="section-header">
@@ -785,7 +800,7 @@
                 </div>
 
                 <!-- صفحة الكشف المستقلة -->
-                <div id="page-clients" class="page-view">
+                <div id="page-clients" class="page-view hidden">
                     
                     <section class="dashboard-section">
                         
@@ -842,7 +857,6 @@
         </div>
     </div>
 
-    <!-- نافذة كلمة مرور حذف المحددين -->
     <div class="modal" id="deleteSelectedAuthModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -859,7 +873,6 @@
         </div>
     </div>
 
-    <!-- نافذة كلمة مرور مسح الفترة -->
     <div class="modal" id="deleteRangeAuthModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -1087,7 +1100,7 @@
         if (cachedClientTrash) { try { clientDeletedRecords = JSON.parse(cachedClientTrash); } catch(e) { clientDeletedRecords = []; } }
 
         window.addEventListener('DOMContentLoaded', () => {
-            const activePage = localStorage.getItem('activePage') || 'clients';
+            const activePage = localStorage.getItem('activePage') || 'dashboard';
             switchPage(activePage);
 
             const hoursSelect = document.getElementById('clientHoursSelect');
@@ -1304,18 +1317,41 @@
                 const selectVal = isOther ? 'أخرى' : currentContact;
                 const otherDetail = isOther ? currentContact : (record.adminContactDetail || '');
 
+                // تنسيق شارة الحالة والأولوية بألوان مخصصة
+                let statusBadgeHTML = '';
+                if (record.isRecurring) {
+                    statusBadgeHTML += '<span class="status-badge badge-priority">⭐ أولوية</span><br>';
+                }
+                if (record.isRepeatedRequest) {
+                    statusBadgeHTML += '<span class="status-badge badge-repeated">🔄 متكررة</span><br>';
+                }
+
+                let sClass = 'badge-other';
+                if (selectVal === 'قيد الانتظار') sClass = 'badge-pending';
+                else if (selectVal === 'قيد الإجراء') sClass = 'badge-inprogress';
+                else if (selectVal === 'تم التواصل') sClass = 'badge-completed';
+                else if (selectVal === 'معلق') sClass = 'badge-suspended';
+                else if (selectVal === 'لا يرد') sClass = 'badge-noresponse';
+
+                statusBadgeHTML += `<span class="status-badge ${sClass}">${selectVal}</span>`;
+
+                // تنسيق شارة نوع الإجراء بألوان احترافية متميزة
+                const proc = record.procedureType || '-';
+                let procClass = 'proc-default';
+                if (proc.includes('زراعة')) procClass = 'proc-plant'; // تميز الزراعة بلون تيل مختلف ومميز
+                else if (proc.includes('خلع')) procClass = 'proc-extraction';
+                else if (proc.includes('جراحه')) procClass = 'proc-surgery';
+                else if (proc.includes('فك خياطه')) procClass = 'proc-stitches';
+                else if (proc.includes('مراجعه')) procClass = 'proc-review';
+
                 tr.innerHTML = `
                     <td>${index + 1}</td>
                     <td>${formatDateOnly(record.createdAt)}</td>
-                    <td>
-                        ${record.isRecurring ? '<span class="status-badge" style="background-color: var(--accent-purple);">⭐ أولوية</span><br>' : ''}
-                        ${record.isRepeatedRequest ? '<span class="status-badge" style="background-color: #e11d48;">🔄 متكررة</span><br>' : ''}
-                        <span class="status-badge badge-new">${selectVal}</span>
-                    </td>
+                    <td>${statusBadgeHTML}</td>
                     <td><strong>${record.patientName}</strong></td>
                     <td>${record.patientPhone}</td>
                     <td>${record.fileNumber || '-'}</td>
-                    <td>${record.procedureType || '-'}</td>
+                    <td><span class="proc-badge ${procClass}">${proc}</span></td>
                     <td><div class="service-cell-box">${record.serviceRequired}</div></td>
                     <td>${record.coordinatorName}</td>
                     <td>
@@ -1500,7 +1536,6 @@
             return openRecords;
         }
 
-        // تنسيق التاريخ والوقت (اليوم / الشهر / السنة + نظام 12 ساعة)
         function formatDateTimeFullCustom(isoString) {
             if (!isoString) return '';
             try {
@@ -1580,7 +1615,6 @@
             navigator.clipboard.writeText(reportText.trim()).then(() => alert('تم نسخ الكشف كاملاً وتنسيقه للواتساب بنجاح!'));
         }
 
-        // حماية حذف المحددين بكلمة المرور
         function requestDeleteSelectedAccess() {
             const checkboxes = document.querySelectorAll('.client-select-chk:checked');
             if (checkboxes.length === 0) {
@@ -1628,7 +1662,6 @@
             renderClientReport();
         }
 
-        // حماية مسح الفترة بكلمة المرور
         function requestDeleteRangeAccess() {
             document.getElementById('deleteRangePassInput').value = '';
             document.getElementById('deleteRangeAuthModal').classList.add('open');
