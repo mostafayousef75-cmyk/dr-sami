@@ -1291,6 +1291,9 @@
                 for (let key in data) { cloudTrash.push({ firebaseKey: key, ...data[key] }); }
                 deletedRecords = cloudTrash;
                 saveLocal();
+            } else {
+                deletedRecords = [];
+                saveLocal();
             }
         });
 
@@ -1298,8 +1301,11 @@
             const data = snapshot.val();
             if (data) {
                 const cloudClientTrash = [];
-                for (let key in data) { cloudClientTrash.push({ firebaseKey: key, ...data[key] }); }
+                for (let key in data) { cloudClientTrash.push({ trashKey: key, ...data[key] }); }
                 clientDeletedRecords = cloudClientTrash;
+                saveLocal();
+            } else {
+                clientDeletedRecords = [];
                 saveLocal();
             }
         });
@@ -1903,8 +1909,10 @@
                     
                     if (!r.firebaseKey.startsWith('local_') && navigator.onLine) {
                         dbRef.child(r.firebaseKey).update({ isClientDeletedOnly: true });
+                    }
+                    if (navigator.onLine) {
                         const ctRef = clientDeletedRef.push();
-                        clientDeletedRef.child(ctRef.key).set(copyObj);
+                        ctRef.set(copyObj);
                     }
                 }
             });
@@ -1918,7 +1926,6 @@
 
         function requestDeleteRangeAccess() {
             requireAdminAuth(() => {
-                // إضافة إشعار تأكيد إجباري قبل اتمام مسح الفترة
                 const filterDesc = clientHoursFilter === 'all' ? 'جميع الأوقات' : `آخر ${clientHoursFilter} ساعة`;
                 if (confirm(`⚠️ تنبيه إدارة: هل أنت متأكد من رغبتك في مسح وعمل إخفاء لنطاق الفترة (${filterDesc}) من صفحة الكشف ونقلها لسلة المحذوفات؟`)) {
                     executeDeleteClientsTimeRange();
@@ -1948,8 +1955,10 @@
 
                     if (!r.firebaseKey.startsWith('local_') && navigator.onLine) {
                         dbRef.child(r.firebaseKey).update({ isClientDeletedOnly: true });
+                    }
+                    if (navigator.onLine) {
                         const ctRef = clientDeletedRef.push();
-                        clientDeletedRef.child(ctRef.key).set(copyObj);
+                        ctRef.set(copyObj);
                     }
                 }
             });
@@ -1976,7 +1985,6 @@
 
             let listToRender = currentTrashContext === 'clients' ? clientDeletedRecords : deletedRecords;
 
-            // ترتيب زمني صارم: الحالات المحذوفة حديثاً تظهر دائماً بالأعلى
             listToRender.sort((a, b) => {
                 const timeA = new Date(a.deletedAt || a.createdAt || 0).getTime();
                 const timeB = new Date(b.deletedAt || b.createdAt || 0).getTime();
@@ -2026,9 +2034,8 @@
             const restored = listToRender[idx];
             
             if (currentTrashContext === 'clients') {
-                clientDeletedRecords.splice(clientDeletedRecords.indexOf(restored), 1);
+                clientDeletedRecords.splice(idx, 1);
                 
-                // استرجاع العميل لصفحة الكشف حصراً دون التأثير على جدول المواعيد العام
                 let existRec = records.find(r => r.firebaseKey === restored.firebaseKey);
                 if (existRec) {
                     existRec.isClientDeletedOnly = false;
@@ -2043,22 +2050,12 @@
                     if (restored.firebaseKey && !restored.firebaseKey.startsWith('local_')) {
                         dbRef.child(restored.firebaseKey).update({ isClientDeletedOnly: false });
                     }
-                    if (restored.firebaseKey) {
-                        // إزالة العنصر من سجل سلة كشف العملاء في فايربيس
-                        clientDeletedRef.once('value').then(snap => {
-                            const val = snap.val();
-                            if (val) {
-                                for (let k in val) {
-                                    if (val[k].firebaseKey === restored.firebaseKey || k === restored.firebaseKey) {
-                                        clientDeletedRef.child(k).remove();
-                                    }
-                                }
-                            }
-                        });
+                    if (restored.trashKey) {
+                        clientDeletedRef.child(restored.trashKey).remove();
                     }
                 }
             } else {
-                deletedRecords.splice(deletedRecords.indexOf(restored), 1);
+                deletedRecords.splice(idx, 1);
                 const trashKey = restored.firebaseKey;
                 delete restored.firebaseKey;
                 delete restored.deletedAt;
@@ -2097,21 +2094,12 @@
                 const target = listToRender[idx];
 
                 if (currentTrashContext === 'clients') {
-                    clientDeletedRecords.splice(clientDeletedRecords.indexOf(target), 1);
-                    if (navigator.onLine && target.firebaseKey) {
-                        clientDeletedRef.once('value').then(snap => {
-                            const val = snap.val();
-                            if (val) {
-                                for (let k in val) {
-                                    if (val[k].firebaseKey === target.firebaseKey || k === target.firebaseKey) {
-                                        clientDeletedRef.child(k).remove();
-                                    }
-                                }
-                            }
-                        });
+                    clientDeletedRecords.splice(idx, 1);
+                    if (navigator.onLine && target.trashKey) {
+                        clientDeletedRef.child(target.trashKey).remove();
                     }
                 } else {
-                    deletedRecords.splice(deletedRecords.indexOf(target), 1);
+                    deletedRecords.splice(idx, 1);
                     if (navigator.onLine && target.firebaseKey) {
                         trashRef.child(target.firebaseKey).remove();
                     }
