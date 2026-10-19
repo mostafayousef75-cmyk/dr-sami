@@ -445,6 +445,7 @@
         .proc-surgery { background-color: #b91c1c; color: #ffffff; } 
         .proc-stitches { background-color: #7e22ce; color: #ffffff; } 
         .proc-review { background-color: #4f46e5; color: #ffffff; } 
+        .proc-inquiry { background-color: #0284c7; color: #ffffff; }
         .proc-default { background-color: #334155; color: #ffffff; } 
 
         .table-input {
@@ -801,6 +802,7 @@
                                         <option value="جراحه">جراحه</option>
                                         <option value="فك خياطه">فك خياطه</option>
                                         <option value="مراجعه">مراجعه</option>
+                                        <option value="استفسارات">استفسارات</option>
                                         <option value="أخرى">أخرى</option>
                                     </select>
                                 </div>
@@ -868,6 +870,8 @@
                                     <button class="filter-tab" data-filter="plants" onclick="setDashboardFilter('plants', this)">حالات الزراعة 🦷</button>
                                     <button class="filter-tab" data-filter="extraction" onclick="setDashboardFilter('extraction', this)">حالات الخلع 🩺</button>
                                     <button class="filter-tab" data-filter="review" onclick="setDashboardFilter('review', this)">حالات المراجعة 📋</button>
+                                    <button class="filter-tab" data-filter="inquiries" onclick="setDashboardFilter('inquiries', this)">استفسارات 💬</button>
+                                    <button class="filter-tab" data-filter="no_inquiries" onclick="setDashboardFilter('no_inquiries', this)">بدون الاستفسارات 🚫💬</button>
                                 </div>
                             </div>
                             <div class="filter-row" style="border-top: 1px dashed var(--border-color); padding-top: 8px;">
@@ -946,19 +950,20 @@
         </main>
     </div>
 
+    <!-- نافذة إدخال كلمة المرور الموحدة -->
     <div class="modal" id="passAuthModal">
         <div class="modal-content">
             <div class="modal-header">
                 <h3><i class="fa-solid fa-shield-halved"></i> تأكيد كلمة مرور الإدارة</h3>
-                <button class="close-modal-btn" onclick="cancelPriorityAuth()">&times;</button>
+                <button class="close-modal-btn" onclick="cancelUniversalAuth()">&times;</button>
             </div>
             <div class="form-grid">
                 <div class="input-field full-width">
-                    <label>أدخل كلمة مرور الموقع لتفعيل الأولوية *</label>
+                    <label>أدخل كلمة مرور الموقع للمتابعة *</label>
                     <input type="password" id="authPassInput" placeholder="كلمة المرور">
                 </div>
             </div>
-            <button type="button" class="submit-btn" onclick="confirmPriorityAuth()">تأكيد</button>
+            <button type="button" class="submit-btn" onclick="confirmUniversalAuth()">تأكيد</button>
         </div>
     </div>
 
@@ -1112,6 +1117,7 @@
                             <option value="جراحه">جراحه</option>
                             <option value="فك خياطه">فك خياطه</option>
                             <option value="مراجعه">مراجعه</option>
+                            <option value="استفسارات">استفسارات</option>
                             <option value="أخرى">أخرى</option>
                         </select>
                     </div>
@@ -1315,34 +1321,49 @@
             setTimeout(() => { toast.classList.remove('show'); }, 3500);
         }
 
-        let pendingPriorityCheckbox = null;
-        function checkPriorityAuth(checkbox) {
-            if (checkbox.checked) {
-                pendingPriorityCheckbox = checkbox;
-                checkbox.checked = false;
+        // نظام التحقق الموحد بكلمة المرور (جلسة عمل واحدة لا تتطلب إعادة إدخال عند التحديث)
+        let universalAuthCallback = null;
+
+        function requireAdminAuth(callback) {
+            if (sessionStorage.getItem('isAdminAuth') === 'true') {
+                callback();
+            } else {
+                universalAuthCallback = callback;
                 document.getElementById('authPassInput').value = '';
                 document.getElementById('passAuthModal').classList.add('open');
             }
         }
 
-        function confirmPriorityAuth() {
+        function confirmUniversalAuth() {
             const pass = document.getElementById('authPassInput').value;
             if (pass === localStorage.getItem('adminPassword')) {
-                if (pendingPriorityCheckbox) {
-                    pendingPriorityCheckbox.checked = true;
-                    pendingPriorityCheckbox = null;
-                }
+                sessionStorage.setItem('isAdminAuth', 'true');
                 document.getElementById('passAuthModal').classList.remove('open');
+                if (universalAuthCallback) {
+                    universalAuthCallback();
+                    universalAuthCallback = null;
+                }
             } else {
                 alert('كلمة المرور غير صحيحة!');
             }
         }
 
-        function cancelPriorityAuth() {
+        function cancelUniversalAuth() {
             document.getElementById('passAuthModal').classList.remove('open');
-            if (pendingPriorityCheckbox) {
-                pendingPriorityCheckbox.checked = false;
-                pendingPriorityCheckbox = null;
+            universalAuthCallback = null;
+        }
+
+        let pendingPriorityCheckbox = null;
+        function checkPriorityAuth(checkbox) {
+            if (checkbox.checked) {
+                pendingPriorityCheckbox = checkbox;
+                checkbox.checked = false;
+                requireAdminAuth(() => {
+                    if (pendingPriorityCheckbox) {
+                        pendingPriorityCheckbox.checked = true;
+                        pendingPriorityCheckbox = null;
+                    }
+                });
             }
         }
 
@@ -1457,7 +1478,8 @@
             }).length;
 
             const percentage = Math.round((completedToday / totalToday) * 100);
-            document.getElementById('progressText').innerText = `${percentage}\% (${completedToday} من ${totalToday} حالات مُنجزة)`; document.getElementById('progressBarFill').style.width = `${percentage}%`;
+            document.getElementById('progressText').innerText = `${percentage}% (${completedToday} من ${totalToday} حالات مُنجزة)`;
+            document.getElementById('progressBarFill').style.width = `${percentage}%`;
         }
 
         function renderTable() {
@@ -1480,6 +1502,10 @@
                 filteredList = filteredList.filter(r => r.procedureType && r.procedureType.includes('خلع'));
             } else if (dashboardFilter === 'review') {
                 filteredList = filteredList.filter(r => r.procedureType && r.procedureType.includes('مراجعه'));
+            } else if (dashboardFilter === 'inquiries') {
+                filteredList = filteredList.filter(r => r.procedureType && r.procedureType.includes('استفسارات'));
+            } else if (dashboardFilter === 'no_inquiries') {
+                filteredList = filteredList.filter(r => !r.procedureType || !r.procedureType.includes('استفسارات'));
             }
 
             if (dashboardTimeFilter === 'today') {
@@ -1540,6 +1566,7 @@
                 else if (proc.includes('جراحه')) procClass = 'proc-surgery';
                 else if (proc.includes('فك خياطه')) procClass = 'proc-stitches';
                 else if (proc.includes('مراجعه')) procClass = 'proc-review';
+                else if (proc.includes('استفسارات')) procClass = 'proc-inquiry';
 
                 tr.innerHTML = `
                     <td>${index + 1}</td>
@@ -1681,36 +1708,35 @@
             const currentUIState = document.getElementById('editIsRecurring').checked;
 
             if (currentUIState !== originalEditPriorityState) {
-                let pass = prompt('يرجى إدخال كلمة مرور الإدارة للاستمرار:');
-                if (pass === localStorage.getItem('adminPassword')) {
+                requireAdminAuth(() => {
                     executeActualEdit();
-                } else if (pass !== null) {
-                    alert('كلمة المرور غير صحيحة!');
-                }
+                });
             } else {
                 executeActualEdit();
             }
         }
 
         function deleteRecord(key) {
-            if (confirm('هل أنت متأكد من حذف هذا العميل؟')) {
-                const itemIdx = records.findIndex(r => r.firebaseKey === key);
-                if (itemIdx !== -1) {
-                    const deletedItem = records.splice(itemIdx, 1)[0];
-                    deletedRecords.unshift(deletedItem);
-                    saveLocal();
-                    renderTable();
-                    updateKPIs();
-                    updateDailyProgress();
-                    renderClientReport();
+            requireAdminAuth(() => {
+                if (confirm('هل أنت متأكد من حذف هذا العميل؟')) {
+                    const itemIdx = records.findIndex(r => r.firebaseKey === key);
+                    if (itemIdx !== -1) {
+                        const deletedItem = records.splice(itemIdx, 1)[0];
+                        deletedRecords.unshift(deletedItem);
+                        saveLocal();
+                        renderTable();
+                        updateKPIs();
+                        updateDailyProgress();
+                        renderClientReport();
 
-                    if (navigator.onLine && !key.startsWith('local_')) {
-                        dbRef.child(key).remove();
+                        if (navigator.onLine && !key.startsWith('local_')) {
+                            dbRef.child(key).remove();
+                        }
+                        const tRef = trashRef.push();
+                        trashRef.child(tRef.key).set(deletedItem);
                     }
-                    const tRef = trashRef.push();
-                    trashRef.child(tRef.key).set(deletedItem);
                 }
-            }
+            });
         }
 
         function setClientTimeFilterSelect(hours) {
@@ -1757,16 +1783,18 @@
         }
 
         function toggleCopiedStatus(key) {
-            const rec = records.find(r => r.firebaseKey === key);
-            if (rec) {
-                rec.isCopied = !rec.isCopied;
-                saveLocal();
-                renderClientReport();
+            requireAdminAuth(() => {
+                const rec = records.find(r => r.firebaseKey === key);
+                if (rec) {
+                    rec.isCopied = !rec.isCopied;
+                    saveLocal();
+                    renderClientReport();
 
-                if (navigator.onLine && !key.startsWith('local_')) {
-                    dbRef.child(key).update({ isCopied: rec.isCopied });
+                    if (navigator.onLine && !key.startsWith('local_')) {
+                        dbRef.child(key).update({ isCopied: rec.isCopied });
+                    }
                 }
-            }
+            });
         }
 
         function renderClientReport() {
@@ -1848,22 +1876,9 @@
             if (checkboxes.length === 0) {
                 return alert('يرجى اختيار عميل واحد على الأقل من الخانات المحددة!');
             }
-            document.getElementById('deleteSelectedPassInput').value = '';
-            document.getElementById('deleteSelectedAuthModal').classList.add('open');
-        }
-
-        function closeDeleteSelectedAuthModal() {
-            document.getElementById('deleteSelectedAuthModal').classList.remove('open');
-        }
-
-        function confirmDeleteSelectedAccess() {
-            const pass = document.getElementById('deleteSelectedPassInput').value;
-            if (pass === localStorage.getItem('adminPassword')) {
-                closeDeleteSelectedAuthModal();
+            requireAdminAuth(() => {
                 executeDeleteSelectedClients();
-            } else {
-                alert('كلمة المرور غير صحيحة!');
-            }
+            });
         }
 
         function executeDeleteSelectedClients() {
@@ -1892,22 +1907,9 @@
         }
 
         function requestDeleteRangeAccess() {
-            document.getElementById('deleteRangePassInput').value = '';
-            document.getElementById('deleteRangeAuthModal').classList.add('open');
-        }
-
-        function closeDeleteRangeAuthModal() {
-            document.getElementById('deleteRangeAuthModal').classList.remove('open');
-        }
-
-        function confirmDeleteRangeAccess() {
-            const pass = document.getElementById('deleteRangePassInput').value;
-            if (pass === localStorage.getItem('adminPassword')) {
-                closeDeleteRangeAuthModal();
+            requireAdminAuth(() => {
                 executeDeleteClientsTimeRange();
-            } else {
-                alert('كلمة المرور غير صحيحة!');
-            }
+            });
         }
 
         function executeDeleteClientsTimeRange() {
@@ -1946,22 +1948,9 @@
         }
 
         function requestRestoreAccess() {
-            document.getElementById('restorePassInput').value = '';
-            document.getElementById('restoreAuthModal').classList.add('open');
-        }
-
-        function closeRestoreAuthModal() {
-            document.getElementById('restoreAuthModal').classList.remove('open');
-        }
-
-        function confirmRestoreAccess() {
-            const pass = document.getElementById('restorePassInput').value;
-            if (pass === localStorage.getItem('adminPassword')) {
-                closeRestoreAuthModal();
+            requireAdminAuth(() => {
                 openRestoreModal();
-            } else {
-                alert('كلمة المرور غير صحيحة!');
-            }
+            });
         }
 
         function openRestoreModal() {
@@ -2055,9 +2044,18 @@
             });
         }
 
-        function openClearModal() { document.getElementById('clearModal').classList.add('open'); }
+        function openClearModal() { 
+            requireAdminAuth(() => {
+                document.getElementById('clearModal').classList.add('open');
+            });
+        }
         function closeClearModal() { document.getElementById('clearModal').classList.remove('open'); }
-        function openPasswordModal() { document.getElementById('passwordModal').classList.add('open'); }
+        
+        function openPasswordModal() { 
+            requireAdminAuth(() => {
+                document.getElementById('passwordModal').classList.add('open');
+            });
+        }
         function closePasswordModal() { document.getElementById('passwordModal').classList.remove('open'); }
 
         function updatePassword() {
