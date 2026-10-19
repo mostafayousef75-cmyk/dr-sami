@@ -1211,10 +1211,10 @@
         }
 
         function saveLocal() { 
-            localStorage.setItem('cachedAppointments_v8', JSON.stringify(records));
+            localStorage.setItem('cachedAppointments_v9', JSON.stringify(records));
         }
 
-        const cached = localStorage.getItem('cachedAppointments_v8');
+        const cached = localStorage.getItem('cachedAppointments_v9');
         if (cached) { try { records = JSON.parse(cached); lastKnownRecordsCount = records.length; } catch(e) { records = []; } }
 
         function syncFilterTabsUI() {
@@ -1484,14 +1484,14 @@
             } else if (dashboardFilter === 'no_inquiries') {
                 filteredList = filteredList.filter(r => !r.procedureType || !r.procedureType.includes('استفسارات'));
             } else if (dashboardFilter === 'admin_pending') {
-                // لم يتم التغيير في تواصل الإدارة ولم يكتب أي خيار في إجراء الإدارة
+                // لم يتم التغيير ولم يكتب شيء في إجراء الإدارة، مع استثناء حالات "استفسارات"
                 filteredList = filteredList.filter(r => {
+                    const isNot1NQ = (!r.procedureType || !r.procedureType.includes('استفسارات'));
                     const contact = (!r.adminContactMethod || r.adminContactMethod === 'قيد الانتظار');
                     const noAction = (!r.actionTaken || r.actionTaken.trim() === '');
-                    return contact && noAction;
+                    return isNot1NQ && contact && noAction;
                 });
             } else if (dashboardFilter === 'admin_done') {
-                // تم التغيير إما بتعديل تواصل الإدارة أو كتابة نص في إجراء الإدارة
                 filteredList = filteredList.filter(r => {
                     const hasContactChange = (r.adminContactMethod && r.adminContactMethod !== 'قيد الانتظار');
                     const hasAction = (r.actionTaken && r.actionTaken.trim() !== '');
@@ -1846,7 +1846,7 @@
                     renderClientReport();
                     renderTrashModalList();
                     if (navigator.onLine && !key.startsWith('local_')) {
-                        dbRef.child(key).update({ isHiddenFromClients: false, deletedAt: null });
+                        dbRef.child(k).update({ isHiddenFromClients: false, deletedAt: null });
                     }
                     playBeepAndShowToast('↩️ تم استرجاع العميل إلى صفحة الكشف بنجاح!');
                 }
@@ -1867,7 +1867,7 @@
                         renderTrashModalList();
 
                         if (navigator.onLine && !key.startsWith('local_')) {
-                            dbRef.child(key).remove();
+                            dbRef.child(k).remove();
                         }
                         alert('تم الحذف النهائي للعميل بنجاح.');
                     }
