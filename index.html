@@ -85,7 +85,7 @@
             top: 0;
             bottom: 0;
             right: 0;
-            z-index: 100;
+            z-index: 1000;
             transition: transform 0.3s ease;
         }
 
@@ -188,6 +188,7 @@
             display: flex;
             flex-direction: column;
             width: calc(100% - 270px);
+            min-width: 0;
         }
 
         .app-layout.sidebar-collapsed .main-wrapper {
@@ -198,7 +199,7 @@
         .top-header {
             background-color: var(--bg-surface);
             border-bottom: 1px solid var(--border-color);
-            padding: 15px 30px;
+            padding: 15px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -210,21 +211,21 @@
         .header-title {
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 12px;
         }
 
-        .header-title h1 { font-size: 1.3rem; font-weight: 700; color: var(--text-main); }
+        .header-title h1 { font-size: 1.2rem; font-weight: 700; color: var(--text-main); }
 
         .open-sidebar-btn {
             background: var(--primary-color);
             color: white;
             border: none;
-            padding: 8px 14px;
+            padding: 8px 12px;
             border-radius: var(--radius-md);
             cursor: pointer;
             display: inline-flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
             font-family: var(--font-family);
             font-size: 0.88rem;
             font-weight: 600;
@@ -234,18 +235,18 @@
             background: var(--bg-base);
             border: 1px solid var(--border-color);
             color: var(--text-main);
-            width: 40px;
-            height: 40px;
+            width: 38px;
+            height: 38px;
             border-radius: 50%;
             cursor: pointer;
-            font-size: 1.1rem;
+            font-size: 1rem;
             display: flex;
             align-items: center;
             justify-content: center;
         }
 
         .content-body {
-            padding: 20px 25px;
+            padding: 15px;
             display: flex;
             flex-direction: column;
             gap: 18px;
@@ -263,7 +264,7 @@
             background-color: var(--bg-surface);
             border: 1px solid var(--border-color);
             border-radius: var(--radius-lg);
-            padding: 18px;
+            padding: 15px;
             box-shadow: var(--shadow-sm);
         }
 
@@ -277,11 +278,11 @@
         }
 
         .section-header h2 {
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             color: var(--text-main);
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
         }
 
         .progress-box {
@@ -297,7 +298,7 @@
         .progress-info-row {
             display: flex;
             justify-content: space-between;
-            font-size: 0.88rem;
+            font-size: 0.85rem;
             font-weight: 700;
         }
         .progress-bar-container {
@@ -316,18 +317,18 @@
 
         .kpi-cards-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 12px;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 10px;
         }
 
         .kpi-card {
             background: var(--bg-surface);
             border: 1px solid var(--border-color);
             border-radius: var(--radius-md);
-            padding: 14px;
+            padding: 12px;
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
             border-right: 4px solid;
         }
 
@@ -339,15 +340,15 @@
         .kpi-card.indigo { border-color: #4f46e5; }
 
         .kpi-icon-box {
-            font-size: 1.4rem; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: var(--bg-base); color: var(--text-main);
+            font-size: 1.2rem; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: var(--bg-base); color: var(--text-main); flex-shrink: 0;
         }
 
-        .kpi-info h3 { font-size: 0.8rem; color: var(--text-muted); font-weight: 500; }
-        .kpi-value { font-size: 1.3rem; font-weight: 800; color: var(--text-main); }
+        .kpi-info h3 { font-size: 0.75rem; color: var(--text-muted); font-weight: 500; }
+        .kpi-value { font-size: 1.1rem; font-weight: 800; color: var(--text-main); }
 
         .form-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 12px;
         }
 
@@ -370,7 +371,7 @@
 
         .actions-toolbar { display: flex; gap: 8px; flex-wrap: wrap; }
         .action-btn {
-            padding: 7px 14px; border-radius: var(--radius-md); border: none; color: white; font-family: var(--font-family); font-size: 0.85rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; text-decoration: none;
+            padding: 7px 12px; border-radius: var(--radius-md); border: none; color: white; font-family: var(--font-family); font-size: 0.82rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; text-decoration: none;
         }
         .action-btn.excel { background-color: #107c41; }
         .action-btn.json { background-color: #6366f1; }
@@ -385,7 +386,7 @@
             background: var(--bg-base);
             border: 1px solid var(--border-color);
             border-radius: var(--radius-lg);
-            padding: 10px 14px;
+            padding: 10px 12px;
             margin-bottom: 14px;
             display: flex;
             flex-direction: column;
@@ -397,11 +398,11 @@
 
         .filter-tabs { display: flex; gap: 6px; flex-wrap: wrap; }
         .filter-tab {
-            padding: 5px 12px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-surface); color: var(--text-main); font-family: var(--font-family); font-size: 0.8rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 5px;
+            padding: 5px 10px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-surface); color: var(--text-main); font-family: var(--font-family); font-size: 0.78rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 5px;
         }
         .filter-tab.active { background-color: var(--primary-color); color: white; border-color: var(--primary-color); }
 
-        .search-field { position: relative; min-width: 240px; }
+        .search-field { position: relative; width: 100%; max-width: 300px; }
         .search-field input {
             width: 100%; padding: 7px 34px 7px 10px; border: 1px solid var(--border-color); border-radius: var(--radius-md); background-color: var(--bg-base); color: var(--text-main); font-family: var(--font-family); font-size: 0.85rem;
         }
@@ -451,7 +452,7 @@
         }
         
         .service-cell-box {
-            width: 210px;
+            width: 200px;
             white-space: pre-wrap;
             word-break: break-word;
             padding: 3px 6px;
@@ -503,27 +504,27 @@
             background-color: var(--bg-surface);
             border: 1px solid var(--border-color);
             border-radius: var(--radius-lg);
-            padding: 15px;
+            padding: 12px;
         }
 
         .client-card-wrapper {
             background-color: var(--bg-base);
             border: 1px solid var(--border-color);
-            border-radius: 6px;
-            padding: 16px;
+            border-radius: 8px;
+            padding: 14px;
             margin-bottom: 12px;
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 8px;
             color: var(--text-main);
             font-family: var(--font-family);
             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
             transition: all 0.3s ease;
+            width: 100%;
         }
 
-        /* تنسيق كارت العميل عندما يكون متاحاً للنسخ وتم تعيينه كـ تم النسخ */
         .client-card-wrapper.is-copied {
-            background-color: rgba(22, 163, 74, 0.1);
+            background-color: rgba(22, 163, 74, 0.08);
             border-color: var(--success-color);
         }
 
@@ -531,16 +532,17 @@
             background: transparent;
             border: 1px solid var(--border-color);
             color: var(--text-muted);
-            padding: 4px 10px;
+            padding: 4px 8px;
             border-radius: 6px;
             font-family: var(--font-family);
-            font-size: 0.8rem;
+            font-size: 0.78rem;
             font-weight: 700;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
-            gap: 6px;
+            gap: 5px;
             transition: all 0.2s ease;
+            white-space: nowrap;
         }
 
         .copied-btn.active {
@@ -552,11 +554,13 @@
 
         .client-card-header {
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             justify-content: space-between;
-            font-size: 1rem;
+            font-size: 0.95rem;
             font-weight: 700;
             color: var(--text-main);
+            flex-wrap: wrap;
+            gap: 8px;
         }
 
         .client-card-header .client-title {
@@ -564,6 +568,9 @@
             align-items: center;
             gap: 8px;
             color: var(--text-main);
+            flex-wrap: wrap;
+            flex: 1;
+            min-width: 200px;
         }
 
         .client-card-header .client-select-chk {
@@ -571,12 +578,14 @@
             height: 18px;
             cursor: pointer;
             accent-color: var(--primary-color);
+            flex-shrink: 0;
         }
 
         .client-info-row {
-            font-size: 0.92rem;
+            font-size: 0.9rem;
             color: var(--text-main);
-            line-height: 1.6;
+            line-height: 1.5;
+            word-break: break-word;
         }
 
         .client-info-row .info-label {
@@ -585,15 +594,16 @@
 
         .client-datetime-badge {
             font-family: Arial, sans-serif;
-            font-size: 0.85rem;
+            font-size: 0.78rem;
             font-weight: 700;
             color: #ffffff;
             background: rgba(37, 99, 235, 0.2);
-            padding: 3px 10px;
+            padding: 3px 8px;
             border-radius: 4px;
             border: 1px solid rgba(37, 99, 235, 0.4);
             direction: ltr;
             display: inline-block;
+            white-space: nowrap;
         }
         body.light-theme .client-datetime-badge {
             color: #0f172a;
@@ -601,16 +611,48 @@
             border-color: #cbd5e1;
         }
 
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 200; justify-content: center; align-items: center; padding: 15px; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 2000; justify-content: center; align-items: center; padding: 15px; }
         .modal.open { display: flex; }
         .modal-content { background: var(--bg-surface); border-radius: var(--radius-lg); width: 100%; max-width: 520px; max-height: 90vh; overflow-y: auto; padding: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); border: 1px solid var(--border-color); color: var(--text-main); }
         .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid var(--border-color); padding-bottom: 8px; }
         .modal-header h3 { color: var(--primary-color); font-size: 1.1rem; }
         .close-modal-btn { background: none; border: none; font-size: 1.3rem; color: var(--text-muted); cursor: pointer; }
 
+        /* التجاوب والتكيف مع الموبايل (Responsive CSS) */
+        @media (max-width: 992px) {
+            .sidebar {
+                transform: translateX(100%);
+            }
+            .app-layout:not(.sidebar-collapsed) .sidebar {
+                transform: translateX(100%);
+            }
+            .app-layout.sidebar-open .sidebar {
+                transform: translateX(0) !important;
+            }
+            .main-wrapper {
+                margin-right: 0 !important;
+                width: 100% !important;
+            }
+            .open-sidebar-btn {
+                display: inline-flex !important;
+            }
+            .client-card-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .client-datetime-badge {
+                align-self: flex-start;
+                margin-top: 4px;
+            }
+        }
+
         @media (max-width: 768px) {
             .table-container { overflow-x: auto; }
-            table { min-width: 1100px; }
+            table { min-width: 1000px; }
+            .content-body { padding: 10px; }
+            .top-header { padding: 12px 15px; }
+            .actions-toolbar { width: 100%; }
+            .action-btn { flex: 1 1 calc(50% - 8px); justify-content: center; }
         }
     </style>
 </head>
@@ -632,7 +674,7 @@
                         <p>د. سامي - التنسيق الطبي</p>
                     </div>
                 </div>
-                <button class="toggle-sidebar-btn" onclick="toggleSidebar()" title="توسيع الشاشة">
+                <button class="toggle-sidebar-btn" onclick="toggleSidebar()" title="إغلاق القائمة">
                     <i class="fa-solid fa-chevron-right"></i>
                 </button>
             </div>
@@ -658,7 +700,7 @@
         <main class="main-wrapper">
             <header class="top-header">
                 <div class="header-title">
-                    <button class="open-sidebar-btn hidden" id="openSidebarBtn" onclick="toggleSidebar()">
+                    <button class="open-sidebar-btn" id="openSidebarBtn" onclick="toggleSidebar()">
                         <i class="fa-solid fa-bars"></i> القائمة
                     </button>
                     <h1 id="pageTitle">مؤشر الأداء والمواعيد</h1>
@@ -789,7 +831,7 @@
                             <button class="action-btn excel" onclick="exportToExcel()"><i class="fa-solid fa-file-excel"></i> تصدير Excel</button>
                             <button class="action-btn json" onclick="exportToJSON()"><i class="fa-solid fa-file-code"></i> تصدير JSON</button>
                             <label class="action-btn import">
-                                <i class="fa-solid fa-file-import"></i> استيراد ملفات (Excel / JSON)
+                                <i class="fa-solid fa-file-import"></i> استيراد ملفات
                                 <input type="file" id="importFile" accept=".json,.xlsx,.xls" onchange="importData(event)" hidden>
                             </label>
                             <button class="action-btn clear-all" onclick="openClearModal()"><i class="fa-solid fa-trash-can"></i> مسح بفلتر وباسورد</button>
@@ -868,15 +910,15 @@
                     
                     <section class="dashboard-section">
                         
-                        <div style="display: flex; justify-content: space-between; align-items: center; background: var(--bg-base); padding: 12px 18px; border-radius: 8px; border: 1px solid var(--border-color); margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; background: var(--bg-base); padding: 12px 15px; border-radius: 8px; border: 1px solid var(--border-color); margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
                             <div style="display: flex; align-items: center; gap: 10px;">
                                 <h2 style="font-size: 1.1rem; color: var(--primary-color); font-weight: 700;">
                                     <i class="fa-solid fa-file-lines"></i> صفحة الكشف
                                 </h2>
                             </div>
                             
-                            <div style="display: flex; align-items: center; gap: 10px;">
-                                <select id="clientHoursSelect" onchange="setClientTimeFilterSelect(this.value)" style="background: var(--bg-surface); color: var(--text-main); border: 1px solid var(--border-color); padding: 6px 12px; border-radius: 6px; font-family: var(--font-family); font-size: 0.85rem; cursor: pointer;">
+                            <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap; width: 100%; justify-content: flex-end;">
+                                <select id="clientHoursSelect" onchange="setClientTimeFilterSelect(this.value)" style="background: var(--bg-surface); color: var(--text-main); border: 1px solid var(--border-color); padding: 6px 10px; border-radius: 6px; font-family: var(--font-family); font-size: 0.82rem; cursor: pointer;">
                                     <option value="all">كل الأوقات</option>
                                     <option value="6">آخر 6 ساعات</option>
                                     <option value="8">آخر 8 ساعات</option>
@@ -1126,9 +1168,11 @@
 
         function toggleSidebar() {
             const appLayout = document.getElementById('appLayout');
-            const openBtn = document.getElementById('openSidebarBtn');
-            appLayout.classList.toggle('sidebar-collapsed');
-            openBtn.classList.toggle('hidden', !appLayout.classList.contains('sidebar-collapsed'));
+            if (window.innerWidth <= 992) {
+                appLayout.classList.toggle('sidebar-open');
+            } else {
+                appLayout.classList.toggle('sidebar-collapsed');
+            }
         }
 
         function switchPage(page) {
@@ -1146,6 +1190,10 @@
                 document.getElementById('menu-clients').classList.add('active');
                 document.getElementById('pageTitle').innerText = 'صفحة الكشف';
                 renderClientReport();
+            }
+
+            if (window.innerWidth <= 992) {
+                document.getElementById('appLayout').classList.remove('sidebar-open');
             }
         }
 
@@ -1681,7 +1729,6 @@
             } catch(e) { return isoString; }
         }
 
-        // دالة تبديل حالة النسخ لعميل معين في صفحة الكشف
         function toggleCopiedStatus(key) {
             const rec = records.find(r => r.firebaseKey === key);
             if (rec) {
@@ -1723,7 +1770,7 @@
                         <div class="client-title">
                             <input type="checkbox" class="client-select-chk" data-key="${item.firebaseKey}">
                             <span>${index + 1}- ${item.patientName}${fileStr}</span>
-                            <button class="copied-btn ${isCopied ? 'active' : ''}" onclick="toggleCopiedStatus('${item.firebaseKey}')" title="تنسيق العميل">
+                            <button class="copied-btn ${isCopied ? 'active' : ''}" onclick="toggleCopiedStatus('${item.firebaseKey}')">
                                 <i class="fa-solid ${isCopied ? 'fa-circle-check' : 'fa-check'}"></i> ${isCopied ? 'تم النسخ ✅' : 'تعليم كمنسوخ'}
                             </button>
                         </div>
@@ -1741,10 +1788,8 @@
             });
         }
 
-        // نسخ الكشف كاملاً باستثناء العملاء الذين تم وضع علامة "تم النسخ" عليهم
         function copyClientReport() {
             let openRecords = getOpenFilteredRecords();
-            // استبعاد العملاء المنسوخين سابقاً
             let uncopiedRecords = openRecords.filter(r => !r.isCopied);
 
             if (uncopiedRecords.length === 0) {
