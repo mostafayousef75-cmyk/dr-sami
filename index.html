@@ -400,11 +400,42 @@
         .filter-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
         .filter-label { font-size: 0.82rem; font-weight: 700; color: var(--text-muted); min-width: 90px; display: flex; align-items: center; gap: 6px; }
 
-        .filter-tabs { display: flex; gap: 6px; flex-wrap: wrap; }
+        .filter-tabs { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
         .filter-tab {
             padding: 5px 10px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-surface); color: var(--text-main); font-family: var(--font-family); font-size: 0.78rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 5px;
         }
         .filter-tab.active { background-color: var(--primary-color); color: white; border-color: var(--primary-color); }
+
+        /* القائمة المنسدلة المخصصة للاستفسارات */
+        .dropdown-filter-container {
+            position: relative;
+            display: inline-block;
+        }
+        .dropdown-filter-btn {
+            padding: 5px 12px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-surface); color: var(--text-main); font-family: var(--font-family); font-size: 0.78rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;
+        }
+        .dropdown-filter-btn.active {
+            background-color: var(--primary-color); color: white; border-color: var(--primary-color);
+        }
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 105%;
+            background-color: var(--bg-surface);
+            min-width: 180px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.4);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            z-index: 99;
+            padding: 5px;
+        }
+        .dropdown-content.show { display: flex; flex-direction: column; gap: 4px; }
+        .dropdown-item {
+            padding: 7px 10px; text-align: right; border-radius: 4px; background: transparent; border: none; color: var(--text-main); font-family: var(--font-family); font-size: 0.78rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px;
+        }
+        .dropdown-item:hover { background: var(--border-color); }
+        .dropdown-item.active { background: var(--primary-color); color: white; }
 
         .search-field { position: relative; width: 100%; max-width: 300px; }
         .search-field input {
@@ -911,10 +942,23 @@
                                     <button class="filter-tab" data-filter="plants" onclick="setDashboardFilter('plants', this)">حالات الزراعة 🦷</button>
                                     <button class="filter-tab" data-filter="extraction" onclick="setDashboardFilter('extraction', this)">حالات الخلع 🩺</button>
                                     <button class="filter-tab" data-filter="review" onclick="setDashboardFilter('review', this)">حالات المراجعة 📋</button>
-                                    <button class="filter-tab" data-filter="inquiries" onclick="setDashboardFilter('inquiries', this)">استفسارات 💬</button>
+                                    
+                                    <!-- قائمة منسدلة للاستفسارات لتوفير المساحة -->
+                                    <div class="dropdown-filter-container" id="inquiriesDropdownContainer">
+                                        <button class="dropdown-filter-btn" id="inquiriesDropdownBtn" onclick="toggleInquiriesDropdown()">
+                                            <i class="fa-solid fa-comments"></i> الاستفسارات <i class="fa-solid fa-chevron-down" style="font-size:0.7rem;"></i>
+                                        </button>
+                                        <div class="dropdown-content" id="inquiriesDropdownContent">
+                                            <button class="dropdown-item" data-filter="inquiries_all" onclick="setDashboardFilter('inquiries_all', this)">💬 كل الاستفسارات</button>
+                                            <button class="dropdown-item" data-filter="inquiries_done" onclick="setDashboardFilter('inquiries_done', this)">✅ استفسارات تم إجراءها</button>
+                                            <button class="dropdown-item" data-filter="inquiries_pending" onclick="setDashboardFilter('inquiries_pending', this)">⏳ استفسارات لم تُمَس</button>
+                                        </div>
+                                    </div>
+
                                     <button class="filter-tab" data-filter="no_inquiries" onclick="setDashboardFilter('no_inquiries', this)">الكشفيات والمواعيد 🩺📅</button>
-                                    <button class="filter-tab" data-filter="admin_pending" onclick="setDashboardFilter('admin_pending', this)" style="border-color: var(--warning-color); color: var(--warning-color);">قيد انتظار الإدارة ⏳</button>
-                                    <button class="filter-tab" data-filter="admin_done" onclick="setDashboardFilter('admin_done', this)" style="border-color: var(--success-color); color: var(--success-color);">تم عليها إجراء الإدارة ✅</button>
+                                    
+                                    <!-- خانة موحدة لفلتر الإدارة (قيد الانتظار أو تم إجراء) -->
+                                    <button class="filter-tab" data-filter="admin_status_box" onclick="setDashboardFilter('admin_status_box', this)" style="border-color: var(--primary-color);">📋 متابعة الإدارة (الانتظار/المنجز)</button>
                                 </div>
                             </div>
                             <div class="filter-row" style="border-top: 1px dashed var(--border-color); padding-top: 8px;">
@@ -1211,10 +1255,10 @@
         }
 
         function saveLocal() { 
-            localStorage.setItem('cachedAppointments_v9', JSON.stringify(records));
+            localStorage.setItem('cachedAppointments_v10', JSON.stringify(records));
         }
 
-        const cached = localStorage.getItem('cachedAppointments_v9');
+        const cached = localStorage.getItem('cachedAppointments_v10');
         if (cached) { try { records = JSON.parse(cached); lastKnownRecordsCount = records.length; } catch(e) { records = []; } }
 
         function syncFilterTabsUI() {
@@ -1227,6 +1271,23 @@
                         btn.classList.remove('active');
                     }
                 });
+
+                // تفعيل القائمة المنسدلة للاستفسارات لو اختار أحد فروعها
+                const dropdownBtn = document.getElementById('inquiriesDropdownBtn');
+                const isDropdownActive = dashboardFilter.startsWith('inquiries_');
+                if (isDropdownActive) {
+                    dropdownBtn.classList.add('active');
+                    statusContainer.querySelectorAll('.dropdown-item').forEach(item => {
+                        if (item.getAttribute('data-filter') === dashboardFilter) {
+                            item.classList.add('active');
+                        } else {
+                            item.classList.remove('active');
+                        }
+                    });
+                } else {
+                    dropdownBtn.classList.remove('active');
+                    statusContainer.querySelectorAll('.dropdown-item').forEach(item => item.classList.remove('active'));
+                }
             }
 
             const timeContainer = document.getElementById('timeFilterTabs');
@@ -1240,6 +1301,19 @@
                 });
             }
         }
+
+        function toggleInquiriesDropdown() {
+            const content = document.getElementById('inquiriesDropdownContent');
+            content.classList.toggle('show');
+        }
+
+        // إغلاق القائمة المنسدلة عند النقر في أي مكان خارجها
+        window.addEventListener('click', function(e) {
+            const container = document.getElementById('inquiriesDropdownContainer');
+            if (container && !container.contains(e.target)) {
+                document.getElementById('inquiriesDropdownContent').classList.remove('show');
+            }
+        });
 
         window.addEventListener('DOMContentLoaded', () => {
             const activePage = localStorage.getItem('activePage') || 'dashboard';
@@ -1421,8 +1495,18 @@
         function setDashboardFilter(filterType, btn) {
             dashboardFilter = filterType;
             localStorage.setItem('savedDashboardFilter', filterType);
-            btn.closest('.filter-row').querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
-            btn.classList.add('active');
+            
+            // إزالة التنشيط عن جميع فلاتر الصفوف
+            document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.dropdown-item').forEach(i => i.classList.remove('active'));
+            
+            if (btn) {
+                btn.classList.add('active');
+                if (btn.classList.contains('dropdown-item')) {
+                    document.getElementById('inquiriesDropdownBtn').classList.add('active');
+                }
+            }
+            document.getElementById('inquiriesDropdownContent').classList.remove('show');
             renderTable();
         }
 
@@ -1456,7 +1540,7 @@
 
             const percentage = Math.round((completedToday / totalToday) * 100);
             document.getElementById('progressText').innerText = `${percentage}% (${completedToday} من ${totalToday} حالات مُنجزة)`;
-            document.getElementById('progressBarFill').style.width = `${percentage}%`;
+            document.getElementById('progressBarFill').style.width = `${percentage}`;
         }
 
         function renderTable() {
@@ -1479,23 +1563,29 @@
                 filteredList = filteredList.filter(r => r.procedureType && r.procedureType.includes('خلع'));
             } else if (dashboardFilter === 'review') {
                 filteredList = filteredList.filter(r => r.procedureType && r.procedureType.includes('مراجعه'));
-            } else if (dashboardFilter === 'inquiries') {
+            } else if (dashboardFilter === 'inquiries_all') {
                 filteredList = filteredList.filter(r => r.procedureType && r.procedureType.includes('استفسارات'));
+            } else if (dashboardFilter === 'inquiries_done') {
+                filteredList = filteredList.filter(r => {
+                    const isQ = (r.procedureType && r.procedureType.includes('استفسارات'));
+                    const hasChange = (r.adminContactMethod && r.adminContactMethod !== 'قيد الانتظار') || (r.actionTaken && r.actionTaken.trim() !== '');
+                    return isQ && hasChange;
+                });
+            } else if (dashboardFilter === 'inquiries_pending') {
+                filteredList = filteredList.filter(r => {
+                    const isQ = (r.procedureType && r.procedureType.includes('استفسارات'));
+                    const isPending = (!r.adminContactMethod || r.adminContactMethod === 'قيد الانتظار') && (!r.actionTaken || r.actionTaken.trim() === '');
+                    return isQ && isPending;
+                });
             } else if (dashboardFilter === 'no_inquiries') {
                 filteredList = filteredList.filter(r => !r.procedureType || !r.procedureType.includes('استفسارات'));
-            } else if (dashboardFilter === 'admin_pending') {
-                // لم يتم التغيير ولم يكتب شيء في إجراء الإدارة، مع استثناء حالات "استفسارات"
+            } else if (dashboardFilter === 'admin_status_box') {
+                // يعرض كلا الحالتين المدمجتين (قيد الانتظار بدون استفسارات أو تم عليها إجراء) في خانة واحدة
                 filteredList = filteredList.filter(r => {
-                    const isNot1NQ = (!r.procedureType || !r.procedureType.includes('استفسارات'));
-                    const contact = (!r.adminContactMethod || r.adminContactMethod === 'قيد الانتظار');
-                    const noAction = (!r.actionTaken || r.actionTaken.trim() === '');
-                    return isNot1NQ && contact && noAction;
-                });
-            } else if (dashboardFilter === 'admin_done') {
-                filteredList = filteredList.filter(r => {
-                    const hasContactChange = (r.adminContactMethod && r.adminContactMethod !== 'قيد الانتظار');
-                    const hasAction = (r.actionTaken && r.actionTaken.trim() !== '');
-                    return hasContactChange || hasAction;
+                    const isNotQ = (!r.procedureType || !r.procedureType.includes('استفسارات'));
+                    const isPending = (isNotQ && (!r.adminContactMethod || r.adminContactMethod === 'قيد الانتظار') && (!r.actionTaken || r.actionTaken.trim() === ''));
+                    const isDone = ((r.adminContactMethod && r.adminContactMethod !== 'قيد الانتظار') || (r.actionTaken && r.actionTaken.trim() !== ''));
+                    return isPending || isDone;
                 });
             }
 
@@ -1867,7 +1957,7 @@
                         renderTrashModalList();
 
                         if (navigator.onLine && !key.startsWith('local_')) {
-                            dbRef.child(k).remove();
+                            dbRef.child(key).remove();
                         }
                         alert('تم الحذف النهائي للعميل بنجاح.');
                     }
