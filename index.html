@@ -1010,13 +1010,14 @@
         </div>
     </div>
 
+    <!-- نافذة سلة المحذوفات المصممة خصيصاً للموبايل لضمان ظهور بيانات العميل بوضوح -->
     <div class="modal" id="restoreModal">
-        <div class="modal-content" style="max-width: 600px;">
+        <div class="modal-content" style="max-width: 500px;">
             <div class="modal-header">
                 <h3><i class="fa-solid fa-rotate-left"></i> سلة المحذوفات والاسترجاع</h3>
                 <button class="close-modal-btn" onclick="closeRestoreModal()">&times;</button>
             </div>
-            <div id="trashList" style="max-height: 380px; overflow-y: auto;"></div>
+            <div id="trashList" style="max-height: 400px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px;"></div>
         </div>
     </div>
 
@@ -1284,6 +1285,7 @@
             setTimeout(() => { toast.classList.remove('show'); }, 3500);
         }
 
+        // استخدام sessionStorage لطلب كلمة المرور مرة واحدة فقط في الجلسة أو عند إعادة فتح المتصفح/انقطاع الاتصال
         let universalAuthCallback = null;
 
         function requireAdminAuth(callback) {
@@ -1934,16 +1936,16 @@
             } else {
                 allTrash.forEach((item, idx) => {
                     const div = document.createElement('div');
-                    // تصميم مصغر ومرتب للأزرار بجانب بعضها لعدم حجب بيانات العميل
-                    div.style.cssText = 'padding: 10px 12px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; gap: 8px;';
+                    // تصميم عمودي مرن للموبايل: بيانات العميل في الأعلى بارزة، والأزرار الصغيرة في الأسفل بجانب بعضها
+                    div.style.cssText = 'background: var(--bg-base); border: 1px solid var(--border-color); border-radius: 8px; padding: 10px; display: flex; flex-direction: column; gap: 8px;';
                     div.innerHTML = `
-                        <div style="flex: 1; word-break: break-word; line-height: 1.4;">
-                            <strong style="color:var(--text-main); font-size: 0.9rem;">${item.patientName}</strong> <span style="color:var(--text-muted);">(${item.patientPhone})</span><br>
-                            <small style="color:var(--text-muted);">${item.serviceRequired || '-'}</small>
+                        <div style="word-break: break-word; line-height: 1.4;">
+                            <strong style="color:var(--text-main); font-size: 0.95rem;">${item.patientName}</strong> <span style="color:var(--text-muted); font-size: 0.85rem;">(${item.patientPhone})</span><br>
+                            <small style="color:var(--text-muted); font-size: 0.82rem;">${item.serviceRequired || '-'}</small>
                         </div>
-                        <div style="display: flex; gap: 4px; flex-shrink: 0; align-items: center;">
-                            <button class="btn-save-action" onclick="restoreRecord(${idx})" style="padding: 4px 8px; font-size: 0.78rem;" title="استرجاع"><i class="fa-solid fa-rotate-left"></i> استرجاع</button>
-                            <button class="action-btn select-del-btn" onclick="permanentDeleteRecord(${idx})" style="padding: 4px 8px; font-size: 0.78rem;" title="حذف نهائي"><i class="fa-solid fa-trash-can"></i> حذف</button>
+                        <div style="display: flex; gap: 6px; justify-content: flex-end; border-top: 1px solid var(--border-color); padding-top: 6px;">
+                            <button class="btn-save-action" onclick="restoreRecord(${idx})" style="padding: 4px 10px; font-size: 0.78rem;" title="استرجاع"><i class="fa-solid fa-rotate-left"></i> استرجاع</button>
+                            <button class="action-btn select-del-btn" onclick="permanentDeleteRecord(${idx})" style="padding: 4px 10px; font-size: 0.78rem;" title="حذف نهائي"><i class="fa-solid fa-trash-can"></i> حذف نهائي</button>
                         </div>
                     `;
                     trashList.appendChild(div);
