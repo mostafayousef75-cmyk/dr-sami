@@ -1757,7 +1757,7 @@
 
         function getOpenFilteredRecords() {
             let openRecords = records.filter(r => {
-                if (r.isClientDeletedOnly) return false; // إخفاؤه فقط من صفحة الكشف إذا تم حذفه منها
+                if (r.isClientDeletedOnly) return false;
                 const isPending = !r.adminContactMethod || r.adminContactMethod === 'قيد الانتظار';
                 const noAction = !r.actionTaken || r.actionTaken.trim() === '';
                 return isPending && noAction;
@@ -1897,7 +1897,7 @@
 
             records.forEach(r => {
                 if (keysToDelete.includes(r.firebaseKey)) {
-                    r.isClientDeletedOnly = true; // نحدد فقط أنه محذوف من الكشف ليظل موجود بجدول المواعيد
+                    r.isClientDeletedOnly = true;
                     const copyObj = { ...r, deletedAt: new Date().toISOString(), deletedFrom: 'clients' };
                     clientDeletedRecords.unshift(copyObj);
                     
@@ -1918,7 +1918,11 @@
 
         function requestDeleteRangeAccess() {
             requireAdminAuth(() => {
-                executeDeleteClientsTimeRange();
+                // إضافة إشعار تأكيد إجباري قبل اتمام مسح الفترة
+                const filterDesc = clientHoursFilter === 'all' ? 'جميع الأوقات' : `آخر ${clientHoursFilter} ساعة`;
+                if (confirm(`⚠️ تنبيه إدارة: هل أنت متأكد من رغبتك في مسح وعمل إخفاء لنطاق الفترة (${filterDesc}) من صفحة الكشف ونقلها لسلة المحذوفات؟`)) {
+                    executeDeleteClientsTimeRange();
+                }
             });
         }
 
@@ -1955,6 +1959,7 @@
             updateKPIs();
             updateDailyProgress();
             renderClientReport();
+            alert('تم مسح الفترة المحددة بنجاح وإرسال الحالات لسلة المحذوفات.');
         }
 
         function requestRestoreAccess(context = 'dashboard') {
@@ -2022,7 +2027,8 @@
             
             if (currentTrashContext === 'clients') {
                 clientDeletedRecords.splice(clientDeletedRecords.indexOf(restored), 1);
-                // إرجاع الخصائص وإعادة تفعيل العميل في صفحة الكشف حصراً
+                
+                // استرجاع العميل لصفحة الكشف حصراً دون التأثير على جدول المواعيد العام
                 let existRec = records.find(r => r.firebaseKey === restored.firebaseKey);
                 if (existRec) {
                     existRec.isClientDeletedOnly = false;
@@ -2038,7 +2044,17 @@
                         dbRef.child(restored.firebaseKey).update({ isClientDeletedOnly: false });
                     }
                     if (restored.firebaseKey) {
-                        clientDeletedRef.child(restored.firebaseKey).remove();
+                        // إزالة العنصر من سجل سلة كشف العملاء في فايربيس
+                        clientDeletedRef.once('value').then(snap => {
+                            const val = snap.val();
+                            if (val) {
+                                for (let k in val) {
+                                    if (val[k].firebaseKey === restored.firebaseKey || k === restored.firebaseKey) {
+                                        clientDeletedRef.child(k).remove();
+                                    }
+                                }
+                            }
+                        });
                     }
                 }
             } else {
@@ -2047,6 +2063,7 @@
                 delete restored.firebaseKey;
                 delete restored.deletedAt;
                 delete restored.deletedFrom;
+                delete restored.isClientDeletedOnly;
 
                 records.unshift(restored);
 
@@ -2065,6 +2082,7 @@
             updateDailyProgress();
             renderClientReport();
             openRestoreModal();
+            alert('تم استرجاع العميل بنجاح!');
         }
 
         function permanentDeleteRecord(idx) {
@@ -2081,7 +2099,16 @@
                 if (currentTrashContext === 'clients') {
                     clientDeletedRecords.splice(clientDeletedRecords.indexOf(target), 1);
                     if (navigator.onLine && target.firebaseKey) {
-                        clientDeletedRef.child(target.firebaseKey).remove();
+                        clientDeletedRef.once('value').then(snap => {
+                            const val = snap.val();
+                            if (val) {
+                                for (let k in val) {
+                                    if (val[k].firebaseKey === target.firebaseKey || k === target.firebaseKey) {
+                                        clientDeletedRef.child(k).remove();
+                                    }
+                                }
+                            }
+                        });
                     }
                 } else {
                     deletedRecords.splice(deletedRecords.indexOf(target), 1);
