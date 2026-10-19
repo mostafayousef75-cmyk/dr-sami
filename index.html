@@ -526,6 +526,7 @@
         .client-card-wrapper.is-copied {
             background-color: rgba(22, 163, 74, 0.08);
             border-color: var(--success-color);
+            opacity: 0.85;
         }
 
         .copied-btn {
@@ -618,7 +619,6 @@
         .modal-header h3 { color: var(--primary-color); font-size: 1.1rem; }
         .close-modal-btn { background: none; border: none; font-size: 1.3rem; color: var(--text-muted); cursor: pointer; }
 
-        /* التجاوب والتكيف مع الموبايل (Responsive CSS) */
         @media (max-width: 992px) {
             .sidebar {
                 transform: translateX(100%);
@@ -861,22 +861,22 @@
                         <div class="filter-container-box">
                             <div class="filter-row">
                                 <span class="filter-label"><i class="fa-solid fa-filter"></i> فلاتر الحالات:</span>
-                                <div class="filter-tabs">
-                                    <button class="filter-tab active" onclick="setDashboardFilter('all', this)">الكل</button>
-                                    <button class="filter-tab" onclick="setDashboardFilter('priority', this)">حالات ذات أولوية ⭐</button>
-                                    <button class="filter-tab" onclick="setDashboardFilter('repeated', this)">طلبات متكررة 🔄</button>
-                                    <button class="filter-tab" onclick="setDashboardFilter('plants', this)">حالات الزراعة 🦷</button>
-                                    <button class="filter-tab" onclick="setDashboardFilter('extraction', this)">حالات الخلع 🩺</button>
-                                    <button class="filter-tab" onclick="setDashboardFilter('review', this)">حالات المراجعة 📋</button>
+                                <div class="filter-tabs" id="statusFilterTabs">
+                                    <button class="filter-tab" data-filter="all" onclick="setDashboardFilter('all', this)">الكل</button>
+                                    <button class="filter-tab" data-filter="priority" onclick="setDashboardFilter('priority', this)">حالات ذات أولوية ⭐</button>
+                                    <button class="filter-tab" data-filter="repeated" onclick="setDashboardFilter('repeated', this)">طلبات متكررة 🔄</button>
+                                    <button class="filter-tab" data-filter="plants" onclick="setDashboardFilter('plants', this)">حالات الزراعة 🦷</button>
+                                    <button class="filter-tab" data-filter="extraction" onclick="setDashboardFilter('extraction', this)">حالات الخلع 🩺</button>
+                                    <button class="filter-tab" data-filter="review" onclick="setDashboardFilter('review', this)">حالات المراجعة 📋</button>
                                 </div>
                             </div>
                             <div class="filter-row" style="border-top: 1px dashed var(--border-color); padding-top: 8px;">
                                 <span class="filter-label"><i class="fa-solid fa-clock"></i> النطاق الزمني:</span>
-                                <div class="filter-tabs">
-                                    <button class="filter-tab active" onclick="setDashboardTimeFilter('all', this)">كل الأوقات</button>
-                                    <button class="filter-tab" onclick="setDashboardTimeFilter('today', this)">اليوم</button>
-                                    <button class="filter-tab" onclick="setDashboardTimeFilter('week', this)">الأسبوع</button>
-                                    <button class="filter-tab" onclick="setDashboardTimeFilter('month', this)">الشهر</button>
+                                <div class="filter-tabs" id="timeFilterTabs">
+                                    <button class="filter-tab" data-time="all" onclick="setDashboardTimeFilter('all', this)">كل الأوقات</button>
+                                    <button class="filter-tab" data-time="today" onclick="setDashboardTimeFilter('today', this)">اليوم</button>
+                                    <button class="filter-tab" data-time="week" onclick="setDashboardTimeFilter('week', this)">الأسبوع</button>
+                                    <button class="filter-tab" data-time="month" onclick="setDashboardTimeFilter('month', this)">الشهر</button>
                                 </div>
                             </div>
                         </div>
@@ -1212,6 +1212,30 @@
         const cachedClientTrash = localStorage.getItem('cachedClientTrash');
         if (cachedClientTrash) { try { clientDeletedRecords = JSON.parse(cachedClientTrash); } catch(e) { clientDeletedRecords = []; } }
 
+        function syncFilterTabsUI() {
+            const statusContainer = document.getElementById('statusFilterTabs');
+            if (statusContainer) {
+                statusContainer.querySelectorAll('.filter-tab').forEach(btn => {
+                    if (btn.getAttribute('data-filter') === dashboardFilter) {
+                        btn.classList.add('active');
+                    } else {
+                        btn.classList.remove('active');
+                    }
+                });
+            }
+
+            const timeContainer = document.getElementById('timeFilterTabs');
+            if (timeContainer) {
+                timeContainer.querySelectorAll('.filter-tab').forEach(btn => {
+                    if (btn.getAttribute('data-time') === dashboardTimeFilter) {
+                        btn.classList.add('active');
+                    } else {
+                        btn.classList.remove('active');
+                    }
+                });
+            }
+        }
+
         window.addEventListener('DOMContentLoaded', () => {
             const activePage = localStorage.getItem('activePage') || 'dashboard';
             switchPage(activePage);
@@ -1220,6 +1244,8 @@
             if (hoursSelect) {
                 hoursSelect.value = clientHoursFilter;
             }
+
+            syncFilterTabsUI();
         });
 
         dbRef.on('value', (snapshot) => {
@@ -1431,14 +1457,15 @@
             }).length;
 
             const percentage = Math.round((completedToday / totalToday) * 100);
-            document.getElementById('progressText').innerText = `${percentage}% (${completedToday} من ${totalToday} حالات مُنجزة)`;
-            document.getElementById('progressBarFill').style.width = `${percentage}%`;
+            document.getElementById('progressText').innerText = `${percentage}\% (${completedToday} من ${totalToday} حالات مُنجزة)`; document.getElementById('progressBarFill').style.width = `${percentage}%`;
         }
 
         function renderTable() {
             const tbody = document.getElementById('tableBody');
             if (!tbody) return;
             tbody.innerHTML = '';
+
+            syncFilterTabsUI();
 
             let filteredList = [...records];
             const now = new Date();
@@ -1753,6 +1780,13 @@
                 container.innerHTML = '<div style="text-align:center; padding:30px; color:var(--text-muted); font-size:1rem;">لا توجد حالات جديدة أو معلقة في الوقت الحالي 🎉</div>';
                 return;
             }
+
+            // ترتيب الحالات: غير المنسوخين فوق والمنسوخين تحت
+            openRecords.sort((a, b) => {
+                if (a.isCopied && !b.isCopied) return 1;
+                if (!a.isCopied && b.isCopied) return -1;
+                return new Date(b.createdAt) - new Date(a.createdAt);
+            });
 
             openRecords.forEach((item, index) => {
                 const card = document.createElement('div');
