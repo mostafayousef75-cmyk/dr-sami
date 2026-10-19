@@ -384,7 +384,6 @@
         .action-btn.settings { background-color: #475569; }
         .action-btn.copy-btn { background-color: #16a34a; }
         .action-btn.select-del-btn { background-color: #dc2626; }
-        .action-btn.restore-all-btn { background-color: #d97706; }
 
         .filter-container-box {
             background: var(--bg-base);
@@ -964,7 +963,6 @@
                                 <button class="action-btn copy-btn" onclick="copyClientReport()"><i class="fa-solid fa-copy"></i> نسخ الكشف كاملاً</button>
                                 <button class="action-btn select-del-btn" onclick="requestDeleteSelectedAccess()"><i class="fa-solid fa-trash-can"></i> حذف المحددين</button>
                                 <button class="action-btn clear-all" onclick="requestDeleteRangeAccess()"><i class="fa-solid fa-trash"></i> مسح الفترة</button>
-                                <button class="action-btn restore-all-btn" onclick="requestRestoreAllClients()"><i class="fa-solid fa-rotate-left"></i> استاسترجاع الكل</button>
                             </div>
                         </div>
 
@@ -1118,10 +1116,8 @@
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
         const dbRef = database.ref('appointments');
-        const trashRef = database.ref('trash');
 
         let records = [];
-        let deletedRecords = [];
         let dashboardFilter = localStorage.getItem('savedDashboardFilter') || 'all';
         let dashboardTimeFilter = localStorage.getItem('savedDashboardTimeFilter') || 'all';
         let clientHoursFilter = localStorage.getItem('savedClientHoursFilter') || '8';
@@ -1180,14 +1176,10 @@
 
         function saveLocal() { 
             localStorage.setItem('cachedAppointments', JSON.stringify(records));
-            localStorage.setItem('cachedTrash', JSON.stringify(deletedRecords));
         }
 
         const cached = localStorage.getItem('cachedAppointments');
         if (cached) { try { records = JSON.parse(cached); lastKnownRecordsCount = records.length; } catch(e) { records = []; } }
-
-        const cachedTrash = localStorage.getItem('cachedTrash');
-        if (cachedTrash) { try { deletedRecords = JSON.parse(cachedTrash); } catch(e) { deletedRecords = []; } }
 
         function syncFilterTabsUI() {
             const statusContainer = document.getElementById('statusFilterTabs');
@@ -1246,19 +1238,6 @@
             updateKPIs();
             updateDailyProgress();
             renderClientReport();
-        });
-
-        trashRef.on('value', (snapshot) => {
-            const data = snapshot.val();
-            if (data) {
-                const cloudTrash = [];
-                for (let key in data) { cloudTrash.push({ firebaseKey: key, ...data[key] }); }
-                deletedRecords = cloudTrash;
-                saveLocal();
-            } else {
-                deletedRecords = [];
-                saveLocal();
-            }
         });
 
         function playBeepAndShowToast(msg) {
@@ -1687,7 +1666,7 @@
                 if (confirm('هل أنت متأكد من حذف هذا العميل؟')) {
                     const itemIdx = records.findIndex(r => r.firebaseKey === key);
                     if (itemIdx !== -1) {
-                        const deletedItem = records.splice(itemIdx, 1)[0];
+                        records.splice(itemIdx, 1);
                         saveLocal();
                         renderTable();
                         updateKPIs();
@@ -1761,7 +1740,7 @@
             });
         }
 
-        // إخفاء العميل من صفحة الكشف مؤقتاً (استرجاع)
+        // إخفاء العميل مؤقتاً من صفحة الكشف (استرجاع)
         function hideClientFromReport(key) {
             requireAdminAuth(() => {
                 let rec = records.find(r => r.firebaseKey === key);
@@ -1795,25 +1774,6 @@
                         }
                         alert('تم الحذف النهائي للعميل بنجاح.');
                     }
-                }
-            });
-        }
-
-        // استرجاع كافة العملاء المخفيين في صفحة الكشف بضغطة واحدة
-        function requestRestoreAllClients() {
-            requireAdminAuth(() => {
-                if (confirm('هل تريد إظهار واسترجاع جميع العملاء المخفيين في صفحة الكشف؟')) {
-                    records.forEach(r => {
-                        if (r.isHiddenFromClients) {
-                            r.isHiddenFromClients = false;
-                            if (navigator.onLine && !r.firebaseKey.startsWith('local_')) {
-                                dbRef.child(r.firebaseKey).update({ isHiddenFromClients: false });
-                            }
-                        }
-                    });
-                    saveLocal();
-                    renderClientReport();
-                    alert('تم استرجاع جميع العملاء لصفحة الكشف بنجاح!');
                 }
             });
         }
