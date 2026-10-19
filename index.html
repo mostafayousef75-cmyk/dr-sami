@@ -617,7 +617,7 @@
             border-color: #cbd5e1;
         }
 
-        /* أزرار الإجراءات داخل بطاقة العميل (ترتيب وابعاد أصغر) */
+        /* أزرار الإجراءات داخل بطاقة العميل */
         .client-actions-row {
             display: flex;
             gap: 6px;
@@ -638,6 +638,7 @@
             align-items: center;
             gap: 4px;
         }
+        .btn-client-action.delete-to-trash { background-color: var(--danger-color); }
         .btn-client-action.restore { background-color: var(--success-color); }
         .btn-client-action.permanent-delete { background-color: var(--danger-color); }
 
@@ -874,7 +875,7 @@
                             <h2><i class="fa-solid fa-list-check"></i> جدول المواعيد والمتابعة</h2>
                             <div class="search-field">
                                 <i class="fa-solid fa-magnifying-glass"></i>
-                                <input type="text" id="searchInput" onkeyup="filterTable()" placeholder="بحث باسم العميل، الجوال...">
+                                <input type="text" id="searchInput" oninput="filterTable()" placeholder="بحث باسم العميل، الجوال...">
                             </div>
                         </div>
 
@@ -986,7 +987,7 @@
                 <button class="close-modal-btn" onclick="closeTrashModal()">&times;</button>
             </div>
             <div id="trashModalList" style="display: flex; flex-direction: column; gap: 10px; max-height: 60vh; overflow-y: auto;">
-                <!-- المحذوفات تظهر هنا مرتبة من الأحدث للأقدم -->
+                <!-- المحذوفات تظهر هنا بترتيب الأحدث للأقدم -->
             </div>
         </div>
     </div>
@@ -1190,10 +1191,10 @@
         }
 
         function saveLocal() { 
-            localStorage.setItem('cachedAppointments_v4', JSON.stringify(records));
+            localStorage.setItem('cachedAppointments_v5', JSON.stringify(records));
         }
 
-        const cached = localStorage.getItem('cachedAppointments_v4');
+        const cached = localStorage.getItem('cachedAppointments_v5');
         if (cached) { try { records = JSON.parse(cached); lastKnownRecordsCount = records.length; } catch(e) { records = []; } }
 
         function syncFilterTabsUI() {
@@ -1372,7 +1373,8 @@
                 adminContactMethod: 'قيد الانتظار',
                 adminContactDetail: '',
                 isCopied: false,
-                isHiddenFromClients: false
+                isHiddenFromClients: false,
+                deletedAt: null
             };
 
             records.unshift(newRecord);
@@ -1553,6 +1555,8 @@
                 `;
                 tbody.appendChild(tr);
             });
+            // إعادة تطبيق البحث إن وجد لضمان استمراره
+            filterTable();
         }
 
         function handleContactChange(key) {
@@ -1756,18 +1760,20 @@
             });
         }
 
-        // إخفاء العميل مؤقتاً من صفحة الكشف وإرساله لسلة المحذوفات
+        // إخفاء العميل مؤقتاً من صفحة الكشف وإرساله لسلة المحذوفات مع تنبيه
         function hideClientFromReport(key) {
             requireAdminAuth(() => {
                 let rec = records.find(r => r.firebaseKey === key);
                 if (rec) {
                     rec.isHiddenFromClients = true;
+                    rec.deletedAt = new Date().toISOString();
                     saveLocal();
                     renderClientReport();
                     renderTrashModalList();
                     if (navigator.onLine && !key.startsWith('local_')) {
-                        dbRef.child(key).update({ isHiddenFromClients: true });
+                        dbRef.child(key).update({ isHiddenFromClients: true, deletedAt: rec.deletedAt });
                     }
+                    playBeepAndShowToast('🗑️ تم نقل العميل إلى سلة المحذوفات بنجاح!');
                 }
             });
         }
@@ -1778,17 +1784,19 @@
                 let rec = records.find(r => r.firebaseKey === key);
                 if (rec) {
                     rec.isHiddenFromClients = false;
+                    rec.deletedAt = null;
                     saveLocal();
                     renderClientReport();
                     renderTrashModalList();
                     if (navigator.onLine && !key.startsWith('local_')) {
-                        dbRef.child(key).update({ isHiddenFromClients: false });
+                        dbRef.child(key).update({ isHiddenFromClients: false, deletedAt: null });
                     }
+                    playBeepAndShowToast('↩️ تم استرجاع العميل إلى صفحة الكشف بنجاح!');
                 }
             });
         }
 
-        // الحذف النهائي المباشر (إزالة نهائية من المصفوفة والسحابة بدون عودة بعد الريفرش)
+        // الحذف النهائي المباشر
         function permanentDeleteClientFromReport(key) {
             requireAdminAuth(() => {
                 if (confirm('⚠️ تنبيه: هل أنت متأكد من الحذف النهائي لهذا العميل من النظام بالكامل؟ لا يمكن استرجاعه بعد الآن.')) {
@@ -1838,8 +1846,8 @@
                 return;
             }
 
-            // الترتيب من الأحدث للأقدم (من فوق لتحت)
-            hiddenRecords.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            // الترتيب من الأحدث للأقدم حسب وقت الحذف أو تاريخ الإنشاء
+            hiddenRecords.sort((a, b) => new Date(b.deletedAt || b.createdAt) - new Date(a.deletedAt || a.createdAt));
 
             hiddenRecords.forEach((item, index) => {
                 const card = document.createElement('div');
@@ -1921,8 +1929,8 @@
                         ${serviceStr}
                     </div>
                     <div class="client-actions-row">
-                        <button class="btn-client-action restore" onclick="hideClientFromReport('${item.firebaseKey}')">
-                            <i class="fa-solid fa-rotate-left"></i> استرجاع
+                        <button class="btn-client-action delete-to-trash" onclick="hideClientFromReport('${item.firebaseKey}')">
+                            <i class="fa-solid fa-trash"></i> حذف
                         </button>
                         <button class="btn-client-action permanent-delete" onclick="permanentDeleteClientFromReport('${item.firebaseKey}')">
                             <i class="fa-solid fa-trash-can"></i> حذف نهائي
@@ -2168,7 +2176,8 @@
                                     adminContactMethod: 'قيد الانتظار',
                                     adminContactDetail: '',
                                     isCopied: false,
-                                    isHiddenFromClients: false
+                                    isHiddenFromClients: false,
+                                    deletedAt: null
                                 };
 
                                 records.unshift(formattedRow);
