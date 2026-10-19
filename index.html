@@ -617,6 +617,20 @@
             border-color: #cbd5e1;
         }
 
+        /* شارة العميل المتكرر في صفحة الكشف */
+        .client-repeated-badge {
+            background-color: #e11d48;
+            color: #ffffff;
+            font-size: 0.72rem;
+            font-weight: 800;
+            padding: 2px 8px;
+            border-radius: 12px;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            box-shadow: 0 0 8px rgba(225, 29, 72, 0.4);
+        }
+
         /* أزرار الإجراءات داخل بطاقة العميل */
         .client-actions-row {
             display: flex;
@@ -969,6 +983,12 @@
                             </div>
                         </div>
 
+                        <!-- خانة البحث في صفحة الكشف -->
+                        <div style="margin-bottom: 12px; display: flex; gap: 10px; align-items: center; background: var(--bg-base); padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border-color);">
+                            <i class="fa-solid fa-magnifying-glass" style="color: var(--text-muted);"></i>
+                            <input type="text" id="clientSearchInput" oninput="renderClientReport()" placeholder="بحث بالاسم، رقم الجوال، رقم الملف، الهوية..." style="width: 100%; background: transparent; border: none; outline: none; color: var(--text-main); font-family: var(--font-family); font-size: 0.88rem;">
+                        </div>
+
                         <div id="clientReportList" class="client-report-container"></div>
 
                     </section>
@@ -1191,10 +1211,10 @@
         }
 
         function saveLocal() { 
-            localStorage.setItem('cachedAppointments_v5', JSON.stringify(records));
+            localStorage.setItem('cachedAppointments_v6', JSON.stringify(records));
         }
 
-        const cached = localStorage.getItem('cachedAppointments_v5');
+        const cached = localStorage.getItem('cachedAppointments_v6');
         if (cached) { try { records = JSON.parse(cached); lastKnownRecordsCount = records.length; } catch(e) { records = []; } }
 
         function syncFilterTabsUI() {
@@ -1760,7 +1780,6 @@
             });
         }
 
-        // إخفاء العميل مؤقتاً من صفحة الكشف وإرساله لسلة المحذوفات مع تنبيه
         function hideClientFromReport(key) {
             requireAdminAuth(() => {
                 let rec = records.find(r => r.firebaseKey === key);
@@ -1778,7 +1797,6 @@
             });
         }
 
-        // استرجاع العميل من سلة المحذوفات لصفحة الكشف
         function restoreClientToReport(key) {
             requireAdminAuth(() => {
                 let rec = records.find(r => r.firebaseKey === key);
@@ -1796,7 +1814,6 @@
             });
         }
 
-        // الحذف النهائي المباشر
         function permanentDeleteClientFromReport(key) {
             requireAdminAuth(() => {
                 if (confirm('⚠️ تنبيه: هل أنت متأكد من الحذف النهائي لهذا العميل من النظام بالكامل؟ لا يمكن استرجاعه بعد الآن.')) {
@@ -1846,7 +1863,6 @@
                 return;
             }
 
-            // الترتيب من الأحدث للأقدم حسب وقت الحذف أو تاريخ الإنشاء
             hiddenRecords.sort((a, b) => new Date(b.deletedAt || b.createdAt) - new Date(a.deletedAt || a.createdAt));
 
             hiddenRecords.forEach((item, index) => {
@@ -1887,12 +1903,27 @@
 
             let openRecords = getOpenFilteredRecords();
 
+            // فلتر البحث بصفحة الكشف
+            const searchInputEl = document.getElementById('clientSearchInput');
+            if (searchInputEl) {
+                const searchVal = searchInputEl.value.trim().toLowerCase();
+                if (searchVal !== '') {
+                    openRecords = openRecords.filter(r => {
+                        const name = (r.patientName || '').toLowerCase();
+                        const phone = (r.patientPhone || '').toLowerCase();
+                        const file = (r.fileNumber || '').toLowerCase();
+                        const id = (r.idNumber || '').toLowerCase();
+                        const service = (r.serviceRequired || '').toLowerCase();
+                        return name.includes(searchVal) || phone.includes(searchVal) || file.includes(searchVal) || id.includes(searchVal) || service.includes(searchVal);
+                    });
+                }
+            }
+
             if (openRecords.length === 0) {
-                container.innerHTML = '<div style="text-align:center; padding:30px; color:var(--text-muted); font-size:1rem;">لا توجد حالات جديدة أو معلقة في الوقت الحالي 🎉</div>';
+                container.innerHTML = '<div style="text-align:center; padding:30px; color:var(--text-muted); font-size:1rem;">لا توجد نتائج أو حالات طابقت البحث 🎉</div>';
                 return;
             }
 
-            // التسلسل من فوق (الأحدث فوق دائماً)
             openRecords.sort((a, b) => {
                 if (a.isCopied && !b.isCopied) return 1;
                 if (!a.isCopied && b.isCopied) return -1;
@@ -1910,11 +1941,14 @@
                 const serviceStr = item.serviceRequired || '-';
                 const dateTimeStr = formatDateTimeFullCustom(item.createdAt);
 
+                // فحص هل العميل متكرر من قبل
+                const isRepeated = !!item.isRepeatedRequest;
+
                 card.innerHTML = `
                     <div class="client-card-header">
                         <div class="client-title">
                             <input type="checkbox" class="client-select-chk" data-key="${item.firebaseKey}">
-                            <span>${index + 1}- ${item.patientName}${fileStr}</span>
+                            <span>${index + 1}-${item.patientName}${fileStr}</span>${isRepeated ? `<span class="client-repeated-badge"><i class="fa-solid fa-rotate-right"></i> متكرر</span>` : ''}
                             <button class="copied-btn ${isCopied ? 'active' : ''}" onclick="toggleCopiedStatus('${item.firebaseKey}')">
                                 <i class="fa-solid ${isCopied ? 'fa-circle-check' : 'fa-check'}"></i> ${isCopied ? 'تم النسخ ✅' : 'تعليم كمنسوخ'}
                             </button>
