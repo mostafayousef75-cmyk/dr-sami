@@ -353,7 +353,7 @@
         .action-btn.copy-btn { background-color: #0d9488; }
         .action-btn.restore-btn { background-color: #d97706; }
 
-        /* Filter Box - صفين منظمين */
+        /* Filter Box */
         .filter-container-box {
             background: var(--bg-base);
             border: 1px solid var(--border-color);
@@ -406,7 +406,6 @@
         .status-badge { padding: 4px 10px; border-radius: 20px; font-size: 0.78rem; font-weight: 700; color: #fff; display: inline-block; }
         .badge-new { background-color: var(--success-color); }
         
-        /* لون مميز لحالة الزراعة */
         .badge-procedure-plant { 
             background-color: #0d9488; 
             color: #fff; 
@@ -458,7 +457,6 @@
             animation: urgentPulse 1.8s infinite ease-in-out;
         }
 
-        /* تصميم الإشعار التنبيهي الصوتي والبصري */
         #notificationToast {
             position: fixed;
             bottom: 25px;
@@ -482,17 +480,35 @@
             opacity: 1;
         }
 
-        .client-text-block {
+        /* تنسيق بطاقة كشف العملاء مع زر الحذف وتاريخ المشاهدة */
+        .client-card-box {
             background: var(--bg-surface);
             border: 1px solid var(--border-color);
             border-radius: var(--radius-md);
-            padding: 18px;
+            padding: 16px 20px;
             margin-bottom: 15px;
+            border-right: 5px solid var(--primary-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 15px;
+        }
+        .client-card-content {
             white-space: pre-wrap;
             font-family: var(--font-family);
             font-size: 0.95rem;
             line-height: 1.6;
-            border-right: 5px solid var(--primary-color);
+            flex: 1;
+        }
+        .client-meta-time {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            background: var(--bg-base);
+            padding: 3px 8px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            display: inline-block;
+            margin-bottom: 6px;
         }
 
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 200; justify-content: center; align-items: center; padding: 15px; }
@@ -754,6 +770,7 @@
                             <h2><i class="fa-solid fa-address-book"></i> كشف العملاء المستقل (الطلبات المعلقة)</h2>
                             <div class="actions-toolbar">
                                 <button class="action-btn copy-btn" onclick="copyClientReport()"><i class="fa-solid fa-copy"></i> نسخ الكشف (واتساب)</button>
+                                <button class="action-btn clear-all" onclick="deleteSelectedClients()"><i class="fa-solid fa-square-check"></i> حذف العملاء المحددين</button>
                                 <button class="action-btn clear-all" onclick="deleteClientsTimeRange()"><i class="fa-solid fa-trash"></i> حذف الكشف المحدد</button>
                                 <button class="action-btn restore-btn" onclick="requestRestoreAccess()"><i class="fa-solid fa-rotate-left"></i> استرجاع المحذوفات</button>
                             </div>
@@ -924,7 +941,6 @@
                         <label>الخدمة المطلوبة / تفاصيل المشكلة والطلب *</label>
                         <textarea id="editServiceRequired" required></textarea>
                     </div>
-                    <!-- خانة الأولوية في التعديل -->
                     <div class="input-field full-width">
                         <label class="priority-checkbox">
                             <input type="checkbox" id="editIsRecurring">
@@ -951,7 +967,7 @@
         let dashboardFilter = 'all';
         let dashboardTimeFilter = 'all';
         let clientHoursFilter = 'all';
-        let originalEditPriorityState = false; // لتخزين الحالة الأصلية للأولوية عند فتح التعديل
+        let originalEditPriorityState = false;
 
         if (!localStorage.getItem('adminPassword')) {
             localStorage.setItem('adminPassword', '1234');
@@ -1091,7 +1107,6 @@
                     pendingPriorityCheckbox.checked = true;
                     pendingPriorityCheckbox = null;
                 }
-                document.getElementById('passAuthModal').classList.add('open'); // إغلاق نافذة الباسورد
                 document.getElementById('passAuthModal').classList.remove('open');
             } else {
                 alert('كلمة المرور غير صحيحة!');
@@ -1320,7 +1335,6 @@
             document.getElementById('editProcedureType').value = rec.procedureType || 'مراجعه';
             document.getElementById('editServiceRequired').value = rec.serviceRequired || '';
             
-            // تخزين حالة الأولوية الأصلية عند الفتح وحفظها في المتغير
             originalEditPriorityState = !!rec.isRecurring;
             document.getElementById('editIsRecurring').checked = originalEditPriorityState;
 
@@ -1331,7 +1345,6 @@
             document.getElementById('editModal').classList.remove('open');
         }
 
-        // الحفظ الفعلي بعد اجتياز فحص الأولوية وباسورد الإدارة
         function executeActualEdit() {
             const key = document.getElementById('editFirebaseKey').value;
             let rec = records.find(r => r.firebaseKey === key);
@@ -1371,14 +1384,11 @@
             alert('تم تعديل بيانات العميل بنجاح!');
         }
 
-        // التحقق من تغيير الأولوية عند محاولة حفظ التعديل واشتراط الباسورد
         function saveEditedRecord(e) {
             e.preventDefault();
             const currentUIState = document.getElementById('editIsRecurring').checked;
 
-            // إذا تم تغيير حالة الأولوية (سواء إضافتها أو إزالتها) مقارنة بما كانت عليه عند فتح النافذة
             if (currentUIState !== originalEditPriorityState) {
-                // طلب باسورد الإدارة أولاً
                 let pass = prompt('لقد قمت بتعديل حالة "الأولوية ⭐". يرجى إدخال كلمة مرور الإدارة للاستمرار:');
                 if (pass === localStorage.getItem('adminPassword')) {
                     executeActualEdit();
@@ -1386,7 +1396,6 @@
                     alert('كلمة المرور غير صحيحة! تم إلغاء عملية الحفظ والتعديل.');
                 }
             } else {
-                // إذا لم يتم تغيير الأولوية، يتم الحفظ مباشرة دون باسورد
                 executeActualEdit();
             }
         }
@@ -1411,6 +1420,7 @@
             }
         }
 
+        /* كشف العملاء المستقل (عرض التاريخ للمشاهدة فقط، وعدم تأثره عند النسخ، مع إمكانية التحديد والحذف) */
         function setClientTimeFilter(hours, btn) {
             clientHoursFilter = hours;
             btn.closest('.filter-tabs').querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
@@ -1435,6 +1445,14 @@
             return openRecords;
         }
 
+        function formatDateTimeFull(isoString) {
+            if (!isoString) return '';
+            try {
+                const d = new Date(isoString);
+                return d.toLocaleString('ar-EG', { dateStyle: 'short', timeStyle: 'short' });
+            } catch(e) { return isoString; }
+        }
+
         function renderClientReport() {
             const container = document.getElementById('clientReportList');
             if (!container) return;
@@ -1451,6 +1469,7 @@
                         patientName: r.patientName,
                         patientPhone: r.patientPhone,
                         fileNumber: r.fileNumber,
+                        createdAt: r.createdAt,
                         services: []
                     };
                 }
@@ -1466,16 +1485,26 @@
             keys.forEach((k, index) => {
                 const client = groupedClients[k];
                 const card = document.createElement('div');
-                card.className = 'client-text-block';
+                card.className = 'client-card-box';
 
                 let filePart = (client.fileNumber && client.fileNumber.trim() !== '') ? ` ${client.fileNumber}` : '';
-                let textContent = `${index + 1}.${client.patientName}${filePart}\nالجوال / ${client.patientPhone}\n` + client.services.join('\n');
+                let textForScreen = `${index + 1}.${client.patientName}${filePart}\nالجوال / ${client.patientPhone}\n` + client.services.join('\n');
 
-                card.innerText = textContent;
+                card.innerHTML = `
+                    <div style="display: flex; align-items: flex-start; gap: 12px; flex: 1;">
+                        <input type="checkbox" class="client-select-checkbox" data-key="${client.firebaseKey}" style="margin-top: 5px; width: 18px; height: 18px; cursor: pointer;" title="تحديد للحذف">
+                        <div class="client-card-content">
+                            <span class="client-meta-time"><i class="fa-solid fa-clock"></i> وقت الإضافة: ${formatDateTimeFull(client.createdAt)}</span>
+                            <div class="pure-text-content" style="white-space: pre-wrap;">${textForScreen}</div>
+                        </div>
+                    </div>
+                    <button class="btn-delete-action" onclick="deleteSingleClientFromReport('${client.firebaseKey}')" title="حذف هذا العميل فقط"><i class="fa-solid fa-trash"></i></button>
+                `;
                 container.appendChild(card);
             });
         }
 
+        /* نسخ كشف العملاء للواتساب (نظيف بدون تواريخ وبدون أي تأثير) */
         function copyClientReport() {
             let openRecords = getOpenFilteredRecords();
 
@@ -1502,6 +1531,66 @@
             });
 
             navigator.clipboard.writeText(reportText.trim()).then(() => alert('تم نسخ الكشف بصيغة تكست احترافية للواتساب بنجاح!'));
+        }
+
+        /* حذف عميل واحد محدد من كشف العملاء */
+        function deleteSingleClientFromReport(key) {
+            if (confirm('هل أنت متأكد من حذف هذا العميل من الكشف؟')) {
+                let movedToClientTrash = [];
+                let remaining = [];
+
+                records.forEach(r => {
+                    if (r.firebaseKey === key) {
+                        movedToClientTrash.push(r);
+                        if (!r.firebaseKey.startsWith('local_') && navigator.onLine) {
+                            dbRef.child(r.firebaseKey).remove();
+                        }
+                        const ctRef = clientDeletedRef.push();
+                        clientDeletedRef.child(ctRef.key).set(r);
+                    } else {
+                        remaining.push(r);
+                    }
+                });
+
+                records = remaining;
+                saveLocal();
+                renderTable();
+                updateKPIs();
+                renderClientReport();
+                alert('تم حذف العميل بنجاح!');
+            }
+        }
+
+        /* حذف العملاء المحددين (Select Checkboxes) */
+        function deleteSelectedClients() {
+            const checkboxes = document.querySelectorAll('.client-select-checkbox:checked');
+            if (checkboxes.length === 0) {
+                return alert('يرجى تحديد عميل واحد على الأقل للحذف!');
+            }
+
+            if (confirm(`هل أنت متأكد من حذف عدد (${checkboxes.length}) من العملاء المحددين؟`)) {
+                const keysToDelete = Array.from(checkboxes).map(cb => cb.getAttribute('data-key'));
+                let remaining = [];
+
+                records.forEach(r => {
+                    if (keysToDelete.includes(r.firebaseKey)) {
+                        if (!r.firebaseKey.startsWith('local_') && navigator.onLine) {
+                            dbRef.child(r.firebaseKey).remove();
+                        }
+                        const ctRef = clientDeletedRef.push();
+                        clientDeletedRef.child(ctRef.key).set(r);
+                    } else {
+                        remaining.push(r);
+                    }
+                });
+
+                records = remaining;
+                saveLocal();
+                renderTable();
+                updateKPIs();
+                renderClientReport();
+                alert('تم حذف العملاء المحددين بنجاح!');
+            }
         }
 
         function deleteClientsTimeRange() {
