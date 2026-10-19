@@ -460,7 +460,6 @@
         }
         #notificationToast.show { transform: translateY(0); opacity: 1; }
 
-        /* صفحة الكشف والمظهر الداكن والفاتح للتاريخ والوقت */
         .client-report-container {
             background-color: var(--bg-surface);
             border: 1px solid var(--border-color);
@@ -515,7 +514,7 @@
             color: var(--text-muted);
         }
 
-        /* تنسيق التاريخ والوقت الواضح (أبيض في الداكن، أسود في الفاتح) */
+        /* تنسيق التاريخ والوقت (اليوم/الشهر/السنة + وقت 12 ساعة) */
         .client-datetime-badge {
             font-family: Arial, sans-serif;
             font-size: 0.85rem;
@@ -801,14 +800,17 @@
                                 <select id="clientHoursSelect" onchange="setClientTimeFilterSelect(this.value)" style="background: var(--bg-surface); color: var(--text-main); border: 1px solid var(--border-color); padding: 6px 12px; border-radius: 6px; font-family: var(--font-family); font-size: 0.85rem; cursor: pointer;">
                                     <option value="all">كل الأوقات</option>
                                     <option value="6">آخر 6 ساعات</option>
-                                    <option value="8" selected>آخر 8 ساعات</option>
+                                    <option value="8">آخر 8 ساعات</option>
                                     <option value="12">آخر 12 ساعة</option>
                                     <option value="24">آخر 24 ساعة</option>
+                                    <option value="48">آخر 48 ساعة</option>
+                                    <option value="168">أسبوع</option>
+                                    <option value="720">شهر</option>
                                 </select>
 
                                 <button class="action-btn copy-btn" onclick="copyClientReport()"><i class="fa-solid fa-copy"></i> نسخ الكشف كاملاً</button>
-                                <button class="action-btn select-del-btn" onclick="deleteSelectedClients()"><i class="fa-solid fa-trash-can"></i> حذف المحددين</button>
-                                <button class="action-btn clear-all" onclick="deleteClientsTimeRange()"><i class="fa-solid fa-trash"></i> مسح الفترة</button>
+                                <button class="action-btn select-del-btn" onclick="requestDeleteSelectedAccess()"><i class="fa-solid fa-trash-can"></i> حذف المحددين</button>
+                                <button class="action-btn clear-all" onclick="requestDeleteRangeAccess()"><i class="fa-solid fa-trash"></i> مسح الفترة</button>
                                 <button class="action-btn restore-btn" onclick="requestRestoreAccess()"><i class="fa-solid fa-rotate-left"></i> استرجاع</button>
                             </div>
                         </div>
@@ -837,6 +839,40 @@
                 </div>
             </div>
             <button type="button" class="submit-btn" onclick="confirmPriorityAuth()">تأكيد</button>
+        </div>
+    </div>
+
+    <!-- نافذة كلمة مرور حذف المحددين -->
+    <div class="modal" id="deleteSelectedAuthModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-shield-halved"></i> تأكيد كلمة مرور الحذف</h3>
+                <button class="close-modal-btn" onclick="closeDeleteSelectedAuthModal()">&times;</button>
+            </div>
+            <div class="form-grid">
+                <div class="input-field full-width">
+                    <label>أدخل كلمة مرور الإدارة لحذف العملاء المحددين *</label>
+                    <input type="password" id="deleteSelectedPassInput" placeholder="كلمة المرور">
+                </div>
+            </div>
+            <button type="button" class="submit-btn" style="background-color: var(--danger-color);" onclick="confirmDeleteSelectedAccess()">تأكيد الحذف</button>
+        </div>
+    </div>
+
+    <!-- نافذة كلمة مرور مسح الفترة -->
+    <div class="modal" id="deleteRangeAuthModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-shield-halved"></i> تأكيد كلمة مرور مسح الفترة</h3>
+                <button class="close-modal-btn" onclick="closeDeleteRangeAuthModal()">&times;</button>
+            </div>
+            <div class="form-grid">
+                <div class="input-field full-width">
+                    <label>أدخل كلمة مرور الإدارة لمسح الفترة الحالية *</label>
+                    <input type="password" id="deleteRangePassInput" placeholder="كلمة المرور">
+                </div>
+            </div>
+            <button type="button" class="submit-btn" style="background-color: var(--danger-color);" onclick="confirmDeleteRangeAccess()">تأكيد المسح</button>
         </div>
     </div>
 
@@ -997,7 +1033,6 @@
             localStorage.setItem('adminPassword', '1234');
         }
 
-        // استرجاع الثيم المحفوظ عند التحميل
         const savedTheme = localStorage.getItem('theme');
         if (savedTheme === 'light') {
             document.body.classList.add('light-theme');
@@ -1008,7 +1043,7 @@
             document.body.classList.toggle('light-theme');
             const isLight = document.body.classList.contains('light-theme');
             localStorage.setItem('theme', isLight ? 'light' : 'dark');
-            document.getElementById('themeIcon').classList.replace(isLight ? 'fa-moon' : 'fa-sun', isLight ? 'fa-sun' : 'fa-moon');
+            document.getElementById('themeIcon').classList.replace(isLight ? 'fa-sun' : 'fa-moon', isLight ? 'fa-moon' : 'fa-sun');
         }
 
         function toggleSidebar() {
@@ -1055,7 +1090,6 @@
             const activePage = localStorage.getItem('activePage') || 'clients';
             switchPage(activePage);
 
-            // ضبط فلاتر الساعات بالقيمة المحفوظة
             const hoursSelect = document.getElementById('clientHoursSelect');
             if (hoursSelect) {
                 hoursSelect.value = clientHoursFilter;
@@ -1443,7 +1477,6 @@
             }
         }
 
-        // فلتر الساعات مع الحفظ التلقائي
         function setClientTimeFilterSelect(hours) {
             clientHoursFilter = hours;
             localStorage.setItem('savedClientHoursFilter', hours);
@@ -1467,12 +1500,24 @@
             return openRecords;
         }
 
-        // تنسيق التاريخ والوقت الواضح
-        function formatDateTimeFull(isoString) {
+        // تنسيق التاريخ والوقت (اليوم / الشهر / السنة + نظام 12 ساعة)
+        function formatDateTimeFullCustom(isoString) {
             if (!isoString) return '';
             try {
                 const d = new Date(isoString);
-                return d.toLocaleString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
+                const day = String(d.getDate()).padStart(2, '0');
+                const month = String(d.getMonth() + 1).padStart(2, '0');
+                const year = d.getFullYear();
+                
+                let hours = d.getHours();
+                const minutes = String(d.getMinutes()).padStart(2, '0');
+                const seconds = String(d.getSeconds()).padStart(2, '0');
+                const ampm = hours >= 12 ? 'PM' : 'AM';
+                hours = hours % 12;
+                hours = hours ? hours : 12;
+                const hoursStr = String(hours).padStart(2, '0');
+
+                return `${day}/${month}/${year} , ${hoursStr}:${minutes}:${seconds}${ampm}`;
             } catch(e) { return isoString; }
         }
 
@@ -1496,7 +1541,7 @@
                 const idStr = (item.idNumber && item.idNumber !== '-') ? item.idNumber : '';
                 const phoneStr = (item.patientPhone && item.patientPhone !== '-') ? item.patientPhone : '-';
                 const serviceStr = item.serviceRequired || '-';
-                const dateTimeStr = formatDateTimeFull(item.createdAt);
+                const dateTimeStr = formatDateTimeFullCustom(item.createdAt);
 
                 card.innerHTML = `
                     <div class="client-card-header">
@@ -1518,7 +1563,6 @@
             });
         }
 
-        // نسخ الكشف بالتنسيق المطلوب بالضبط (بدون تكرار أسماء الحقول الزائدة)
         function copyClientReport() {
             let openRecords = getOpenFilteredRecords();
             if (openRecords.length === 0) return alert('لا يوجد عملاء لنسخ الكشف!');
@@ -1536,72 +1580,106 @@
             navigator.clipboard.writeText(reportText.trim()).then(() => alert('تم نسخ الكشف كاملاً وتنسيقه للواتساب بنجاح!'));
         }
 
-        function deleteSelectedClients() {
+        // حماية حذف المحددين بكلمة المرور
+        function requestDeleteSelectedAccess() {
             const checkboxes = document.querySelectorAll('.client-select-chk:checked');
             if (checkboxes.length === 0) {
                 return alert('يرجى اختيار عميل واحد على الأقل من الخانات المحددة!');
             }
+            document.getElementById('deleteSelectedPassInput').value = '';
+            document.getElementById('deleteSelectedAuthModal').classList.add('open');
+        }
 
-            if (confirm(`هل أنت متأكد من حذف عدد (${checkboxes.length}) من العملاء المحددين؟`)) {
-                const keysToDelete = Array.from(checkboxes).map(cb => cb.getAttribute('data-key'));
-                let remaining = [];
+        function closeDeleteSelectedAuthModal() {
+            document.getElementById('deleteSelectedAuthModal').classList.remove('open');
+        }
 
-                records.forEach(r => {
-                    if (keysToDelete.includes(r.firebaseKey)) {
-                        if (!r.firebaseKey.startsWith('local_') && navigator.onLine) {
-                            dbRef.child(r.firebaseKey).remove();
-                        }
-                        const ctRef = clientDeletedRef.push();
-                        clientDeletedRef.child(ctRef.key).set(r);
-                    } else {
-                        remaining.push(r);
-                    }
-                });
-
-                records = remaining;
-                saveLocal();
-                renderTable();
-                updateKPIs();
-                renderClientReport();
-                alert('تم حذف العملاء المحددين بنجاح!');
+        function confirmDeleteSelectedAccess() {
+            const pass = document.getElementById('deleteSelectedPassInput').value;
+            if (pass === localStorage.getItem('adminPassword')) {
+                closeDeleteSelectedAuthModal();
+                executeDeleteSelectedClients();
+            } else {
+                alert('كلمة المرور غير صحيحة!');
             }
         }
 
-        function deleteClientsTimeRange() {
-            if (confirm('هل أنت متأكد من مسح كافة الكشف للفترة المحددة؟')) {
-                const now = new Date();
-                let remaining = [];
+        function executeDeleteSelectedClients() {
+            const checkboxes = document.querySelectorAll('.client-select-chk:checked');
+            const keysToDelete = Array.from(checkboxes).map(cb => cb.getAttribute('data-key'));
+            let remaining = [];
 
-                records.forEach(r => {
-                    const isPending = (!r.adminContactMethod || r.adminContactMethod === 'قيد الانتظار') && (!r.actionTaken || r.actionTaken.trim() === '');
-                    let shouldDelete = false;
-                    if (isPending) {
-                        if (clientHoursFilter === 'all') {
-                            shouldDelete = true;
-                        } else {
-                            const diffHours = (now - new Date(r.createdAt)) / (1000 * 60 * 60);
-                            if (diffHours <= parseFloat(clientHoursFilter)) shouldDelete = true;
-                        }
+            records.forEach(r => {
+                if (keysToDelete.includes(r.firebaseKey)) {
+                    if (!r.firebaseKey.startsWith('local_') && navigator.onLine) {
+                        dbRef.child(r.firebaseKey).remove();
                     }
+                    const ctRef = clientDeletedRef.push();
+                    clientDeletedRef.child(ctRef.key).set(r);
+                } else {
+                    remaining.push(r);
+                }
+            });
 
-                    if (shouldDelete) {
-                        if (!r.firebaseKey.startsWith('local_') && navigator.onLine) {
-                            dbRef.child(r.firebaseKey).remove();
-                        }
-                        const ctRef = clientDeletedRef.push();
-                        clientDeletedRef.child(ctRef.key).set(r);
-                    } else {
-                        remaining.push(r);
-                    }
-                });
+            records = remaining;
+            saveLocal();
+            renderTable();
+            updateKPIs();
+            renderClientReport();
+        }
 
-                records = remaining;
-                saveLocal();
-                renderTable();
-                updateKPIs();
-                renderClientReport();
-                alert('تم مسح الكشف المحدّد بنجاح!');
+        // حماية مسح الفترة بكلمة المرور
+        function requestDeleteRangeAccess() {
+            document.getElementById('deleteRangePassInput').value = '';
+            document.getElementById('deleteRangeAuthModal').classList.add('open');
+        }
+
+        function closeDeleteRangeAuthModal() {
+            document.getElementById('deleteRangeAuthModal').classList.remove('open');
+        }
+
+        function confirmDeleteRangeAccess() {
+            const pass = document.getElementById('deleteRangePassInput').value;
+            if (pass === localStorage.getItem('adminPassword')) {
+                closeDeleteRangeAuthModal();
+                executeDeleteClientsTimeRange();
+            } else {
+                alert('كلمة المرور غير صحيحة!');
             }
+        }
+
+        function executeDeleteClientsTimeRange() {
+            const now = new Date();
+            let remaining = [];
+
+            records.forEach(r => {
+                const isPending = (!r.adminContactMethod || r.adminContactMethod === 'قيد الانتظار') && (!r.actionTaken || r.actionTaken.trim() === '');
+                let shouldDelete = false;
+                if (isPending) {
+                    if (clientHoursFilter === 'all') {
+                        shouldDelete = true;
+                    } else {
+                        const diffHours = (now - new Date(r.createdAt)) / (1000 * 60 * 60);
+                        if (diffHours <= parseFloat(clientHoursFilter)) shouldDelete = true;
+                    }
+                }
+
+                if (shouldDelete) {
+                    if (!r.firebaseKey.startsWith('local_') && navigator.onLine) {
+                        dbRef.child(r.firebaseKey).remove();
+                    }
+                    const ctRef = clientDeletedRef.push();
+                    clientDeletedRef.child(ctRef.key).set(r);
+                } else {
+                    remaining.push(r);
+                }
+            });
+
+            records = remaining;
+            saveLocal();
+            renderTable();
+            updateKPIs();
+            renderClientReport();
         }
 
         function requestRestoreAccess() {
@@ -1678,7 +1756,6 @@
                     clientDeletedRef.child(trashKey).remove();
                 }
             }
-            alert('تم استرجاع الحالة بنجاح!');
         }
 
         function updateKPIs() {
@@ -1698,7 +1775,13 @@
 
         function formatDateOnly(isoString) {
             if (!isoString) return '-';
-            try { return new Date(isoString).toISOString().slice(0, 10); } catch (e) { return isoString; }
+            try {
+                const d = new Date(isoString);
+                const day = String(d.getDate()).padStart(2, '0');
+                const month = String(d.getMonth() + 1).padStart(2, '0');
+                const year = d.getFullYear();
+                return `${day}/${month}/${year}`;
+            } catch (e) { return isoString; }
         }
 
         function filterTable() {
@@ -1733,7 +1816,6 @@
                 renderClientReport();
                 closeClearModal();
                 if (navigator.onLine) dbRef.set(null);
-                alert('تم مسح البيانات بنجاح!');
             } else { alert('كلمة المرور غير صحيحة!'); }
         }
 
