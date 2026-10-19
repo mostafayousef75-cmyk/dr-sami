@@ -71,7 +71,6 @@
             position: relative;
         }
 
-        /* القائمة الجانبية قابلة للطي */
         .sidebar {
             width: 260px;
             background-color: var(--bg-sidebar);
@@ -258,7 +257,7 @@
 
         .kpi-cards-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 15px;
         }
 
@@ -275,20 +274,24 @@
 
         .kpi-card.blue { border-color: var(--primary-color); }
         .kpi-card.purple { border-color: var(--accent-purple); }
+        .kpi-card.pink { border-color: #e11d48; }
+        .kpi-card.teal { border-color: #0d9488; }
         .kpi-card.warning { border-color: var(--warning-color); }
         .kpi-card.danger { border-color: var(--danger-color); }
 
         .kpi-icon-box {
-            font-size: 1.8rem; width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: var(--bg-base);
+            font-size: 1.6rem; width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: var(--bg-base);
         }
 
         .kpi-card.blue .kpi-icon-box { color: var(--primary-color); }
         .kpi-card.purple .kpi-icon-box { color: var(--accent-purple); }
+        .kpi-card.pink .kpi-icon-box { color: #e11d48; }
+        .kpi-card.teal .kpi-icon-box { color: #0d9488; }
         .kpi-card.warning .kpi-icon-box { color: var(--warning-color); }
         .kpi-card.danger .kpi-icon-box { color: var(--danger-color); }
 
-        .kpi-info h3 { font-size: 0.85rem; color: var(--text-muted); font-weight: 500; }
-        .kpi-value { font-size: 1.6rem; font-weight: 800; }
+        .kpi-info h3 { font-size: 0.83rem; color: var(--text-muted); font-weight: 500; }
+        .kpi-value { font-size: 1.5rem; font-weight: 800; }
 
         .form-grid {
             display: grid;
@@ -318,18 +321,49 @@
 
         .actions-toolbar { display: flex; gap: 12px; flex-wrap: wrap; }
         .action-btn {
-            padding: 10px 18px; border-radius: var(--radius-md); border: none; color: white; font-family: var(--font-family); font-size: 0.9rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px;
+            padding: 10px 18px; border-radius: var(--radius-md); border: none; color: white; font-family: var(--font-family); font-size: 0.9rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; text-decoration: none; align-items: center;
         }
         .action-btn.excel { background-color: #107c41; }
         .action-btn.json { background-color: #6366f1; }
+        .action-btn.import { background-color: #0284c7; }
         .action-btn.clear-all { background-color: #dc2626; }
         .action-btn.settings { background-color: #475569; }
 
-        .filter-tabs { display: flex; gap: 10px; margin-bottom: 15px; border-bottom: 2px solid var(--border-color); padding-bottom: 10px; flex-wrap: wrap; }
-        .filter-tab {
-            padding: 8px 16px; border-radius: 20px; border: 1px solid var(--border-color); background: var(--bg-base); color: var(--text-main); font-family: var(--font-family); font-size: 0.88rem; font-weight: 600; cursor: pointer;
+        .filter-container-box {
+            background: var(--bg-base);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 14px 18px;
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
         }
-        .filter-tab.active { background-color: var(--primary-color); color: white; border-color: var(--primary-color); }
+
+        .filter-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .filter-label {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            min-width: 90px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .filter-tabs { display: flex; gap: 8px; flex-wrap: wrap; }
+        .filter-tab {
+            padding: 7px 15px; border-radius: 20px; border: 1px solid var(--border-color); background: var(--bg-surface); color: var(--text-main); font-family: var(--font-family); font-size: 0.83rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+        }
+        .filter-tab:hover { border-color: var(--primary-color); color: var(--primary-color); }
+        .filter-tab.active { background-color: var(--primary-color); color: white; border-color: var(--primary-color); box-shadow: 0 2px 5px rgba(37,99,235,0.25); }
 
         .table-section-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; margin-bottom: 18px; }
         .search-field { position: relative; min-width: 260px; }
@@ -338,16 +372,60 @@
         }
         .search-field i { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: var(--text-muted); }
 
-        .table-container { overflow-x: auto; }
+        /* حاوية الجدول وتثبيت رأس الجدول (Sticky Header) أثناء التمرير */
+        .table-container { 
+            max-height: 650px; 
+            overflow-y: auto; 
+            position: relative;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+        }
+
         table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+        
+        table th { 
+            background-color: var(--bg-base); 
+            color: var(--text-muted); 
+            font-weight: 700; 
+            position: sticky; 
+            top: 0; 
+            z-index: 10; 
+            box-shadow: 0 2px 2px rgba(0,0,0,0.05);
+        }
+
         table th, table td { padding: 12px 10px; text-align: right; border-bottom: 1px solid var(--border-color); vertical-align: top; }
-        table th { background-color: var(--bg-base); color: var(--text-muted); font-weight: 700; }
 
         .status-badge { padding: 4px 10px; border-radius: 20px; font-size: 0.78rem; font-weight: 700; color: #fff; display: inline-block; }
         .badge-normal { background-color: var(--success-color); }
         .badge-24h { background-color: var(--warning-color); }
         .badge-48h { background-color: var(--danger-color); }
         .badge-priority { background-color: var(--accent-purple); margin-bottom: 4px; }
+        .badge-repeated { background-color: #e11d48; margin-bottom: 4px; }
+
+        .phone-cell-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+        }
+
+        .whatsapp-link { color: #25d366; text-decoration: none; font-weight: bold; display: inline-flex; align-items: center; gap: 4px; }
+        .whatsapp-link:hover { text-decoration: underline; }
+
+        .copy-phone-btn {
+            background: var(--bg-base);
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+        }
+        .copy-phone-btn:hover { background: var(--primary-color); color: #fff; border-color: var(--primary-color); }
 
         .table-input {
             width: 100%; padding: 8px; border: 1px solid var(--border-color); border-radius: var(--radius-md); background: var(--bg-surface); color: var(--text-main); font-family: var(--font-family); font-size: 0.88rem; box-shadow: inset 0 1px 2px rgba(0,0,0,0.03);
@@ -357,8 +435,6 @@
         .btn-save-action { background-color: var(--success-color); color: #fff; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; margin-bottom: 4px; }
         .btn-edit-action { background-color: var(--primary-color); color: #fff; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; margin-bottom: 4px; }
         .btn-delete-action { background-color: var(--danger-color); color: #fff; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; }
-
-        .whatsapp-link { color: #25d366; text-decoration: none; font-weight: bold; display: inline-flex; align-items: center; gap: 5px; }
 
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 200; justify-content: center; align-items: center; padding: 15px; }
         .modal.open { display: flex; }
@@ -390,7 +466,7 @@
                 <a href="#kpi-section" class="menu-item active"><i class="fa-solid fa-chart-pie"></i><span>مؤشرات الأداء</span></a>
                 <a href="#form-section" class="menu-item"><i class="fa-solid fa-calendar-plus"></i><span>إضافة موعد جديد</span></a>
                 <a href="#table-section" class="menu-item"><i class="fa-solid fa-list-check"></i><span>جدول المواعيد</span></a>
-                <a href="#tools-section" class="menu-item"><i class="fa-solid fa-database"></i><span>تصدير وإدارة</span></a>
+                <a href="#tools-section" class="menu-item"><i class="fa-solid fa-database"></i><span>تصدير واستيراد وإدارة</span></a>
             </nav>
 
             <div class="sidebar-footer">
@@ -430,6 +506,14 @@
                             <div class="kpi-icon-box"><i class="fa-solid fa-star"></i></div>
                             <div class="kpi-info"><h3>حالات ذات أولوية</h3><span class="kpi-value" id="kpi-recurring">0</span></div>
                         </div>
+                        <div class="kpi-card pink">
+                            <div class="kpi-icon-box"><i class="fa-solid fa-rotate-right"></i></div>
+                            <div class="kpi-info"><h3>الطلبات المتكررة</h3><span class="kpi-value" id="kpi-repeated">0</span></div>
+                        </div>
+                        <div class="kpi-card teal">
+                            <div class="kpi-icon-box"><i class="fa-solid fa-tooth"></i></div>
+                            <div class="kpi-info"><h3>حالات الزراعة</h3><span class="kpi-value" id="kpi-plants">0</span></div>
+                        </div>
                         <div class="kpi-card warning">
                             <div class="kpi-icon-box"><i class="fa-solid fa-clock-rotate-left"></i></div>
                             <div class="kpi-info"><h3>تأخير +24 ساعة</h3><span class="kpi-value" id="kpi-24h">0</span></div>
@@ -453,7 +537,7 @@
                             </div>
                             <div class="input-field">
                                 <label><i class="fa-solid fa-phone"></i> رقم الجوال *</label>
-                                <input type="tel" id="patientPhone" required placeholder="05xxxxxxxx / 01xxxxxxxxx">
+                                <input type="tel" id="patientPhone" placeholder="05xxxxxxxx / 01xxxxxxxxx">
                             </div>
                             <div class="input-field">
                                 <label><i class="fa-solid fa-folder"></i> رقم الملف</label>
@@ -493,6 +577,19 @@
                                 <label><i class="fa-solid fa-clock"></i> التاريخ والميعاد (اختياري)</label>
                                 <input type="datetime-local" id="appointmentDateTime">
                             </div>
+                            <div class="input-field">
+                                <label><i class="fa-solid fa-stethoscope"></i> نوع الإجراء *</label>
+                                <select id="procedureType" required onchange="toggleOtherProcedureInput()">
+                                    <option value="">اختر نوع الإجراء...</option>
+                                    <option value="زراعة">زراعة</option>
+                                    <option value="خلع">خلع</option>
+                                    <option value="أخرى">أخرى</option>
+                                </select>
+                            </div>
+                            <div class="input-field hidden" id="otherProcedureGroup">
+                                <label><i class="fa-solid fa-pen-clip"></i> حدد الإجراء (أخرى)</label>
+                                <input type="text" id="otherProcedureDetail" placeholder="اكتب نوع الإجراء الآخر">
+                            </div>
                             <div class="input-field full-width">
                                 <label><i class="fa-solid fa-notes-medical"></i> الخدمة المطلوبة / تفاصيل المشكلة والطلب *</label>
                                 <textarea id="serviceRequired" required placeholder="اكتب هنا طلب العميل، مشكلته، أو تفاصيل الموعد المطلوب..."></textarea>
@@ -515,6 +612,10 @@
                     <div class="actions-toolbar">
                         <button class="action-btn excel" onclick="exportToExcel()"><i class="fa-solid fa-file-excel"></i> تصدير Excel</button>
                         <button class="action-btn json" onclick="exportToJSON()"><i class="fa-solid fa-file-code"></i> تصدير JSON</button>
+                        <label class="action-btn import">
+                            <i class="fa-solid fa-file-import"></i> استيراد ملف (Excel / JSON)
+                            <input type="file" id="importFile" accept=".json,.xlsx,.xls" onchange="importData(event)" hidden>
+                        </label>
                         <button class="action-btn clear-all" onclick="openClearModal()"><i class="fa-solid fa-trash-can"></i> مسح بفلتر وباسورد</button>
                         <button class="action-btn settings" onclick="openPasswordModal()"><i class="fa-solid fa-key"></i> تغيير كلمة المرور</button>
                     </div>
@@ -529,11 +630,25 @@
                         </div>
                     </div>
 
-                    <div class="filter-tabs">
-                        <button class="filter-tab active" onclick="setFilter('all', this)">📋 الكل</button>
-                        <button class="filter-tab" onclick="setFilter('today', this)">📅 حالات اليوم</button>
-                        <button class="filter-tab" onclick="setFilter('week', this)">🗓️ حالات الأسبوع</button>
-                        <button class="filter-tab" onclick="setFilter('month', this)">📊 حالات الشهر</button>
+                    <div class="filter-container-box">
+                        <div class="filter-row">
+                            <span class="filter-label"><i class="fa-solid fa-filter"></i> فلاتر الحالات:</span>
+                            <div class="filter-tabs">
+                                <button class="filter-tab active" onclick="setFilter('all', this)"><i class="fa-solid fa-list"></i> الكل</button>
+                                <button class="filter-tab" onclick="setFilter('priority', this)"><i class="fa-solid fa-star" style="color:var(--accent-purple);"></i> ذات أولوية</button>
+                                <button class="filter-tab" onclick="setFilter('repeated', this)"><i class="fa-solid fa-rotate-right" style="color:#e11d48;"></i> الطلبات المتكررة</button>
+                                <button class="filter-tab" onclick="setFilter('plants', this)"><i class="fa-solid fa-tooth" style="color:#0d9488;"></i> حالات الزراعة</button>
+                            </div>
+                        </div>
+                        <div class="filter-row">
+                            <span class="filter-label"><i class="fa-solid fa-calendar-days"></i> فلاتر الوقت:</span>
+                            <div class="filter-tabs">
+                                <button class="filter-tab active" onclick="setTimeFilter('all', this)">الكل</button>
+                                <button class="filter-tab" onclick="setTimeFilter('today', this)">حالات اليوم</button>
+                                <button class="filter-tab" onclick="setTimeFilter('week', this)">حالات الأسبوع</button>
+                                <button class="filter-tab" onclick="setTimeFilter('month', this)">حالات الشهر</button>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="table-container">
@@ -542,15 +657,16 @@
                                 <tr>
                                     <th>الحالة والأولوية</th>
                                     <th>العميل</th>
-                                    <th>رقم الجوال (واتساب)</th>
+                                    <th>رقم الجوال (واتساب / نسخ)</th>
                                     <th>رقم الملف</th>
                                     <th>رقم الهوية</th>
                                     <th>الفرع</th>
+                                    <th>نوع الإجراء</th>
                                     <th>طريقة التواصل</th>
-                                    <th>الخدمة / تفاصيل الطلب</th>
+                                    <th style="min-width: 285px;">الخدمة / تفاصيل الطلب</th>
                                     <th>المنسق</th>
-                                    <th style="min-width: 220px;">إجراء الإدارة</th>
                                     <th style="min-width: 180px;">تواصل الإدارة</th>
+                                    <th style="min-width: 220px;">إجراء الإدارة</th>
                                     <th>إجراءات</th>
                                 </tr>
                             </thead>
@@ -625,13 +741,14 @@
                 <input type="hidden" id="editFirebaseKey">
                 <div class="form-grid">
                     <div class="input-field"><label>اسم العميل *</label><input type="text" id="editPatientName" required></div>
-                    <div class="input-field"><label>رقم الجوال *</label><input type="tel" id="editPatientPhone" required></div>
+                    <div class="input-field"><label>رقم الجوال *</label><input type="tel" id="editPatientPhone"></div>
                     <div class="input-field"><label>رقم الملف</label><input type="text" id="editFileNumber"></div>
                     <div class="input-field"><label>رقم الهوية</label><input type="text" id="editIdNumber"></div>
                     <div class="input-field">
                         <label>الفرع *</label>
                         <select id="editBranch" required><option value="معشي">فرع معشي</option><option value="الوسام">فرع الوسام</option></select>
                     </div>
+                    <div class="input-field"><label>نوع الإجراء *</label><input type="text" id="editProcedureType" required></div>
                     <div class="input-field"><label>طريقة التواصل *</label><input type="text" id="editContactMethod" required></div>
                     <div class="input-field"><label>اسم المنسق *</label><input type="text" id="editCoordinatorName" required></div>
                     <div class="input-field"><label>التاريخ والميعاد</label><input type="datetime-local" id="editAppointmentDateTime"></div>
@@ -653,13 +770,12 @@
 
         let records = [];
         let currentFilter = 'all';
+        let currentTimeFilter = 'all';
 
-        // إعدادات كلمة المرور الافتراضية
         if (!localStorage.getItem('adminPassword')) {
             localStorage.setItem('adminPassword', '1234');
         }
 
-        // إعدادات الدارك مود
         const savedTheme = localStorage.getItem('theme');
         if (savedTheme === 'dark') {
             document.body.classList.add('dark-theme');
@@ -709,6 +825,11 @@
             document.getElementById('otherContactGroup').classList.toggle('hidden', method !== 'أخرى');
         }
 
+        function toggleOtherProcedureInput() {
+            const proc = document.getElementById('procedureType').value;
+            document.getElementById('otherProcedureGroup').classList.toggle('hidden', proc !== 'أخرى');
+        }
+
         document.getElementById('appointmentForm').addEventListener('submit', function(e) {
             e.preventDefault();
             const patientNameVal = document.getElementById('patientName').value.trim();
@@ -716,13 +837,18 @@
             const cleanNewPhone = patientPhoneVal.replace(/\D/g, '');
 
             const isRepeated = records.some(r => {
-                const cleanPhone = r.patientPhone ? r.patientPhone.replace(/\D/g, '') : '';
-                return (cleanNewPhone.length >= 8 && cleanPhone === cleanNewPhone) || (patientNameVal.length >= 3 && r.patientName && r.patientName.trim().toLowerCase() === patientNameVal.toLowerCase());
+                const cleanExistingPhone = r.patientPhone ? r.patientPhone.replace(/\D/g, '') : '';
+                const matchPhone = (cleanNewPhone.length >= 8 && cleanExistingPhone === cleanNewPhone);
+                const matchName = (r.patientName && r.patientName.trim().toLowerCase() === patientNameVal.toLowerCase());
+                return matchPhone || matchName;
             });
 
             let priorityStatus = document.getElementById('isRecurring').checked || isRepeated;
             const contactMethodVal = document.getElementById('contactMethod').value;
             const finalContactMethod = contactMethodVal === 'أخرى' ? `أخرى (${document.getElementById('otherContactDetail').value})` : contactMethodVal;
+
+            const procedureVal = document.getElementById('procedureType').value;
+            const finalProcedureType = procedureVal === 'أخرى' ? `أخرى (${document.getElementById('otherProcedureDetail').value})` : procedureVal;
 
             const tempKey = 'local_' + Date.now();
             const newRecord = {
@@ -732,6 +858,7 @@
                 fileNumber: document.getElementById('fileNumber').value || '-',
                 idNumber: document.getElementById('idNumber').value || '-',
                 branch: document.getElementById('branch').value,
+                procedureType: finalProcedureType,
                 contactMethod: finalContactMethod,
                 serviceRequired: document.getElementById('serviceRequired').value,
                 appointmentDateTime: document.getElementById('appointmentDateTime').value || '-',
@@ -760,10 +887,105 @@
 
             this.reset();
             toggleOtherContactInput();
-            alert(isRepeated ? 'تم حفظ الموعد! (تم الكشف عن تكرار الطلب وتم منح الحالة أولوية تلقائياً ⭐)' : 'تم حفظ الموعد بنجاح!');
+            toggleOtherProcedureInput();
+            alert(isRepeated ? 'تم حفظ الموعد! (تم الكشف عن تكرار الطلب وتم منح الحالة شارة طلب متكرر وأولوية تلقائياً 🔄)' : 'تم حفظ الموعد بنجاح!');
         });
 
-        /* النوافذ والمسح المفلتر بكلمة مرور */
+        function importData(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const fileName = file.name.toLowerCase();
+
+            if (fileName.endsWith('.json')) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        const importedArray = JSON.parse(e.target.result);
+                        if (Array.isArray(importedArray)) {
+                            importedArray.forEach(item => {
+                                const cleanItem = { ...item };
+                                const originalKey = cleanItem.firebaseKey && !cleanItem.firebaseKey.startsWith('local_') ? cleanItem.firebaseKey : null;
+                                delete cleanItem.firebaseKey;
+
+                                if (navigator.onLine) {
+                                    if (originalKey) {
+                                        dbRef.child(originalKey).set(cleanItem);
+                                        cleanItem.firebaseKey = originalKey;
+                                    } else {
+                                        const newRef = dbRef.push(cleanItem);
+                                        cleanItem.firebaseKey = newRef.key;
+                                    }
+                                } else {
+                                    cleanItem.firebaseKey = originalKey || ('local_' + Math.random());
+                                }
+                                records.unshift(cleanItem);
+                            });
+                            saveLocal();
+                            renderTable();
+                            updateKPIs();
+                            alert(`تم استيراد وحفظ ${importedArray.length} سجل بنجاح في السحابة والقاعدة!`);
+                        } else {
+                            alert('ملف الـ JSON غير متوافق.');
+                        }
+                    } catch(err) {
+                        alert('حدث خطأ أثناء قراءة ملف الـ JSON.');
+                    }
+                };
+                reader.readAsText(file);
+            } else if (fileName.endsWith('.xlsx') || fileName.endsWith('.xls')) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        const data = new Uint8Array(e.target.result);
+                        const workbook = XLSX.read(data, {type: 'array'});
+                        const firstSheetName = workbook.SheetNames[0];
+                        const worksheet = workbook.Sheets[firstSheetName];
+                        const jsonArr = XLSX.utils.sheet_to_json(worksheet);
+
+                        jsonArr.forEach(row => {
+                            const newRec = {
+                                patientName: row["اسم العميل"] || row["PatientName"] || "مستورد",
+                                patientPhone: String(row["الجوال"] || row["الهاتف"] || row["Phone"] || "-"),
+                                fileNumber: String(row["رقم الملف"] || "-"),
+                                idNumber: String(row["رقم الهوية"] || "-"),
+                                branch: row["الفرع"] || "معشي",
+                                procedureType: row["نوع الإجراء"] || "أخرى",
+                                contactMethod: row["طريقة التواصل"] || "اتصال",
+                                serviceRequired: row["الخدمة المطلوبة"] || row["تفاصيل الطلب"] || "-",
+                                appointmentDateTime: row["الموعد المقترح"] || "-",
+                                coordinatorName: row["اسم المنسق"] || "مسؤول الاستيراد",
+                                isRecurring: (row["أولوية"] === "نعم" || row["أولوية"] === true),
+                                isRepeatedRequest: (row["طلب متكرر"] === "نعم"),
+                                createdAt: row["تاريخ التسجيل"] || new Date().toISOString(),
+                                actionTaken: row["إجراء الإدارة"] || "",
+                                adminContactMethod: row["تواصل الإدارة"] || "قيد الانتظار",
+                                adminContactDetail: ""
+                            };
+
+                            if (navigator.onLine) {
+                                const newRef = dbRef.push(newRec);
+                                newRec.firebaseKey = newRef.key;
+                            } else {
+                                newRec.firebaseKey = 'local_' + Math.random() + Date.now();
+                            }
+                            records.unshift(newRec);
+                        });
+
+                        saveLocal();
+                        renderTable();
+                        updateKPIs();
+                        alert(`تم استيراد وحفظ بيانات ملف الـ Excel بنجاح في السحابة!`);
+                    } catch(err) {
+                        alert('حدث خطأ أثناء تحليل ملف الـ Excel.');
+                    }
+                };
+                reader.readAsArrayBuffer(file);
+            } else {
+                alert('الرجاء اختيار ملف Excel أو JSON صحيح.');
+            }
+            event.target.value = '';
+        }
+
         function openClearModal() { document.getElementById('clearModal').classList.add('open'); }
         function closeClearModal() { 
             document.getElementById('clearModal').classList.remove('open'); 
@@ -850,22 +1072,44 @@
 
         function setFilter(filterType, element) {
             currentFilter = filterType;
-            document.querySelectorAll('.filter-tab').forEach(btn => btn.classList.remove('active'));
+            const parentRow = element.closest('.filter-row');
+            parentRow.querySelectorAll('.filter-tab').forEach(btn => btn.classList.remove('active'));
             element.classList.add('active');
             renderTable();
         }
 
-        function filterByDateRange(recordsList) {
-            if (currentFilter === 'all') return recordsList;
-            const now = new Date();
-            const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-            return recordsList.filter(r => {
-                const created = new Date(r.createdAt);
-                if (currentFilter === 'today') return created >= startOfDay;
-                if (currentFilter === 'week') return (now - created) / (1000 * 60 * 60 * 24) <= 7;
-                if (currentFilter === 'month') return created.getMonth() === now.getMonth() && created.getFullYear() === now.getFullYear();
-                return true;
-            });
+        function setTimeFilter(timeType, element) {
+            currentTimeFilter = timeType;
+            const parentRow = element.closest('.filter-row');
+            parentRow.querySelectorAll('.filter-tab').forEach(btn => btn.classList.remove('active'));
+            element.classList.add('active');
+            renderTable();
+        }
+
+        function filterRecordsList(recordsList) {
+            let res = recordsList;
+            
+            if (currentFilter === 'priority') {
+                res = res.filter(r => r.isRecurring);
+            } else if (currentFilter === 'repeated') {
+                res = res.filter(r => r.isRepeatedRequest);
+            } else if (currentFilter === 'plants') {
+                res = res.filter(r => (r.procedureType && r.procedureType.toLowerCase().includes('زراعة')) || (r.serviceRequired && r.serviceRequired.toLowerCase().includes('زراعة')));
+            }
+
+            if (currentTimeFilter !== 'all') {
+                const now = new Date();
+                const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+                res = res.filter(r => {
+                    const created = new Date(r.createdAt);
+                    if (currentTimeFilter === 'today') return created >= startOfDay;
+                    if (currentTimeFilter === 'week') return (now - created) / (1000 * 60 * 60 * 24) <= 7;
+                    if (currentTimeFilter === 'month') return created.getMonth() === now.getMonth() && created.getFullYear() === now.getFullYear();
+                    return true;
+                });
+            }
+
+            return res;
         }
 
         function getDelayStatus(createdAt, actionTaken) {
@@ -885,6 +1129,32 @@
             return cleaned;
         }
 
+        /* نسخ الرقم وإظهار إشعار تم النسخ بجانب الزر */
+        function copyPhoneNumber(phone, event) {
+            event.stopPropagation();
+            if (!phone) return;
+            
+            navigator.clipboard.writeText(phone).then(() => {
+                const btn = event.currentTarget;
+                let tooltip = btn.querySelector('.copy-tooltip');
+                if (!tooltip) {
+                    tooltip = document.createElement('span');
+                    tooltip.className = 'copy-tooltip';
+                    tooltip.style.cssText = 'position: absolute; background: #16a34a; color: white; padding: 3px 8px; font-size: 0.75rem; border-radius: 4px; transform: translateY(-35px); pointer-events: none; transition: opacity 0.2s; white-space: nowrap; z-index: 100;';
+                    btn.style.position = 'relative';
+                    btn.appendChild(tooltip);
+                }
+                tooltip.innerText = 'تم النسخ ✓';
+                tooltip.style.opacity = '1';
+                
+                setTimeout(() => {
+                    tooltip.style.opacity = '0';
+                }, 1200);
+            }).catch(err => {
+                console.error('فشل النسخ', err);
+            });
+        }
+
         function handleAdminContactChange(key) {
             const selectEl = document.getElementById(`adminContact_${key}`);
             const detailEl = document.getElementById(`adminContactDetail_${key}`);
@@ -896,7 +1166,7 @@
             if (!tbody) return;
             tbody.innerHTML = '';
 
-            let filteredRecords = filterByDateRange(records);
+            let filteredRecords = filterRecordsList(records);
             const sorted = [...filteredRecords].sort((a, b) => b.isRecurring - a.isRecurring || new Date(b.createdAt) - new Date(a.createdAt));
 
             sorted.forEach(record => {
@@ -909,18 +1179,23 @@
                 tr.innerHTML = `
                     <td>
                         ${record.isRecurring ? '<span class="status-badge badge-priority">⭐ أولوية</span><br>' : ''}
-                        ${record.isRepeatedRequest ? '<span class="status-badge badge-priority" style="background:#e11d48;">🔄 طلب متكرر</span><br>' : ''}
+                        ${record.isRepeatedRequest ? '<span class="status-badge badge-repeated">🔄 طلب متكرر</span><br>' : ''}
                         <span class="status-badge ${status.class}">${status.text}</span>
                     </td>
                     <td><strong>${record.patientName}</strong></td>
-                    <td><a href="https://wa.me/${formattedPhone}" target="_blank" class="whatsapp-link"><i class="fa-brands fa-whatsapp"></i> ${record.patientPhone}</a></td>
+                    <td>
+                        <div class="phone-cell-wrapper">
+                            <a href="https://wa.me/${formattedPhone}" target="_blank" class="whatsapp-link" title="انقر لفتح واتساب"><i class="fa-brands fa-whatsapp"></i> ${record.patientPhone}</a>
+                            <button class="copy-phone-btn" onclick="copyPhoneNumber('${record.patientPhone}', event)" title="نسخ الرقم"><i class="fa-solid fa-copy"></i></button>
+                        </div>
+                    </td>
                     <td>${record.fileNumber}</td>
                     <td>${record.idNumber}</td>
                     <td>${record.branch}</td>
+                    <td><span style="font-weight: 600; color: var(--primary-color);">${record.procedureType || 'غير محدد'}</span></td>
                     <td>${record.contactMethod}</td>
-                    <td style="max-width: 250px; word-break: break-word;">${record.serviceRequired}${record.appointmentDateTime !== '-' ? `<br><small><strong>الموعد:</strong> ${record.appointmentDateTime.replace('T', ' ')}</small>` : ''}</td>
+                    <td style="min-width: 285px; white-space: pre-wrap; word-break: break-word; line-height: 1.5;">${record.serviceRequired}${record.appointmentDateTime !== '-' ? `<br><small style="color:var(--primary-color);"><strong>الموعد:</strong> ${record.appointmentDateTime.replace('T', ' ')}</small>` : ''}</td>
                     <td>${record.coordinatorName}</td>
-                    <td><textarea class="table-input" id="action_${record.firebaseKey}" placeholder="اكتب إجراء الإدارة...">${record.actionTaken || ''}</textarea></td>
                     <td>
                         <select class="table-input" id="adminContact_${record.firebaseKey}" onchange="handleAdminContactChange('${record.firebaseKey}')">
                             <option value="قيد الانتظار" ${currentAdminContact === 'قيد الانتظار' ? 'selected' : ''}>قيد الانتظار ⏳</option>
@@ -932,6 +1207,7 @@
                         </select>
                         <input type="text" class="table-input ${isOther ? '' : 'hidden'}" id="adminContactDetail_${record.firebaseKey}" value="${record.adminContactDetail || ''}" placeholder="اكتب تفاصيل التواصل..." style="margin-top: 5px;">
                     </td>
+                    <td><textarea class="table-input" id="action_${record.firebaseKey}" placeholder="اكتب إجراء الإدارة..." style="min-height: 85px;">${record.actionTaken || ''}</textarea></td>
                     <td>
                         <button class="btn-save-action" onclick="saveAdminUpdate('${record.firebaseKey}')" title="حفظ"><i class="fa-solid fa-floppy-disk"></i></button>
                         <button class="btn-edit-action" onclick="openEditModal('${record.firebaseKey}')" title="تعديل"><i class="fa-solid fa-pen-to-square"></i></button>
@@ -948,11 +1224,32 @@
             const adminContactDetail = document.getElementById(`adminContactDetail_${key}`).value;
             const finalAdminContact = adminContactSelect === 'أخرى' && adminContactDetail.trim() !== '' ? `أخرى (${adminContactDetail.trim()})` : adminContactSelect;
 
-            const updatePayload = { actionTaken: actionVal, adminContactMethod: finalAdminContact, adminContactDetail: adminContactDetail };
-            const rec = records.find(r => r.firebaseKey === key);
-            if (rec) { rec.actionTaken = actionVal; rec.adminContactMethod = finalAdminContact; rec.adminContactDetail = adminContactDetail; saveLocal(); renderTable(); updateKPIs(); }
+            let rec = records.find(r => r.firebaseKey === key);
+            if (rec) { 
+                rec.actionTaken = actionVal; 
+                rec.adminContactMethod = finalAdminContact; 
+                rec.adminContactDetail = adminContactDetail; 
+                
+                if (adminContactSelect === 'تم التواصل') {
+                    rec.isRecurring = false;
+                }
 
-            if (navigator.onLine && !key.startsWith('local_')) dbRef.child(key).update(updatePayload).then(() => alert('تم التحديث بنجاح!'));
+                saveLocal(); 
+                renderTable(); 
+                updateKPIs(); 
+            }
+
+            if (navigator.onLine && !key.startsWith('local_')) {
+                const updatePayload = { 
+                    actionTaken: actionVal, 
+                    adminContactMethod: finalAdminContact, 
+                    adminContactDetail: adminContactDetail,
+                    isRecurring: rec ? rec.isRecurring : false
+                };
+                dbRef.child(key).update(updatePayload).then(() => alert('تم التحديث بنجاح!'));
+            } else {
+                alert('تم التحديث بنجاح!');
+            }
         }
 
         function openEditModal(key) {
@@ -964,6 +1261,7 @@
             document.getElementById('editFileNumber').value = item.fileNumber !== '-' ? item.fileNumber : '';
             document.getElementById('editIdNumber').value = item.idNumber !== '-' ? item.idNumber : '';
             document.getElementById('editBranch').value = item.branch || 'معشي';
+            document.getElementById('editProcedureType').value = item.procedureType || '';
             document.getElementById('editContactMethod').value = item.contactMethod || '';
             document.getElementById('editCoordinatorName').value = item.coordinatorName || '';
             document.getElementById('editAppointmentDateTime').value = item.appointmentDateTime !== '-' ? item.appointmentDateTime : '';
@@ -983,6 +1281,7 @@
                 fileNumber: document.getElementById('editFileNumber').value || '-',
                 idNumber: document.getElementById('editIdNumber').value || '-',
                 branch: document.getElementById('editBranch').value,
+                procedureType: document.getElementById('editProcedureType').value,
                 contactMethod: document.getElementById('editContactMethod').value,
                 coordinatorName: document.getElementById('editCoordinatorName').value,
                 appointmentDateTime: document.getElementById('editAppointmentDateTime').value || '-',
@@ -1011,12 +1310,19 @@
         function updateKPIs() {
             const totalEl = document.getElementById('kpi-total');
             const recurringEl = document.getElementById('kpi-recurring');
+            const repeatedEl = document.getElementById('kpi-repeated');
+            const plantsEl = document.getElementById('kpi-plants');
             const kpi24El = document.getElementById('kpi-24h');
             const kpi48El = document.getElementById('kpi-48h');
             if (!totalEl) return;
 
             totalEl.innerText = records.length;
             recurringEl.innerText = records.filter(r => r.isRecurring).length;
+            repeatedEl.innerText = records.filter(r => r.isRepeatedRequest).length;
+            
+            if (plantsEl) {
+                plantsEl.innerText = records.filter(r => (r.procedureType && r.procedureType.toLowerCase().includes('زراعة')) || (r.serviceRequired && r.serviceRequired.toLowerCase().includes('زراعة'))).length;
+            }
 
             let c24 = 0, c48 = 0;
             const now = new Date();
@@ -1046,14 +1352,16 @@
                 "رقم الملف": r.fileNumber,
                 "رقم الهوية": r.idNumber,
                 "الفرع": r.branch,
+                "نوع الإجراء": r.procedureType || '',
                 "طريقة التواصل": r.contactMethod,
                 "الخدمة المطلوبة": r.serviceRequired,
                 "الموعد المقترح": r.appointmentDateTime,
                 "اسم المنسق": r.coordinatorName,
                 "أولوية": r.isRecurring ? "نعم" : "لا",
+                "طلب متكرر": r.isRepeatedRequest ? "نعم" : "لا",
                 "تاريخ التسجيل": r.createdAt,
-                "إجراء الإدارة": r.actionTaken || '',
-                "تواصل الإدارة": r.adminContactMethod || 'قيد الانتظار'
+                "تواصل الإدارة": r.adminContactMethod || 'قيد الانتظار',
+                "إجراء الإدارة": r.actionTaken || ''
             }));
             const worksheet = XLSX.utils.json_to_sheet(dataToExport);
             const workbook = XLSX.utils.book_new();
