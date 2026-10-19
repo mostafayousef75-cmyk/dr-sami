@@ -617,37 +617,37 @@
             border-color: #cbd5e1;
         }
 
-        /* سلة المحذوفات المصغرة بدقة للموبايل (خط واضح وأزرار أيقونات دقيقة وصغيرة) */
+        /* سلة المحذوفات المصممة بثبات وأزرار أيقونات مصغرة مدمجة للموبايل */
         .trash-item-card {
             background: var(--bg-base);
             border: 1px solid var(--border-color);
             border-radius: 8px;
             padding: 10px 12px;
             display: flex;
-            flex-direction: column;
-            gap: 6px;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
         }
         
         .trash-item-info {
-            font-size: 0.92rem;
+            font-size: 0.95rem;
             color: var(--text-main);
             line-height: 1.4;
             word-break: break-word;
-            font-weight: 600;
+            flex: 1;
         }
 
         .trash-btn-group {
             display: flex;
             gap: 6px;
-            justify-content: flex-end;
-            border-top: 1px dashed var(--border-color);
-            padding-top: 6px;
+            align-items: center;
+            flex-shrink: 0;
         }
 
         .btn-trash-micro {
-            padding: 4px 10px !important;
-            font-size: 0.75rem !important;
-            border-radius: 4px !important;
+            padding: 6px 10px !important;
+            font-size: 0.8rem !important;
+            border-radius: 6px !important;
             border: none;
             cursor: pointer;
             display: inline-flex;
@@ -982,7 +982,7 @@
                                 <button class="action-btn copy-btn" onclick="copyClientReport()"><i class="fa-solid fa-copy"></i> نسخ الكشف كاملاً</button>
                                 <button class="action-btn select-del-btn" onclick="requestDeleteSelectedAccess()"><i class="fa-solid fa-trash-can"></i> حذف المحددين</button>
                                 <button class="action-btn clear-all" onclick="requestDeleteRangeAccess()"><i class="fa-solid fa-trash"></i> مسح الفترة</button>
-                                <button class="action-btn restore-btn" onclick="requestRestoreAccess()"><i class="fa-solid fa-rotate-left"></i> استرجاع</button>
+                                <button class="action-btn restore-btn" onclick="requestRestoreAccess('clients')"><i class="fa-solid fa-rotate-left"></i> استرجاع</button>
                             </div>
                         </div>
 
@@ -1153,6 +1153,7 @@
         let records = [];
         let deletedRecords = [];
         let clientDeletedRecords = [];
+        let currentTrashContext = 'dashboard';
         let dashboardFilter = localStorage.getItem('savedDashboardFilter') || 'all';
         let dashboardTimeFilter = localStorage.getItem('savedDashboardTimeFilter') || 'all';
         let clientHoursFilter = localStorage.getItem('savedClientHoursFilter') || '8';
@@ -1418,7 +1419,8 @@
                 actionTaken: '',
                 adminContactMethod: 'قيد الانتظار',
                 adminContactDetail: '',
-                isCopied: false
+                isCopied: false,
+                isClientDeletedOnly: false
             };
 
             records.unshift(newRecord);
@@ -1479,8 +1481,7 @@
             }).length;
 
             const percentage = Math.round((completedToday / totalToday) * 100);
-            document.getElementById('progressText').innerText = `${percentage}% (${completedToday} من ${totalToday} حالات مُنجزة)`;
-            document.getElementById('progressBarFill').style.width = `${percentage}%`;
+            document.getElementById('progressText').innerText = `${percentage}\% (${completedToday} من ${totalToday} حالات مُنجزة)`; document.getElementById('progressBarFill').style.width = `${percentage}%`;
         }
 
         function renderTable() {
@@ -1729,7 +1730,8 @@
                     const itemIdx = records.findIndex(r => r.firebaseKey === key);
                     if (itemIdx !== -1) {
                         const deletedItem = records.splice(itemIdx, 1)[0];
-                        deletedItem.deletedAt = new Date().toISOString(); // طابع زمني للحذف لضمان ظهور الأحدث فوق
+                        deletedItem.deletedAt = new Date().toISOString();
+                        deletedItem.deletedFrom = 'dashboard';
                         deletedRecords.unshift(deletedItem); 
                         saveLocal();
                         renderTable();
@@ -1755,6 +1757,7 @@
 
         function getOpenFilteredRecords() {
             let openRecords = records.filter(r => {
+                if (r.isClientDeletedOnly) return false; // إخفاؤه فقط من صفحة الكشف إذا تم حذفه منها
                 const isPending = !r.adminContactMethod || r.adminContactMethod === 'قيد الانتظار';
                 const noAction = !r.actionTaken || r.actionTaken.trim() === '';
                 return isPending && noAction;
@@ -1891,23 +1894,21 @@
         function executeDeleteSelectedClients() {
             const checkboxes = document.querySelectorAll('.client-select-chk:checked');
             const keysToDelete = Array.from(checkboxes).map(cb => cb.getAttribute('data-key'));
-            let remaining = [];
 
             records.forEach(r => {
                 if (keysToDelete.includes(r.firebaseKey)) {
-                    r.deletedAt = new Date().toISOString();
+                    r.isClientDeletedOnly = true; // نحدد فقط أنه محذوف من الكشف ليظل موجود بجدول المواعيد
+                    const copyObj = { ...r, deletedAt: new Date().toISOString(), deletedFrom: 'clients' };
+                    clientDeletedRecords.unshift(copyObj);
+                    
                     if (!r.firebaseKey.startsWith('local_') && navigator.onLine) {
-                        dbRef.child(r.firebaseKey).remove();
+                        dbRef.child(r.firebaseKey).update({ isClientDeletedOnly: true });
+                        const ctRef = clientDeletedRef.push();
+                        clientDeletedRef.child(ctRef.key).set(copyObj);
                     }
-                    const ctRef = clientDeletedRef.push();
-                    clientDeletedRef.child(ctRef.key).set(r);
-                    clientDeletedRecords.unshift(r);
-                } else {
-                    remaining.push(r);
                 }
             });
 
-            records = remaining;
             saveLocal();
             renderTable();
             updateKPIs();
@@ -1923,12 +1924,11 @@
 
         function executeDeleteClientsTimeRange() {
             const now = new Date();
-            let remaining = [];
 
             records.forEach(r => {
                 const isPending = (!r.adminContactMethod || r.adminContactMethod === 'قيد الانتظار') && (!r.actionTaken || r.actionTaken.trim() === '');
                 let shouldDelete = false;
-                if (isPending) {
+                if (isPending && !r.isClientDeletedOnly) {
                     if (clientHoursFilter === 'all') {
                         shouldDelete = true;
                     } else {
@@ -1938,19 +1938,18 @@
                 }
 
                 if (shouldDelete) {
-                    r.deletedAt = new Date().toISOString();
+                    r.isClientDeletedOnly = true;
+                    const copyObj = { ...r, deletedAt: new Date().toISOString(), deletedFrom: 'clients' };
+                    clientDeletedRecords.unshift(copyObj);
+
                     if (!r.firebaseKey.startsWith('local_') && navigator.onLine) {
-                        dbRef.child(r.firebaseKey).remove();
+                        dbRef.child(r.firebaseKey).update({ isClientDeletedOnly: true });
+                        const ctRef = clientDeletedRef.push();
+                        clientDeletedRef.child(ctRef.key).set(copyObj);
                     }
-                    const ctRef = clientDeletedRef.push();
-                    clientDeletedRef.child(ctRef.key).set(r);
-                    clientDeletedRecords.unshift(r);
-                } else {
-                    remaining.push(r);
                 }
             });
 
-            records = remaining;
             saveLocal();
             renderTable();
             updateKPIs();
@@ -1958,7 +1957,8 @@
             renderClientReport();
         }
 
-        function requestRestoreAccess() {
+        function requestRestoreAccess(context = 'dashboard') {
+            currentTrashContext = context;
             requireAdminAuth(() => {
                 openRestoreModal();
             });
@@ -1969,19 +1969,19 @@
             const trashList = document.getElementById('trashList');
             trashList.innerHTML = '';
 
-            let allTrash = [...deletedRecords, ...clientDeletedRecords];
+            let listToRender = currentTrashContext === 'clients' ? clientDeletedRecords : deletedRecords;
 
-            // الترتيب الحاسم: الأحدث حذفا يظهر في الأعلى فوراً وبشكل دائم حتى بعد Refresh
-            allTrash.sort((a, b) => {
+            // ترتيب زمني صارم: الحالات المحذوفة حديثاً تظهر دائماً بالأعلى
+            listToRender.sort((a, b) => {
                 const timeA = new Date(a.deletedAt || a.createdAt || 0).getTime();
                 const timeB = new Date(b.deletedAt || b.createdAt || 0).getTime();
                 return timeB - timeA;
             });
             
-            if (allTrash.length === 0) {
+            if (listToRender.length === 0) {
                 trashList.innerHTML = '<div style="text-align:center; padding:20px; color:var(--text-muted);">سلة المحذوفات فارغة</div>';
             } else {
-                allTrash.forEach((item, idx) => {
+                listToRender.forEach((item, idx) => {
                     const card = document.createElement('div');
                     card.className = 'trash-item-card';
 
@@ -1990,15 +1990,15 @@
 
                     card.innerHTML = `
                         <div class="trash-item-info">
-                            <div style="color:var(--text-main); font-size: 0.98rem; font-weight:700; margin-bottom:2px;">${item.patientName} (${phoneStr})</div>
-                            <div style="font-size:0.85rem; color:var(--text-muted);">${serviceStr}</div>
+                            <strong style="color:var(--text-main); font-size:0.95rem;">${item.patientName} (${phoneStr})</strong>
+                            <div style="font-size:0.82rem; color:var(--text-muted); margin-top:2px;">${serviceStr}</div>
                         </div>
                         <div class="trash-btn-group">
-                            <button class="btn-trash-micro restore" onclick="restoreRecord(${idx})" title="استرجاع الحالة">
-                                <i class="fa-solid fa-rotate-left"></i> استرجاع
+                            <button class="btn-trash-micro restore" onclick="restoreRecord(${idx})" title="استرجاع">
+                                <i class="fa-solid fa-rotate-left"></i>
                             </button>
-                            <button class="btn-trash-micro delete" onclick="permanentDeleteRecord(${idx})" title="حذف نهائي من النظام">
-                                <i class="fa-solid fa-trash-can"></i> حذف نهائي
+                            <button class="btn-trash-micro delete" onclick="permanentDeleteRecord(${idx})" title="حذف نهائي">
+                                <i class="fa-solid fa-trash-can"></i>
                             </button>
                         </div>
                     `;
@@ -2011,67 +2011,87 @@
         function closeRestoreModal() { document.getElementById('restoreModal').classList.remove('open'); }
 
         function restoreRecord(idx) {
-            let allTrash = [...deletedRecords, ...clientDeletedRecords];
-            allTrash.sort((a, b) => {
+            let listToRender = currentTrashContext === 'clients' ? clientDeletedRecords : deletedRecords;
+            listToRender.sort((a, b) => {
                 const timeA = new Date(a.deletedAt || a.createdAt || 0).getTime();
                 const timeB = new Date(b.deletedAt || b.createdAt || 0).getTime();
                 return timeB - timeA;
             });
 
-            const restored = allTrash[idx];
+            const restored = listToRender[idx];
             
-            if (deletedRecords.includes(restored)) {
-                deletedRecords.splice(deletedRecords.indexOf(restored), 1);
-            } else if (clientDeletedRecords.includes(restored)) {
+            if (currentTrashContext === 'clients') {
                 clientDeletedRecords.splice(clientDeletedRecords.indexOf(restored), 1);
+                // إرجاع الخصائص وإعادة تفعيل العميل في صفحة الكشف حصراً
+                let existRec = records.find(r => r.firebaseKey === restored.firebaseKey);
+                if (existRec) {
+                    existRec.isClientDeletedOnly = false;
+                } else {
+                    delete restored.deletedAt;
+                    delete restored.deletedFrom;
+                    restored.isClientDeletedOnly = false;
+                    records.unshift(restored);
+                }
+
+                if (navigator.onLine) {
+                    if (restored.firebaseKey && !restored.firebaseKey.startsWith('local_')) {
+                        dbRef.child(restored.firebaseKey).update({ isClientDeletedOnly: false });
+                    }
+                    if (restored.firebaseKey) {
+                        clientDeletedRef.child(restored.firebaseKey).remove();
+                    }
+                }
+            } else {
+                deletedRecords.splice(deletedRecords.indexOf(restored), 1);
+                const trashKey = restored.firebaseKey;
+                delete restored.firebaseKey;
+                delete restored.deletedAt;
+                delete restored.deletedFrom;
+
+                records.unshift(restored);
+
+                if (navigator.onLine) {
+                    const newRef = dbRef.push(restored);
+                    restored.firebaseKey = newRef.key;
+                    if (trashKey) {
+                        trashRef.child(trashKey).remove();
+                    }
+                }
             }
 
-            const trashKey = restored.firebaseKey;
-            delete restored.firebaseKey;
-            delete restored.deletedAt;
-
-            records.unshift(restored);
             saveLocal();
             renderTable();
             updateKPIs();
             updateDailyProgress();
             renderClientReport();
             openRestoreModal();
-
-            if (navigator.onLine) {
-                const newRef = dbRef.push(restored);
-                restored.firebaseKey = newRef.key;
-                if (trashKey) {
-                    trashRef.child(trashKey).remove();
-                    clientDeletedRef.child(trashKey).remove();
-                }
-            }
         }
 
         function permanentDeleteRecord(idx) {
             if (confirm('هل أنت متأكد من الحذف النهائي لهذا السجل؟ لا يمكن استرجاعه بعد الآن.')) {
-                let allTrash = [...deletedRecords, ...clientDeletedRecords];
-                allTrash.sort((a, b) => {
+                let listToRender = currentTrashContext === 'clients' ? clientDeletedRecords : deletedRecords;
+                listToRender.sort((a, b) => {
                     const timeA = new Date(a.deletedAt || a.createdAt || 0).getTime();
                     const timeB = new Date(b.deletedAt || b.createdAt || 0).getTime();
                     return timeB - timeA;
                 });
 
-                const target = allTrash[idx];
+                const target = listToRender[idx];
 
-                if (deletedRecords.includes(target)) {
-                    deletedRecords.splice(deletedRecords.indexOf(target), 1);
-                } else if (clientDeletedRecords.includes(target)) {
+                if (currentTrashContext === 'clients') {
                     clientDeletedRecords.splice(clientDeletedRecords.indexOf(target), 1);
+                    if (navigator.onLine && target.firebaseKey) {
+                        clientDeletedRef.child(target.firebaseKey).remove();
+                    }
+                } else {
+                    deletedRecords.splice(deletedRecords.indexOf(target), 1);
+                    if (navigator.onLine && target.firebaseKey) {
+                        trashRef.child(target.firebaseKey).remove();
+                    }
                 }
 
                 saveLocal();
                 openRestoreModal();
-
-                if (navigator.onLine && target.firebaseKey && !target.firebaseKey.startsWith('local_')) {
-                    trashRef.child(target.firebaseKey).remove();
-                    clientDeletedRef.child(target.firebaseKey).remove();
-                }
             }
         }
 
@@ -2214,7 +2234,8 @@
                                     actionTaken: row.actionTaken || '',
                                     adminContactMethod: row.adminContactMethod || 'قيد الانتظار',
                                     adminContactDetail: row.adminContactDetail || '',
-                                    isCopied: false
+                                    isCopied: false,
+                                    isClientDeletedOnly: false
                                 };
 
                                 records.unshift(formattedRow);
