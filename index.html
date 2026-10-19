@@ -722,7 +722,7 @@
                                 </div>
                                 <div class="input-field">
                                     <label>نوع الإجراء *</label>
-                                    <select id="procedureType" required>
+                                    <select id="procedureType" required onchange="handleProcedureTypeChange(this)">
                                         <option value="">اختر نوع الإجراء...</option>
                                         <option value="زراعة">زراعة</option>
                                         <option value="خلع">خلع</option>
@@ -731,6 +731,11 @@
                                         <option value="مراجعه">مراجعه</option>
                                         <option value="أخرى">أخرى</option>
                                     </select>
+                                </div>
+                                <!-- حقل إضافي يظهر فقط عند اختيار أخرى -->
+                                <div class="input-field" id="customProcedureWrapper" style="display: none;">
+                                    <label>اكتب نوع الإجراء الآخر *</label>
+                                    <input type="text" id="customProcedureInput" placeholder="اكتب نوع الإجراء هنا...">
                                 </div>
                                 <div class="input-field full-width">
                                     <label>الخدمة المطلوبة / تفاصيل المشكلة والطلب *</label>
@@ -1238,6 +1243,20 @@
             }
         }
 
+        // إظهار أو إخفاء حقل الإجراء المخصص عند اختيار "أخرى"
+        function handleProcedureTypeChange(selectElement) {
+            const customWrapper = document.getElementById('customProcedureWrapper');
+            const customInput = document.getElementById('customProcedureInput');
+            if (selectElement.value === 'أخرى') {
+                customWrapper.style.display = 'flex';
+                customInput.setAttribute('required', 'true');
+            } else {
+                customWrapper.style.display = 'none';
+                customInput.removeAttribute('required');
+                customInput.value = '';
+            }
+        }
+
         document.getElementById('appointmentForm').addEventListener('submit', function(e) {
             e.preventDefault();
             const patientNameVal = document.getElementById('patientName').value.trim();
@@ -1251,6 +1270,13 @@
                 return matchPhone || matchName;
             });
 
+            // تحديد قيمة نوع الإجراء (إذا كانت أخرى يتم أخذ النص المكتوب في خانة الإجراء المخصص فقط)
+            let procedureTypeValue = document.getElementById('procedureType').value;
+            if (procedureTypeValue === 'أخرى') {
+                const customVal = document.getElementById('customProcedureInput').value.trim();
+                procedureTypeValue = customVal !== '' ? customVal : 'أخرى';
+            }
+
             const tempKey = 'local_' + Date.now();
             const newRecord = {
                 firebaseKey: tempKey,
@@ -1259,7 +1285,7 @@
                 fileNumber: document.getElementById('fileNumber').value.trim() || '-',
                 idNumber: document.getElementById('idNumber').value.trim() || '-',
                 branch: document.getElementById('branch').value,
-                procedureType: document.getElementById('procedureType').value,
+                procedureType: procedureTypeValue,
                 contactMethod: document.getElementById('contactMethod').value,
                 serviceRequired: document.getElementById('serviceRequired').value,
                 coordinatorName: document.getElementById('coordinatorName').value,
@@ -1288,6 +1314,7 @@
             }
 
             this.reset();
+            document.getElementById('customProcedureWrapper').style.display = 'none';
             playBeepAndShowToast('⚠️ تم إضافة العميل والموعد بنجاح!');
         });
 
@@ -1938,7 +1965,6 @@
             const a = document.createElement('a'); a.href = dataStr; a.download = `Appointments_Backup.json`; a.click();
         }
 
-        // دالة الاستيراد المحسنة لدعم Excel و JSON وحفظها تلقائياً على السحابة (Firebase)
         function importData(e) {
             const file = e.target.files[0];
             if (!file) return;
@@ -1951,7 +1977,7 @@
                         const imported = JSON.parse(evt.target.result);
                         if (Array.isArray(imported)) {
                             imported.forEach(item => {
-                                delete item.firebaseKey; // لضمان توليد مفاتيح جديدة وحفظها بالسحابة
+                                delete item.firebaseKey;
                                 records.unshift(item);
                                 if (navigator.onLine) {
                                     dbRef.push(item);
@@ -2020,7 +2046,7 @@
             } else {
                 alert('نوع الملف غير مدعوم. يرجى اختيار ملف JSON أو Excel صالح.');
             }
-            e.target.value = ''; // لإعادة تعيين حقل الرفع لكي يسمح برفع نفس الملف مرة أخرى إذا لزم الأمر
+            e.target.value = '';
         }
     </script>
 </body>
