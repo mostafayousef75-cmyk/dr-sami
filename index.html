@@ -617,7 +617,7 @@
             border-color: #cbd5e1;
         }
 
-        /* أزرار الإجراءات داخل بطاقة العميل (أصغر حجماً) */
+        /* أزرار الإجراءات داخل بطاقة العميل (ترتيب وابعاد أصغر) */
         .client-actions-row {
             display: flex;
             gap: 6px;
@@ -626,13 +626,13 @@
             flex-wrap: wrap;
         }
         .btn-client-action {
-            padding: 3px 8px;
-            border-radius: 4px;
+            padding: 4px 10px;
+            border-radius: 5px;
             border: none;
             color: #fff;
             font-family: var(--font-family);
-            font-size: 0.75rem;
-            font-weight: 600;
+            font-size: 0.78rem;
+            font-weight: 700;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
@@ -964,7 +964,7 @@
                                 <button class="action-btn copy-btn" onclick="copyClientReport()"><i class="fa-solid fa-copy"></i> نسخ الكشف</button>
                                 <button class="action-btn select-del-btn" onclick="requestDeleteSelectedAccess()"><i class="fa-solid fa-trash-can"></i> حذف المحددين</button>
                                 <button class="action-btn clear-all" onclick="requestDeleteRangeAccess()"><i class="fa-solid fa-trash"></i> مسح الفترة</button>
-                                <button class="action-btn trash-view-btn" onclick="openTrashModal()"><i class="fa-solid fa-rotate-left"></i> سلة المحذوفات والاسترجاع</button>
+                                <button class="action-btn trash-view-btn" onclick="checkTrashAuthAndOpen()"><i class="fa-solid fa-rotate-left"></i> سلة المحذوفات والاسترجاع</button>
                             </div>
                         </div>
 
@@ -986,7 +986,7 @@
                 <button class="close-modal-btn" onclick="closeTrashModal()">&times;</button>
             </div>
             <div id="trashModalList" style="display: flex; flex-direction: column; gap: 10px; max-height: 60vh; overflow-y: auto;">
-                <!-- المحذوفات تظهر هنا -->
+                <!-- المحذوفات تظهر هنا مرتبة من الأحدث للأقدم -->
             </div>
         </div>
     </div>
@@ -1190,10 +1190,10 @@
         }
 
         function saveLocal() { 
-            localStorage.setItem('cachedAppointments_v3', JSON.stringify(records));
+            localStorage.setItem('cachedAppointments_v4', JSON.stringify(records));
         }
 
-        const cached = localStorage.getItem('cachedAppointments_v3');
+        const cached = localStorage.getItem('cachedAppointments_v4');
         if (cached) { try { records = JSON.parse(cached); lastKnownRecordsCount = records.length; } catch(e) { records = []; } }
 
         function syncFilterTabsUI() {
@@ -1811,6 +1811,12 @@
             });
         }
 
+        function checkTrashAuthAndOpen() {
+            requireAdminAuth(() => {
+                openTrashModal();
+            });
+        }
+
         function openTrashModal() {
             renderTrashModalList();
             document.getElementById('trashModal').classList.add('open');
@@ -1977,7 +1983,7 @@
         function requestDeleteRangeAccess() {
             requireAdminAuth(() => {
                 const filterDesc = clientHoursFilter === 'all' ? 'جميع الأوقات' : `آخر ${clientHoursFilter} ساعة`;
-                if (confirm(`⚠️ تنبيه إدارة: هل أنت متأكد من رغبتك في الحذف النهائي لنطاق الفترة (${filterDesc}) من صفحة الكشف؟`)) {
+                if (confirm(`⚠️ تحذير إدارة: هل أنت متأكد تماماً من رغبتك في حذف مسح الفترة (${filterDesc}) نهائياً من النظام؟`)) {
                     executeDeleteClientsTimeRange();
                 }
             });
