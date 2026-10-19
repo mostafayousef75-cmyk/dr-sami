@@ -285,6 +285,37 @@
             gap: 10px;
         }
 
+        /* Progress Bar للإنجاز اليومي */
+        .progress-box {
+            background: var(--bg-base);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 12px 15px;
+            margin-bottom: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .progress-info-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.88rem;
+            font-weight: 700;
+        }
+        .progress-bar-container {
+            width: 100%;
+            height: 10px;
+            background: var(--border-color);
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-color), var(--success-color));
+            width: 0%;
+            transition: width 0.4s ease;
+        }
+
         /* KPI Cards */
         .kpi-cards-grid {
             display: grid;
@@ -404,7 +435,6 @@
 
         table th, table td { padding: 8px 8px; text-align: right; border-bottom: 1px solid var(--border-color); vertical-align: middle; color: var(--text-main); }
 
-        /* شارات الحالة والأولوية الملونة والمخصصة */
         .status-badge { padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; color: #fff; display: inline-block; margin-bottom: 2px; }
         .badge-priority { background-color: #7c3aed; box-shadow: 0 0 8px rgba(124, 58, 237, 0.4); }
         .badge-repeated { background-color: #e11d48; }
@@ -415,14 +445,13 @@
         .badge-noresponse { background-color: #475569; }
         .badge-other { background-color: #0d9488; }
 
-        /* شارات أنواع الإجراءات الملونة والاحترافية */
         .proc-badge { padding: 4px 10px; border-radius: 6px; font-size: 0.8rem; font-weight: 700; display: inline-block; text-align: center; }
-        .proc-plant { background-color: #0d9488; color: #ffffff; border: 1px solid #14b8a6; box-shadow: 0 0 10px rgba(13, 148, 136, 0.3); } /* تميز الزراعة بلون مختلف وجذاب */
-        .proc-extraction { background-color: #c2410c; color: #ffffff; } /* خلع */
-        .proc-surgery { background-color: #b91c1c; color: #ffffff; } /* جراحة */
-        .proc-stitches { background-color: #7e22ce; color: #ffffff; } /* فك خياطة */
-        .proc-review { background-color: #4f46e5; color: #ffffff; } /* مراجعة */
-        .proc-default { background-color: #334155; color: #ffffff; } /* أخرى */
+        .proc-plant { background-color: #0d9488; color: #ffffff; border: 1px solid #14b8a6; box-shadow: 0 0 10px rgba(13, 148, 136, 0.3); } 
+        .proc-extraction { background-color: #c2410c; color: #ffffff; } 
+        .proc-surgery { background-color: #b91c1c; color: #ffffff; } 
+        .proc-stitches { background-color: #7e22ce; color: #ffffff; } 
+        .proc-review { background-color: #4f46e5; color: #ffffff; } 
+        .proc-default { background-color: #334155; color: #ffffff; } 
 
         .table-input {
             width: 100%; padding: 6px; border: 1px solid var(--border-color); border-radius: var(--radius-md); background: var(--bg-base); color: var(--text-main); font-family: var(--font-family); font-size: 0.85rem;
@@ -454,6 +483,7 @@
         }
         .row-priority-pulse {
             animation: priorityPulse 1.8s infinite ease-in-out;
+            border-right: 4px solid var(--accent-purple);
         }
 
         #notificationToast {
@@ -751,6 +781,17 @@
                             </div>
                         </div>
 
+                        <!-- شريط تقدم الإنجاز اليومي -->
+                        <div class="progress-box">
+                            <div class="progress-info-row">
+                                <span><i class="fa-solid fa-chart-line"></i> نسبة الإنجاز اليومي للحالات</span>
+                                <span id="progressText">0% (0 من 0)</span>
+                            </div>
+                            <div class="progress-bar-container">
+                                <div class="progress-bar-fill" id="progressBarFill"></div>
+                            </div>
+                        </div>
+
                         <div class="filter-container-box">
                             <div class="filter-row">
                                 <span class="filter-label"><i class="fa-solid fa-filter"></i> فلاتر الحالات:</span>
@@ -1041,6 +1082,8 @@
         let dashboardTimeFilter = localStorage.getItem('savedDashboardTimeFilter') || 'all';
         let clientHoursFilter = localStorage.getItem('savedClientHoursFilter') || '8';
         let originalEditPriorityState = false;
+        let isInitialLoad = true;
+        let lastKnownRecordsCount = 0;
 
         if (!localStorage.getItem('adminPassword')) {
             localStorage.setItem('adminPassword', '1234');
@@ -1091,7 +1134,7 @@
         }
 
         const cached = localStorage.getItem('cachedAppointments');
-        if (cached) { try { records = JSON.parse(cached); } catch(e) { records = []; } }
+        if (cached) { try { records = JSON.parse(cached); lastKnownRecordsCount = records.length; } catch(e) { records = []; } }
 
         const cachedTrash = localStorage.getItem('cachedTrash');
         if (cachedTrash) { try { deletedRecords = JSON.parse(cachedTrash); } catch(e) { deletedRecords = []; } }
@@ -1115,12 +1158,21 @@
                 const cloudRecords = [];
                 for (let key in data) { cloudRecords.push({ firebaseKey: key, ...data[key] }); }
                 records = cloudRecords;
+                
+                // تنبيه تلقائي عند وصول حجز جديد عبر السحابة
+                if (!isInitialLoad && records.length > lastKnownRecordsCount) {
+                    playBeepAndShowToast('🔔 تم استلام حجز/طلب جديد عبر السحابة!');
+                }
+                lastKnownRecordsCount = records.length;
             } else {
                 records = [];
+                lastKnownRecordsCount = 0;
             }
+            isInitialLoad = false;
             saveLocal();
             renderTable();
             updateKPIs();
+            updateDailyProgress();
             renderClientReport();
         });
 
@@ -1236,6 +1288,7 @@
             saveLocal();
             renderTable();
             updateKPIs();
+            updateDailyProgress();
             renderClientReport();
 
             if (navigator.onLine) {
@@ -1265,6 +1318,32 @@
             btn.closest('.filter-row').querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
             btn.classList.add('active');
             renderTable();
+        }
+
+        // تحديث نسبة الإنجاز اليومي (Progress Bar)
+        function updateDailyProgress() {
+            const now = new Date();
+            const todayRecords = records.filter(r => {
+                const d = new Date(r.createdAt);
+                return d.toDateString() === now.toDateString();
+            });
+
+            const totalToday = todayRecords.length;
+            if (totalToday === 0) {
+                document.getElementById('progressText').innerText = '0% (لا توجد حالات اليوم)';
+                document.getElementById('progressBarFill').style.width = '0%';
+                return;
+            }
+
+            const completedToday = todayRecords.filter(r => {
+                const contact = r.adminContactMethod || 'قيد الانتظار';
+                const hasAction = r.actionTaken && r.actionTaken.trim() !== '';
+                return contact === 'تم التواصل' || hasAction;
+            }).length;
+
+            const percentage = Math.round((completedToday / totalToday) * 100);
+            document.getElementById('progressText').innerText = `${percentage}% (${completedToday} من ${totalToday} حالات مُنجزة)`;
+            document.getElementById('progressBarFill').style.width = `${percentage}%`;
         }
 
         function renderTable() {
@@ -1304,7 +1383,12 @@
                 });
             }
 
-            filteredList.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            // تثبيت الحالات ذات الأولوية في الأعلى دائماً
+            filteredList.sort((a, b) => {
+                if (a.isRecurring && !b.isRecurring) return -1;
+                if (!a.isRecurring && b.isRecurring) return 1;
+                return new Date(b.createdAt) - new Date(a.createdAt);
+            });
 
             filteredList.forEach((record, index) => {
                 const tr = document.createElement('tr');
@@ -1317,7 +1401,6 @@
                 const selectVal = isOther ? 'أخرى' : currentContact;
                 const otherDetail = isOther ? currentContact : (record.adminContactDetail || '');
 
-                // تنسيق شارة الحالة والأولوية بألوان مخصصة
                 let statusBadgeHTML = '';
                 if (record.isRecurring) {
                     statusBadgeHTML += '<span class="status-badge badge-priority">⭐ أولوية</span><br>';
@@ -1335,10 +1418,9 @@
 
                 statusBadgeHTML += `<span class="status-badge ${sClass}">${selectVal}</span>`;
 
-                // تنسيق شارة نوع الإجراء بألوان احترافية متميزة
                 const proc = record.procedureType || '-';
                 let procClass = 'proc-default';
-                if (proc.includes('زراعة')) procClass = 'proc-plant'; // تميز الزراعة بلون تيل مختلف ومميز
+                if (proc.includes('زراعة')) procClass = 'proc-plant';
                 else if (proc.includes('خلع')) procClass = 'proc-extraction';
                 else if (proc.includes('جراحه')) procClass = 'proc-surgery';
                 else if (proc.includes('فك خياطه')) procClass = 'proc-stitches';
@@ -1404,6 +1486,7 @@
                 saveLocal(); 
                 renderTable(); 
                 updateKPIs();
+                updateDailyProgress();
                 renderClientReport();
             }
 
@@ -1457,6 +1540,7 @@
             saveLocal();
             renderTable();
             updateKPIs();
+            updateDailyProgress();
             renderClientReport();
             closeEditModal();
 
@@ -1502,6 +1586,7 @@
                     saveLocal();
                     renderTable();
                     updateKPIs();
+                    updateDailyProgress();
                     renderClientReport();
 
                     if (navigator.onLine && !key.startsWith('local_')) {
@@ -1659,6 +1744,7 @@
             saveLocal();
             renderTable();
             updateKPIs();
+            updateDailyProgress();
             renderClientReport();
         }
 
@@ -1712,6 +1798,7 @@
             saveLocal();
             renderTable();
             updateKPIs();
+            updateDailyProgress();
             renderClientReport();
         }
 
@@ -1778,6 +1865,7 @@
             saveLocal();
             renderTable();
             updateKPIs();
+            updateDailyProgress();
             renderClientReport();
             openRestoreModal();
 
@@ -1846,6 +1934,7 @@
                 saveLocal();
                 renderTable();
                 updateKPIs();
+                updateDailyProgress();
                 renderClientReport();
                 closeClearModal();
                 if (navigator.onLine) dbRef.set(null);
@@ -1873,7 +1962,7 @@
                     const imported = JSON.parse(evt.target.result);
                     if (Array.isArray(imported)) {
                         records = imported.concat(records);
-                        saveLocal(); renderTable(); updateKPIs(); renderClientReport();
+                        saveLocal(); renderTable(); updateKPIs(); updateDailyProgress(); renderClientReport();
                         alert('تم استيراد البيانات بنجاح!');
                     }
                 } catch(err) { alert('خطأ في استيراد الملف'); }
