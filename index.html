@@ -518,6 +518,36 @@
             color: var(--text-main);
             font-family: var(--font-family);
             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+        }
+
+        /* تنسيق كارت العميل عندما يكون متاحاً للنسخ وتم تعيينه كـ تم النسخ */
+        .client-card-wrapper.is-copied {
+            background-color: rgba(22, 163, 74, 0.1);
+            border-color: var(--success-color);
+        }
+
+        .copied-btn {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-family: var(--font-family);
+            font-size: 0.8rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .copied-btn.active {
+            background: var(--success-color);
+            color: #ffffff;
+            border-color: var(--success-color);
+            box-shadow: 0 0 10px rgba(22, 163, 74, 0.3);
         }
 
         .client-card-header {
@@ -732,7 +762,6 @@
                                         <option value="أخرى">أخرى</option>
                                     </select>
                                 </div>
-                                <!-- حقل إضافي يظهر فقط عند اختيار أخرى -->
                                 <div class="input-field" id="customProcedureWrapper" style="display: none;">
                                     <label>اكتب نوع الإجراء الآخر *</label>
                                     <input type="text" id="customProcedureInput" placeholder="اكتب نوع الإجراء هنا...">
@@ -1243,7 +1272,6 @@
             }
         }
 
-        // إظهار أو إخفاء حقل الإجراء المخصص عند اختيار "أخرى"
         function handleProcedureTypeChange(selectElement) {
             const customWrapper = document.getElementById('customProcedureWrapper');
             const customInput = document.getElementById('customProcedureInput');
@@ -1270,7 +1298,6 @@
                 return matchPhone || matchName;
             });
 
-            // تحديد قيمة نوع الإجراء (إذا كانت أخرى يتم أخذ النص المكتوب في خانة الإجراء المخصص فقط)
             let procedureTypeValue = document.getElementById('procedureType').value;
             if (procedureTypeValue === 'أخرى') {
                 const customVal = document.getElementById('customProcedureInput').value.trim();
@@ -1294,7 +1321,8 @@
                 createdAt: new Date().toISOString(),
                 actionTaken: '',
                 adminContactMethod: 'قيد الانتظار',
-                adminContactDetail: ''
+                adminContactDetail: '',
+                isCopied: false
             };
 
             records.unshift(newRecord);
@@ -1653,6 +1681,20 @@
             } catch(e) { return isoString; }
         }
 
+        // دالة تبديل حالة النسخ لعميل معين في صفحة الكشف
+        function toggleCopiedStatus(key) {
+            const rec = records.find(r => r.firebaseKey === key);
+            if (rec) {
+                rec.isCopied = !rec.isCopied;
+                saveLocal();
+                renderClientReport();
+
+                if (navigator.onLine && !key.startsWith('local_')) {
+                    dbRef.child(key).update({ isCopied: rec.isCopied });
+                }
+            }
+        }
+
         function renderClientReport() {
             const container = document.getElementById('clientReportList');
             if (!container) return;
@@ -1667,7 +1709,8 @@
 
             openRecords.forEach((item, index) => {
                 const card = document.createElement('div');
-                card.className = 'client-card-wrapper';
+                const isCopied = !!item.isCopied;
+                card.className = `client-card-wrapper ${isCopied ? 'is-copied' : ''}`;
 
                 const fileStr = (item.fileNumber && item.fileNumber !== '-') ? ` ${item.fileNumber}` : '';
                 const idStr = (item.idNumber && item.idNumber !== '-') ? item.idNumber : '';
@@ -1680,6 +1723,9 @@
                         <div class="client-title">
                             <input type="checkbox" class="client-select-chk" data-key="${item.firebaseKey}">
                             <span>${index + 1}- ${item.patientName}${fileStr}</span>
+                            <button class="copied-btn ${isCopied ? 'active' : ''}" onclick="toggleCopiedStatus('${item.firebaseKey}')" title="تنسيق العميل">
+                                <i class="fa-solid ${isCopied ? 'fa-circle-check' : 'fa-check'}"></i> ${isCopied ? 'تم النسخ ✅' : 'تعليم كمنسوخ'}
+                            </button>
                         </div>
                         ${dateTimeStr ? `<span class="client-datetime-badge"><i class="fa-regular fa-clock"></i> ${dateTimeStr}</span>` : ''}
                     </div>
@@ -1695,12 +1741,18 @@
             });
         }
 
+        // نسخ الكشف كاملاً باستثناء العملاء الذين تم وضع علامة "تم النسخ" عليهم
         function copyClientReport() {
             let openRecords = getOpenFilteredRecords();
-            if (openRecords.length === 0) return alert('لا يوجد عملاء لنسخ الكشف!');
+            // استبعاد العملاء المنسوخين سابقاً
+            let uncopiedRecords = openRecords.filter(r => !r.isCopied);
+
+            if (uncopiedRecords.length === 0) {
+                return alert('جميع العملاء الموجودين تم وضع علامة "تم النسخ" عليهم سابقاً!');
+            }
 
             let reportText = ``;
-            openRecords.forEach((item, idx) => {
+            uncopiedRecords.forEach((item, idx) => {
                 const fileStr = (item.fileNumber && item.fileNumber !== '-') ? ` ${item.fileNumber}` : '';
                 const idStr = (item.idNumber && item.idNumber !== '-') ? `رقم الهوية: ${item.idNumber}\n` : '';
                 const phoneStr = (item.patientPhone && item.patientPhone !== '-') ? item.patientPhone : '-';
@@ -1709,7 +1761,7 @@
                 reportText += `${idx + 1}- ${item.patientName}${fileStr}\nرقم الجوال: ${phoneStr}\n${idStr}${serviceStr}\n\n`;
             });
 
-            navigator.clipboard.writeText(reportText.trim()).then(() => alert('تم نسخ الكشف كاملاً وتنسيقه للواتساب بنجاح!'));
+            navigator.clipboard.writeText(reportText.trim()).then(() => alert(`تم نسخ (${uncopiedRecords.length}) عميل جديد بنجاح واستبعاد المنسوخين سابقاً!`));
         }
 
         function requestDeleteSelectedAccess() {
@@ -2020,7 +2072,8 @@
                                     createdAt: row.createdAt || new Date().toISOString(),
                                     actionTaken: row.actionTaken || '',
                                     adminContactMethod: row.adminContactMethod || 'قيد الانتظار',
-                                    adminContactDetail: row.adminContactDetail || ''
+                                    adminContactDetail: row.adminContactDetail || '',
+                                    isCopied: false
                                 };
 
                                 records.unshift(formattedRow);
