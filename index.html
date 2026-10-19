@@ -863,7 +863,7 @@
         </div>
     </div>
 
-    <!-- نافذة تعديل بيانات العميل مع حماية خانة الأولوية بكلمة المرور -->
+    <!-- نافذة تعديل بيانات العميل المحمية بالكلمة السرية للأولوية -->
     <div class="modal" id="editModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -924,11 +924,11 @@
                         <label>الخدمة المطلوبة / تفاصيل المشكلة والطلب *</label>
                         <textarea id="editServiceRequired" required></textarea>
                     </div>
-                    <!-- حماية خانة الأولوية في التعديل بباسورد الإدارة -->
+                    <!-- خانة الأولوية في التعديل -->
                     <div class="input-field full-width">
                         <label class="priority-checkbox">
-                            <input type="checkbox" id="editIsRecurring" onchange="checkEditPriorityAuth(this)">
-                            <span>تعيين كحالة ذات أولوية ⭐ (يتطلب باسورد الإدارة)</span>
+                            <input type="checkbox" id="editIsRecurring">
+                            <span>تعيين كحالة ذات أولوية ⭐</span>
                         </label>
                     </div>
                 </div>
@@ -951,6 +951,7 @@
         let dashboardFilter = 'all';
         let dashboardTimeFilter = 'all';
         let clientHoursFilter = 'all';
+        let originalEditPriorityState = false; // لتخزين الحالة الأصلية للأولوية عند فتح التعديل
 
         if (!localStorage.getItem('adminPassword')) {
             localStorage.setItem('adminPassword', '1234');
@@ -1053,14 +1054,13 @@
             saveLocal();
         });
 
-        /* دالة تشغيل التنبيه الصوتي الرقمي (Beep Sound) + التنبيه البصري */
         function playBeepAndShowToast(msg) {
             try {
                 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
                 const osc = audioCtx.createOscillator();
                 const gain = audioCtx.createGain();
                 osc.type = 'sine';
-                osc.frequency.setValueAtTime(587.33, audioCtx.currentTime); // نغة D5 التنبيهية
+                osc.frequency.setValueAtTime(587.33, audioCtx.currentTime);
                 gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
                 osc.connect(gain);
                 gain.connect(audioCtx.destination);
@@ -1084,16 +1084,6 @@
             }
         }
 
-        let pendingEditPriorityCheckbox = null;
-        function checkEditPriorityAuth(checkbox) {
-            if (checkbox.checked) {
-                pendingEditPriorityCheckbox = checkbox;
-                checkbox.checked = false;
-                document.getElementById('authPassInput').value = '';
-                document.getElementById('passAuthModal').classList.add('open');
-            }
-        }
-
         function confirmPriorityAuth() {
             const pass = document.getElementById('authPassInput').value;
             if (pass === localStorage.getItem('adminPassword')) {
@@ -1101,10 +1091,7 @@
                     pendingPriorityCheckbox.checked = true;
                     pendingPriorityCheckbox = null;
                 }
-                if (pendingEditPriorityCheckbox) {
-                    pendingEditPriorityCheckbox.checked = true;
-                    pendingEditPriorityCheckbox = null;
-                }
+                document.getElementById('passAuthModal').classList.add('open'); // إغلاق نافذة الباسورد
                 document.getElementById('passAuthModal').classList.remove('open');
             } else {
                 alert('كلمة المرور غير صحيحة!');
@@ -1116,10 +1103,6 @@
             if (pendingPriorityCheckbox) {
                 pendingPriorityCheckbox.checked = false;
                 pendingPriorityCheckbox = null;
-            }
-            if (pendingEditPriorityCheckbox) {
-                pendingEditPriorityCheckbox.checked = false;
-                pendingEditPriorityCheckbox = null;
             }
         }
 
@@ -1156,7 +1139,6 @@
                 adminContactDetail: ''
             };
 
-            // يظهر الجديد في أعلى الجدول دائماً
             records.unshift(newRecord);
             saveLocal();
             renderTable();
@@ -1176,7 +1158,6 @@
             playBeepAndShowToast('⚠️ تنبيه: تم تسجيل موعد وعميل جديد وإضافته في أعلى الجدول!');
         });
 
-        /* فلاتر الجدول الأساسي */
         function setDashboardFilter(filterType, btn) {
             dashboardFilter = filterType;
             btn.closest('.filter-row').querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
@@ -1191,7 +1172,6 @@
             renderTable();
         }
 
-        /* جدول المواعيد (مع تثبيت الجديد في الأعلى والحذف المباشر بدون باسورد) */
         function renderTable() {
             const tbody = document.getElementById('tableBody');
             if (!tbody) return;
@@ -1229,7 +1209,6 @@
                 });
             }
 
-            // ترتيب بحيث الأولوية في الأعلى ثم الأحدث ضاف أولاً
             filteredList.sort((a, b) => {
                 if (b.isRecurring !== a.isRecurring) {
                     return (b.isRecurring === true) - (a.isRecurring === true);
@@ -1340,7 +1319,10 @@
             document.getElementById('editCoordinatorName').value = rec.coordinatorName || '';
             document.getElementById('editProcedureType').value = rec.procedureType || 'مراجعه';
             document.getElementById('editServiceRequired').value = rec.serviceRequired || '';
-            document.getElementById('editIsRecurring').checked = !!rec.isRecurring;
+            
+            // تخزين حالة الأولوية الأصلية عند الفتح وحفظها في المتغير
+            originalEditPriorityState = !!rec.isRecurring;
+            document.getElementById('editIsRecurring').checked = originalEditPriorityState;
 
             document.getElementById('editModal').classList.add('open');
         }
@@ -1349,8 +1331,8 @@
             document.getElementById('editModal').classList.remove('open');
         }
 
-        function saveEditedRecord(e) {
-            e.preventDefault();
+        // الحفظ الفعلي بعد اجتياز فحص الأولوية وباسورد الإدارة
+        function executeActualEdit() {
             const key = document.getElementById('editFirebaseKey').value;
             let rec = records.find(r => r.firebaseKey === key);
             if (!rec) return;
@@ -1389,7 +1371,26 @@
             alert('تم تعديل بيانات العميل بنجاح!');
         }
 
-        /* الحذف مباشر بدون باسورد كما طلبت */
+        // التحقق من تغيير الأولوية عند محاولة حفظ التعديل واشتراط الباسورد
+        function saveEditedRecord(e) {
+            e.preventDefault();
+            const currentUIState = document.getElementById('editIsRecurring').checked;
+
+            // إذا تم تغيير حالة الأولوية (سواء إضافتها أو إزالتها) مقارنة بما كانت عليه عند فتح النافذة
+            if (currentUIState !== originalEditPriorityState) {
+                // طلب باسورد الإدارة أولاً
+                let pass = prompt('لقد قمت بتعديل حالة "الأولوية ⭐". يرجى إدخال كلمة مرور الإدارة للاستمرار:');
+                if (pass === localStorage.getItem('adminPassword')) {
+                    executeActualEdit();
+                } else if (pass !== null) {
+                    alert('كلمة المرور غير صحيحة! تم إلغاء عملية الحفظ والتعديل.');
+                }
+            } else {
+                // إذا لم يتم تغيير الأولوية، يتم الحفظ مباشرة دون باسورد
+                executeActualEdit();
+            }
+        }
+
         function deleteRecord(key) {
             if (confirm('هل أنت متأكد من حذف هذا العميل؟')) {
                 const itemIdx = records.findIndex(r => r.firebaseKey === key);
@@ -1410,7 +1411,6 @@
             }
         }
 
-        /* كشف العملاء المستقل */
         function setClientTimeFilter(hours, btn) {
             clientHoursFilter = hours;
             btn.closest('.filter-tabs').querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
@@ -1620,7 +1620,6 @@
             alert('تم استرجاع الحالة بنجاح!');
         }
 
-        /* تحديث المؤشرات (KPIs الجديدة) */
         function updateKPIs() {
             document.getElementById('kpi-total').innerText = records.length;
             document.getElementById('kpi-recurring').innerText = records.filter(r => r.isRecurring).length;
