@@ -617,7 +617,7 @@
             border-color: #cbd5e1;
         }
 
-        /* تنسيق خاص بسلة المحذوفات المصغرة جداً لتناسب الموبايل */
+        /* سلة المحذوفات المصغرة بدقة للموبايل (خط واضح وأزرار أيقونات دقيقة وصغيرة) */
         .trash-item-card {
             background: var(--bg-base);
             border: 1px solid var(--border-color);
@@ -625,14 +625,15 @@
             padding: 10px 12px;
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 6px;
         }
         
         .trash-item-info {
-            font-size: 0.88rem;
+            font-size: 0.92rem;
             color: var(--text-main);
             line-height: 1.4;
             word-break: break-word;
+            font-weight: 600;
         }
 
         .trash-btn-group {
@@ -644,7 +645,7 @@
         }
 
         .btn-trash-micro {
-            padding: 3px 8px !important;
+            padding: 4px 10px !important;
             font-size: 0.75rem !important;
             border-radius: 4px !important;
             border: none;
@@ -652,7 +653,7 @@
             display: inline-flex;
             align-items: center;
             gap: 4px;
-            font-weight: 600;
+            font-weight: 700;
             color: #fff;
         }
         .btn-trash-micro.restore { background-color: var(--success-color); }
@@ -1051,7 +1052,7 @@
         </div>
     </div>
 
-    <!-- نافذة سلة المحذوفات المصممة بأزرار مصغرة وألوان مريحة للموبايل -->
+    <!-- نافذة سلة المحذوفات المصممة بثبات وتنسيق متميز للموبايل -->
     <div class="modal" id="restoreModal">
         <div class="modal-content" style="max-width: 480px;">
             <div class="modal-header">
@@ -1288,10 +1289,8 @@
                 const cloudTrash = [];
                 for (let key in data) { cloudTrash.push({ firebaseKey: key, ...data[key] }); }
                 deletedRecords = cloudTrash;
-            } else {
-                deletedRecords = [];
+                saveLocal();
             }
-            saveLocal();
         });
 
         clientDeletedRef.on('value', (snapshot) => {
@@ -1300,10 +1299,8 @@
                 const cloudClientTrash = [];
                 for (let key in data) { cloudClientTrash.push({ firebaseKey: key, ...data[key] }); }
                 clientDeletedRecords = cloudClientTrash;
-            } else {
-                clientDeletedRecords = [];
+                saveLocal();
             }
-            saveLocal();
         });
 
         function playBeepAndShowToast(msg) {
@@ -1482,7 +1479,8 @@
             }).length;
 
             const percentage = Math.round((completedToday / totalToday) * 100);
-            document.getElementById('progressText').innerText = `${percentage}\% (${completedToday} من ${totalToday} حالات مُنجزة)`; document.getElementById('progressBarFill').style.width = `${percentage}%`;
+            document.getElementById('progressText').innerText = `${percentage}% (${completedToday} من ${totalToday} حالات مُنجزة)`;
+            document.getElementById('progressBarFill').style.width = `${percentage}%`;
         }
 
         function renderTable() {
@@ -1731,7 +1729,7 @@
                     const itemIdx = records.findIndex(r => r.firebaseKey === key);
                     if (itemIdx !== -1) {
                         const deletedItem = records.splice(itemIdx, 1)[0];
-                        deletedItem.deletedAt = new Date().toISOString(); // إتاحة وقت الحذف للترتيب
+                        deletedItem.deletedAt = new Date().toISOString(); // طابع زمني للحذف لضمان ظهور الأحدث فوق
                         deletedRecords.unshift(deletedItem); 
                         saveLocal();
                         renderTable();
@@ -1973,7 +1971,7 @@
 
             let allTrash = [...deletedRecords, ...clientDeletedRecords];
 
-            // الترتيب الصارم: الأحدث حذفا يظهر في الأعلى فوراً (حتى بعد الـ Refresh)
+            // الترتيب الحاسم: الأحدث حذفا يظهر في الأعلى فوراً وبشكل دائم حتى بعد Refresh
             allTrash.sort((a, b) => {
                 const timeA = new Date(a.deletedAt || a.createdAt || 0).getTime();
                 const timeB = new Date(b.deletedAt || b.createdAt || 0).getTime();
@@ -1992,9 +1990,8 @@
 
                     card.innerHTML = `
                         <div class="trash-item-info">
-                            <strong style="color:var(--text-main); font-size: 0.95rem;">${item.patientName}</strong> 
-                            <span style="color:var(--text-muted); font-size:0.85rem;">(${phoneStr})</span>
-                            <div style="font-size:0.82rem; color:var(--text-muted); margin-top:3px;">${serviceStr}</div>
+                            <div style="color:var(--text-main); font-size: 0.98rem; font-weight:700; margin-bottom:2px;">${item.patientName} (${phoneStr})</div>
+                            <div style="font-size:0.85rem; color:var(--text-muted);">${serviceStr}</div>
                         </div>
                         <div class="trash-btn-group">
                             <button class="btn-trash-micro restore" onclick="restoreRecord(${idx})" title="استرجاع الحالة">
