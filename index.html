@@ -321,7 +321,7 @@
 
         .actions-toolbar { display: flex; gap: 12px; flex-wrap: wrap; }
         .action-btn {
-            padding: 10px 18px; border-radius: var(--radius-md); border: none; color: white; font-family: var(--font-family); font-size: 0.9rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; text-decoration: none; align-items: center;
+            padding: 10px 18px; border-radius: var(--radius-md); border: none; color: white; font-family: var(--font-family); font-size: 0.9rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; text-decoration: none;
         }
         .action-btn.excel { background-color: #107c41; }
         .action-btn.json { background-color: #6366f1; }
@@ -372,7 +372,6 @@
         }
         .search-field i { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: var(--text-muted); }
 
-        /* حاوية الجدول وتثبيت رأس الجدول (Sticky Header) أثناء التمرير */
         .table-container { 
             max-height: 650px; 
             overflow-y: auto; 
@@ -396,11 +395,35 @@
         table th, table td { padding: 12px 10px; text-align: right; border-bottom: 1px solid var(--border-color); vertical-align: top; }
 
         .status-badge { padding: 4px 10px; border-radius: 20px; font-size: 0.78rem; font-weight: 700; color: #fff; display: inline-block; }
-        .badge-normal { background-color: var(--success-color); }
-        .badge-24h { background-color: var(--warning-color); }
-        .badge-48h { background-color: var(--danger-color); }
+        .badge-new { background-color: var(--success-color); }
+        .badge-done { background-color: #0284c7; }
+        .badge-pending { background-color: var(--warning-color); }
+        .badge-canceled { background-color: var(--danger-color); }
+        
         .badge-priority { background-color: var(--accent-purple); margin-bottom: 4px; }
         .badge-repeated { background-color: #e11d48; margin-bottom: 4px; }
+        
+        /* شارة نوع الإجراء العادية */
+        .badge-procedure {
+            background-color: var(--primary-color) !important;
+            color: #ffffff !important;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            display: inline-block;
+        }
+
+        /* شارة مخصصة لتمييز نوع إجراء الزراعة בלون فريد ومميز */
+        .badge-procedure-plant {
+            background-color: #0d9488 !important;
+            color: #ffffff !important;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            display: inline-block;
+        }
 
         .phone-cell-wrapper {
             display: flex;
@@ -442,6 +465,26 @@
         .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; }
         .modal-header h3 { color: var(--primary-color); font-size: 1.2rem; }
         .close-modal-btn { background: none; border: none; font-size: 1.5rem; color: var(--text-muted); cursor: pointer; }
+
+        @media (max-width: 768px) {
+            .table-container {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+            table {
+                min-width: 1300px;
+            }
+        }
+
+        @keyframes urgentPulse {
+            0% { background-color: rgba(220, 38, 38, 0.15); }
+            50% { background-color: rgba(220, 38, 38, 0.03); }
+            100% { background-color: rgba(220, 38, 38, 0.15); }
+        }
+
+        .row-urgent-new {
+            animation: urgentPulse 2s infinite ease-in-out;
+        }
     </style>
 </head>
 <body>
@@ -536,7 +579,7 @@
                                 <input type="text" id="patientName" required placeholder="الاسم الكامل للعميل">
                             </div>
                             <div class="input-field">
-                                <label><i class="fa-solid fa-phone"></i> رقم الجوال *</label>
+                                <label><i class="fa-solid fa-phone"></i> رقم الجوال</label>
                                 <input type="tel" id="patientPhone" placeholder="05xxxxxxxx / 01xxxxxxxxx">
                             </div>
                             <div class="input-field">
@@ -583,6 +626,9 @@
                                     <option value="">اختر نوع الإجراء...</option>
                                     <option value="زراعة">زراعة</option>
                                     <option value="خلع">خلع</option>
+                                    <option value="جراحه">جراحه</option>
+                                    <option value="فك خياطه">فك خياطه</option>
+                                    <option value="مراجعه">مراجعه</option>
                                     <option value="أخرى">أخرى</option>
                                 </select>
                             </div>
@@ -655,6 +701,8 @@
                         <table id="requestsTable">
                             <thead>
                                 <tr>
+                                    <th>م</th>
+                                    <th>تاريخ الإضافة</th>
                                     <th>الحالة والأولوية</th>
                                     <th>العميل</th>
                                     <th>رقم الجوال (واتساب / نسخ)</th>
@@ -679,7 +727,7 @@
         </main>
     </div>
 
-    <!-- نافذة مسح البيانات بفلتر وكلمة مرور -->
+    <!-- نوافذ الحوار (Modals) -->
     <div class="modal" id="clearModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -707,7 +755,6 @@
         </div>
     </div>
 
-    <!-- نافذة تعديل كلمة المرور -->
     <div class="modal" id="passwordModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -730,7 +777,6 @@
         </div>
     </div>
 
-    <!-- نافذة تعديل بيانات العميل -->
     <div class="modal" id="editModal">
         <div class="modal-content" style="max-width: 700px;">
             <div class="modal-header">
@@ -741,14 +787,24 @@
                 <input type="hidden" id="editFirebaseKey">
                 <div class="form-grid">
                     <div class="input-field"><label>اسم العميل *</label><input type="text" id="editPatientName" required></div>
-                    <div class="input-field"><label>رقم الجوال *</label><input type="tel" id="editPatientPhone"></div>
+                    <div class="input-field"><label>رقم الجوال</label><input type="tel" id="editPatientPhone"></div>
                     <div class="input-field"><label>رقم الملف</label><input type="text" id="editFileNumber"></div>
                     <div class="input-field"><label>رقم الهوية</label><input type="text" id="editIdNumber"></div>
                     <div class="input-field">
                         <label>الفرع *</label>
                         <select id="editBranch" required><option value="معشي">فرع معشي</option><option value="الوسام">فرع الوسام</option></select>
                     </div>
-                    <div class="input-field"><label>نوع الإجراء *</label><input type="text" id="editProcedureType" required></div>
+                    <div class="input-field">
+                        <label>نوع الإجراء *</label>
+                        <select id="editProcedureType" required>
+                            <option value="زراعة">زراعة</option>
+                            <option value="خلع">خلع</option>
+                            <option value="جراحه">جراحه</option>
+                            <option value="فك خياطه">فك خياطه</option>
+                            <option value="مراجعه">مراجعه</option>
+                            <option value="أخرى">أخرى</option>
+                        </select>
+                    </div>
                     <div class="input-field"><label>طريقة التواصل *</label><input type="text" id="editContactMethod" required></div>
                     <div class="input-field"><label>اسم المنسق *</label><input type="text" id="editCoordinatorName" required></div>
                     <div class="input-field"><label>التاريخ والميعاد</label><input type="datetime-local" id="editAppointmentDateTime"></div>
@@ -771,6 +827,7 @@
         let records = [];
         let currentFilter = 'all';
         let currentTimeFilter = 'all';
+        let previousCount = 0;
 
         if (!localStorage.getItem('adminPassword')) {
             localStorage.setItem('adminPassword', '1234');
@@ -793,6 +850,13 @@
         if (cached) { try { records = JSON.parse(cached); } catch(e) { records = []; } }
 
         window.addEventListener('DOMContentLoaded', () => {
+            const savedFilter = localStorage.getItem('savedFilter');
+            const savedTimeFilter = localStorage.getItem('savedTimeFilter');
+            
+            if (savedFilter) currentFilter = savedFilter;
+            if (savedTimeFilter) currentTimeFilter = savedTimeFilter;
+
+            updateActiveFilterUI();
             renderTable();
             updateKPIs();
         });
@@ -802,6 +866,11 @@
             if (data) {
                 const cloudRecords = [];
                 for (let key in data) { cloudRecords.push({ firebaseKey: key, ...data[key] }); }
+                
+                if (previousCount > 0 && cloudRecords.length > previousCount) {
+                    playNotificationSound();
+                }
+                previousCount = cloudRecords.length;
                 records = cloudRecords;
             } else {
                 records = [];
@@ -810,6 +879,23 @@
             renderTable();
             updateKPIs();
         });
+
+        function playNotificationSound() {
+            try {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(587.33, audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.3);
+            } catch (e) {
+                console.log('Audio notification played');
+            }
+        }
 
         function toggleSidebar() {
             const appLayout = document.getElementById('appLayout');
@@ -833,11 +919,11 @@
         document.getElementById('appointmentForm').addEventListener('submit', function(e) {
             e.preventDefault();
             const patientNameVal = document.getElementById('patientName').value.trim();
-            const patientPhoneVal = document.getElementById('patientPhone').value.trim();
-            const cleanNewPhone = patientPhoneVal.replace(/\D/g, '');
+            const patientPhoneVal = document.getElementById('patientPhone').value.trim() || '-';
+            const cleanNewPhone = patientPhoneVal !== '-' ? patientPhoneVal.replace(/\D/g, '') : '';
 
             const isRepeated = records.some(r => {
-                const cleanExistingPhone = r.patientPhone ? r.patientPhone.replace(/\D/g, '') : '';
+                const cleanExistingPhone = (r.patientPhone && r.patientPhone !== '-') ? r.patientPhone.replace(/\D/g, '') : '';
                 const matchPhone = (cleanNewPhone.length >= 8 && cleanExistingPhone === cleanNewPhone);
                 const matchName = (r.patientName && r.patientName.trim().toLowerCase() === patientNameVal.toLowerCase());
                 return matchPhone || matchName;
@@ -845,10 +931,10 @@
 
             let priorityStatus = document.getElementById('isRecurring').checked || isRepeated;
             const contactMethodVal = document.getElementById('contactMethod').value;
-            const finalContactMethod = contactMethodVal === 'أخرى' ? `أخرى (${document.getElementById('otherContactDetail').value})` : contactMethodVal;
+            const finalContactMethod = contactMethodVal === 'أخرى' ? `${document.getElementById('otherContactDetail').value}` : contactMethodVal;
 
             const procedureVal = document.getElementById('procedureType').value;
-            const finalProcedureType = procedureVal === 'أخرى' ? `أخرى (${document.getElementById('otherProcedureDetail').value})` : procedureVal;
+            const finalProcedureType = procedureVal === 'أخرى' ? `${document.getElementById('otherProcedureDetail').value}` : procedureVal;
 
             const tempKey = 'local_' + Date.now();
             const newRecord = {
@@ -923,7 +1009,7 @@
                             saveLocal();
                             renderTable();
                             updateKPIs();
-                            alert(`تم استيراد وحفظ ${importedArray.length} سجل بنجاح في السحابة والقاعدة!`);
+                            alert(`تم استيراد وحفظ ${importedArray.length} سجل بنجاح!`);
                         } else {
                             alert('ملف الـ JSON غير متوافق.');
                         }
@@ -974,7 +1060,7 @@
                         saveLocal();
                         renderTable();
                         updateKPIs();
-                        alert(`تم استيراد وحفظ بيانات ملف الـ Excel بنجاح في السحابة!`);
+                        alert(`تم استيراد وحفظ ملف الـ Excel بنجاح!`);
                     } catch(err) {
                         alert('حدث خطأ أثناء تحليل ملف الـ Excel.');
                     }
@@ -1072,6 +1158,8 @@
 
         function setFilter(filterType, element) {
             currentFilter = filterType;
+            localStorage.setItem('savedFilter', filterType);
+            
             const parentRow = element.closest('.filter-row');
             parentRow.querySelectorAll('.filter-tab').forEach(btn => btn.classList.remove('active'));
             element.classList.add('active');
@@ -1080,10 +1168,31 @@
 
         function setTimeFilter(timeType, element) {
             currentTimeFilter = timeType;
+            localStorage.setItem('savedTimeFilter', timeType);
+            
             const parentRow = element.closest('.filter-row');
             parentRow.querySelectorAll('.filter-tab').forEach(btn => btn.classList.remove('active'));
             element.classList.add('active');
             renderTable();
+        }
+
+        function updateActiveFilterUI() {
+            document.querySelectorAll('.filter-container-box .filter-row').forEach((row, index) => {
+                const tabs = row.querySelectorAll('.filter-tab');
+                if (index === 0) {
+                    tabs.forEach(tab => {
+                        const onClickAttr = tab.getAttribute('onclick') || '';
+                        if (onClickAttr.includes(`'${currentFilter}'`)) tab.classList.add('active');
+                        else tab.classList.remove('active');
+                    });
+                } else if (index === 1) {
+                    tabs.forEach(tab => {
+                        const onClickAttr = tab.getAttribute('onclick') || '';
+                        if (onClickAttr.includes(`'${currentTimeFilter}'`)) tab.classList.add('active');
+                        else tab.classList.remove('active');
+                    });
+                }
+            });
         }
 
         function filterRecordsList(recordsList) {
@@ -1112,12 +1221,17 @@
             return res;
         }
 
-        function getDelayStatus(createdAt, actionTaken) {
-            if (actionTaken && actionTaken.trim() !== '') return { text: 'تم الإجراء', class: 'badge-normal' };
-            const diffHours = (new Date() - new Date(createdAt)) / (1000 * 60 * 60);
-            if (diffHours >= 48) return { text: 'تأخير +48 ساعة', class: 'badge-48h' };
-            if (diffHours >= 24) return { text: 'تأخير +24 ساعة', class: 'badge-24h' };
-            return { text: 'جديد', class: 'badge-normal' };
+        function getStatusDetails(createdAt, actionTaken, adminContactMethod) {
+            const hasAction = (actionTaken && actionTaken.trim() !== '') || (adminContactMethod && adminContactMethod !== 'قيد الانتظار');
+            
+            if (hasAction) {
+                if (adminContactMethod === 'تم إلغاء الموعد') return { text: 'تم الإلغاء', class: 'badge-canceled' };
+                if (adminContactMethod === 'معلق') return { text: 'معلق', class: 'badge-pending' };
+                if (adminContactMethod === 'لا يرد') return { text: 'لا يرد', class: 'badge-pending' };
+                return { text: 'تم الإجراء', class: 'badge-done' };
+            }
+            
+            return { text: 'جديد', class: 'badge-new' };
         }
 
         function formatWhatsAppNumber(phone) {
@@ -1129,10 +1243,23 @@
             return cleaned;
         }
 
-        /* نسخ الرقم وإظهار إشعار تم النسخ بجانب الزر */
+        function formatDateOnly(isoString) {
+            if (!isoString) return '-';
+            try {
+                const date = new Date(isoString);
+                if (isNaN(date.getTime())) return isoString;
+                const yyyy = date.getFullYear();
+                const mm = String(date.getMonth() + 1).padStart(2, '0');
+                const dd = String(date.getDate()).padStart(2, '0');
+                return `${yyyy}-${mm}-${dd}`;
+            } catch (e) {
+                return isoString;
+            }
+        }
+
         function copyPhoneNumber(phone, event) {
             event.stopPropagation();
-            if (!phone) return;
+            if (!phone || phone === '-') return;
             
             navigator.clipboard.writeText(phone).then(() => {
                 const btn = event.currentTarget;
@@ -1150,8 +1277,6 @@
                 setTimeout(() => {
                     tooltip.style.opacity = '0';
                 }, 1200);
-            }).catch(err => {
-                console.error('فشل النسخ', err);
             });
         }
 
@@ -1169,14 +1294,27 @@
             let filteredRecords = filterRecordsList(records);
             const sorted = [...filteredRecords].sort((a, b) => b.isRecurring - a.isRecurring || new Date(b.createdAt) - new Date(a.createdAt));
 
-            sorted.forEach(record => {
-                const status = getDelayStatus(record.createdAt, record.actionTaken);
-                const formattedPhone = formatWhatsAppNumber(record.patientPhone);
+            sorted.forEach((record, index) => {
                 const currentAdminContact = record.adminContactMethod || 'قيد الانتظار';
+                const status = getStatusDetails(record.createdAt, record.actionTaken, currentAdminContact);
+                const hasPhone = record.patientPhone && record.patientPhone !== '-';
+                const formattedPhone = hasPhone ? formatWhatsAppNumber(record.patientPhone) : '';
                 const isOther = currentAdminContact === 'أخرى' || currentAdminContact.startsWith('أخرى');
 
                 const tr = document.createElement('tr');
+                
+                const isUrgentAndNew = record.isRecurring && status.text === 'جديد';
+                if (isUrgentAndNew) {
+                    tr.classList.add('row-urgent-new');
+                }
+
+                const isPlantProcedure = record.procedureType && record.procedureType.includes('زراعة');
+                const procedureBadgeClass = isPlantProcedure ? 'badge-procedure-plant' : 'badge-procedure';
+                const formattedDate = formatDateOnly(record.createdAt);
+
                 tr.innerHTML = `
+                    <td style="text-align: center; font-weight: 700; color: var(--text-muted);">${index + 1}</td>
+                    <td style="white-space: nowrap; font-size: 0.85rem; color: var(--text-muted);">${formattedDate}</td>
                     <td>
                         ${record.isRecurring ? '<span class="status-badge badge-priority">⭐ أولوية</span><br>' : ''}
                         ${record.isRepeatedRequest ? '<span class="status-badge badge-repeated">🔄 طلب متكرر</span><br>' : ''}
@@ -1184,15 +1322,17 @@
                     </td>
                     <td><strong>${record.patientName}</strong></td>
                     <td>
-                        <div class="phone-cell-wrapper">
-                            <a href="https://wa.me/${formattedPhone}" target="_blank" class="whatsapp-link" title="انقر لفتح واتساب"><i class="fa-brands fa-whatsapp"></i> ${record.patientPhone}</a>
-                            <button class="copy-phone-btn" onclick="copyPhoneNumber('${record.patientPhone}', event)" title="نسخ الرقم"><i class="fa-solid fa-copy"></i></button>
-                        </div>
+                        ${hasPhone ? `
+                            <div class="phone-cell-wrapper">
+                                <a href="https://wa.me/${formattedPhone}" target="_blank" class="whatsapp-link" title="انقر لفتح واتساب"><i class="fa-brands fa-whatsapp"></i> ${record.patientPhone}</a>
+                                <button class="copy-phone-btn" onclick="copyPhoneNumber('${record.patientPhone}', event)" title="نسخ الرقم"><i class="fa-solid fa-copy"></i></button>
+                            </div>
+                        ` : '<span style="color: var(--text-muted);">-</span>'}
                     </td>
                     <td>${record.fileNumber}</td>
                     <td>${record.idNumber}</td>
                     <td>${record.branch}</td>
-                    <td><span style="font-weight: 600; color: var(--primary-color);">${record.procedureType || 'غير محدد'}</span></td>
+                    <td><span class="${procedureBadgeClass}">${record.procedureType || 'غير محدد'}</span></td>
                     <td>${record.contactMethod}</td>
                     <td style="min-width: 285px; white-space: pre-wrap; word-break: break-word; line-height: 1.5;">${record.serviceRequired}${record.appointmentDateTime !== '-' ? `<br><small style="color:var(--primary-color);"><strong>الموعد:</strong> ${record.appointmentDateTime.replace('T', ' ')}</small>` : ''}</td>
                     <td>${record.coordinatorName}</td>
@@ -1222,7 +1362,7 @@
             const actionVal = document.getElementById(`action_${key}`).value;
             const adminContactSelect = document.getElementById(`adminContact_${key}`).value;
             const adminContactDetail = document.getElementById(`adminContactDetail_${key}`).value;
-            const finalAdminContact = adminContactSelect === 'أخرى' && adminContactDetail.trim() !== '' ? `أخرى (${adminContactDetail.trim()})` : adminContactSelect;
+            const finalAdminContact = adminContactSelect === 'أخرى' && adminContactDetail.trim() !== '' ? `${adminContactDetail.trim()}` : adminContactSelect;
 
             let rec = records.find(r => r.firebaseKey === key);
             if (rec) { 
@@ -1257,11 +1397,11 @@
             if (!item) return;
             document.getElementById('editFirebaseKey').value = key;
             document.getElementById('editPatientName').value = item.patientName || '';
-            document.getElementById('editPatientPhone').value = item.patientPhone || '';
+            document.getElementById('editPatientPhone').value = item.patientPhone !== '-' ? item.patientPhone : '';
             document.getElementById('editFileNumber').value = item.fileNumber !== '-' ? item.fileNumber : '';
             document.getElementById('editIdNumber').value = item.idNumber !== '-' ? item.idNumber : '';
             document.getElementById('editBranch').value = item.branch || 'معشي';
-            document.getElementById('editProcedureType').value = item.procedureType || '';
+            document.getElementById('editProcedureType').value = item.procedureType || 'زراعة';
             document.getElementById('editContactMethod').value = item.contactMethod || '';
             document.getElementById('editCoordinatorName').value = item.coordinatorName || '';
             document.getElementById('editAppointmentDateTime').value = item.appointmentDateTime !== '-' ? item.appointmentDateTime : '';
@@ -1277,7 +1417,7 @@
             const key = document.getElementById('editFirebaseKey').value;
             const updatedData = {
                 patientName: document.getElementById('editPatientName').value,
-                patientPhone: document.getElementById('editPatientPhone').value,
+                patientPhone: document.getElementById('editPatientPhone').value.trim() || '-',
                 fileNumber: document.getElementById('editFileNumber').value || '-',
                 idNumber: document.getElementById('editIdNumber').value || '-',
                 branch: document.getElementById('editBranch').value,
@@ -1327,7 +1467,8 @@
             let c24 = 0, c48 = 0;
             const now = new Date();
             records.forEach(r => {
-                if (!r.actionTaken || r.actionTaken.trim() === '') {
+                const hasAction = (r.actionTaken && r.actionTaken.trim() !== '') || (r.adminContactMethod && r.adminContactMethod !== 'قيد الانتظار');
+                if (!hasAction) {
                     const diffHours = (now - new Date(r.createdAt)) / (1000 * 60 * 60);
                     if (diffHours >= 48) c48++;
                     else if (diffHours >= 24) c24++;
@@ -1346,7 +1487,9 @@
 
         function exportToExcel() {
             if (records.length === 0) return alert('لا توجد بيانات للتصدير');
-            const dataToExport = records.map(r => ({
+            const dataToExport = records.map((r, index) => ({
+                "م": index + 1,
+                "تاريخ الإضافة": formatDateOnly(r.createdAt),
                 "اسم العميل": r.patientName,
                 "الجوال": r.patientPhone,
                 "رقم الملف": r.fileNumber,
@@ -1359,7 +1502,6 @@
                 "اسم المنسق": r.coordinatorName,
                 "أولوية": r.isRecurring ? "نعم" : "لا",
                 "طلب متكرر": r.isRepeatedRequest ? "نعم" : "لا",
-                "تاريخ التسجيل": r.createdAt,
                 "تواصل الإدارة": r.adminContactMethod || 'قيد الانتظار',
                 "إجراء الإدارة": r.actionTaken || ''
             }));
