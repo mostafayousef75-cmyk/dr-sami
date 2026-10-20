@@ -285,6 +285,73 @@
             gap: 8px;
         }
 
+        /* تنسيقات شريط التنبيهات والإشعارات العام */
+        .clinic-announcements-box {
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.15), rgba(124, 58, 237, 0.15));
+            border: 1px solid var(--primary-color);
+            border-radius: var(--radius-lg);
+            padding: 12px 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.15);
+        }
+        .announcement-header-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .announcement-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+        .announcement-ticker-container {
+            background: var(--bg-base);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 10px 14px;
+            max-height: 120px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .announcement-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--bg-surface);
+            padding: 8px 12px;
+            border-radius: 6px;
+            border-right: 4px solid var(--warning-color);
+            font-size: 0.85rem;
+            gap: 10px;
+        }
+        .announcement-text {
+            flex: 1;
+            word-break: break-word;
+            line-height: 1.4;
+        }
+        .announcement-meta {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            white-space: nowrap;
+        }
+        .btn-delete-announcement {
+            background: none;
+            border: none;
+            color: var(--danger-color);
+            cursor: pointer;
+            font-size: 0.9rem;
+            padding: 2px 6px;
+        }
+
         .progress-box {
             background: var(--bg-base);
             border: 1px solid var(--border-color);
@@ -675,9 +742,6 @@
         .btn-client-action.permanent-delete { background-color: var(--danger-color); }
         .btn-client-action.unpin-item { background-color: var(--warning-color); }
 
-        /* ---------------------------------------------------- */
-        /* تنسيقات كروت الدليل الشامل مع تخصيص مقبض السحب حصرياً */
-        /* ---------------------------------------------------- */
         .links-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -923,6 +987,21 @@
                 <!-- صفحة مؤشر الأداء والمواعيد -->
                 <div id="page-dashboard" class="page-view">
                     
+                    <!-- شريط الإشعارات والتنبيهات العام للعيادة -->
+                    <section class="clinic-announcements-box">
+                        <div class="announcement-header-row">
+                            <div class="announcement-title">
+                                <i class="fa-solid fa-bullhorn"></i> تنبيهات وإشعارات العيادة العامة
+                            </div>
+                            <button class="action-btn copy-btn" onclick="openAddAnnouncementModal()" style="padding: 5px 10px; font-size: 0.78rem;">
+                                <i class="fa-solid fa-plus"></i> إضافة تنبيه جديد
+                            </button>
+                        </div>
+                        <div class="announcement-ticker-container" id="announcementsListContainer">
+                            <!-- يتم تعبئة التنبيهات هنا ديناميكياً -->
+                        </div>
+                    </section>
+
                     <section class="dashboard-section">
                         <div class="section-header">
                             <h2><i class="fa-solid fa-chart-pie"></i> ملخص مؤشرات الأداء (KPIs)</h2>
@@ -1199,6 +1278,25 @@
         </main>
     </div>
 
+    <!-- نافذة إضافة تنبيه / إشعار عام جديد -->
+    <div class="modal" id="announcementModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-bullhorn"></i> إضافة تنبيه أو إشعار للعيادة</h3>
+                <button class="close-modal-btn" onclick="closeAnnouncementModal()">&times;</button>
+            </div>
+            <form id="announcementForm" onsubmit="saveAnnouncementItem(event)">
+                <div class="form-grid">
+                    <div class="input-field full-width">
+                        <label>نص التنبيه أو الملاحظة *</label>
+                        <textarea id="announcementText" required placeholder="اكتب التنبيه أو التحديث الجديد للعيادة هنا..."></textarea>
+                    </div>
+                </div>
+                <button type="submit" class="submit-btn" style="margin-top: 15px;"><i class="fa-solid fa-floppy-disk"></i> نشر التنبيه للجميع</button>
+            </form>
+        </div>
+    </div>
+
     <!-- نافذة إضافة / تعديل رابط جديد في الدليل الشامل -->
     <div class="modal" id="linkModal">
         <div class="modal-content">
@@ -1380,9 +1478,11 @@
         const database = firebase.database();
         const dbRef = database.ref('appointments');
         const linksDbRef = database.ref('cs_guide_links');
+        const announcementsDbRef = database.ref('clinic_announcements');
 
         let records = [];
         let csLinks = [];
+        let clinicAnnouncements = [];
         let dashboardFilter = localStorage.getItem('savedDashboardFilter') || 'all';
         let dashboardTimeFilter = localStorage.getItem('savedDashboardTimeFilter') || 'all';
         let clientHoursFilter = localStorage.getItem('savedClientHoursFilter') || '8';
@@ -1449,6 +1549,7 @@
         function saveLocal() { 
             localStorage.setItem('cachedAppointments_v16', JSON.stringify(records));
             localStorage.setItem('cachedCSLinks_v1', JSON.stringify(csLinks));
+            localStorage.setItem('cachedAnnouncements_v1', JSON.stringify(clinicAnnouncements));
         }
 
         const cached = localStorage.getItem('cachedAppointments_v16');
@@ -1456,6 +1557,9 @@
 
         const cachedLinks = localStorage.getItem('cachedCSLinks_v1');
         if (cachedLinks) { try { csLinks = JSON.parse(cachedLinks); } catch(e) { csLinks = []; } }
+
+        const cachedAnnouncements = localStorage.getItem('cachedAnnouncements_v1');
+        if (cachedAnnouncements) { try { clinicAnnouncements = JSON.parse(cachedAnnouncements); } catch(e) { clinicAnnouncements = []; } }
 
         function syncFilterTabsUI() {
             const statusContainer = document.getElementById('statusFilterTabs');
@@ -1545,6 +1649,7 @@
             }
 
             syncFilterTabsUI();
+            renderAnnouncements();
         });
 
         dbRef.on('value', (snapshot) => {
@@ -1583,6 +1688,20 @@
             }
             saveLocal();
             renderCSLinks();
+        });
+
+        announcementsDbRef.on('value', (snapshot) => {
+            const data = snapshot.val();
+            if (data) {
+                const cloudAnnouncements = [];
+                for (let key in data) { cloudAnnouncements.push({ announcementKey: key, ...data[key] }); }
+                cloudAnnouncements.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                clinicAnnouncements = cloudAnnouncements;
+            } else {
+                clinicAnnouncements = [];
+            }
+            saveLocal();
+            renderAnnouncements();
         });
 
         function playBeepAndShowToast(msg) {
@@ -1634,6 +1753,87 @@
         function cancelUniversalAuth() {
             document.getElementById('passAuthModal').classList.remove('open');
             universalAuthCallback = null;
+        }
+
+        // دوال شريط الإشعارات والتنبيهات العام
+        function renderAnnouncements() {
+            const container = document.getElementById('announcementsListContainer');
+            if (!container) return;
+            container.innerHTML = '';
+
+            if (clinicAnnouncements.length === 0) {
+                container.innerHTML = '<div style="text-align: center; color: var(--text-muted); font-size: 0.82rem; padding: 6px;">لا توجد تنبيهات جديدة حالياً. انقر على "إضافة تنبيه جديد" لإرسال تحديث للعيادة.</div>';
+                return;
+            }
+
+            clinicAnnouncements.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'announcement-item';
+                const dateStr = formatDateTimeFullCustom(item.createdAt);
+
+                div.innerHTML = `
+                    <div class="announcement-text"><i class="fa-solid fa-circle-exclamation" style="color: var(--warning-color); margin-left: 5px;"></i> ${item.text}</div>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <span class="announcement-meta">${dateStr}</span>
+                        <button class="btn-delete-announcement" onclick="deleteAnnouncement('${item.announcementKey}')" title="حذف التنبيه"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function openAddAnnouncementModal() {
+            document.getElementById('announcementText').value = '';
+            document.getElementById('announcementModal').classList.add('open');
+        }
+
+        function closeAnnouncementModal() {
+            document.getElementById('announcementModal').classList.remove('open');
+        }
+
+        function saveAnnouncementItem(e) {
+            e.preventDefault();
+            const textVal = document.getElementById('announcementText').value.trim();
+            if (!textVal) return;
+
+            const tempKey = 'ann_' + Date.now();
+            const newAnn = {
+                announcementKey: tempKey,
+                text: textVal,
+                createdAt: new Date().toISOString()
+            };
+
+            clinicAnnouncements.unshift(newAnn);
+            saveLocal();
+            renderAnnouncements();
+            closeAnnouncementModal();
+            playBeepAndShowToast('📢 تم نشر التنبيه بنجاح للجميع!');
+
+            if (navigator.onLine) {
+                const uploadData = { text: newAnn.text, createdAt: newAnn.createdAt };
+                announcementsDbRef.push(uploadData).then((pushedRef) => {
+                    const idx = clinicAnnouncements.findIndex(a => a.announcementKey === tempKey);
+                    if (idx !== -1) {
+                        clinicAnnouncements[idx].announcementKey = pushedRef.key;
+                        saveLocal();
+                    }
+                });
+            }
+        }
+
+        function deleteAnnouncement(key) {
+            requireAdminAuth(() => {
+                if (confirm('هل أنت متأكد من حذف هذا التنبيه؟')) {
+                    clinicAnnouncements = clinicAnnouncements.filter(a => a.announcementKey !== key);
+                    saveLocal();
+                    renderAnnouncements();
+
+                    if (navigator.onLine && !key.startsWith('ann_')) {
+                        announcementsDbRef.child(key).remove();
+                    }
+                    playBeepAndShowToast('🗑️ تم حذف التنبيه بنجاح!');
+                }
+            });
         }
 
         let pendingPriorityCheckbox = null;
@@ -2108,10 +2308,6 @@
             });
         }
 
-        // ===================================
-        // السحب والترتيب المباشر عبر مقبض السحب حصرياً (مؤمن بكلمة المرور)
-        // ===================================
-
         let draggedCardIndex = null;
         let activeTouchHandle = null;
 
@@ -2238,7 +2434,6 @@
             });
         }
 
-        // تم إلغاء طلب كلمة المرور عند فتح الموقع ليفتح مباشرة
         function secureOpenLink(url) {
             window.open(url, '_blank');
         }
