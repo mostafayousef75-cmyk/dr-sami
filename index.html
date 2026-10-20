@@ -329,12 +329,40 @@
             border-right: 4px solid var(--warning-color);
             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
         }
+        .announcement-body-content {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
         .announcement-body-text {
             font-size: 0.9rem;
             color: var(--text-main);
             line-height: 1.6;
             word-break: break-word;
             white-space: pre-wrap;
+            flex: 1;
+        }
+        .announcement-thumbnail-wrapper {
+            width: 55px;
+            height: 55px;
+            border-radius: 6px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            cursor: pointer;
+            flex-shrink: 0;
+            position: relative;
+            background: #000;
+        }
+        .announcement-thumbnail-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.2s;
+        }
+        .announcement-thumbnail-wrapper:hover img {
+            transform: scale(1.08);
         }
         .announcement-footer-row {
             display: flex;
@@ -1307,7 +1335,7 @@
         </main>
     </div>
 
-    <!-- نافذة إضافة / تعديل تنبيه / إشعار عام جديد -->
+    <!-- نافذة إضافة / تعديل تنبيه / إشعار عام جديد مع رفع صورة -->
     <div class="modal" id="announcementModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -1321,9 +1349,26 @@
                         <label>نص التنبيه أو الملاحظة *</label>
                         <textarea id="announcementText" required placeholder="اكتب التنبيه أو التحديث الجديد للعيادة هنا..."></textarea>
                     </div>
+                    <div class="input-field full-width">
+                        <label><i class="fa-solid fa-image"></i> إرفاق صورة مع التنبيه (اختياري)</label>
+                        <input type="file" id="announcementImageFile" accept="image/*" style="padding: 6px; cursor: pointer;">
+                    </div>
                 </div>
                 <button type="submit" class="submit-btn" style="margin-top: 15px;"><i class="fa-solid fa-floppy-disk"></i> حفظ ونشر التنبيه</button>
             </form>
+        </div>
+    </div>
+
+    <!-- نافذة تكبير وعرض الصورة المرفقة بحجم كامل -->
+    <div class="modal" id="imagePreviewModal">
+        <div class="modal-content" style="max-width: 650px; text-align: center; padding: 15px;">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-image"></i> معاينة الصورة المرفقة</h3>
+                <button class="close-modal-btn" onclick="closeImagePreviewModal()">&times;</button>
+            </div>
+            <div style="width: 100%; max-height: 75vh; overflow: hidden; display: flex; align-items: center; justify-content: center; background: #000; border-radius: 8px;">
+                <img id="previewFullImageTag" src="" alt="صورة مرفقة" style="max-width: 100%; max-height: 70vh; object-fit: contain;">
+            </div>
         </div>
     </div>
 
@@ -1579,7 +1624,7 @@
         function saveLocal() { 
             localStorage.setItem('cachedAppointments_v16', JSON.stringify(records));
             localStorage.setItem('cachedCSLinks_v1', JSON.stringify(csLinks));
-            localStorage.setItem('cachedAnnouncements_v1', JSON.stringify(clinicAnnouncements));
+            localStorage.setItem('cachedAnnouncements_v2', JSON.stringify(clinicAnnouncements));
         }
 
         const cached = localStorage.getItem('cachedAppointments_v16');
@@ -1588,7 +1633,7 @@
         const cachedLinks = localStorage.getItem('cachedCSLinks_v1');
         if (cachedLinks) { try { csLinks = JSON.parse(cachedLinks); } catch(e) { csLinks = []; } }
 
-        const cachedAnnouncements = localStorage.getItem('cachedAnnouncements_v1');
+        const cachedAnnouncements = localStorage.getItem('cachedAnnouncements_v2');
         if (cachedAnnouncements) { try { clinicAnnouncements = JSON.parse(cachedAnnouncements); } catch(e) { clinicAnnouncements = []; } }
 
         function syncFilterTabsUI() {
@@ -1785,7 +1830,7 @@
             universalAuthCallback = null;
         }
 
-        // دالة عرض الكروت المنظمة للتنبيهات مع أيقونة التعديل والحذف المباشر بدون باسورد
+        // دالة عرض كروت التنبيهات مع الصورة المصغرة ومعاينتها
         function renderAnnouncements() {
             const container = document.getElementById('announcementsListContainer');
             if (!container) return;
@@ -1801,8 +1846,20 @@
                 card.className = 'announcement-card';
                 const dateStr = formatDateTimeFullCustom(item.createdAt);
 
+                let thumbnailHTML = '';
+                if (item.imageUrl) {
+                    thumbnailHTML = `
+                        <div class="announcement-thumbnail-wrapper" onclick="openImagePreview('${item.imageUrl}')" title="اضغط لمعاينة الصورة المكبرة">
+                            <img src="${item.imageUrl}" alt="مرفق">
+                        </div>
+                    `;
+                }
+
                 card.innerHTML = `
-                    <div class="announcement-body-text">${item.text}</div>
+                    <div class="announcement-body-content">
+                        <div class="announcement-body-text">${item.text}</div>
+                        ${thumbnailHTML}
+                    </div>
                     <div class="announcement-footer-row">
                         <span><i class="fa-regular fa-clock"></i> ${dateStr}</span>
                         <div class="announcement-actions-group">
@@ -1819,9 +1876,20 @@
             });
         }
 
+        function openImagePreview(url) {
+            document.getElementById('previewFullImageTag').src = url;
+            document.getElementById('imagePreviewModal').classList.add('open');
+        }
+
+        function closeImagePreviewModal() {
+            document.getElementById('imagePreviewModal').classList.remove('open');
+            document.getElementById('previewFullImageTag').src = '';
+        }
+
         function openAddAnnouncementModal() {
             document.getElementById('editAnnouncementKey').value = '';
             document.getElementById('announcementText').value = '';
+            document.getElementById('announcementImageFile').value = '';
             document.getElementById('announcementModalTitle').innerHTML = '<i class="fa-solid fa-bullhorn"></i> إضافة تنبيه أو إشعار للعيادة';
             document.getElementById('announcementModal').classList.add('open');
         }
@@ -1831,6 +1899,7 @@
             if (!item) return;
             document.getElementById('editAnnouncementKey').value = item.announcementKey;
             document.getElementById('announcementText').value = item.text || '';
+            document.getElementById('announcementImageFile').value = '';
             document.getElementById('announcementModalTitle').innerHTML = '<i class="fa-solid fa-pen"></i> تعديل تنبيه العيادة';
             document.getElementById('announcementModal').classList.add('open');
         }
@@ -1843,52 +1912,74 @@
             e.preventDefault();
             const key = document.getElementById('editAnnouncementKey').value;
             const textVal = document.getElementById('announcementText').value.trim();
+            const imageInput = document.getElementById('announcementImageFile');
             if (!textVal) return;
 
-            if (key) {
-                // تعديل تنبيه موجود
-                const item = clinicAnnouncements.find(a => a.announcementKey === key);
-                if (item) {
-                    item.text = textVal;
+            const processAndSave = (imageUrl) => {
+                if (key) {
+                    const item = clinicAnnouncements.find(a => a.announcementKey === key);
+                    if (item) {
+                        item.text = textVal;
+                        if (imageUrl !== undefined) {
+                            item.imageUrl = imageUrl;
+                        }
+                        saveLocal();
+                        renderAnnouncements();
+                        closeAnnouncementModal();
+                        playBeepAndShowToast('✏️ تم تعديل التنبيه بنجاح!');
+
+                        if (navigator.onLine && !key.startsWith('ann_')) {
+                            const updateObj = { text: textVal };
+                            if (imageUrl !== undefined) updateObj.imageUrl = imageUrl;
+                            announcementsDbRef.child(key).update(updateObj);
+                        }
+                    }
+                } else {
+                    const tempKey = 'ann_' + Date.now();
+                    const newAnn = {
+                        announcementKey: tempKey,
+                        text: textVal,
+                        imageUrl: imageUrl || '',
+                        createdAt: new Date().toISOString()
+                    };
+
+                    clinicAnnouncements.unshift(newAnn);
                     saveLocal();
                     renderAnnouncements();
                     closeAnnouncementModal();
-                    playBeepAndShowToast('✏️ تم تعديل التنبيه بنجاح!');
+                    playBeepAndShowToast('📢 تم نشر التنبيه بنجاح للجميع!');
 
-                    if (navigator.onLine && !key.startsWith('ann_')) {
-                        announcementsDbRef.child(key).update({ text: textVal });
+                    if (navigator.onLine) {
+                        const uploadData = { text: newAnn.text, imageUrl: newAnn.imageUrl, createdAt: newAnn.createdAt };
+                        announcementsDbRef.push(uploadData).then((pushedRef) => {
+                            const idx = clinicAnnouncements.findIndex(a => a.announcementKey === tempKey);
+                            if (idx !== -1) {
+                                clinicAnnouncements[idx].announcementKey = pushedRef.key;
+                                saveLocal();
+                            }
+                        });
                     }
                 }
-            } else {
-                // إضافة تنبيه جديد
-                const tempKey = 'ann_' + Date.now();
-                const newAnn = {
-                    announcementKey: tempKey,
-                    text: textVal,
-                    createdAt: new Date().toISOString()
+            };
+
+            if (imageInput.files && imageInput.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(evt) {
+                    processAndSave(evt.target.result);
                 };
-
-                clinicAnnouncements.unshift(newAnn);
-                saveLocal();
-                renderAnnouncements();
-                closeAnnouncementModal();
-                playBeepAndShowToast('📢 تم نشر التنبيه بنجاح للجميع!');
-
-                if (navigator.onLine) {
-                    const uploadData = { text: newAnn.text, createdAt: newAnn.createdAt };
-                    announcementsDbRef.push(uploadData).then((pushedRef) => {
-                        const idx = clinicAnnouncements.findIndex(a => a.announcementKey === tempKey);
-                        if (idx !== -1) {
-                            clinicAnnouncements[idx].announcementKey = pushedRef.key;
-                            saveLocal();
-                        }
-                    });
+                reader.readAsDataURL(imageInput.files[0]);
+            } else {
+                // إذا لم يتم رفع صورة جديدة، نحتفظ بالقديمة في حال التعديل أو نتركها فارغة
+                let existingImageUrl = undefined;
+                if (key) {
+                    const existingItem = clinicAnnouncements.find(a => a.announcementKey === key);
+                    if (existingItem) existingImageUrl = existingItem.imageUrl || '';
                 }
+                processAndSave(existingImageUrl);
             }
         }
 
         function deleteAnnouncement(key) {
-            // حذف مباشر بدون كلمة مرور
             if (confirm('هل أنت متأكد من حذف هذا التنبيه؟')) {
                 clinicAnnouncements = clinicAnnouncements.filter(a => a.announcementKey !== key);
                 saveLocal();
