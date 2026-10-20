@@ -1032,7 +1032,7 @@
 
                                 <!-- زر فلتر العملاء المُميّزين المستقل -->
                                 <button class="action-btn" id="pinnedFilterBtn" onclick="togglePinnedFilter()" style="background-color: #d97706;">
-                                    <i class="fa-solid fa-thumbtack"></i> العملاء المُميّزون (<span id="pinnedCount">0</span>)
+                                    <i class="fa-solid fa-thumbtack"></i> المميزون (<span id="pinnedCount">0</span>)
                                 </button>
 
                                 <button class="action-btn copy-btn" onclick="copyClientReport()"><i class="fa-solid fa-copy"></i> نسخ الكشف</button>
@@ -1215,7 +1215,7 @@
         let dashboardFilter = localStorage.getItem('savedDashboardFilter') || 'all';
         let dashboardTimeFilter = localStorage.getItem('savedDashboardTimeFilter') || 'all';
         let clientHoursFilter = localStorage.getItem('savedClientHoursFilter') || '8';
-        let isPinnedFilterActive = false; // فلتر العملاء المُميزين المستقل
+        let isPinnedFilterActive = false;
         
         let originalEditPriorityState = false;
         let originalEditRepeatedState = false;
@@ -1271,10 +1271,10 @@
         }
 
         function saveLocal() { 
-            localStorage.setItem('cachedAppointments_v13', JSON.stringify(records));
+            localStorage.setItem('cachedAppointments_v14', JSON.stringify(records));
         }
 
-        const cached = localStorage.getItem('cachedAppointments_v13');
+        const cached = localStorage.getItem('cachedAppointments_v14');
         if (cached) { try { records = JSON.parse(cached); lastKnownRecordsCount = records.length; } catch(e) { records = []; } }
 
         function syncFilterTabsUI() {
@@ -1541,7 +1541,7 @@
                         dbRef.child(key).update({ isPinned: rec.isPinned });
                     }
 
-                    playBeepAndShowToast(rec.isPinned ? '📌 تم تثبيت العميل في قائمة المُميّزين' : '✖️ تم إزالة العميل من قائمة المُميّزين');
+                    playBeepAndShowToast(rec.isPinned ? '📌 تم تثبيت العميل في المُميّزون' : '✖️ تم إزالة العميل من المُميّزون');
                 }
             });
         }
@@ -2152,7 +2152,6 @@
             let consolidatedList = [];
 
             groupedMap.forEach((groupRecords) => {
-                // الترتيب من الأحدث للأقدم
                 groupRecords.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
                 const mainRecord = groupRecords[0];
@@ -2182,8 +2181,13 @@
                 });
             });
 
-            // ترتيب القائمة النهائية دائماً من الأحدث للأقدم
-            consolidatedList.sort((a, b) => new Date(b.latestCreatedAt) - new Date(a.latestCreatedAt));
+            // الترتيب: الحالات غير المنسوخة أولاً (من الأحدث للأقدم)، ثم الحالات المنسوخة تنزل للأسفل (من الأحدث للأقدم)
+            consolidatedList.sort((a, b) => {
+                if (a.isCopied !== b.isCopied) {
+                    return a.isCopied ? 1 : -1;
+                }
+                return new Date(b.latestCreatedAt) - new Date(a.latestCreatedAt);
+            });
 
             consolidatedList.forEach((item, index) => {
                 const card = document.createElement('div');
@@ -2198,12 +2202,11 @@
                 const dateTimeStr = formatDateTimeFullCustom(item.latestCreatedAt);
                 const keysJsonStr = JSON.stringify(item.allKeys).replace(/"/g, '&quot;');
 
-                // إذا كان في قائمة المُميّزين المستقلة، لا نعرض زر "تم النسخ" العادي ليكونوا مستقلين تماماً، ونضع زر إزالة من المميزين فقط
                 let headerActionsHTML = '';
                 if (isPinnedFilterActive) {
                     headerActionsHTML = `
                         <button class="copied-btn active" style="background-color: #d97706; border-color: #f59e0b;" onclick="requestTogglePinRecord('${rec.firebaseKey}')">
-                            <i class="fa-solid fa-thumbtack"></i> إزالة من المُميّزين
+                            <i class="fa-solid fa-thumbtack"></i> المميزون 📌
                         </button>
                     `;
                 } else {
@@ -2233,7 +2236,7 @@
                     <div class="client-actions-row">
                         ${isPinnedFilterActive ? '' : `
                         <button class="btn-client-action unpin-item" onclick="requestTogglePinRecord('${rec.firebaseKey}')">
-                            <i class="fa-solid fa-thumbtack"></i> إزالة من المُميّزين
+                            <i class="fa-solid fa-thumbtack"></i> المميزون 📌
                         </button>`}
                         <button class="btn-client-action delete-to-trash" onclick="hideClientGroupFromReport(${keysJsonStr})">
                             <i class="fa-solid fa-trash"></i> حذف
@@ -2254,7 +2257,6 @@
             }
 
             const groupedMap = new Map();
-            // إذا كنا في قائمة المُميّزين، ننسخ الكل مباشرة بدون اشتراط "تم النسخ" لأنها قائمة مخصصة للنسخ فقط
             const recordsToCopy = isPinnedFilterActive ? openRecords : openRecords.filter(r => !r.isCopied);
 
             recordsToCopy.forEach(record => {
