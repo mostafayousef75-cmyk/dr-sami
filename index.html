@@ -1560,7 +1560,7 @@
         let clinicAnnouncements = [];
         let dashboardFilter = localStorage.getItem('savedDashboardFilter') || 'all';
         let dashboardTimeFilter = localStorage.getItem('savedDashboardTimeFilter') || 'all';
-        let clientHoursFilter = localStorage.getItem('savedClientHoursFilter') || '8';
+        let clientHoursFilter = localStorage.getItem('savedClientHoursFilter') || 'all';
         let isPinnedFilterActive = false;
         
         let originalEditPriorityState = false;
@@ -1780,7 +1780,6 @@
             renderAnnouncements();
         });
 
-        // دالة التنبيهات الصوتية المقتصرة فقط على استلام عميل جديد أو إضافة تنبيه للعيادة
         function playBeepAndShowToast(msg) {
             try {
                 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -2505,7 +2504,6 @@
 
                 const handle = card.querySelector('.drag-handle');
 
-                // السحب والإفلات للكمبيوتر
                 card.addEventListener('dragstart', (e) => {
                     requireAdminAuth(() => {
                         draggedCardIndex = index;
@@ -2538,7 +2536,6 @@
                     draggedCardIndex = null;
                 });
 
-                // السحب والإفلات للشاشات اللمسية
                 handle.addEventListener('touchstart', (e) => {
                     e.preventDefault();
                     requireAdminAuth(() => {
@@ -2695,16 +2692,19 @@
             renderClientReport();
         }
 
+        // دالة الفلترة لصفحة الكشف
         function getOpenFilteredRecords() {
             let openRecords = records.filter(r => {
+                // استبعاد أي عميل تم إخفاؤه أو نقله للسلة
                 if (r.isHiddenFromClients) return false;
+                
+                // إذا كان فلتر المميزين مفعلاً، نعرض المميزين فقط
                 if (isPinnedFilterActive && !r.isPinned) return false;
 
-                const isPending = !r.adminContactMethod || r.adminContactMethod === 'قيد الانتظار';
-                const noAction = !r.actionTaken || r.actionTaken.trim() === '';
-                return isPending && noAction;
+                return true;
             });
 
+            // فلترة الوقت
             if (clientHoursFilter !== 'all' && !isPinnedFilterActive) {
                 const now = new Date();
                 openRecords = openRecords.filter(r => {
@@ -2963,7 +2963,6 @@
                 });
             });
 
-            // ترتيب الكروت دائماً من الأحدث إلى الأقدم
             consolidatedList.sort((a, b) => new Date(b.latestCreatedAt) - new Date(a.latestCreatedAt));
 
             consolidatedList.forEach((item, index) => {
@@ -3123,9 +3122,8 @@
             let keysToDelete = [];
 
             records = records.filter(r => {
-                const isPending = (!r.adminContactMethod || r.adminContactMethod === 'قيد الانتظار') && (!r.actionTaken || r.actionTaken.trim() === '');
                 let shouldDelete = false;
-                if (isPending && !r.isHiddenFromClients) {
+                if (!r.isHiddenFromClients) {
                     if (clientHoursFilter === 'all') {
                         shouldDelete = true;
                     } else {
