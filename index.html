@@ -463,6 +463,12 @@
 
         table th, table td { padding: 8px 8px; text-align: right; border-bottom: 1px solid var(--border-color); vertical-align: middle; color: var(--text-main); }
 
+        /* تغيير لون الصف بالكامل عند الاعتذار */
+        tr.row-apologized {
+            background-color: rgba(220, 38, 38, 0.18) !important;
+            border-right: 4px solid var(--danger-color);
+        }
+
         .status-badge { padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; color: #fff; display: inline-block; margin-bottom: 2px; }
         .badge-priority { background-color: #7c3aed; box-shadow: 0 0 8px rgba(124, 58, 237, 0.4); }
         .badge-repeated { background-color: #e11d48; }
@@ -471,6 +477,7 @@
         .badge-completed { background-color: #16a34a; }
         .badge-suspended { background-color: #ca8a04; }
         .badge-noresponse { background-color: #475569; }
+        .badge-apologized { background-color: #dc2626; box-shadow: 0 0 8px rgba(220, 38, 38, 0.4); }
         .badge-other { background-color: #0d9488; }
 
         .proc-badge { padding: 4px 10px; border-radius: 6px; font-size: 0.8rem; font-weight: 700; display: inline-block; text-align: center; }
@@ -538,155 +545,67 @@
         }
         #notificationToast.show { transform: translateY(0); opacity: 1; }
 
-        .client-report-container {
-            background-color: var(--bg-surface);
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius-lg);
-            padding: 12px;
+        /* تنسيقات شبكة الدليل الشامل لخدمة العملاء */
+        .links-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
         }
-
-        .client-card-wrapper {
-            background-color: var(--bg-base);
+        .link-card {
+            background: var(--bg-base);
             border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 14px;
-            margin-bottom: 12px;
+            border-radius: var(--radius-md);
+            padding: 15px;
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 10px;
+            position: relative;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .link-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            border-color: var(--primary-color);
+        }
+        .link-card-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+            font-size: 1rem;
             color: var(--text-main);
-            font-family: var(--font-family);
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-            transition: all 0.3s ease;
-            width: 100%;
         }
-
-        .client-card-wrapper.is-copied {
-            background-color: rgba(22, 163, 74, 0.08);
-            border-color: var(--success-color);
-            opacity: 0.85;
+        .link-card-header i {
+            color: var(--primary-color);
+            font-size: 1.2rem;
         }
-
-        .copied-btn {
-            background: transparent;
-            border: 1px solid var(--border-color);
+        .link-card-desc {
+            font-size: 0.82rem;
             color: var(--text-muted);
-            padding: 4px 8px;
-            border-radius: 6px;
-            font-family: var(--font-family);
-            font-size: 0.78rem;
-            font-weight: 700;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            transition: all 0.2s ease;
-            white-space: nowrap;
+            line-height: 1.4;
+            min-height: 35px;
         }
-
-        .copied-btn.active {
-            background: var(--success-color);
-            color: #ffffff;
-            border-color: var(--success-color);
-            box-shadow: 0 0 10px rgba(22, 163, 74, 0.3);
-        }
-
-        .client-card-header {
+        .link-card-actions {
             display: flex;
-            align-items: flex-start;
-            justify-content: space-between;
-            font-size: 0.95rem;
-            font-weight: 700;
-            color: var(--text-main);
-            flex-wrap: wrap;
             gap: 8px;
+            margin-top: 5px;
         }
-
-        .client-card-header .client-title {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            color: var(--text-main);
-            flex-wrap: wrap;
+        .btn-open-link {
             flex: 1;
-            min-width: 200px;
-        }
-
-        .client-card-header .client-select-chk {
-            width: 18px;
-            height: 18px;
-            cursor: pointer;
-            accent-color: var(--primary-color);
-            flex-shrink: 0;
-        }
-
-        .client-info-row {
-            font-size: 0.9rem;
-            color: var(--text-main);
-            line-height: 1.5;
-            word-break: break-word;
-        }
-
-        .client-info-row .info-label {
-            color: var(--text-muted);
-        }
-
-        .client-datetime-badge {
-            font-family: Arial, sans-serif;
-            font-size: 0.78rem;
-            font-weight: 700;
-            color: #ffffff;
-            background: rgba(37, 99, 235, 0.2);
-            padding: 3px 8px;
-            border-radius: 4px;
-            border: 1px solid rgba(37, 99, 235, 0.4);
-            direction: ltr;
-            display: inline-block;
-            white-space: nowrap;
-        }
-        body.light-theme .client-datetime-badge {
-            color: #0f172a;
-            background: #e2e8f0;
-            border-color: #cbd5e1;
-        }
-
-        .client-repeated-badge {
-            background-color: #e11d48;
-            color: #ffffff;
-            font-size: 0.72rem;
-            font-weight: 800;
-            padding: 2px 8px;
-            border-radius: 12px;
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            box-shadow: 0 0 8px rgba(225, 29, 72, 0.4);
-        }
-
-        .client-actions-row {
-            display: flex;
-            gap: 6px;
-            margin-top: 6px;
-            justify-content: flex-start;
-            flex-wrap: wrap;
-        }
-        .btn-client-action {
-            padding: 4px 10px;
-            border-radius: 5px;
-            border: none;
+            background-color: var(--primary-color);
             color: #fff;
-            font-family: var(--font-family);
-            font-size: 0.78rem;
+            text-decoration: none;
+            padding: 8px 12px;
+            border-radius: var(--radius-md);
+            font-size: 0.85rem;
             font-weight: 700;
-            cursor: pointer;
-            display: inline-flex;
+            display: flex;
             align-items: center;
-            gap: 4px;
+            justify-content: center;
+            gap: 6px;
         }
-        .btn-client-action.delete-to-trash { background-color: var(--danger-color); }
-        .btn-client-action.restore { background-color: var(--success-color); }
-        .btn-client-action.permanent-delete { background-color: var(--danger-color); }
-        .btn-client-action.unpin-item { background-color: var(--warning-color); }
+        .btn-open-link:hover { background-color: var(--primary-hover); }
 
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 2000; justify-content: center; align-items: center; padding: 15px; }
         .modal.open { display: flex; }
@@ -712,23 +631,6 @@
             .open-sidebar-btn {
                 display: inline-flex !important;
             }
-            .client-card-header {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            .client-datetime-badge {
-                align-self: flex-start;
-                margin-top: 4px;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .table-container { overflow-x: auto; }
-            table { min-width: 1000px; }
-            .content-body { padding: 10px; }
-            .top-header { padding: 12px 15px; }
-            .actions-toolbar { width: 100%; }
-            .action-btn { flex: 1 1 calc(50% - 8px); justify-content: center; }
         }
     </style>
 </head>
@@ -736,7 +638,7 @@
 
     <div id="notificationToast">
         <i class="fa-solid fa-circle-check" style="font-size: 1.1rem;"></i>
-        <span id="toastMessage">تمت إضافة عميل جديد بنجاح!</span>
+        <span id="toastMessage">تمت العملية بنجاح!</span>
     </div>
 
     <div class="app-layout" id="appLayout">
@@ -764,6 +666,11 @@
                     <i class="fa-solid fa-file-lines"></i>
                     <span>صفحة الكشف</span>
                 </div>
+                <!-- العنصر الجديد المضاف بناءً على الصورة -->
+                <div class="menu-item" id="menu-csguide" onclick="switchPage('csguide')">
+                    <i class="fa-solid fa-book-bookmark"></i>
+                    <span>الدليل الشامل لـ (خدمة العملاء)</span>
+                </div>
             </nav>
 
             <div class="sidebar-footer">
@@ -790,6 +697,7 @@
 
             <div class="content-body">
                 
+                <!-- صفحة مؤشر الأداء والمواعيد -->
                 <div id="page-dashboard" class="page-view">
                     
                     <section class="dashboard-section">
@@ -946,7 +854,6 @@
                                     <button class="filter-tab" data-filter="extraction" onclick="setDashboardFilter('extraction', this)">حالات الخلع 🩺</button>
                                     <button class="filter-tab" data-filter="review" onclick="setDashboardFilter('review', this)">حالات المراجعة 📋</button>
                                     
-                                    <!-- قائمة الاستفسارات -->
                                     <div class="dropdown-filter-container" id="inquiriesDropdownContainer">
                                         <button class="dropdown-filter-btn" id="inquiriesDropdownBtn" onclick="toggleDropdown('inquiriesDropdownContent')">
                                             <i class="fa-solid fa-comments"></i> الاستفسارات <i class="fa-solid fa-chevron-down" style="font-size:0.7rem;"></i>
@@ -958,7 +865,6 @@
                                         </div>
                                     </div>
 
-                                    <!-- قائمة الكشفيات والمواعيد -->
                                     <div class="dropdown-filter-container" id="appointmentsDropdownContainer">
                                         <button class="dropdown-filter-btn" id="appointmentsDropdownBtn" onclick="toggleDropdown('appointmentsDropdownContent')">
                                             <i class="fa-solid fa-stethoscope"></i> الكشفيات والمواعيد <i class="fa-solid fa-chevron-down" style="font-size:0.7rem;"></i>
@@ -1007,10 +913,9 @@
 
                 </div>
 
+                <!-- صفحة الكشف -->
                 <div id="page-clients" class="page-view hidden">
-                    
                     <section class="dashboard-section">
-                        
                         <div style="display: flex; justify-content: space-between; align-items: center; background: var(--bg-base); padding: 12px 15px; border-radius: 8px; border: 1px solid var(--border-color); margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
                             <div style="display: flex; align-items: center; gap: 10px;">
                                 <h2 style="font-size: 1.1rem; color: var(--primary-color); font-weight: 700;">
@@ -1030,7 +935,6 @@
                                     <option value="720">شهر</option>
                                 </select>
 
-                                <!-- زر فلتر العملاء المُميّزين المستقل -->
                                 <button class="action-btn" id="pinnedFilterBtn" onclick="togglePinnedFilter()" style="background-color: #d97706;">
                                     <i class="fa-solid fa-thumbtack"></i> المميزون (<span id="pinnedCount">0</span>)
                                 </button>
@@ -1042,20 +946,62 @@
                             </div>
                         </div>
 
-                        <!-- خانة البحث في صفحة الكشف -->
                         <div style="margin-bottom: 12px; display: flex; gap: 10px; align-items: center; background: var(--bg-base); padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border-color);">
                             <i class="fa-solid fa-magnifying-glass" style="color: var(--text-muted);"></i>
                             <input type="text" id="clientSearchInput" oninput="renderClientReport()" placeholder="بحث بالاسم، رقم الجوال، رقم الملف، الهوية..." style="width: 100%; background: transparent; border: none; outline: none; color: var(--text-main); font-family: var(--font-family); font-size: 0.88rem;">
                         </div>
 
                         <div id="clientReportList" class="client-report-container"></div>
-
                     </section>
+                </div>
 
+                <!-- الصفحة الجديدة: الدليل الشامل لـ (خدمة العملاء) -->
+                <div id="page-csguide" class="page-view hidden">
+                    <section class="dashboard-section">
+                        <div class="section-header">
+                            <h2><i class="fa-solid fa-book-bookmark"></i> الدليل الشامل لـ (خدمة العملاء) - الروابط والتحويل السريع</h2>
+                            <button class="action-btn copy-btn" onclick="openAddLinkModal()"><i class="fa-solid fa-plus"></i> إضافة رابط جديد</button>
+                        </div>
+                        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 10px;">
+                            صفحة مخصصة لحفظ وتسهيل الوصول للروابط الخارجية والمواقع الهامة. يمكنك فتح أي موقع مباشرة بضغطة زر.
+                        </p>
+
+                        <div class="links-grid" id="linksGridContainer">
+                            <!-- سيتم توليد الروابط هنا تلقائياً -->
+                        </div>
+                    </section>
                 </div>
 
             </div>
         </main>
+    </div>
+
+    <!-- نافذة إضافة / تعديل رابط جديد في الدليل الشامل -->
+    <div class="modal" id="linkModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="linkModalTitle"><i class="fa-solid fa-link"></i> إضافة رابط جديد</h3>
+                <button class="close-modal-btn" onclick="closeLinkModal()">&times;</button>
+            </div>
+            <form id="linkForm" onsubmit="saveLinkItem(event)">
+                <input type="hidden" id="linkKey">
+                <div class="form-grid">
+                    <div class="input-field full-width">
+                        <label>عنوان الرابط / الموقع *</label>
+                        <input type="text" id="linkTitle" required placeholder="مثال: رابط نظام بيفاتيل Bevatel">
+                    </div>
+                    <div class="input-field full-width">
+                        <label>الرابط (URL) *</label>
+                        <input type="url" id="linkUrl" required placeholder="https://example.com">
+                    </div>
+                    <div class="input-field full-width">
+                        <label>وصف مختصر</label>
+                        <textarea id="linkDesc" placeholder="اكتب وصفاً مختصراً للرابط والهدف منه..."></textarea>
+                    </div>
+                </div>
+                <button type="submit" class="submit-btn" style="margin-top: 15px;"><i class="fa-solid fa-floppy-disk"></i> حفظ الرابط</button>
+            </form>
+        </div>
     </div>
 
     <!-- نافذة سلة المحذوفات والاسترجاع -->
@@ -1210,12 +1156,14 @@
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
         const dbRef = database.ref('appointments');
+        const linksDbRef = database.ref('cs_guide_links'); // مرجع قاعدة البيانات للروابط
 
         let records = [];
+        let csLinks = []; // الروابط المضافة في الدليل الشامل
         let dashboardFilter = localStorage.getItem('savedDashboardFilter') || 'all';
         let dashboardTimeFilter = localStorage.getItem('savedDashboardTimeFilter') || 'all';
         let clientHoursFilter = localStorage.getItem('savedClientHoursFilter') || '8';
-        let isPinnedFilterActive = localStorage.getItem('savedPinnedFilterActive') === 'true';
+        let isPinnedFilterActive = false;
         
         let originalEditPriorityState = false;
         let originalEditRepeatedState = false;
@@ -1263,6 +1211,11 @@
                 document.getElementById('menu-clients').classList.add('active');
                 document.getElementById('pageTitle').innerText = 'صفحة الكشف';
                 renderClientReport();
+            } else if (page === 'csguide') {
+                document.getElementById('page-csguide').classList.remove('hidden');
+                document.getElementById('menu-csguide').classList.add('active');
+                document.getElementById('pageTitle').innerText = 'الدليل الشامل لـ (خدمة العملاء)';
+                renderCSLinks();
             }
 
             if (window.innerWidth <= 992) {
@@ -1272,10 +1225,14 @@
 
         function saveLocal() { 
             localStorage.setItem('cachedAppointments_v16', JSON.stringify(records));
+            localStorage.setItem('cachedCSLinks_v1', JSON.stringify(csLinks));
         }
 
         const cached = localStorage.getItem('cachedAppointments_v16');
         if (cached) { try { records = JSON.parse(cached); lastKnownRecordsCount = records.length; } catch(e) { records = []; } }
+
+        const cachedLinks = localStorage.getItem('cachedCSLinks_v1');
+        if (cachedLinks) { try { csLinks = JSON.parse(cachedLinks); } catch(e) { csLinks = []; } }
 
         function syncFilterTabsUI() {
             const statusContainer = document.getElementById('statusFilterTabs');
@@ -1357,11 +1314,11 @@
                 hoursSelect.value = clientHoursFilter;
             }
 
-            // تطبيق حالة زر المميزون المحفوظة عند التحميل أو الريفرش
+            isPinnedFilterActive = false;
             const btn = document.getElementById('pinnedFilterBtn');
-            if (btn && isPinnedFilterActive) {
-                btn.style.backgroundColor = '#16a34a';
-                btn.style.boxShadow = '0 0 10px rgba(22, 163, 74, 0.4)';
+            if (btn) {
+                btn.style.backgroundColor = '#d97706';
+                btn.style.boxShadow = 'none';
             }
 
             syncFilterTabsUI();
@@ -1389,6 +1346,20 @@
             updateDailyProgress();
             renderClientReport();
             renderTrashModalList();
+        });
+
+        // المزامنة مع السحابة لروابط الدليل الشامل
+        linksDbRef.on('value', (snapshot) => {
+            const data = snapshot.val();
+            if (data) {
+                const cloudLinks = [];
+                for (let key in data) { cloudLinks.push({ linkKey: key, ...data[key] }); }
+                csLinks = cloudLinks;
+            } else {
+                csLinks = [];
+            }
+            saveLocal();
+            renderCSLinks();
         });
 
         function playBeepAndShowToast(msg) {
@@ -1560,7 +1531,6 @@
 
         function togglePinnedFilter() {
             isPinnedFilterActive = !isPinnedFilterActive;
-            localStorage.setItem('savedPinnedFilterActive', isPinnedFilterActive);
             const btn = document.getElementById('pinnedFilterBtn');
             if (isPinnedFilterActive) {
                 btn.style.backgroundColor = '#16a34a';
@@ -1702,9 +1672,14 @@
                 }
 
                 const currentContact = record.adminContactMethod || 'قيد الانتظار';
-                const isOther = !['قيد الانتظار', 'قيد الإجراء', 'تم التواصل', 'معلق', 'لا يرد'].includes(currentContact);
+                const isOther = !['قيد الانتظار', 'قيد الإجراء', 'تم التواصل', 'معلق', 'لا يرد', 'اعتذر'].includes(currentContact);
                 const selectVal = isOther ? 'أخرى' : currentContact;
                 const otherDetail = isOther ? currentContact : (record.adminContactDetail || '');
+
+                // في حالة اختيار "اعتذر"، تمييز الصف بالكامل باللون الأحمر
+                if (selectVal === 'اعتذر') {
+                    tr.classList.add('row-apologized');
+                }
 
                 let statusBadgeHTML = '';
                 if (record.isRecurring) {
@@ -1720,6 +1695,7 @@
                 else if (selectVal === 'تم التواصل') sClass = 'badge-completed';
                 else if (selectVal === 'معلق') sClass = 'badge-suspended';
                 else if (selectVal === 'لا يرد') sClass = 'badge-noresponse';
+                else if (selectVal === 'اعتذر') sClass = 'badge-apologized';
 
                 statusBadgeHTML += `<span class="status-badge ${sClass}">${selectVal}</span>`;
 
@@ -1751,6 +1727,8 @@
                             <option value="تم التواصل" ${selectVal === 'تم التواصل' ? 'selected' : ''}>تم التواصل ✅</option>
                             <option value="معلق" ${selectVal === 'معلق' ? 'selected' : ''}>معلق 🟡</option>
                             <option value="لا يرد" ${selectVal === 'لا يرد' ? 'selected' : ''}>لا يرد ❌</option>
+                            <!-- الخيار الجديد بناءً على الصورة -->
+                            <option value="اعتذر" ${selectVal === 'اعتذر' ? 'selected' : ''}>اعتذر ❌</option>
                             <option value="أخرى" ${selectVal === 'أخرى' ? 'selected' : ''}>أخرى ✍️</option>
                         </select>
                         <input type="text" class="table-input" id="adminOther_${record.firebaseKey}" placeholder="التفاصيل..." value="${otherDetail}" style="margin-top: 5px; ${selectVal === 'أخرى' ? '' : 'display:none;'}">
@@ -1911,6 +1889,128 @@
             });
         }
 
+        // ===================================
+        // وظائف صفحة الدليل الشامل لخدمة العملاء
+        // ===================================
+
+        function renderCSLinks() {
+            const container = document.getElementById('linksGridContainer');
+            if (!container) return;
+            container.innerHTML = '';
+
+            if (csLinks.length === 0) {
+                container.innerHTML = `
+                    <div style="grid-column: 1/-1; text-align: center; padding: 30px; color: var(--text-muted);">
+                        لا توجد روابط مضافة حالياً. انقر على "إضافة رابط جديد" لإضافة أول رابط للدليل الشامل.
+                    </div>
+                `;
+                return;
+            }
+
+            csLinks.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'link-card';
+                card.innerHTML = `
+                    <div class="link-card-header">
+                        <i class="fa-solid fa-globe"></i>
+                        <span>${item.title}</span>
+                    </div>
+                    <div class="link-card-desc">${item.desc || 'لا يوجد وصف مُضاف.'}</div>
+                    <div class="link-card-actions">
+                        <a href="${item.url}" target="_blank" class="btn-open-link"><i class="fa-solid fa-arrow-up-right-from-square"></i> فتح الموقع</a>
+                        <button class="btn-edit-action" onclick="openEditLinkModal('${item.linkKey}')" title="تعديل الرابط"><i class="fa-solid fa-pen"></i></button>
+                        <button class="btn-delete-action" onclick="deleteCSLink('${item.linkKey}')" title="حذف الرابط"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function openAddLinkModal() {
+            requireAdminAuth(() => {
+                document.getElementById('linkKey').value = '';
+                document.getElementById('linkTitle').value = '';
+                document.getElementById('linkUrl').value = '';
+                document.getElementById('linkDesc').value = '';
+                document.getElementById('linkModalTitle').innerHTML = '<i class="fa-solid fa-link"></i> إضافة رابط جديد';
+                document.getElementById('linkModal').classList.add('open');
+            });
+        }
+
+        function openEditLinkModal(key) {
+            requireAdminAuth(() => {
+                const item = csLinks.find(l => l.linkKey === key);
+                if (!item) return;
+                document.getElementById('linkKey').value = item.linkKey;
+                document.getElementById('linkTitle').value = item.title || '';
+                document.getElementById('linkUrl').value = item.url || '';
+                document.getElementById('linkDesc').value = item.desc || '';
+                document.getElementById('linkModalTitle').innerHTML = '<i class="fa-solid fa-pen"></i> تعديل بيانات الرابط';
+                document.getElementById('linkModal').classList.add('open');
+            });
+        }
+
+        function closeLinkModal() {
+            document.getElementById('linkModal').classList.remove('open');
+        }
+
+        function saveLinkItem(e) {
+            e.preventDefault();
+            const key = document.getElementById('linkKey').value;
+            const title = document.getElementById('linkTitle').value.trim();
+            const url = document.getElementById('linkUrl').value.trim();
+            const desc = document.getElementById('linkDesc').value.trim();
+
+            if (key) {
+                // تعديل رابط موجود
+                let item = csLinks.find(l => l.linkKey === key);
+                if (item) {
+                    item.title = title;
+                    item.url = url;
+                    item.desc = desc;
+
+                    if (navigator.onLine && !key.startsWith('local_')) {
+                        linksDbRef.child(key).update({ title, url, desc });
+                    }
+                }
+            } else {
+                // إضافة رابط جديد
+                const tempKey = 'link_' + Date.now();
+                const newLink = { linkKey: tempKey, title, url, desc };
+                csLinks.unshift(newLink);
+
+                if (navigator.onLine) {
+                    linksDbRef.push({ title, url, desc }).then((pushedRef) => {
+                        const idx = csLinks.findIndex(l => l.linkKey === tempKey);
+                        if (idx !== -1) { csLinks[idx].linkKey = pushedRef.key; saveLocal(); }
+                    });
+                }
+            }
+
+            saveLocal();
+            renderCSLinks();
+            closeLinkModal();
+            playBeepAndShowToast('✅ تم حفظ الرابط بنجاح!');
+        }
+
+        function deleteCSLink(key) {
+            requireAdminAuth(() => {
+                if (confirm('هل أنت متأكد من حذف هذا الرابط من الدليل الشامل؟')) {
+                    const idx = csLinks.findIndex(l => l.linkKey === key);
+                    if (idx !== -1) {
+                        csLinks.splice(idx, 1);
+                        saveLocal();
+                        renderCSLinks();
+
+                        if (navigator.onLine && !key.startsWith('link_')) {
+                            linksDbRef.child(key).remove();
+                        }
+                        playBeepAndShowToast('🗑️ تم حذف الرابط بنجاح!');
+                    }
+                }
+            });
+        }
+
         function setClientTimeFilterSelect(hours) {
             clientHoursFilter = hours;
             localStorage.setItem('savedClientHoursFilter', hours);
@@ -1920,7 +2020,6 @@
         function getOpenFilteredRecords() {
             let openRecords = records.filter(r => {
                 if (r.isHiddenFromClients) return false;
-                
                 if (isPinnedFilterActive && !r.isPinned) return false;
 
                 const isPending = !r.adminContactMethod || r.adminContactMethod === 'قيد الانتظار';
