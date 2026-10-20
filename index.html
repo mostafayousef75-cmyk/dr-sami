@@ -1271,10 +1271,10 @@
         }
 
         function saveLocal() { 
-            localStorage.setItem('cachedAppointments_v14', JSON.stringify(records));
+            localStorage.setItem('cachedAppointments_v15', JSON.stringify(records));
         }
 
-        const cached = localStorage.getItem('cachedAppointments_v14');
+        const cached = localStorage.getItem('cachedAppointments_v15');
         if (cached) { try { records = JSON.parse(cached); lastKnownRecordsCount = records.length; } catch(e) { records = []; } }
 
         function syncFilterTabsUI() {
@@ -2010,6 +2010,7 @@
             });
         }
 
+        // دالة استرجاع العميل المُصلحة لتحديث البيانات بدون أخطاء
         function restoreClientToReport(key) {
             requireAdminAuth(() => {
                 let rec = records.find(r => r.firebaseKey === key);
@@ -2020,7 +2021,7 @@
                     renderClientReport();
                     renderTrashModalList();
                     if (navigator.onLine && !key.startsWith('local_')) {
-                        dbRef.child(k).update({ isHiddenFromClients: false, deletedAt: null });
+                        dbRef.child(key).update({ isHiddenFromClients: false, deletedAt: null });
                     }
                     playBeepAndShowToast('↩️ تم استرجاع العميل إلى صفحة الكشف بنجاح!');
                 }
@@ -2181,7 +2182,6 @@
                 });
             });
 
-            // الترتيب: الحالات غير المنسوخة أولاً (من الأحدث للأقدم)، ثم الحالات المنسوخة تنزل للأسفل (من الأحدث للأقدم)
             consolidatedList.sort((a, b) => {
                 if (a.isCopied !== b.isCopied) {
                     return a.isCopied ? 1 : -1;
