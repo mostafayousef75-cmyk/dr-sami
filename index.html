@@ -773,6 +773,8 @@
             justify-content: center;
             gap: 6px;
             white-space: nowrap;
+            cursor: pointer;
+            border: none;
         }
         .btn-open-link:hover { background-color: var(--primary-hover); }
 
@@ -1184,7 +1186,7 @@
                             <button class="action-btn copy-btn" onclick="openAddLinkModal()"><i class="fa-solid fa-plus"></i> إضافة رابط جديد</button>
                         </div>
                         <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 10px;">
-                            💡 **السحب والترتيب:** اضغط فقط على أيقونة المقبض الزرقاء <i class="fa-solid fa-grip-vertical" style="color: var(--primary-color);"></i> واسحب الكارت لأعلى أو لأسفل. باقي المساحات مخصصة للتصفح الطبيعي (Scroll) بدون تحريك.
+                            💡 **حماية المواقع:** فتح أو ترتيب أو تعديل أو حذف أي رابط يتطلب **كلمة مرور الموقع / الإدارة**. اضغط على أيقونة المقبض الزرقاء <i class="fa-solid fa-grip-vertical" style="color: var(--primary-color);"></i> للترتيب بالسحب.
                         </p>
 
                         <div class="links-grid" id="linksGridContainer">
@@ -2107,7 +2109,7 @@
         }
 
         // ===================================
-        // السحب والترتيب المباشر عبر مقبض السحب حصرياً (Handle Only)
+        // السحب والترتيب المباشر عبر مقبض السحب حصرياً (مؤمن بكلمة المرور)
         // ===================================
 
         let draggedCardIndex = null;
@@ -2133,14 +2135,14 @@
                 card.setAttribute('data-index', index);
 
                 card.innerHTML = `
-                    <div class="drag-handle" title="امسك من هنا للترتيب بالسحب"><i class="fa-solid fa-grip-vertical"></i></div>
+                    <div class="drag-handle" title="امسك من هنا للترتيب بالسحب (يتطلب باسورد الإدارة)"><i class="fa-solid fa-grip-vertical"></i></div>
                     <div class="link-card-header">
                         <i class="fa-solid fa-globe"></i>
                         <span>${item.title}</span>
                     </div>
                     <div class="link-card-desc">${item.desc || 'لا يوجد وصف مُضاف.'}</div>
                     <div class="link-card-actions">
-                        <a href="${item.url}" target="_blank" class="btn-open-link"><i class="fa-solid fa-arrow-up-right-from-square"></i> فتح الموقع</a>
+                        <button type="button" class="btn-open-link" onclick="secureOpenLink('${item.url}')"><i class="fa-solid fa-arrow-up-right-from-square"></i> فتح الموقع</button>
                         <button class="btn-edit-action" onclick="openEditLinkModal('${item.linkKey}')" title="تعديل الرابط"><i class="fa-solid fa-pen"></i></button>
                         <button class="btn-delete-action" onclick="deleteCSLink('${item.linkKey}')" title="حذف الرابط"><i class="fa-solid fa-trash"></i></button>
                     </div>
@@ -2148,18 +2150,22 @@
 
                 const handle = card.querySelector('.drag-handle');
 
-                // جعل السحب للكمبيوتر متاحاً من المقبض فقط
-                handle.addEventListener('mousedown', () => {
-                    card.setAttribute('draggable', 'true');
-                });
-                handle.addEventListener('mouseup', () => {
-                    card.removeAttribute('draggable');
+                // حماية السحب والترتيب بكلمة المرور
+                handle.addEventListener('mousedown', (e) => {
+                    e.preventDefault();
+                    requireAdminAuth(() => {
+                        card.setAttribute('draggable', 'true');
+                        draggedCardIndex = index;
+                        card.classList.add('dragging');
+                    });
                 });
 
                 card.addEventListener('dragstart', (e) => {
-                    draggedCardIndex = index;
-                    card.classList.add('dragging');
+                    if (!card.classList.contains('dragging')) {
+                        e.preventDefault();
+                    }
                 });
+
                 card.addEventListener('dragover', (e) => {
                     e.preventDefault();
                     card.classList.add('drag-over');
@@ -2182,17 +2188,19 @@
                     draggedCardIndex = null;
                 });
 
-                // السحب المباشر للموبايل من مقبض السحب (Touch Handle)
+                // السحب المباشر للموبايل من مقبض السحب (محمي بكلمة المرور)
                 handle.addEventListener('touchstart', (e) => {
-                    activeTouchHandle = card;
-                    draggedCardIndex = index;
-                    card.classList.add('dragging');
-                }, { passive: true });
+                    e.preventDefault();
+                    requireAdminAuth(() => {
+                        activeTouchHandle = card;
+                        draggedCardIndex = index;
+                        card.classList.add('dragging');
+                    });
+                }, { passive: false });
 
                 handle.addEventListener('touchmove', (e) => {
                     if (!activeTouchHandle) return;
                     
-                    // تحريك واستكشاف العنصر الموجود تحت الأصبع
                     const touchLoc = e.touches[0];
                     const targetEl = document.elementFromPoint(touchLoc.clientX, touchLoc.clientY);
 
@@ -2229,6 +2237,12 @@
                 });
 
                 container.appendChild(card);
+            });
+        }
+
+        function secureOpenLink(url) {
+            requireAdminAuth(() => {
+                window.open(url, '_blank');
             });
         }
 
