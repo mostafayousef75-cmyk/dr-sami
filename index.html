@@ -694,6 +694,7 @@
         .client-card-wrapper.is-copied {
             background-color: rgba(22, 163, 74, 0.06);
             border-color: rgba(22, 163, 74, 0.3);
+            opacity: 0.75;
         }
 
         .client-card-header {
@@ -1172,7 +1173,7 @@
 
                     <section class="dashboard-section">
                         <div class="section-header">
-                            <h2><i class="fa-solid fa-database"></i> التصدير والاستيراد للادارة</h2>
+                            <h2><i class="fa-solid fa-database"></i> التصدير واستيراد البيانات</h2>
                         </div>
                         <div class="actions-toolbar">
                             <button class="action-btn excel" onclick="exportToExcel()"><i class="fa-solid fa-file-excel"></i> تصدير Excel</button>
@@ -1336,7 +1337,7 @@
         </main>
     </div>
 
-    <!-- نافذة إضافة / تعديل تنبيه / إشعار عام جديد مع رفع صورة -->
+    <!-- نافذة إضافة / تعديل تنبيه -->
     <div class="modal" id="announcementModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -1360,7 +1361,7 @@
         </div>
     </div>
 
-    <!-- نافذة تكبير وعرض الصورة المرفقة بحجم كامل -->
+    <!-- نافذة تكبير الصورة المرفقة -->
     <div class="modal" id="imagePreviewModal">
         <div class="modal-content" style="max-width: 650px; text-align: center; padding: 15px;">
             <div class="modal-header">
@@ -1373,7 +1374,7 @@
         </div>
     </div>
 
-    <!-- نافذة إضافة / تعديل رابط جديد في الدليل الشامل -->
+    <!-- نافذة إضافة / تعديل رابط جديد -->
     <div class="modal" id="linkModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -1401,7 +1402,7 @@
         </div>
     </div>
 
-    <!-- نافذة سلة المحذوفات والاسترجاع -->
+    <!-- نافذة سلة المحذوفات -->
     <div class="modal" id="trashModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -1412,7 +1413,7 @@
         </div>
     </div>
 
-    <!-- نافذة إدخال كلمة المرور الموحدة -->
+    <!-- نافذة كلمة المرور -->
     <div class="modal" id="passAuthModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -1621,13 +1622,14 @@
             }
         }
 
+        // توحيد مفاتيح التخزين لتجنب التضارب بين الأجهزة
         function saveLocal() { 
-            localStorage.setItem('cachedAppointments_v16', JSON.stringify(records));
+            localStorage.setItem('cachedAppointments_v20', JSON.stringify(records));
             localStorage.setItem('cachedCSLinks_v1', JSON.stringify(csLinks));
             localStorage.setItem('cachedAnnouncements_v2', JSON.stringify(clinicAnnouncements));
         }
 
-        const cached = localStorage.getItem('cachedAppointments_v16');
+        const cached = localStorage.getItem('cachedAppointments_v20') || localStorage.getItem('cachedAppointments_v16');
         if (cached) { try { records = JSON.parse(cached); lastKnownRecordsCount = records.length; } catch(e) { records = []; } }
 
         const cachedLinks = localStorage.getItem('cachedCSLinks_v1');
@@ -1726,8 +1728,11 @@
 
             syncFilterTabsUI();
             renderAnnouncements();
+            renderTable();
+            renderClientReport();
         });
 
+        // الربط المباشر مع Firebase للتأكد من المزامنة الفورية بين اللابتوب والموبايل
         dbRef.on('value', (snapshot) => {
             const data = snapshot.val();
             if (data) {
@@ -2692,19 +2697,13 @@
             renderClientReport();
         }
 
-        // دالة الفلترة لصفحة الكشف
         function getOpenFilteredRecords() {
             let openRecords = records.filter(r => {
-                // استبعاد أي عميل تم إخفاؤه أو نقله للسلة
                 if (r.isHiddenFromClients) return false;
-                
-                // إذا كان فلتر المميزين مفعلاً، نعرض المميزين فقط
                 if (isPinnedFilterActive && !r.isPinned) return false;
-
                 return true;
             });
 
-            // فلترة الوقت
             if (clientHoursFilter !== 'all' && !isPinnedFilterActive) {
                 const now = new Date();
                 openRecords = openRecords.filter(r => {
@@ -2735,21 +2734,22 @@
             } catch(e) { return isoString; }
         }
 
+        // إمكانية تبديل حالة "تم النسخ" والتحويل الفوري للترتيب
         function toggleCopiedStatusGroup(keysArray) {
-            requireAdminAuth(() => {
-                const targetState = !records.find(r => keysArray.includes(r.firebaseKey))?.isCopied;
-                keysArray.forEach(k => {
-                    const rec = records.find(r => r.firebaseKey === k);
-                    if (rec) {
-                        rec.isCopied = targetState;
-                        if (navigator.onLine && !k.startsWith('local_')) {
-                            dbRef.child(k).update({ isCopied: targetState });
-                        }
+            const firstRec = records.find(r => keysArray.includes(r.firebaseKey));
+            const targetState = !firstRec?.isCopied;
+            
+            keysArray.forEach(k => {
+                const rec = records.find(r => r.firebaseKey === k);
+                if (rec) {
+                    rec.isCopied = targetState;
+                    if (navigator.onLine && !k.startsWith('local_')) {
+                        dbRef.child(k).update({ isCopied: targetState });
                     }
-                });
-                saveLocal();
-                renderClientReport();
+                }
             });
+            saveLocal();
+            renderClientReport();
         }
 
         function hideClientGroupFromReport(keysArray) {
@@ -2892,6 +2892,7 @@
             });
         }
 
+        // عرض الكشف مع ترتيب العملاء غير المنسوخين أولاً، ثم المنسوخين في الأسفل
         function renderClientReport() {
             const container = document.getElementById('clientReportList');
             if (!container) return;
@@ -2963,7 +2964,13 @@
                 });
             });
 
-            consolidatedList.sort((a, b) => new Date(b.latestCreatedAt) - new Date(a.latestCreatedAt));
+            // الترتيب الأساسي: الحالات غير المنسوخين أولاً، ثم المنسوخين في أسفل القائمة
+            consolidatedList.sort((a, b) => {
+                if (a.isCopied !== b.isCopied) {
+                    return a.isCopied ? 1 : -1;
+                }
+                return new Date(b.latestCreatedAt) - new Date(a.latestCreatedAt);
+            });
 
             consolidatedList.forEach((item, index) => {
                 const card = document.createElement('div');
