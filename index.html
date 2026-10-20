@@ -65,6 +65,8 @@
             direction: rtl;
             min-height: 100vh;
             overflow-x: hidden;
+            user-select: text;
+            -webkit-user-select: text;
         }
 
         .app-layout {
@@ -685,6 +687,8 @@
             box-shadow: 0 2px 6px rgba(0,0,0,0.3);
             width: 100%;
             overflow: hidden;
+            user-select: text;
+            -webkit-user-select: text;
         }
 
         .client-card-wrapper.is-copied {
@@ -744,6 +748,8 @@
             color: var(--text-main);
             line-height: 1.5;
             word-break: break-word;
+            user-select: text;
+            -webkit-user-select: text;
         }
 
         .client-info-row .info-label {
@@ -796,7 +802,7 @@
 
         .btn-client-action.delete-to-trash { background-color: var(--danger-color); }
         .btn-client-action.permanent-delete { background-color: var(--danger-color); }
-        .btn-client-action.unpin-item { background-color: var(--warning-color); }
+        .btn-client-action.restore { background-color: var(--success-color); }
 
         .links-grid {
             display: grid;
@@ -815,8 +821,8 @@
             gap: 10px;
             position: relative;
             transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
-            user-select: none;
-            -webkit-user-select: none;
+            user-select: text;
+            -webkit-user-select: text;
             width: 100%;
         }
         .link-card.dragging {
@@ -845,6 +851,7 @@
             padding: 8px 10px;
             touch-action: none;
             z-index: 5;
+            user-select: none;
         }
         .drag-handle:active {
             cursor: grabbing;
@@ -1291,7 +1298,7 @@
                                 </select>
 
                                 <button class="action-btn" id="pinnedFilterBtn" onclick="togglePinnedFilter()" style="background-color: #16a34a;">
-                                    <i class="fa-solid fa-file-lines"></i> ✅ الكشف العادي (<span id="pinnedCount">0</span>)
+                                    <i class="fa-solid fa-file-lines"></i> ✅ الكشف العادي ( <span id="pinnedCount">0</span> )
                                 </button>
 
                                 <button class="action-btn copy-btn" onclick="copyClientReport()"><i class="fa-solid fa-copy"></i> نسخ الكشف</button>
@@ -1773,6 +1780,7 @@
             renderAnnouncements();
         });
 
+        // دالة التنبيهات الصوتية المقتصرة فقط على استلام عميل جديد أو إضافة تنبيه للعيادة
         function playBeepAndShowToast(msg) {
             try {
                 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -1850,8 +1858,7 @@
 
                 card.innerHTML = `
                     <div class="announcement-body-content">
-                        <div class="announcement-body-text">${item.text}</div>
-                        ${thumbnailHTML}
+                        <div class="announcement-body-text">${item.text}</div>${thumbnailHTML}
                     </div>
                     <div class="announcement-footer-row">
                         <span><i class="fa-regular fa-clock"></i> ${dateStr}</span>
@@ -1919,7 +1926,6 @@
                         saveLocal();
                         renderAnnouncements();
                         closeAnnouncementModal();
-                        playBeepAndShowToast('✏️ تم تعديل التنبيه بنجاح!');
 
                         if (navigator.onLine && !key.startsWith('ann_')) {
                             const updateObj = { text: textVal };
@@ -1980,7 +1986,6 @@
                 if (navigator.onLine && !key.startsWith('ann_')) {
                     announcementsDbRef.child(key).remove();
                 }
-                playBeepAndShowToast('🗑️ تم حذف التنبيه بنجاح!');
             }
         }
 
@@ -2088,8 +2093,6 @@
                     if (navigator.onLine && !key.startsWith('local_')) {
                         dbRef.child(key).update({ isPinned: rec.isPinned });
                     }
-
-                    playBeepAndShowToast(rec.isPinned ? '📌 تم تثبيت العميل في المميزون' : '✖️ تم إزالة العميل من المميزون');
                 }
             });
         }
@@ -2484,6 +2487,7 @@
                 const card = document.createElement('div');
                 card.className = 'link-card';
                 card.setAttribute('data-index', index);
+                card.setAttribute('draggable', 'true');
 
                 card.innerHTML = `
                     <div class="drag-handle" title="امسك من هنا للترتيب بالسحب (يتطلب باسورد الإدارة)"><i class="fa-solid fa-grip-vertical"></i></div>
@@ -2501,28 +2505,24 @@
 
                 const handle = card.querySelector('.drag-handle');
 
-                handle.addEventListener('mousedown', (e) => {
-                    e.preventDefault();
+                // السحب والإفلات للكمبيوتر
+                card.addEventListener('dragstart', (e) => {
                     requireAdminAuth(() => {
-                        card.setAttribute('draggable', 'true');
                         draggedCardIndex = index;
                         card.classList.add('dragging');
+                        e.dataTransfer.effectAllowed = 'move';
                     });
-                });
-
-                card.addEventListener('dragstart', (e) => {
-                    if (!card.classList.contains('dragging')) {
-                        e.preventDefault();
-                    }
                 });
 
                 card.addEventListener('dragover', (e) => {
                     e.preventDefault();
                     card.classList.add('drag-over');
                 });
+
                 card.addEventListener('dragleave', () => {
                     card.classList.remove('drag-over');
                 });
+
                 card.addEventListener('drop', (e) => {
                     e.preventDefault();
                     card.classList.remove('drag-over');
@@ -2531,13 +2531,14 @@
                         reorderCSLinks(draggedCardIndex, targetIdx);
                     }
                 });
+
                 card.addEventListener('dragend', () => {
-                    card.removeAttribute('draggable');
                     card.classList.remove('dragging');
                     document.querySelectorAll('.link-card').forEach(c => c.classList.remove('drag-over'));
                     draggedCardIndex = null;
                 });
 
+                // السحب والإفلات للشاشات اللمسية
                 handle.addEventListener('touchstart', (e) => {
                     e.preventDefault();
                     requireAdminAuth(() => {
@@ -2549,7 +2550,6 @@
 
                 handle.addEventListener('touchmove', (e) => {
                     if (!activeTouchHandle) return;
-                    
                     const touchLoc = e.touches[0];
                     const targetEl = document.elementFromPoint(touchLoc.clientX, touchLoc.clientY);
 
@@ -2564,7 +2564,6 @@
 
                 handle.addEventListener('touchend', (e) => {
                     if (!activeTouchHandle) return;
-
                     const touchLoc = e.changedTouches[0];
                     const targetEl = document.elementFromPoint(touchLoc.clientX, touchLoc.clientY);
 
@@ -2606,7 +2605,6 @@
 
             saveLocal();
             renderCSLinks();
-            playBeepAndShowToast('🔄 تم ترتيب الكروت بنجاح!');
         }
 
         function openAddLinkModal() {
@@ -2672,7 +2670,6 @@
             saveLocal();
             renderCSLinks();
             closeLinkModal();
-            playBeepAndShowToast('✅ تم حفظ الرابط بنجاح!');
         }
 
         function deleteCSLink(key) {
@@ -2687,7 +2684,6 @@
                         if (navigator.onLine && !key.startsWith('link_')) {
                             linksDbRef.child(key).remove();
                         }
-                        playBeepAndShowToast('🗑️ تم حذف الرابط بنجاح!');
                     }
                 }
             });
@@ -2772,7 +2768,6 @@
                 saveLocal();
                 renderClientReport();
                 renderTrashModalList();
-                playBeepAndShowToast('🗑️ تم نقل الطلبات إلى سلة المحذوفات بنجاح!');
             });
         }
 
@@ -2810,7 +2805,6 @@
                     if (navigator.onLine && !key.startsWith('local_')) {
                         dbRef.child(key).update({ isHiddenFromClients: false, deletedAt: null });
                     }
-                    playBeepAndShowToast('↩️ تم استرجاع العميل إلى صفحة الكشف بنجاح!');
                 }
             });
         }
@@ -2969,6 +2963,7 @@
                 });
             });
 
+            // ترتيب الكروت دائماً من الأحدث إلى الأقدم
             consolidatedList.sort((a, b) => new Date(b.latestCreatedAt) - new Date(a.latestCreatedAt));
 
             consolidatedList.forEach((item, index) => {
@@ -2977,7 +2972,7 @@
                 const isCopied = item.isCopied;
                 const isPinned = item.isPinned;
 
-                card.className = `client-card-wrapper ${isCopied && !isPinnedFilterActive ? 'is-copied' : ''}`;
+                card.className = `client-card-wrapper ${isCopied ? 'is-copied' : ''}`;
 
                 const fileStr = (rec.fileNumber && rec.fileNumber !== '-') ? ` ${rec.fileNumber}` : '';
                 const idStr = (rec.idNumber && rec.idNumber !== '-') ? rec.idNumber : '';
@@ -2994,7 +2989,7 @@
 
                 const copyBtnHTML = !isPinnedFilterActive ? `
                     <button class="copied-btn ${isCopied ? 'active' : ''}" onclick="toggleCopiedStatusGroup(${keysJsonStr})">
-                        <i class="fa-solid ${isCopied ? 'fa-circle-check' : 'fa-check'}"></i> ${isCopied ? 'تم النسخ' : 'تعليم كمنسوخ'}
+                        <i class="fa-solid ${isCopied ? 'fa-circle-check' : 'fa-check'}"></i> ${isCopied ? 'تم النسخ ✅' : 'تعليم كمنسوخ'}
                     </button>
                 ` : '';
 
@@ -3004,8 +2999,7 @@
                             <input type="checkbox" class="client-select-chk" data-keys="${keysJsonStr}">
                             <span>${index + 1}-${rec.patientName}${fileStr}</span>
                             <div style="display: flex; gap: 6px; align-items: center; flex-wrap: wrap;">
-                                ${pinBtnHTML}
-                                ${copyBtnHTML}
+                                ${pinBtnHTML}${copyBtnHTML}
                             </div>
                         </div>
                         ${dateTimeStr ? `<span class="client-datetime-badge"><i class="fa-regular fa-clock"></i> ${dateTimeStr}</span>` : ''}
