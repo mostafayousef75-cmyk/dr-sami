@@ -675,7 +675,9 @@
         .btn-client-action.permanent-delete { background-color: var(--danger-color); }
         .btn-client-action.unpin-item { background-color: var(--warning-color); }
 
-        /* تنسيقات شبكة كروت الدليل الشامل مع إمكانية السحب Drag & Drop */
+        /* ---------------------------------------------------- */
+        /* تنسيقات شبكة كروت الدليل الشامل مع تحسينات الموبايل والسحب */
+        /* ---------------------------------------------------- */
         .links-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -695,6 +697,8 @@
             transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
             cursor: grab;
             user-select: none;
+            -webkit-user-select: none;
+            touch-action: manipulation;
             width: 100%;
         }
         .link-card:active {
@@ -717,12 +721,13 @@
         }
         .drag-handle {
             position: absolute;
-            top: 12px;
-            left: 12px;
+            top: 10px;
+            left: 10px;
             color: var(--text-muted);
-            font-size: 0.9rem;
+            font-size: 1.1rem;
             cursor: grab;
-            padding: 4px;
+            padding: 8px;
+            touch-action: none;
         }
         .link-card-header {
             display: flex;
@@ -731,7 +736,7 @@
             font-weight: 700;
             font-size: 1rem;
             color: var(--text-main);
-            padding-left: 20px;
+            padding-left: 25px;
             word-break: break-word;
         }
         .link-card-header i {
@@ -776,9 +781,6 @@
         .modal-header h3 { color: var(--primary-color); font-size: 1.1rem; }
         .close-modal-btn { background: none; border: none; font-size: 1.3rem; color: var(--text-muted); cursor: pointer; }
 
-        /* ---------------------------------------------------- */
-        /* استجابة الموبايل والشاشات الصغيرة (Responsive Design) */
-        /* ---------------------------------------------------- */
         .client-header-controls {
             display: flex;
             align-items: center;
@@ -1130,7 +1132,7 @@
 
                 </div>
 
-                <!-- صفحة الكشف - متوافقة تماماً مع شاشات الموبايل -->
+                <!-- صفحة الكشف -->
                 <div id="page-clients" class="page-view hidden">
                     <section class="dashboard-section">
                         <div style="display: flex; flex-direction: column; gap: 12px; background: var(--bg-base); padding: 12px 15px; border-radius: 8px; border: 1px solid var(--border-color); margin-bottom: 15px;">
@@ -1172,7 +1174,7 @@
                     </section>
                 </div>
 
-                <!-- الدليل الشامل لـ (خدمة العملاء) مع الدعم الكامل للموبايل والسحب والإفلات -->
+                <!-- الدليل الشامل لـ (خدمة العملاء) - تدعم السحب واللمس التفاعلي المباشر -->
                 <div id="page-csguide" class="page-view hidden">
                     <section class="dashboard-section">
                         <div class="section-header">
@@ -1180,11 +1182,11 @@
                             <button class="action-btn copy-btn" onclick="openAddLinkModal()"><i class="fa-solid fa-plus"></i> إضافة رابط جديد</button>
                         </div>
                         <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 10px;">
-                            💡 يمكنك الضغط باستمرار وسحب الكارت بالماوس أو الإصبع لإعادة ترتيب الكروت بسهولة وسيحفظ الترتيب تلقائياً.
+                            💡 **للموبايل والكمبيوتر:** اضغط باستمرار مع السحب لأعلى أو لأسفل لترتيب الكروت بسهولة وسيحفظ الترتيب تلقائياً[span_2](start_span)[span_2](end_span).
                         </p>
 
                         <div class="links-grid" id="linksGridContainer">
-                            <!-- سيتم توليد الروابط القابلة للسحب والإفلات هنا -->
+                            <!-- الكروت المضافة هنا -->
                         </div>
                     </section>
                 </div>
@@ -2104,8 +2106,11 @@
         }
 
         // ===================================
-        // وظائف صفحة الدليل الشامل مع السحب والإفلات (Drag & Drop)
+        // وظائف السحب والإفلات المباشرة المدعومة للماوس واللمس بالموبايل
         // ===================================
+
+        let touchDragElement = null;
+        let touchStartIdx = null;
 
         function renderCSLinks() {
             const container = document.getElementById('linksGridContainer');
@@ -2127,12 +2132,17 @@
                 card.setAttribute('draggable', 'true');
                 card.setAttribute('data-index', index);
 
-                // أحداث السحب والإفلات للماوس واللمس
+                // أحداث الماوس Drag Events للكمبيوتر
                 card.addEventListener('dragstart', handleDragStart);
                 card.addEventListener('dragover', handleDragOver);
                 card.addEventListener('dragleave', handleDragLeave);
                 card.addEventListener('drop', handleDrop);
                 card.addEventListener('dragend', handleDragEnd);
+
+                // أحداث اللمس Touch Events المباشرة للهواتف الذكية
+                card.addEventListener('touchstart', handleTouchStart, { passive: false });
+                card.addEventListener('touchmove', handleTouchMove, { passive: false });
+                card.addEventListener('touchend', handleTouchEnd);
 
                 card.innerHTML = `
                     <div class="drag-handle" title="اسحب لتحريك ترتيب الكارت"><i class="fa-solid fa-grip-vertical"></i></div>
@@ -2151,6 +2161,7 @@
             });
         }
 
+        /* الماوس للكمبيوتر */
         function handleDragStart(e) {
             draggedLinkIndex = parseInt(this.getAttribute('data-index'));
             this.classList.add('dragging');
@@ -2173,19 +2184,7 @@
             const targetIndex = parseInt(this.getAttribute('data-index'));
 
             if (draggedLinkIndex !== null && draggedLinkIndex !== targetIndex) {
-                const movedItem = csLinks.splice(draggedLinkIndex, 1)[0];
-                csLinks.splice(targetIndex, 0, movedItem);
-
-                csLinks.forEach((link, idx) => {
-                    link.orderIndex = idx;
-                    if (navigator.onLine && !link.linkKey.startsWith('link_')) {
-                        linksDbRef.child(link.linkKey).update({ orderIndex: idx });
-                    }
-                });
-
-                saveLocal();
-                renderCSLinks();
-                playBeepAndShowToast('🔄 تم تحديث وترتيب كروت الدليل الشامل بنجاح!');
+                reorderCSLinks(draggedLinkIndex, targetIndex);
             }
         }
 
@@ -2193,6 +2192,68 @@
             this.classList.remove('dragging');
             document.querySelectorAll('.link-card').forEach(card => card.classList.remove('drag-over'));
             draggedLinkIndex = null;
+        }
+
+        /* معالجة اللمس للـ Mobile Touch */
+        function handleTouchStart(e) {
+            if (e.target.closest('.btn-open-link') || e.target.closest('.btn-edit-action') || e.target.closest('.btn-delete-action')) return;
+            touchDragElement = this;
+            touchStartIdx = parseInt(this.getAttribute('data-index'));
+            this.classList.add('dragging');
+        }
+
+        function handleTouchMove(e) {
+            if (!touchDragElement) return;
+            e.preventDefault(); // إيقاف عمل السلكت وتحديد النص على الموبايل
+            
+            const touchLoc = e.touches[0];
+            const targetEl = document.elementFromPoint(touchLoc.clientX, touchLoc.clientY);
+            
+            document.querySelectorAll('.link-card').forEach(card => card.classList.remove('drag-over'));
+            if (targetEl) {
+                const cardTarget = targetEl.closest('.link-card');
+                if (cardTarget && cardTarget !== touchDragElement) {
+                    cardTarget.classList.add('drag-over');
+                }
+            }
+        }
+
+        function handleTouchEnd(e) {
+            if (!touchDragElement) return;
+            
+            const touchLoc = e.changedTouches[0];
+            const targetEl = document.elementFromPoint(touchLoc.clientX, touchLoc.clientY);
+            touchDragElement.classList.remove('dragging');
+            document.querySelectorAll('.link-card').forEach(card => card.classList.remove('drag-over'));
+
+            if (targetEl) {
+                const cardTarget = targetEl.closest('.link-card');
+                if (cardTarget) {
+                    const targetIdx = parseInt(cardTarget.getAttribute('data-index'));
+                    if (touchStartIdx !== null && touchStartIdx !== targetIdx) {
+                        reorderCSLinks(touchStartIdx, targetIdx);
+                    }
+                }
+            }
+
+            touchDragElement = null;
+            touchStartIdx = null;
+        }
+
+        function reorderCSLinks(fromIdx, toIdx) {
+            const movedItem = csLinks.splice(fromIdx, 1)[0];
+            csLinks.splice(toIdx, 0, movedItem);
+
+            csLinks.forEach((link, idx) => {
+                link.orderIndex = idx;
+                if (navigator.onLine && !link.linkKey.startsWith('link_')) {
+                    linksDbRef.child(link.linkKey).update({ orderIndex: idx });
+                }
+            });
+
+            saveLocal();
+            renderCSLinks();
+            playBeepAndShowToast('🔄 تم إعادة ترتيب الكروت بنجاح!');
         }
 
         function openAddLinkModal() {
