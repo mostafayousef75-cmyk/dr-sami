@@ -676,7 +676,7 @@
         .btn-client-action.unpin-item { background-color: var(--warning-color); }
 
         /* ---------------------------------------------------- */
-        /* تنسيقات شبكة كروت الدليل الشامل مع تحسينات الموبايل والسحب */
+        /* تنسيقات كروت الدليل الشامل مع تخصيص مقبض السحب حصرياً */
         /* ---------------------------------------------------- */
         .links-grid {
             display: grid;
@@ -695,14 +695,9 @@
             gap: 10px;
             position: relative;
             transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
-            cursor: grab;
             user-select: none;
             -webkit-user-select: none;
-            touch-action: manipulation;
             width: 100%;
-        }
-        .link-card:active {
-            cursor: grabbing;
         }
         .link-card.dragging {
             opacity: 0.4;
@@ -715,19 +710,26 @@
             transform: translateY(-4px);
         }
         .link-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
             border-color: var(--primary-color);
         }
         .drag-handle {
             position: absolute;
-            top: 10px;
-            left: 10px;
-            color: var(--text-muted);
+            top: 8px;
+            left: 8px;
+            color: var(--primary-color);
+            background: rgba(37, 99, 235, 0.1);
+            border: 1px solid rgba(37, 99, 235, 0.3);
+            border-radius: 6px;
             font-size: 1.1rem;
             cursor: grab;
-            padding: 8px;
+            padding: 8px 10px;
             touch-action: none;
+            z-index: 5;
+        }
+        .drag-handle:active {
+            cursor: grabbing;
+            background: var(--primary-color);
+            color: #ffffff;
         }
         .link-card-header {
             display: flex;
@@ -736,7 +738,7 @@
             font-weight: 700;
             font-size: 1rem;
             color: var(--text-main);
-            padding-left: 25px;
+            padding-left: 35px;
             word-break: break-word;
         }
         .link-card-header i {
@@ -1174,7 +1176,7 @@
                     </section>
                 </div>
 
-                <!-- الدليل الشامل لـ (خدمة العملاء) - تدعم السحب واللمس التفاعلي المباشر -->
+                <!-- الدليل الشامل لـ (خدمة العملاء) -->
                 <div id="page-csguide" class="page-view hidden">
                     <section class="dashboard-section">
                         <div class="section-header">
@@ -1182,7 +1184,7 @@
                             <button class="action-btn copy-btn" onclick="openAddLinkModal()"><i class="fa-solid fa-plus"></i> إضافة رابط جديد</button>
                         </div>
                         <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 10px;">
-                            💡 **للموبايل والكمبيوتر:** اضغط باستمرار مع السحب لأعلى أو لأسفل لترتيب الكروت بسهولة وسيحفظ الترتيب تلقائياً[span_2](start_span)[span_2](end_span).
+                            💡 **السحب والترتيب:** اضغط فقط على أيقونة المقبض الزرقاء <i class="fa-solid fa-grip-vertical" style="color: var(--primary-color);"></i> واسحب الكارت لأعلى أو لأسفل. باقي المساحات مخصصة للتصفح الطبيعي (Scroll) بدون تحريك.
                         </p>
 
                         <div class="links-grid" id="linksGridContainer">
@@ -1388,7 +1390,6 @@
         let originalEditRepeatedState = false;
         let isInitialLoad = true;
         let lastKnownRecordsCount = 0;
-        let draggedLinkIndex = null;
 
         if (!localStorage.getItem('adminPassword')) {
             localStorage.setItem('adminPassword', '1234');
@@ -2106,11 +2107,11 @@
         }
 
         // ===================================
-        // وظائف السحب والإفلات المباشرة المدعومة للماوس واللمس بالموبايل
+        // السحب والترتيب المباشر عبر مقبض السحب حصرياً (Handle Only)
         // ===================================
 
-        let touchDragElement = null;
-        let touchStartIdx = null;
+        let draggedCardIndex = null;
+        let activeTouchHandle = null;
 
         function renderCSLinks() {
             const container = document.getElementById('linksGridContainer');
@@ -2129,23 +2130,10 @@
             csLinks.forEach((item, index) => {
                 const card = document.createElement('div');
                 card.className = 'link-card';
-                card.setAttribute('draggable', 'true');
                 card.setAttribute('data-index', index);
 
-                // أحداث الماوس Drag Events للكمبيوتر
-                card.addEventListener('dragstart', handleDragStart);
-                card.addEventListener('dragover', handleDragOver);
-                card.addEventListener('dragleave', handleDragLeave);
-                card.addEventListener('drop', handleDrop);
-                card.addEventListener('dragend', handleDragEnd);
-
-                // أحداث اللمس Touch Events المباشرة للهواتف الذكية
-                card.addEventListener('touchstart', handleTouchStart, { passive: false });
-                card.addEventListener('touchmove', handleTouchMove, { passive: false });
-                card.addEventListener('touchend', handleTouchEnd);
-
                 card.innerHTML = `
-                    <div class="drag-handle" title="اسحب لتحريك ترتيب الكارت"><i class="fa-solid fa-grip-vertical"></i></div>
+                    <div class="drag-handle" title="امسك من هنا للترتيب بالسحب"><i class="fa-solid fa-grip-vertical"></i></div>
                     <div class="link-card-header">
                         <i class="fa-solid fa-globe"></i>
                         <span>${item.title}</span>
@@ -2157,87 +2145,91 @@
                         <button class="btn-delete-action" onclick="deleteCSLink('${item.linkKey}')" title="حذف الرابط"><i class="fa-solid fa-trash"></i></button>
                     </div>
                 `;
+
+                const handle = card.querySelector('.drag-handle');
+
+                // جعل السحب للكمبيوتر متاحاً من المقبض فقط
+                handle.addEventListener('mousedown', () => {
+                    card.setAttribute('draggable', 'true');
+                });
+                handle.addEventListener('mouseup', () => {
+                    card.removeAttribute('draggable');
+                });
+
+                card.addEventListener('dragstart', (e) => {
+                    draggedCardIndex = index;
+                    card.classList.add('dragging');
+                });
+                card.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    card.classList.add('drag-over');
+                });
+                card.addEventListener('dragleave', () => {
+                    card.classList.remove('drag-over');
+                });
+                card.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    card.classList.remove('drag-over');
+                    const targetIdx = parseInt(card.getAttribute('data-index'));
+                    if (draggedCardIndex !== null && draggedCardIndex !== targetIdx) {
+                        reorderCSLinks(draggedCardIndex, targetIdx);
+                    }
+                });
+                card.addEventListener('dragend', () => {
+                    card.removeAttribute('draggable');
+                    card.classList.remove('dragging');
+                    document.querySelectorAll('.link-card').forEach(c => c.classList.remove('drag-over'));
+                    draggedCardIndex = null;
+                });
+
+                // السحب المباشر للموبايل من مقبض السحب (Touch Handle)
+                handle.addEventListener('touchstart', (e) => {
+                    activeTouchHandle = card;
+                    draggedCardIndex = index;
+                    card.classList.add('dragging');
+                }, { passive: true });
+
+                handle.addEventListener('touchmove', (e) => {
+                    if (!activeTouchHandle) return;
+                    
+                    // تحريك واستكشاف العنصر الموجود تحت الأصبع
+                    const touchLoc = e.touches[0];
+                    const targetEl = document.elementFromPoint(touchLoc.clientX, touchLoc.clientY);
+
+                    document.querySelectorAll('.link-card').forEach(c => c.classList.remove('drag-over'));
+                    if (targetEl) {
+                        const targetCard = targetEl.closest('.link-card');
+                        if (targetCard && targetCard !== activeTouchHandle) {
+                            targetCard.classList.add('drag-over');
+                        }
+                    }
+                }, { passive: true });
+
+                handle.addEventListener('touchend', (e) => {
+                    if (!activeTouchHandle) return;
+
+                    const touchLoc = e.changedTouches[0];
+                    const targetEl = document.elementFromPoint(touchLoc.clientX, touchLoc.clientY);
+
+                    activeTouchHandle.classList.remove('dragging');
+                    document.querySelectorAll('.link-card').forEach(c => c.classList.remove('drag-over'));
+
+                    if (targetEl) {
+                        const targetCard = targetEl.closest('.link-card');
+                        if (targetCard) {
+                            const targetIdx = parseInt(targetCard.getAttribute('data-index'));
+                            if (draggedCardIndex !== null && draggedCardIndex !== targetIdx) {
+                                reorderCSLinks(draggedCardIndex, targetIdx);
+                            }
+                        }
+                    }
+
+                    activeTouchHandle = null;
+                    draggedCardIndex = null;
+                });
+
                 container.appendChild(card);
             });
-        }
-
-        /* الماوس للكمبيوتر */
-        function handleDragStart(e) {
-            draggedLinkIndex = parseInt(this.getAttribute('data-index'));
-            this.classList.add('dragging');
-            e.dataTransfer.effectAllowed = 'move';
-        }
-
-        function handleDragOver(e) {
-            e.preventDefault();
-            e.dataTransfer.dropEffect = 'move';
-            this.classList.add('drag-over');
-        }
-
-        function handleDragLeave(e) {
-            this.classList.remove('drag-over');
-        }
-
-        function handleDrop(e) {
-            e.preventDefault();
-            this.classList.remove('drag-over');
-            const targetIndex = parseInt(this.getAttribute('data-index'));
-
-            if (draggedLinkIndex !== null && draggedLinkIndex !== targetIndex) {
-                reorderCSLinks(draggedLinkIndex, targetIndex);
-            }
-        }
-
-        function handleDragEnd(e) {
-            this.classList.remove('dragging');
-            document.querySelectorAll('.link-card').forEach(card => card.classList.remove('drag-over'));
-            draggedLinkIndex = null;
-        }
-
-        /* معالجة اللمس للـ Mobile Touch */
-        function handleTouchStart(e) {
-            if (e.target.closest('.btn-open-link') || e.target.closest('.btn-edit-action') || e.target.closest('.btn-delete-action')) return;
-            touchDragElement = this;
-            touchStartIdx = parseInt(this.getAttribute('data-index'));
-            this.classList.add('dragging');
-        }
-
-        function handleTouchMove(e) {
-            if (!touchDragElement) return;
-            e.preventDefault(); // إيقاف عمل السلكت وتحديد النص على الموبايل
-            
-            const touchLoc = e.touches[0];
-            const targetEl = document.elementFromPoint(touchLoc.clientX, touchLoc.clientY);
-            
-            document.querySelectorAll('.link-card').forEach(card => card.classList.remove('drag-over'));
-            if (targetEl) {
-                const cardTarget = targetEl.closest('.link-card');
-                if (cardTarget && cardTarget !== touchDragElement) {
-                    cardTarget.classList.add('drag-over');
-                }
-            }
-        }
-
-        function handleTouchEnd(e) {
-            if (!touchDragElement) return;
-            
-            const touchLoc = e.changedTouches[0];
-            const targetEl = document.elementFromPoint(touchLoc.clientX, touchLoc.clientY);
-            touchDragElement.classList.remove('dragging');
-            document.querySelectorAll('.link-card').forEach(card => card.classList.remove('drag-over'));
-
-            if (targetEl) {
-                const cardTarget = targetEl.closest('.link-card');
-                if (cardTarget) {
-                    const targetIdx = parseInt(cardTarget.getAttribute('data-index'));
-                    if (touchStartIdx !== null && touchStartIdx !== targetIdx) {
-                        reorderCSLinks(touchStartIdx, targetIdx);
-                    }
-                }
-            }
-
-            touchDragElement = null;
-            touchStartIdx = null;
         }
 
         function reorderCSLinks(fromIdx, toIdx) {
@@ -2253,7 +2245,7 @@
 
             saveLocal();
             renderCSLinks();
-            playBeepAndShowToast('🔄 تم إعادة ترتيب الكروت بنجاح!');
+            playBeepAndShowToast('🔄 تم ترتيب الكروت بنجاح!');
         }
 
         function openAddLinkModal() {
