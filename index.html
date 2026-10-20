@@ -285,15 +285,15 @@
             gap: 8px;
         }
 
-        /* تنسيقات شريط التنبيهات والإشعارات العام */
+        /* تنسيقات قسم تنبيهات وإشعارات العيادة المحسنة للموبايل */
         .clinic-announcements-box {
-            background: linear-gradient(135deg, rgba(37, 99, 235, 0.15), rgba(124, 58, 237, 0.15));
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.12), rgba(124, 58, 237, 0.12));
             border: 1px solid var(--primary-color);
             border-radius: var(--radius-lg);
-            padding: 12px 18px;
+            padding: 15px;
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 12px;
             box-shadow: 0 4px 15px rgba(37, 99, 235, 0.15);
         }
         .announcement-header-row {
@@ -301,55 +301,65 @@
             align-items: center;
             justify-content: space-between;
             flex-wrap: wrap;
-            gap: 8px;
+            gap: 10px;
         }
         .announcement-title {
             display: flex;
             align-items: center;
             gap: 8px;
-            font-size: 0.95rem;
+            font-size: 1rem;
             font-weight: 700;
             color: var(--primary-color);
         }
-        .announcement-ticker-container {
+        .announcements-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-height: 250px;
+            overflow-y: auto;
+        }
+        .announcement-card {
             background: var(--bg-base);
             border: 1px solid var(--border-color);
             border-radius: var(--radius-md);
-            padding: 10px 14px;
-            max-height: 120px;
-            overflow-y: auto;
+            padding: 12px;
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 10px;
+            border-right: 4px solid var(--warning-color);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
         }
-        .announcement-item {
+        .announcement-body-text {
+            font-size: 0.9rem;
+            color: var(--text-main);
+            line-height: 1.5;
+            word-break: break-word;
+            white-space: pre-wrap;
+        }
+        .announcement-footer-row {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            background: var(--bg-surface);
-            padding: 8px 12px;
-            border-radius: 6px;
-            border-right: 4px solid var(--warning-color);
-            font-size: 0.85rem;
-            gap: 10px;
-        }
-        .announcement-text {
-            flex: 1;
-            word-break: break-word;
-            line-height: 1.4;
-        }
-        .announcement-meta {
-            font-size: 0.72rem;
+            border-top: 1px solid var(--border-color);
+            padding-top: 8px;
+            font-size: 0.75rem;
             color: var(--text-muted);
-            white-space: nowrap;
+            flex-wrap: wrap;
+            gap: 6px;
         }
-        .btn-delete-announcement {
-            background: none;
+        .btn-delete-announcement-card {
+            background-color: var(--danger-color);
+            color: #fff;
             border: none;
-            color: var(--danger-color);
+            padding: 4px 10px;
+            border-radius: 4px;
             cursor: pointer;
-            font-size: 0.9rem;
-            padding: 2px 6px;
+            font-family: var(--font-family);
+            font-size: 0.78rem;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
         }
 
         .progress-box {
@@ -987,18 +997,18 @@
                 <!-- صفحة مؤشر الأداء والمواعيد -->
                 <div id="page-dashboard" class="page-view">
                     
-                    <!-- شريط الإشعارات والتنبيهات العام للعيادة -->
+                    <!-- شريط تنبيهات وإشعارات العيادة المحسن للموبايل -->
                     <section class="clinic-announcements-box">
                         <div class="announcement-header-row">
                             <div class="announcement-title">
                                 <i class="fa-solid fa-bullhorn"></i> تنبيهات وإشعارات العيادة العامة
                             </div>
-                            <button class="action-btn copy-btn" onclick="openAddAnnouncementModal()" style="padding: 5px 10px; font-size: 0.78rem;">
+                            <button class="action-btn copy-btn" onclick="openAddAnnouncementModal()" style="padding: 6px 12px; font-size: 0.8rem;">
                                 <i class="fa-solid fa-plus"></i> إضافة تنبيه جديد
                             </button>
                         </div>
-                        <div class="announcement-ticker-container" id="announcementsListContainer">
-                            <!-- يتم تعبئة التنبيهات هنا ديناميكياً -->
+                        <div class="announcements-grid" id="announcementsListContainer">
+                            <!-- يتم تعبئة كروت التنبيهات هنا ديناميكياً -->
                         </div>
                     </section>
 
@@ -1755,30 +1765,32 @@
             universalAuthCallback = null;
         }
 
-        // دوال شريط الإشعارات والتنبيهات العام
+        // دالة عرض الكروت المنظمة للتنبيهات
         function renderAnnouncements() {
             const container = document.getElementById('announcementsListContainer');
             if (!container) return;
             container.innerHTML = '';
 
             if (clinicAnnouncements.length === 0) {
-                container.innerHTML = '<div style="text-align: center; color: var(--text-muted); font-size: 0.82rem; padding: 6px;">لا توجد تنبيهات جديدة حالياً. انقر على "إضافة تنبيه جديد" لإرسال تحديث للعيادة.</div>';
+                container.innerHTML = '<div style="text-align: center; color: var(--text-muted); font-size: 0.85rem; padding: 10px;">لا توجد تنبيهات جديدة حالياً. انقر على "إضافة تنبيه جديد" لإرسال تحديث للعيادة.</div>';
                 return;
             }
 
             clinicAnnouncements.forEach(item => {
-                const div = document.createElement('div');
-                div.className = 'announcement-item';
+                const card = document.createElement('div');
+                card.className = 'announcement-card';
                 const dateStr = formatDateTimeFullCustom(item.createdAt);
 
-                div.innerHTML = `
-                    <div class="announcement-text"><i class="fa-solid fa-circle-exclamation" style="color: var(--warning-color); margin-left: 5px;"></i> ${item.text}</div>
-                    <div style="display: flex; align-items: center; gap: 8px;">
-                        <span class="announcement-meta">${dateStr}</span>
-                        <button class="btn-delete-announcement" onclick="deleteAnnouncement('${item.announcementKey}')" title="حذف التنبيه"><i class="fa-solid fa-trash"></i></button>
+                card.innerHTML = `
+                    <div class="announcement-body-text">${item.text}</div>
+                    <div class="announcement-footer-row">
+                        <span><i class="fa-regular fa-clock"></i> ${dateStr}</span>
+                        <button class="btn-delete-announcement-card" onclick="deleteAnnouncement('${item.announcementKey}')" title="حذف التنبيه">
+                            <i class="fa-solid fa-trash-can"></i> حذف
+                        </button>
                     </div>
                 `;
-                container.appendChild(div);
+                container.appendChild(card);
             });
         }
 
