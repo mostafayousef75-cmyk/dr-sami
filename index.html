@@ -773,8 +773,6 @@
             justify-content: center;
             gap: 6px;
             white-space: nowrap;
-            cursor: pointer;
-            border: none;
         }
         .btn-open-link:hover { background-color: var(--primary-hover); }
 
@@ -1186,7 +1184,7 @@
                             <button class="action-btn copy-btn" onclick="openAddLinkModal()"><i class="fa-solid fa-plus"></i> إضافة رابط جديد</button>
                         </div>
                         <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 10px;">
-                            💡 **للتمرير والسحب:** التمرير (Scroll) يتم بسلاسة من أي مكان في الصفحة أو الكارت. ولإعادة ترتيب الكروت، استخدم **مقبض السحب المخصص** <i class="fa-solid fa-grip-vertical" style="color: var(--primary-color);"></i> فقط.
+                            💡 **السحب والترتيب:** اضغط فقط على أيقونة المقبض الزرقاء <i class="fa-solid fa-grip-vertical" style="color: var(--primary-color);"></i> واسحب الكارت لأعلى أو لأسفل. باقي المساحات مخصصة للتصفح الطبيعي (Scroll) بدون تحريك.
                         </p>
 
                         <div class="links-grid" id="linksGridContainer">
@@ -2108,15 +2106,6 @@
             });
         }
 
-        // دالة فتح الروابط في نافذة منبثقة مستقلة (Popup) لعدم إغلاق النظام أو التأثير على الجلسة
-        function openAsPopup(url) {
-            const width = 1024;
-            const height = 768;
-            const left = (window.screen.width - width) / 2;
-            const top = (window.screen.height - height) / 2;
-            window.open(url, 'WhatsAppPopup', `width=${width},height=${height},top=${top},left=${left},resizable=yes,scrollbars=yes,status=yes`);
-        }
-
         // ===================================
         // السحب والترتيب المباشر عبر مقبض السحب حصرياً (Handle Only)
         // ===================================
@@ -2151,7 +2140,7 @@
                     </div>
                     <div class="link-card-desc">${item.desc || 'لا يوجد وصف مُضاف.'}</div>
                     <div class="link-card-actions">
-                        <button type="button" class="btn-open-link" onclick="openAsPopup('${item.url}')"><i class="fa-solid fa-arrow-up-right-from-square"></i> فتح الموقع</button>
+                        <a href="${item.url}" target="_blank" class="btn-open-link"><i class="fa-solid fa-arrow-up-right-from-square"></i> فتح الموقع</a>
                         <button class="btn-edit-action" onclick="openEditLinkModal('${item.linkKey}')" title="تعديل الرابط"><i class="fa-solid fa-pen"></i></button>
                         <button class="btn-delete-action" onclick="deleteCSLink('${item.linkKey}')" title="حذف الرابط"><i class="fa-solid fa-trash"></i></button>
                     </div>
@@ -2203,6 +2192,7 @@
                 handle.addEventListener('touchmove', (e) => {
                     if (!activeTouchHandle) return;
                     
+                    // تحريك واستكشاف العنصر الموجود تحت الأصبع
                     const touchLoc = e.touches[0];
                     const targetEl = document.elementFromPoint(touchLoc.clientX, touchLoc.clientY);
 
@@ -2657,8 +2647,7 @@
                     <div class="client-card-header">
                         <div class="client-title">
                             <input type="checkbox" class="client-select-chk" data-keys="${keysJsonStr}">
-                            <span>${index + 1}-${rec.patientName}${fileStr}</span>
-                            ${headerActionsHTML}
+                            <span>${index + 1}-${rec.patientName}${fileStr}</span>${headerActionsHTML}
                         </div>
                         ${dateTimeStr ? `<span class="client-datetime-badge"><i class="fa-regular fa-clock"></i> ${dateTimeStr}</span>` : ''}
                     </div>
