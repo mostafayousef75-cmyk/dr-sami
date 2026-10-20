@@ -347,6 +347,25 @@
             flex-wrap: wrap;
             gap: 8px;
         }
+        .announcement-actions-group {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+        }
+        .btn-edit-announcement-card {
+            background-color: var(--primary-color);
+            color: #fff;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: var(--font-family);
+            font-size: 0.78rem;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
         .btn-delete-announcement-card {
             background-color: var(--danger-color);
             color: #fff;
@@ -1288,21 +1307,22 @@
         </main>
     </div>
 
-    <!-- نافذة إضافة تنبيه / إشعار عام جديد -->
+    <!-- نافذة إضافة / تعديل تنبيه / إشعار عام جديد -->
     <div class="modal" id="announcementModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3><i class="fa-solid fa-bullhorn"></i> إضافة تنبيه أو إشعار للعيادة</h3>
+                <h3 id="announcementModalTitle"><i class="fa-solid fa-bullhorn"></i> إضافة تنبيه أو إشعار للعيادة</h3>
                 <button class="close-modal-btn" onclick="closeAnnouncementModal()">&times;</button>
             </div>
             <form id="announcementForm" onsubmit="saveAnnouncementItem(event)">
+                <input type="hidden" id="editAnnouncementKey">
                 <div class="form-grid">
                     <div class="input-field full-width">
                         <label>نص التنبيه أو الملاحظة *</label>
                         <textarea id="announcementText" required placeholder="اكتب التنبيه أو التحديث الجديد للعيادة هنا..."></textarea>
                     </div>
                 </div>
-                <button type="submit" class="submit-btn" style="margin-top: 15px;"><i class="fa-solid fa-floppy-disk"></i> نشر التنبيه للجميع</button>
+                <button type="submit" class="submit-btn" style="margin-top: 15px;"><i class="fa-solid fa-floppy-disk"></i> حفظ ونشر التنبيه</button>
             </form>
         </div>
     </div>
@@ -1765,7 +1785,7 @@
             universalAuthCallback = null;
         }
 
-        // دالة عرض الكروت المنظمة للتنبيهات
+        // دالة عرض الكروت المنظمة للتنبيهات مع أيقونة التعديل والحذف المباشر بدون باسورد
         function renderAnnouncements() {
             const container = document.getElementById('announcementsListContainer');
             if (!container) return;
@@ -1785,9 +1805,14 @@
                     <div class="announcement-body-text">${item.text}</div>
                     <div class="announcement-footer-row">
                         <span><i class="fa-regular fa-clock"></i> ${dateStr}</span>
-                        <button class="btn-delete-announcement-card" onclick="deleteAnnouncement('${item.announcementKey}')" title="حذف التنبيه">
-                            <i class="fa-solid fa-trash-can"></i> حذف
-                        </button>
+                        <div class="announcement-actions-group">
+                            <button class="btn-edit-announcement-card" onclick="openEditAnnouncementModal('${item.announcementKey}')" title="تعديل التنبيه">
+                                <i class="fa-solid fa-pen"></i> تعديل
+                            </button>
+                            <button class="btn-delete-announcement-card" onclick="deleteAnnouncement('${item.announcementKey}')" title="حذف التنبيه">
+                                <i class="fa-solid fa-trash-can"></i> حذف
+                            </button>
+                        </div>
                     </div>
                 `;
                 container.appendChild(card);
@@ -1795,7 +1820,18 @@
         }
 
         function openAddAnnouncementModal() {
+            document.getElementById('editAnnouncementKey').value = '';
             document.getElementById('announcementText').value = '';
+            document.getElementById('announcementModalTitle').innerHTML = '<i class="fa-solid fa-bullhorn"></i> إضافة تنبيه أو إشعار للعيادة';
+            document.getElementById('announcementModal').classList.add('open');
+        }
+
+        function openEditAnnouncementModal(key) {
+            const item = clinicAnnouncements.find(a => a.announcementKey === key);
+            if (!item) return;
+            document.getElementById('editAnnouncementKey').value = item.announcementKey;
+            document.getElementById('announcementText').value = item.text || '';
+            document.getElementById('announcementModalTitle').innerHTML = '<i class="fa-solid fa-pen"></i> تعديل تنبيه العيادة';
             document.getElementById('announcementModal').classList.add('open');
         }
 
@@ -1805,47 +1841,64 @@
 
         function saveAnnouncementItem(e) {
             e.preventDefault();
+            const key = document.getElementById('editAnnouncementKey').value;
             const textVal = document.getElementById('announcementText').value.trim();
             if (!textVal) return;
 
-            const tempKey = 'ann_' + Date.now();
-            const newAnn = {
-                announcementKey: tempKey,
-                text: textVal,
-                createdAt: new Date().toISOString()
-            };
+            if (key) {
+                // تعديل تنبيه موجود
+                const item = clinicAnnouncements.find(a => a.announcementKey === key);
+                if (item) {
+                    item.text = textVal;
+                    saveLocal();
+                    renderAnnouncements();
+                    closeAnnouncementModal();
+                    playBeepAndShowToast('✏️ تم تعديل التنبيه بنجاح!');
 
-            clinicAnnouncements.unshift(newAnn);
-            saveLocal();
-            renderAnnouncements();
-            closeAnnouncementModal();
-            playBeepAndShowToast('📢 تم نشر التنبيه بنجاح للجميع!');
-
-            if (navigator.onLine) {
-                const uploadData = { text: newAnn.text, createdAt: newAnn.createdAt };
-                announcementsDbRef.push(uploadData).then((pushedRef) => {
-                    const idx = clinicAnnouncements.findIndex(a => a.announcementKey === tempKey);
-                    if (idx !== -1) {
-                        clinicAnnouncements[idx].announcementKey = pushedRef.key;
-                        saveLocal();
+                    if (navigator.onLine && !key.startsWith('ann_')) {
+                        announcementsDbRef.child(key).update({ text: textVal });
                     }
-                });
+                }
+            } else {
+                // إضافة تنبيه جديد
+                const tempKey = 'ann_' + Date.now();
+                const newAnn = {
+                    announcementKey: tempKey,
+                    text: textVal,
+                    createdAt: new Date().toISOString()
+                };
+
+                clinicAnnouncements.unshift(newAnn);
+                saveLocal();
+                renderAnnouncements();
+                closeAnnouncementModal();
+                playBeepAndShowToast('📢 تم نشر التنبيه بنجاح للجميع!');
+
+                if (navigator.onLine) {
+                    const uploadData = { text: newAnn.text, createdAt: newAnn.createdAt };
+                    announcementsDbRef.push(uploadData).then((pushedRef) => {
+                        const idx = clinicAnnouncements.findIndex(a => a.announcementKey === tempKey);
+                        if (idx !== -1) {
+                            clinicAnnouncements[idx].announcementKey = pushedRef.key;
+                            saveLocal();
+                        }
+                    });
+                }
             }
         }
 
         function deleteAnnouncement(key) {
-            requireAdminAuth(() => {
-                if (confirm('هل أنت متأكد من حذف هذا التنبيه؟')) {
-                    clinicAnnouncements = clinicAnnouncements.filter(a => a.announcementKey !== key);
-                    saveLocal();
-                    renderAnnouncements();
+            // حذف مباشر بدون كلمة مرور
+            if (confirm('هل أنت متأكد من حذف هذا التنبيه؟')) {
+                clinicAnnouncements = clinicAnnouncements.filter(a => a.announcementKey !== key);
+                saveLocal();
+                renderAnnouncements();
 
-                    if (navigator.onLine && !key.startsWith('ann_')) {
-                        announcementsDbRef.child(key).remove();
-                    }
-                    playBeepAndShowToast('🗑️ تم حذف التنبيه بنجاح!');
+                if (navigator.onLine && !key.startsWith('ann_')) {
+                    announcementsDbRef.child(key).remove();
                 }
-            });
+                playBeepAndShowToast('🗑️ تم حذف التنبيه بنجاح!');
+            }
         }
 
         let pendingPriorityCheckbox = null;
