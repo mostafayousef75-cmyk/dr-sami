@@ -1215,7 +1215,7 @@
         let dashboardFilter = localStorage.getItem('savedDashboardFilter') || 'all';
         let dashboardTimeFilter = localStorage.getItem('savedDashboardTimeFilter') || 'all';
         let clientHoursFilter = localStorage.getItem('savedClientHoursFilter') || '8';
-        let isPinnedFilterActive = false;
+        let isPinnedFilterActive = localStorage.getItem('savedPinnedFilterActive') === 'true';
         
         let originalEditPriorityState = false;
         let originalEditRepeatedState = false;
@@ -1271,10 +1271,10 @@
         }
 
         function saveLocal() { 
-            localStorage.setItem('cachedAppointments_v15', JSON.stringify(records));
+            localStorage.setItem('cachedAppointments_v16', JSON.stringify(records));
         }
 
-        const cached = localStorage.getItem('cachedAppointments_v15');
+        const cached = localStorage.getItem('cachedAppointments_v16');
         if (cached) { try { records = JSON.parse(cached); lastKnownRecordsCount = records.length; } catch(e) { records = []; } }
 
         function syncFilterTabsUI() {
@@ -1355,6 +1355,13 @@
             const hoursSelect = document.getElementById('clientHoursSelect');
             if (hoursSelect) {
                 hoursSelect.value = clientHoursFilter;
+            }
+
+            // تطبيق حالة زر المميزون المحفوظة عند التحميل أو الريفرش
+            const btn = document.getElementById('pinnedFilterBtn');
+            if (btn && isPinnedFilterActive) {
+                btn.style.backgroundColor = '#16a34a';
+                btn.style.boxShadow = '0 0 10px rgba(22, 163, 74, 0.4)';
             }
 
             syncFilterTabsUI();
@@ -1526,7 +1533,6 @@
             playBeepAndShowToast('⚠️ تم إضافة العميل والموعد بنجاح!');
         });
 
-        // دالة تثبيت أو إلغاء تثبيت العميل محمية بباسورد الموقع
         function requestTogglePinRecord(key) {
             requireAdminAuth(() => {
                 let rec = records.find(r => r.firebaseKey === key);
@@ -1541,7 +1547,7 @@
                         dbRef.child(key).update({ isPinned: rec.isPinned });
                     }
 
-                    playBeepAndShowToast(rec.isPinned ? '📌 تم تثبيت العميل في المُميّزون' : '✖️ تم إزالة العميل من المُميّزون');
+                    playBeepAndShowToast(rec.isPinned ? '📌 تم تثبيت العميل في المميزون' : '✖️ تم إزالة العميل من المميزون');
                 }
             });
         }
@@ -1554,6 +1560,7 @@
 
         function togglePinnedFilter() {
             isPinnedFilterActive = !isPinnedFilterActive;
+            localStorage.setItem('savedPinnedFilterActive', isPinnedFilterActive);
             const btn = document.getElementById('pinnedFilterBtn');
             if (isPinnedFilterActive) {
                 btn.style.backgroundColor = '#16a34a';
@@ -2010,7 +2017,6 @@
             });
         }
 
-        // دالة استرجاع العميل المُصلحة لتحديث البيانات بدون أخطاء
         function restoreClientToReport(key) {
             requireAdminAuth(() => {
                 let rec = records.find(r => r.firebaseKey === key);
