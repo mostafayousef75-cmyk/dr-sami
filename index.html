@@ -476,7 +476,6 @@
         .badge-inprogress { background-color: #2563eb; }
         .badge-completed { background-color: #16a34a; }
         .badge-suspended { background-color: #ca8a04; }
-        .badge-noresponse { background-color: #475569; }
         .badge-apologized { background-color: #dc2626; box-shadow: 0 0 8px rgba(220, 38, 38, 0.4); }
         .badge-other { background-color: #0d9488; }
 
@@ -544,6 +543,126 @@
             transition: transform 0.3s ease, opacity 0.3s ease;
         }
         #notificationToast.show { transform: translateY(0); opacity: 1; }
+
+        /* ---------------------------------------------------- */
+        /* تعديل وتنسيق كروت صفحة الكشف لتتطابق تماماً مع الصورة الثانية */
+        /* ---------------------------------------------------- */
+        .client-report-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .client-card-wrapper {
+            background-color: var(--bg-base);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 14px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            position: relative;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+        }
+
+        .client-card-wrapper.is-copied {
+            background-color: rgba(22, 163, 74, 0.06);
+            border-color: rgba(22, 163, 74, 0.3);
+        }
+
+        .client-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            margin-bottom: 4px;
+        }
+
+        .client-card-header .client-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .client-card-header .client-select-chk {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+            accent-color: var(--primary-color);
+        }
+
+        .client-datetime-badge {
+            font-family: Arial, sans-serif;
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: #ffffff;
+            background: rgba(37, 99, 235, 0.25);
+            padding: 4px 10px;
+            border-radius: 4px;
+            border: 1px solid rgba(37, 99, 235, 0.4);
+            direction: ltr;
+            white-space: nowrap;
+        }
+
+        .client-info-row {
+            font-size: 0.9rem;
+            color: var(--text-main);
+            line-height: 1.5;
+            word-break: break-word;
+        }
+
+        .client-info-row .info-label {
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .copied-btn {
+            background: #d97706;
+            color: #ffffff;
+            border: none;
+            padding: 3px 10px;
+            border-radius: 4px;
+            font-family: var(--font-family);
+            font-size: 0.78rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .copied-btn.active {
+            background: var(--success-color);
+        }
+
+        .client-actions-row {
+            display: flex;
+            gap: 8px;
+            margin-top: 6px;
+            justify-content: flex-end;
+            width: 100%;
+        }
+
+        .btn-client-action {
+            padding: 5px 12px;
+            border-radius: 4px;
+            border: none;
+            color: #fff;
+            font-family: var(--font-family);
+            font-size: 0.8rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .btn-client-action.delete-to-trash { background-color: var(--danger-color); }
+        .btn-client-action.permanent-delete { background-color: var(--danger-color); }
+        .btn-client-action.unpin-item { background-color: var(--warning-color); }
 
         /* تنسيقات شبكة الدليل الشامل لخدمة العملاء */
         .links-grid {
@@ -666,7 +785,6 @@
                     <i class="fa-solid fa-file-lines"></i>
                     <span>صفحة الكشف</span>
                 </div>
-                <!-- العنصر الجديد المضاف بناءً على الصورة -->
                 <div class="menu-item" id="menu-csguide" onclick="switchPage('csguide')">
                     <i class="fa-solid fa-book-bookmark"></i>
                     <span>الدليل الشامل لـ (خدمة العملاء)</span>
@@ -1156,10 +1274,10 @@
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
         const dbRef = database.ref('appointments');
-        const linksDbRef = database.ref('cs_guide_links'); // مرجع قاعدة البيانات للروابط
+        const linksDbRef = database.ref('cs_guide_links');
 
         let records = [];
-        let csLinks = []; // الروابط المضافة في الدليل الشامل
+        let csLinks = [];
         let dashboardFilter = localStorage.getItem('savedDashboardFilter') || 'all';
         let dashboardTimeFilter = localStorage.getItem('savedDashboardTimeFilter') || 'all';
         let clientHoursFilter = localStorage.getItem('savedClientHoursFilter') || '8';
@@ -1348,7 +1466,6 @@
             renderTrashModalList();
         });
 
-        // المزامنة مع السحابة لروابط الدليل الشامل
         linksDbRef.on('value', (snapshot) => {
             const data = snapshot.val();
             if (data) {
@@ -1672,11 +1789,10 @@
                 }
 
                 const currentContact = record.adminContactMethod || 'قيد الانتظار';
-                const isOther = !['قيد الانتظار', 'قيد الإجراء', 'تم التواصل', 'معلق', 'لا يرد', 'اعتذر'].includes(currentContact);
+                const isOther = !['قيد الانتظار', 'قيد الإجراء', 'تم التواصل', 'معلق', 'اعتذر'].includes(currentContact);
                 const selectVal = isOther ? 'أخرى' : currentContact;
                 const otherDetail = isOther ? currentContact : (record.adminContactDetail || '');
 
-                // في حالة اختيار "اعتذر"، تمييز الصف بالكامل باللون الأحمر
                 if (selectVal === 'اعتذر') {
                     tr.classList.add('row-apologized');
                 }
@@ -1694,7 +1810,6 @@
                 else if (selectVal === 'قيد الإجراء') sClass = 'badge-inprogress';
                 else if (selectVal === 'تم التواصل') sClass = 'badge-completed';
                 else if (selectVal === 'معلق') sClass = 'badge-suspended';
-                else if (selectVal === 'لا يرد') sClass = 'badge-noresponse';
                 else if (selectVal === 'اعتذر') sClass = 'badge-apologized';
 
                 statusBadgeHTML += `<span class="status-badge ${sClass}">${selectVal}</span>`;
@@ -1726,8 +1841,7 @@
                             <option value="قيد الإجراء" ${selectVal === 'قيد الإجراء' ? 'selected' : ''}>قيد الإجراء 🔄</option>
                             <option value="تم التواصل" ${selectVal === 'تم التواصل' ? 'selected' : ''}>تم التواصل ✅</option>
                             <option value="معلق" ${selectVal === 'معلق' ? 'selected' : ''}>معلق 🟡</option>
-                            <option value="لا يرد" ${selectVal === 'لا يرد' ? 'selected' : ''}>لا يرد ❌</option>
-                            <!-- الخيار الجديد بناءً على الصورة -->
+                            <!-- تم حذف "لا يرد" وإضافة "اعتذر" بناءً على طلبك -->
                             <option value="اعتذر" ${selectVal === 'اعتذر' ? 'selected' : ''}>اعتذر ❌</option>
                             <option value="أخرى" ${selectVal === 'أخرى' ? 'selected' : ''}>أخرى ✍️</option>
                         </select>
@@ -1962,7 +2076,6 @@
             const desc = document.getElementById('linkDesc').value.trim();
 
             if (key) {
-                // تعديل رابط موجود
                 let item = csLinks.find(l => l.linkKey === key);
                 if (item) {
                     item.title = title;
@@ -1974,7 +2087,6 @@
                     }
                 }
             } else {
-                // إضافة رابط جديد
                 const tempKey = 'link_' + Date.now();
                 const newLink = { linkKey: tempKey, title, url, desc };
                 csLinks.unshift(newLink);
@@ -2216,6 +2328,9 @@
             });
         }
 
+        /* ---------------------------------------------------- */
+        /* التوابع المعدلة بالكامل لصفحة الكشف لتتطابق مع الصورة الثانية */
+        /* ---------------------------------------------------- */
         function renderClientReport() {
             const container = document.getElementById('clientReportList');
             if (!container) return;
@@ -2311,13 +2426,13 @@
                 if (isPinnedFilterActive) {
                     headerActionsHTML = `
                         <button class="copied-btn active" style="background-color: #d97706; border-color: #f59e0b;" onclick="requestTogglePinRecord('${rec.firebaseKey}')">
-                            <i class="fa-solid fa-thumbtack"></i> المميزون 📌
+                            📌 المميزون
                         </button>
                     `;
                 } else {
                     headerActionsHTML = `
                         <button class="copied-btn ${isCopied ? 'active' : ''}" onclick="toggleCopiedStatusGroup(${keysJsonStr})">
-                            <i class="fa-solid ${isCopied ? 'fa-circle-check' : 'fa-check'}"></i> ${isCopied ? 'تم النسخ ✅' : 'تعليم كمنسوخ'}
+                            <i class="fa-solid ${isCopied ? 'fa-circle-check' : 'fa-check'}"></i> ${isCopied ? 'تم النسخ' : 'تعليم كمنسوخ'}
                         </button>
                     `;
                 }
@@ -2326,8 +2441,7 @@
                     <div class="client-card-header">
                         <div class="client-title">
                             <input type="checkbox" class="client-select-chk" data-keys="${keysJsonStr}">
-                            <span>${index + 1}-${rec.patientName}${fileStr}</span>${item.isRepeated ? `<span class="client-repeated-badge"><i class="fa-solid fa-rotate-right"></i> متكرر</span>` : ''}
-                            ${headerActionsHTML}
+                            <span>${index + 1}-${rec.patientName}${fileStr}</span>${headerActionsHTML}
                         </div>
                         ${dateTimeStr ? `<span class="client-datetime-badge"><i class="fa-regular fa-clock"></i> ${dateTimeStr}</span>` : ''}
                     </div>
@@ -2339,15 +2453,11 @@
                         ${serviceStr}
                     </div>
                     <div class="client-actions-row">
-                        ${isPinnedFilterActive ? '' : `
-                        <button class="btn-client-action unpin-item" onclick="requestTogglePinRecord('${rec.firebaseKey}')">
-                            <i class="fa-solid fa-thumbtack"></i> المميزون 📌
-                        </button>`}
                         <button class="btn-client-action delete-to-trash" onclick="hideClientGroupFromReport(${keysJsonStr})">
-                            <i class="fa-solid fa-trash"></i> حذف
+                            حذف
                         </button>
                         <button class="btn-client-action permanent-delete" onclick="permanentDeleteGroupFromReport(${keysJsonStr})">
-                            <i class="fa-solid fa-trash-can"></i> حذف نهائي
+                            حذف نهائي
                         </button>
                     </div>
                 `;
