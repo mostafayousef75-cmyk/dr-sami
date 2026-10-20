@@ -55,6 +55,7 @@
             box-sizing: border-box;
             margin: 0;
             padding: 0;
+            transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
         }
 
         body {
@@ -129,6 +130,8 @@
             justify-content: center;
         }
 
+        .toggle-sidebar-btn:hover { background: var(--primary-color); }
+
         .sidebar-menu {
             display: flex;
             flex-direction: column;
@@ -160,6 +163,11 @@
             color: #ffffff;
             border: 1px solid var(--primary-color);
             box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+        }
+
+        body.light-theme .menu-item.active {
+            background-color: #e2e8f0;
+            color: #1e293b;
         }
 
         .cloud-badge {
@@ -352,6 +360,10 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
+            transition: transform 0.2s;
+        }
+        .announcement-thumbnail-wrapper:hover img {
+            transform: scale(1.08);
         }
         .announcement-footer-row {
             display: flex;
@@ -809,9 +821,43 @@
             flex-direction: column;
             gap: 10px;
             position: relative;
+            transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
             user-select: text;
             -webkit-user-select: text;
             width: 100%;
+        }
+        .link-card.dragging {
+            opacity: 0.4;
+            border: 2px dashed var(--primary-color);
+            transform: scale(0.98);
+        }
+        .link-card.drag-over {
+            border: 2px solid var(--accent-purple);
+            box-shadow: 0 0 12px rgba(124, 58, 237, 0.4);
+            transform: translateY(-4px);
+        }
+        .link-card:hover {
+            border-color: var(--primary-color);
+        }
+        .drag-handle {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            color: var(--primary-color);
+            background: rgba(37, 99, 235, 0.1);
+            border: 1px solid rgba(37, 99, 235, 0.3);
+            border-radius: 6px;
+            font-size: 1.1rem;
+            cursor: grab;
+            padding: 8px 10px;
+            touch-action: none;
+            z-index: 5;
+            user-select: none;
+        }
+        .drag-handle:active {
+            cursor: grabbing;
+            background: var(--primary-color);
+            color: #ffffff;
         }
         .link-card-header {
             display: flex;
@@ -820,6 +866,7 @@
             font-weight: 700;
             font-size: 1rem;
             color: var(--text-main);
+            padding-left: 35px;
             word-break: break-word;
         }
         .link-card-header i {
@@ -857,6 +904,7 @@
             cursor: pointer;
             border: none;
         }
+        .btn-open-link:hover { background-color: var(--primary-hover); }
 
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 2000; justify-content: center; align-items: center; padding: 15px; }
         .modal.open { display: flex; }
@@ -877,6 +925,7 @@
         @media (max-width: 768px) {
             .content-body { padding: 10px; gap: 12px; }
             .dashboard-section { padding: 12px; }
+            
             .client-header-controls {
                 display: grid;
                 grid-template-columns: repeat(2, 1fr);
@@ -891,13 +940,49 @@
                 width: 100%;
                 justify-content: center;
             }
+
+            .client-card-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+            
+            .client-datetime-badge {
+                width: 100%;
+                justify-content: flex-start;
+                font-size: 0.72rem;
+            }
+
+            .client-actions-row {
+                justify-content: stretch;
+            }
+            .btn-client-action {
+                flex: 1;
+                justify-content: center;
+            }
+
+            .links-grid {
+                grid-template-columns: 1fr;
+            }
         }
 
         @media (max-width: 992px) {
-            .sidebar { transform: translateX(100%); }
-            .app-layout.sidebar-open .sidebar { transform: translateX(0) !important; }
-            .main-wrapper { margin-right: 0 !important; width: 100% !important; }
-            .open-sidebar-btn { display: inline-flex !important; }
+            .sidebar {
+                transform: translateX(100%);
+            }
+            .app-layout:not(.sidebar-collapsed) .sidebar {
+                transform: translateX(100%);
+            }
+            .app-layout.sidebar-open .sidebar {
+                transform: translateX(0) !important;
+            }
+            .main-wrapper {
+                margin-right: 0 !important;
+                width: 100% !important;
+            }
+            .open-sidebar-btn {
+                display: inline-flex !important;
+            }
         }
     </style>
 </head>
@@ -1121,6 +1206,51 @@
                             </div>
                         </div>
 
+                        <div class="filter-container-box">
+                            <div class="filter-row">
+                                <span class="filter-label"><i class="fa-solid fa-filter"></i> فلاتر الحالات:</span>
+                                <div class="filter-tabs" id="statusFilterTabs">
+                                    <button class="filter-tab" data-filter="all" onclick="setDashboardFilter('all', this)">الكل</button>
+                                    <button class="filter-tab" data-filter="priority" onclick="setDashboardFilter('priority', this)">حالات ذات أولوية ⭐</button>
+                                    <button class="filter-tab" data-filter="repeated" onclick="setDashboardFilter('repeated', this)">طلبات متكررة 🔄</button>
+                                    <button class="filter-tab" data-filter="plants" onclick="setDashboardFilter('plants', this)">حالات الزراعة 🦷</button>
+                                    <button class="filter-tab" data-filter="extraction" onclick="setDashboardFilter('extraction', this)">حالات الخلع 🩺</button>
+                                    <button class="filter-tab" data-filter="review" onclick="setDashboardFilter('review', this)">حالات المراجعة 📋</button>
+                                    
+                                    <div class="dropdown-filter-container" id="inquiriesDropdownContainer">
+                                        <button class="dropdown-filter-btn" id="inquiriesDropdownBtn" onclick="toggleDropdown('inquiriesDropdownContent')">
+                                            <i class="fa-solid fa-comments"></i> الاستفسارات <i class="fa-solid fa-chevron-down" style="font-size:0.7rem;"></i>
+                                        </button>
+                                        <div class="dropdown-content" id="inquiriesDropdownContent">
+                                            <button class="dropdown-item" data-filter="inquiries_all" onclick="setDashboardFilter('inquiries_all', this)">💬 كل الاستفسارات</button>
+                                            <button class="dropdown-item" data-filter="inquiries_done" onclick="setDashboardFilter('inquiries_done', this)">✅ استفسارات تم إجراءها</button>
+                                            <button class="dropdown-item" data-filter="inquiries_pending" onclick="setDashboardFilter('inquiries_pending', this)">⏳ استفسارات لم يتم إجراؤها</button>
+                                        </div>
+                                    </div>
+
+                                    <div class="dropdown-filter-container" id="appointmentsDropdownContainer">
+                                        <button class="dropdown-filter-btn" id="appointmentsDropdownBtn" onclick="toggleDropdown('appointmentsDropdownContent')">
+                                            <i class="fa-solid fa-stethoscope"></i> الكشفيات والمواعيد <i class="fa-solid fa-chevron-down" style="font-size:0.7rem;"></i>
+                                        </button>
+                                        <div class="dropdown-content" id="appointmentsDropdownContent">
+                                            <button class="dropdown-item" data-filter="no_inquiries_all" onclick="setDashboardFilter('no_inquiries_all', this)">📋 كل الكشفيات والمواعيد</button>
+                                            <button class="dropdown-item" data-filter="no_inquiries_done" onclick="setDashboardFilter('no_inquiries_done', this)">✅ تم عليها إجراءات</button>
+                                            <button class="dropdown-item" data-filter="no_inquiries_pending" onclick="setDashboardFilter('no_inquiries_pending', this)">⏳ لم يتم عليها أي إجراء</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="filter-row" style="border-top: 1px dashed var(--border-color); padding-top: 8px;">
+                                <span class="filter-label"><i class="fa-solid fa-clock"></i> النطاق الزمني:</span>
+                                <div class="filter-tabs" id="timeFilterTabs">
+                                    <button class="filter-tab" data-time="all" onclick="setDashboardTimeFilter('all', this)">كل الأوقات</button>
+                                    <button class="filter-tab" data-time="today" onclick="setDashboardTimeFilter('today', this)">اليوم</button>
+                                    <button class="filter-tab" data-time="week" onclick="setDashboardTimeFilter('week', this)">الأسبوع</button>
+                                    <button class="filter-tab" data-time="month" onclick="setDashboardTimeFilter('month', this)">الشهر</button>
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="table-container">
                             <table id="requestsTable">
                                 <thead>
@@ -1146,7 +1276,7 @@
 
                 </div>
 
-                <!-- صفحة الكشف (معدلة ومثبتة تماماً للكمبيوتر) -->
+                <!-- صفحة الكشف -->
                 <div id="page-clients" class="page-view hidden">
                     <section class="dashboard-section">
                         <div style="display: flex; flex-direction: column; gap: 12px; background: var(--bg-base); padding: 12px 15px; border-radius: 8px; border: 1px solid var(--border-color); margin-bottom: 15px;">
@@ -1159,6 +1289,9 @@
                             <div class="client-header-controls">
                                 <select id="clientHoursSelect" onchange="setClientTimeFilterSelect(this.value)" style="background: var(--bg-surface); color: var(--text-main); border: 1px solid var(--border-color); padding: 8px 10px; border-radius: 6px; font-family: var(--font-family); font-size: 0.85rem; cursor: pointer;">
                                     <option value="all">كل الأوقات</option>
+                                    <option value="6">آخر 6 ساعات</option>
+                                    <option value="8">آخر 8 ساعات</option>
+                                    <option value="12">آخر 12 ساعة</option>
                                     <option value="24">آخر 24 ساعة</option>
                                     <option value="48">آخر 48 ساعة</option>
                                     <option value="168">أسبوع</option>
@@ -1166,7 +1299,7 @@
                                 </select>
 
                                 <button class="action-btn" id="pinnedFilterBtn" onclick="togglePinnedFilter()" style="background-color: #16a34a;">
-                                    <i class="fa-solid fa-file-lines"></i> ✅ عرض الكل ( <span id="pinnedCount">0</span> )
+                                    <i class="fa-solid fa-file-lines"></i> ✅ الكشف العادي ( <span id="pinnedCount">0</span> )
                                 </button>
 
                                 <button class="action-btn copy-btn" onclick="copyClientReport()"><i class="fa-solid fa-copy"></i> نسخ الكشف</button>
@@ -1192,6 +1325,10 @@
                             <h2><i class="fa-solid fa-book-bookmark"></i> الدليل الشامل لـ (خدمة العملاء)</h2>
                             <button class="action-btn copy-btn" onclick="openAddLinkModal()"><i class="fa-solid fa-plus"></i> إضافة رابط جديد</button>
                         </div>
+                        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 10px;">
+                            💡 **حماية المواقع:** الترتيب أو التعديل أو الحذف لأي رابط يتطلب **كلمة مرور الإدارة**. فتح الموقع متاح مباشرة. اضغط على أيقونة المقبض الزرقاء <i class="fa-solid fa-grip-vertical" style="color: var(--primary-color);"></i> للترتيب بالسحب.
+                        </p>
+
                         <div class="links-grid" id="linksGridContainer"></div>
                     </section>
                 </div>
@@ -1200,62 +1337,94 @@
         </main>
     </div>
 
-    <!-- النوافذ المنبثقة -->
+    <!-- نافذة إضافة / تعديل تنبيه -->
     <div class="modal" id="announcementModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 id="announcementModalTitle">إضافة تنبيه جديد</h3>
+                <h3 id="announcementModalTitle"><i class="fa-solid fa-bullhorn"></i> إضافة تنبيه أو إشعار للعيادة</h3>
                 <button class="close-modal-btn" onclick="closeAnnouncementModal()">&times;</button>
             </div>
             <form id="announcementForm" onsubmit="saveAnnouncementItem(event)">
                 <input type="hidden" id="editAnnouncementKey">
                 <div class="form-grid">
                     <div class="input-field full-width">
-                        <label>نص التنبيه *</label>
-                        <textarea id="announcementText" required></textarea>
+                        <label>نص التنبيه أو الملاحظة *</label>
+                        <textarea id="announcementText" required placeholder="اكتب التنبيه أو التحديث الجديد للعيادة هنا..."></textarea>
+                    </div>
+                    <div class="input-field full-width">
+                        <label><i class="fa-solid fa-image"></i> إرفاق صورة مع التنبيه (اختياري)</label>
+                        <input type="file" id="announcementImageFile" accept="image/*" style="padding: 6px; cursor: pointer;">
                     </div>
                 </div>
-                <button type="submit" class="submit-btn" style="margin-top: 15px;">حفظ ونشر</button>
+                <button type="submit" class="submit-btn" style="margin-top: 15px;"><i class="fa-solid fa-floppy-disk"></i> حفظ ونشر التنبيه</button>
             </form>
         </div>
     </div>
 
+    <!-- نافذة تكبير الصورة المرفقة -->
+    <div class="modal" id="imagePreviewModal">
+        <div class="modal-content" style="max-width: 650px; text-align: center; padding: 15px;">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-image"></i> معاينة الصورة المرفقة</h3>
+                <button class="close-modal-btn" onclick="closeImagePreviewModal()">&times;</button>
+            </div>
+            <div style="width: 100%; max-height: 75vh; overflow: hidden; display: flex; align-items: center; justify-content: center; background: #000; border-radius: 8px;">
+                <img id="previewFullImageTag" src="" alt="صورة مرفقة" style="max-width: 100%; max-height: 70vh; object-fit: contain;">
+            </div>
+        </div>
+    </div>
+
+    <!-- نافذة إضافة / تعديل رابط جديد -->
     <div class="modal" id="linkModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 id="linkModalTitle">إضافة رابط جديد</h3>
+                <h3 id="linkModalTitle"><i class="fa-solid fa-link"></i> إضافة رابط جديد</h3>
                 <button class="close-modal-btn" onclick="closeLinkModal()">&times;</button>
             </div>
             <form id="linkForm" onsubmit="saveLinkItem(event)">
                 <input type="hidden" id="linkKey">
                 <div class="form-grid">
-                    <div class="input-field full-width"><label>عنوان الموقع *</label><input type="text" id="linkTitle" required></div>
-                    <div class="input-field full-width"><label>الرابط URL *</label><input type="url" id="linkUrl" required></div>
-                    <div class="input-field full-width"><label>وصف مختصر</label><textarea id="linkDesc"></textarea></div>
+                    <div class="input-field full-width">
+                        <label>عنوان الرابط / الموقع *</label>
+                        <input type="text" id="linkTitle" required placeholder="مثال: نظام بيفاتيل Bevatel">
+                    </div>
+                    <div class="input-field full-width">
+                        <label>الرابط (URL) *</label>
+                        <input type="url" id="linkUrl" required placeholder="https://example.com">
+                    </div>
+                    <div class="input-field full-width">
+                        <label>وصف مختصر</label>
+                        <textarea id="linkDesc" placeholder="اكتب وصفاً مختصراً للرابط والهدف منه..."></textarea>
+                    </div>
                 </div>
-                <button type="submit" class="submit-btn" style="margin-top: 15px;">حفظ الرابط</button>
+                <button type="submit" class="submit-btn" style="margin-top: 15px;"><i class="fa-solid fa-floppy-disk"></i> حفظ الرابط</button>
             </form>
         </div>
     </div>
 
+    <!-- نافذة سلة المحذوفات -->
     <div class="modal" id="trashModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>سلة المحذوفات</h3>
+                <h3><i class="fa-solid fa-rotate-left"></i> سلة المحذوفات والاسترجاع</h3>
                 <button class="close-modal-btn" onclick="closeTrashModal()">&times;</button>
             </div>
             <div id="trashModalList" style="display: flex; flex-direction: column; gap: 10px; max-height: 60vh; overflow-y: auto;"></div>
         </div>
     </div>
 
+    <!-- نافذة كلمة المرور -->
     <div class="modal" id="passAuthModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>تأكيد كلمة مرور الإدارة</h3>
+                <h3><i class="fa-solid fa-shield-halved"></i> تأكيد كلمة مرور الإدارة</h3>
                 <button class="close-modal-btn" onclick="cancelUniversalAuth()">&times;</button>
             </div>
             <div class="form-grid">
-                <div class="input-field full-width"><label>كلمة المرور *</label><input type="password" id="authPassInput"></div>
+                <div class="input-field full-width">
+                    <label>أدخل كلمة مرور الموقع للمتابعة *</label>
+                    <input type="password" id="authPassInput" placeholder="كلمة المرور">
+                </div>
             </div>
             <button type="button" class="submit-btn" onclick="confirmUniversalAuth()">تأكيد</button>
         </div>
@@ -1264,11 +1433,23 @@
     <div class="modal" id="clearModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>مسح البيانات بكلمة مرور</h3>
+                <h3><i class="fa-solid fa-trash-can"></i> مسح البيانات بكلمة مرور</h3>
                 <button class="close-modal-btn" onclick="closeClearModal()">&times;</button>
             </div>
             <div class="form-grid">
-                <div class="input-field full-width"><label>كلمة المرور *</label><input type="password" id="clearPasswordInput"></div>
+                <div class="input-field full-width">
+                    <label>اختر نطاق المسح *</label>
+                    <select id="clearRange" class="table-input">
+                        <option value="today">مسح حالات اليوم فقط</option>
+                        <option value="week">مسح حالات الأسبوع الأخير</option>
+                        <option value="month">مسح حالات الشهر الحالي</option>
+                        <option value="all">مسح جميع البيانات بالكامل ⚠️</option>
+                    </select>
+                </div>
+                <div class="input-field full-width">
+                    <label>كلمة المرور *</label>
+                    <input type="password" id="clearPasswordInput" placeholder="أدخل كلمة المرور">
+                </div>
             </div>
             <button type="button" class="submit-btn" style="background-color: var(--danger-color); margin-top: 15px;" onclick="executeFilteredClear()">تنفيذ الحذف</button>
         </div>
@@ -1277,37 +1458,92 @@
     <div class="modal" id="passwordModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>تغيير كلمة المرور</h3>
+                <h3><i class="fa-solid fa-key"></i> تغيير كلمة المرور</h3>
                 <button class="close-modal-btn" onclick="closePasswordModal()">&times;</button>
             </div>
             <div class="form-grid">
                 <div class="input-field full-width"><label>كلمة المرور الحالية *</label><input type="password" id="oldPassword"></div>
                 <div class="input-field full-width"><label>كلمة المرور الجديدة *</label><input type="password" id="newPassword"></div>
             </div>
-            <button type="button" class="submit-btn" style="margin-top: 15px;" onclick="updatePassword()">حفظ</button>
+            <button type="button" class="submit-btn" style="margin-top: 15px;" onclick="updatePassword()">حفظ كلمة المرور</button>
         </div>
     </div>
 
     <div class="modal" id="editModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>تعديل بيانات العميل</h3>
+                <h3><i class="fa-solid fa-pen-to-square"></i> تعديل بيانات العميل</h3>
                 <button class="close-modal-btn" onclick="closeEditModal()">&times;</button>
             </div>
             <form id="editForm" onsubmit="saveEditedRecord(event)">
                 <input type="hidden" id="editFirebaseKey">
                 <div class="form-grid">
-                    <div class="input-field"><label>اسم العميل *</label><input type="text" id="editPatientName" required></div>
-                    <div class="input-field"><label>رقم الجوال</label><input type="tel" id="editPatientPhone"></div>
-                    <div class="input-field"><label>رقم الملف</label><input type="text" id="editFileNumber"></div>
-                    <div class="input-field"><label>رقم الهوية</label><input type="text" id="editIdNumber"></div>
-                    <div class="input-field"><label>الفرع *</label><select id="editBranch" required><option value="معشي">فرع معشي</option><option value="الوسام">فرع الوسام</option></select></div>
-                    <div class="input-field"><label>طريقة التواصل *</label><select id="editContactMethod" required><option value="اتصال">اتصال</option><option value="شات">شات</option><option value="بالاستقبال">بالاستقبال</option><option value="أخرى">أخرى</option></select></div>
-                    <div class="input-field"><label>المنسق *</label><input type="text" id="editCoordinatorName" required></div>
-                    <div class="input-field"><label>نوع الإجراء *</label><select id="editProcedureType" required><option value="زراعة">زراعة</option><option value="خلع">خلع</option><option value="جراحه">جراحه</option><option value="فك خياطه">فك خياطه</option><option value="مراجعه">مراجعه</option><option value="استفسارات">استفسارات</option><option value="أخرى">أخرى</option></select></div>
-                    <div class="input-field full-width"><label>الخدمة المطلوبة *</label><textarea id="editServiceRequired" required></textarea></div>
+                    <div class="input-field">
+                        <label>اسم العميل *</label>
+                        <input type="text" id="editPatientName" required>
+                    </div>
+                    <div class="input-field">
+                        <label>رقم الجوال</label>
+                        <input type="tel" id="editPatientPhone">
+                    </div>
+                    <div class="input-field">
+                        <label>رقم الملف</label>
+                        <input type="text" id="editFileNumber">
+                    </div>
+                    <div class="input-field">
+                        <label>رقم الهوية / الإقامة</label>
+                        <input type="text" id="editIdNumber">
+                    </div>
+                    <div class="input-field">
+                        <label>الفرع *</label>
+                        <select id="editBranch" required>
+                            <option value="معشي">فرع معشي</option>
+                            <option value="الوسام">فرع الوسام</option>
+                        </select>
+                    </div>
+                    <div class="input-field">
+                        <label>طريقة التواصل *</label>
+                        <select id="editContactMethod" required>
+                            <option value="اتصال">اتصال هاتفي</option>
+                            <option value="شات">واتساب / شات</option>
+                            <option value="بالاستقبال">بالاستقبال</option>
+                            <option value="أخرى">أخرى</option>
+                        </select>
+                    </div>
+                    <div class="input-field">
+                        <label>اسم المنسق *</label>
+                        <input type="text" id="editCoordinatorName" required>
+                    </div>
+                    <div class="input-field">
+                        <label>نوع الإجراء *</label>
+                        <select id="editProcedureType" required>
+                            <option value="زراعة">زراعة</option>
+                            <option value="خلع">خلع</option>
+                            <option value="جراحه">جراحه</option>
+                            <option value="فك خياطه">فك خياطه</option>
+                            <option value="مراجعه">مراجعه</option>
+                            <option value="استفسارات">استفسارات</option>
+                            <option value="أخرى">أخرى</option>
+                        </select>
+                    </div>
+                    <div class="input-field full-width">
+                        <label>الخدمة المطلوبة / تفاصيل المشكلة والطلب *</label>
+                        <textarea id="editServiceRequired" required></textarea>
+                    </div>
+                    <div class="input-field full-width">
+                        <label class="priority-checkbox">
+                            <input type="checkbox" id="editIsRecurring">
+                            <span>تعيين كحالة ذات أولوية ⭐ (يتطلب باسورد)</span>
+                        </label>
+                    </div>
+                    <div class="input-field full-width">
+                        <label class="repeated-checkbox">
+                            <input type="checkbox" id="editIsRepeatedRequest">
+                            <span>حالة طلب متكرر 🔄 (الغِ التحديد لإزالة الشارة)</span>
+                        </label>
+                    </div>
                 </div>
-                <button type="submit" class="submit-btn" style="margin-top: 12px;">حفظ التعديلات</button>
+                <button type="submit" class="submit-btn" style="margin-top: 12px;"><i class="fa-solid fa-floppy-disk"></i> حفظ التعديلات</button>
             </form>
         </div>
     </div>
@@ -1323,8 +1559,15 @@
         let records = [];
         let csLinks = [];
         let clinicAnnouncements = [];
-        let clientHoursFilter = 'all';
+        let dashboardFilter = localStorage.getItem('savedDashboardFilter') || 'all';
+        let dashboardTimeFilter = localStorage.getItem('savedDashboardTimeFilter') || 'all';
+        let clientHoursFilter = localStorage.getItem('savedClientHoursFilter') || 'all';
         let isPinnedFilterActive = false;
+        
+        let originalEditPriorityState = false;
+        let originalEditRepeatedState = false;
+        let isInitialLoad = true;
+        let lastKnownRecordsCount = 0;
 
         if (!localStorage.getItem('adminPassword')) {
             localStorage.setItem('adminPassword', '1234');
@@ -1379,16 +1622,15 @@
             }
         }
 
+        // توحيد مفاتيح التخزين لتجنب التضارب بين الأجهزة
         function saveLocal() { 
-            localStorage.setItem('cachedAppointments_v25', JSON.stringify(records));
+            localStorage.setItem('cachedAppointments_v20', JSON.stringify(records));
             localStorage.setItem('cachedCSLinks_v1', JSON.stringify(csLinks));
             localStorage.setItem('cachedAnnouncements_v2', JSON.stringify(clinicAnnouncements));
         }
 
-        const cached = localStorage.getItem('cachedAppointments_v25') || localStorage.getItem('cachedAppointments_v24') || localStorage.getItem('cachedAppointments_v23') || localStorage.getItem('cachedAppointments_v22') || localStorage.getItem('cachedAppointments_v20');
-        if (cached) { 
-            try { records = JSON.parse(cached); } catch(e) { records = []; } 
-        }
+        const cached = localStorage.getItem('cachedAppointments_v20') || localStorage.getItem('cachedAppointments_v16');
+        if (cached) { try { records = JSON.parse(cached); lastKnownRecordsCount = records.length; } catch(e) { records = []; } }
 
         const cachedLinks = localStorage.getItem('cachedCSLinks_v1');
         if (cachedLinks) { try { csLinks = JSON.parse(cachedLinks); } catch(e) { csLinks = []; } }
@@ -1396,27 +1638,123 @@
         const cachedAnnouncements = localStorage.getItem('cachedAnnouncements_v2');
         if (cachedAnnouncements) { try { clinicAnnouncements = JSON.parse(cachedAnnouncements); } catch(e) { clinicAnnouncements = []; } }
 
+        function syncFilterTabsUI() {
+            const statusContainer = document.getElementById('statusFilterTabs');
+            if (statusContainer) {
+                statusContainer.querySelectorAll('.filter-tab').forEach(btn => {
+                    if (btn.getAttribute('data-filter') === dashboardFilter) {
+                        btn.classList.add('active');
+                    } else {
+                        btn.classList.remove('active');
+                    }
+                });
+
+                const inquiriesBtn = document.getElementById('inquiriesDropdownBtn');
+                const isInquiriesActive = dashboardFilter.startsWith('inquiries_');
+                if (isInquiriesActive) {
+                    inquiriesBtn.classList.add('active');
+                    statusContainer.querySelectorAll('#inquiriesDropdownContent .dropdown-item').forEach(item => {
+                        if (item.getAttribute('data-filter') === dashboardFilter) {
+                            item.classList.add('active');
+                        } else {
+                            item.classList.remove('active');
+                        }
+                    });
+                } else {
+                    inquiriesBtn.classList.remove('active');
+                    statusContainer.querySelectorAll('#inquiriesDropdownContent .dropdown-item').forEach(item => item.classList.remove('active'));
+                }
+
+                const appointmentsBtn = document.getElementById('appointmentsDropdownBtn');
+                const isAppointmentsActive = dashboardFilter.startsWith('no_inquiries_');
+                if (isAppointmentsActive) {
+                    appointmentsBtn.classList.add('active');
+                    statusContainer.querySelectorAll('#appointmentsDropdownContent .dropdown-item').forEach(item => {
+                        if (item.getAttribute('data-filter') === dashboardFilter) {
+                            item.classList.add('active');
+                        } else {
+                            item.classList.remove('active');
+                        }
+                    });
+                } else {
+                    appointmentsBtn.classList.remove('active');
+                    statusContainer.querySelectorAll('#appointmentsDropdownContent .dropdown-item').forEach(item => item.classList.remove('active'));
+                }
+            }
+
+            const timeContainer = document.getElementById('timeFilterTabs');
+            if (timeContainer) {
+                timeContainer.querySelectorAll('.filter-tab').forEach(btn => {
+                    if (btn.getAttribute('data-time') === dashboardTimeFilter) {
+                        btn.classList.add('active');
+                    } else {
+                        btn.classList.remove('active');
+                    }
+                });
+            }
+            updatePinnedCountBadge();
+        }
+
+        function toggleDropdown(contentId) {
+            const content = document.getElementById(contentId);
+            document.querySelectorAll('.dropdown-content').forEach(dc => {
+                if (dc.id !== contentId) dc.classList.remove('show');
+            });
+            content.classList.toggle('show');
+        }
+
+        window.addEventListener('click', function(e) {
+            if (!e.target.closest('.dropdown-filter-container')) {
+                document.querySelectorAll('.dropdown-content').forEach(dc => dc.classList.remove('show'));
+            }
+        });
+
         window.addEventListener('DOMContentLoaded', () => {
             const activePage = localStorage.getItem('activePage') || 'dashboard';
             switchPage(activePage);
+
+            const hoursSelect = document.getElementById('clientHoursSelect');
+            if (hoursSelect) {
+                hoursSelect.value = clientHoursFilter;
+            }
+
+            isPinnedFilterActive = false;
+            const btn = document.getElementById('pinnedFilterBtn');
+            if (btn) {
+                btn.style.backgroundColor = '#16a34a';
+                btn.style.borderColor = '#22c55e';
+                btn.style.boxShadow = 'none';
+            }
+
+            syncFilterTabsUI();
+            renderAnnouncements();
             renderTable();
             renderClientReport();
-            renderAnnouncements();
-            renderCSLinks();
         });
 
-        // قراءة داتابيز Firebase مع حماية كاملة من المسح الفارغ
+        // الربط المباشر مع Firebase للتأكد من المزامنة الفورية بين اللابتوب والموبايل
         dbRef.on('value', (snapshot) => {
             const data = snapshot.val();
             if (data) {
                 const cloudRecords = [];
                 for (let key in data) { cloudRecords.push({ firebaseKey: key, ...data[key] }); }
                 records = cloudRecords;
-                saveLocal();
+                
+                if (!isInitialLoad && records.length > lastKnownRecordsCount) {
+                    playBeepAndShowToast('🔔 تم استلام حجز/طلب جديد عبر السحابة!');
+                }
+                lastKnownRecordsCount = records.length;
+            } else {
+                records = [];
+                lastKnownRecordsCount = 0;
             }
+            isInitialLoad = false;
+            saveLocal();
             renderTable();
             updateKPIs();
+            updateDailyProgress();
             renderClientReport();
+            renderTrashModalList();
         });
 
         linksDbRef.on('value', (snapshot) => {
@@ -1424,10 +1762,13 @@
             if (data) {
                 const cloudLinks = [];
                 for (let key in data) { cloudLinks.push({ linkKey: key, ...data[key] }); }
+                cloudLinks.sort((a, b) => (a.orderIndex || 0) - (b.orderIndex || 0));
                 csLinks = cloudLinks;
-                saveLocal();
-                renderCSLinks();
+            } else {
+                csLinks = [];
             }
+            saveLocal();
+            renderCSLinks();
         });
 
         announcementsDbRef.on('value', (snapshot) => {
@@ -1435,13 +1776,37 @@
             if (data) {
                 const cloudAnnouncements = [];
                 for (let key in data) { cloudAnnouncements.push({ announcementKey: key, ...data[key] }); }
+                cloudAnnouncements.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
                 clinicAnnouncements = cloudAnnouncements;
-                saveLocal();
-                renderAnnouncements();
+            } else {
+                clinicAnnouncements = [];
             }
+            saveLocal();
+            renderAnnouncements();
         });
 
+        function playBeepAndShowToast(msg) {
+            try {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(587.33, audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.25);
+            } catch(e) { console.log('Audio Context blocked'); }
+
+            const toast = document.getElementById('notificationToast');
+            document.getElementById('toastMessage').innerText = msg;
+            toast.classList.add('show');
+            setTimeout(() => { toast.classList.remove('show'); }, 3500);
+        }
+
         let universalAuthCallback = null;
+
         function requireAdminAuth(callback) {
             if (sessionStorage.getItem('isAdminAuth') === 'true') {
                 callback();
@@ -1453,11 +1818,17 @@
         }
 
         function confirmUniversalAuth() {
-            if (document.getElementById('authPassInput').value === localStorage.getItem('adminPassword')) {
+            const pass = document.getElementById('authPassInput').value;
+            if (pass === localStorage.getItem('adminPassword')) {
                 sessionStorage.setItem('isAdminAuth', 'true');
                 document.getElementById('passAuthModal').classList.remove('open');
-                if (universalAuthCallback) { universalAuthCallback(); universalAuthCallback = null; }
-            } else { alert('كلمة المرور غير صحيحة!'); }
+                if (universalAuthCallback) {
+                    universalAuthCallback();
+                    universalAuthCallback = null;
+                }
+            } else {
+                alert('كلمة المرور غير صحيحة!');
+            }
         }
 
         function cancelUniversalAuth() {
@@ -1465,241 +1836,1507 @@
             universalAuthCallback = null;
         }
 
-        // --- تعديل جوهري لصفحة الكشف لمنع اختفاء العملاء تماماً عند الضغط ---
-        function renderClientReport() {
-            const container = document.getElementById('clientReportList');
+        function renderAnnouncements() {
+            const container = document.getElementById('announcementsListContainer');
             if (!container) return;
+            container.innerHTML = '';
 
-            // أخذ كافة العملاء غير المحذوفين لضمان عدم اختفائهم أبداً عند أي تفاعل بالماوس
-            let openRecords = records.filter(r => !r.isHiddenFromClients);
+            if (clinicAnnouncements.length === 0) {
+                container.innerHTML = '<div style="text-align: center; color: var(--text-muted); font-size: 0.85rem; padding: 10px;">لا توجد تنبيهات جديدة حالياً. انقر على "إضافة تنبيه جديد" لإرسال تحديث للعيادة.</div>';
+                return;
+            }
 
-            if (clientHoursFilter !== 'all') {
+            clinicAnnouncements.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'announcement-card';
+                const dateStr = formatDateTimeFullCustom(item.createdAt);
+
+                let thumbnailHTML = '';
+                if (item.imageUrl) {
+                    thumbnailHTML = `
+                        <div class="announcement-thumbnail-wrapper" onclick="openImagePreview('${item.imageUrl}')" title="اضغط لمعاينة الصورة المكبرة">
+                            <img src="${item.imageUrl}" alt="مرفق">
+                        </div>
+                    `;
+                }
+
+                card.innerHTML = `
+                    <div class="announcement-body-content">
+                        <div class="announcement-body-text">${item.text}</div>${thumbnailHTML}
+                    </div>
+                    <div class="announcement-footer-row">
+                        <span><i class="fa-regular fa-clock"></i> ${dateStr}</span>
+                        <div class="announcement-actions-group">
+                            <button class="btn-edit-announcement-card" onclick="openEditAnnouncementModal('${item.announcementKey}')" title="تعديل التنبيه">
+                                <i class="fa-solid fa-pen"></i> تعديل
+                            </button>
+                            <button class="btn-delete-announcement-card" onclick="deleteAnnouncement('${item.announcementKey}')" title="حذف التنبيه">
+                                <i class="fa-solid fa-trash-can"></i> حذف
+                            </button>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function openImagePreview(url) {
+            document.getElementById('previewFullImageTag').src = url;
+            document.getElementById('imagePreviewModal').classList.add('open');
+        }
+
+        function closeImagePreviewModal() {
+            document.getElementById('imagePreviewModal').classList.remove('open');
+            document.getElementById('previewFullImageTag').src = '';
+        }
+
+        function openAddAnnouncementModal() {
+            document.getElementById('editAnnouncementKey').value = '';
+            document.getElementById('announcementText').value = '';
+            document.getElementById('announcementImageFile').value = '';
+            document.getElementById('announcementModalTitle').innerHTML = '<i class="fa-solid fa-bullhorn"></i> إضافة تنبيه أو إشعار للعيادة';
+            document.getElementById('announcementModal').classList.add('open');
+        }
+
+        function openEditAnnouncementModal(key) {
+            const item = clinicAnnouncements.find(a => a.announcementKey === key);
+            if (!item) return;
+            document.getElementById('editAnnouncementKey').value = item.announcementKey;
+            document.getElementById('announcementText').value = item.text || '';
+            document.getElementById('announcementImageFile').value = '';
+            document.getElementById('announcementModalTitle').innerHTML = '<i class="fa-solid fa-pen"></i> تعديل تنبيه العيادة';
+            document.getElementById('announcementModal').classList.add('open');
+        }
+
+        function closeAnnouncementModal() {
+            document.getElementById('announcementModal').classList.remove('open');
+        }
+
+        function saveAnnouncementItem(e) {
+            e.preventDefault();
+            const key = document.getElementById('editAnnouncementKey').value;
+            const textVal = document.getElementById('announcementText').value.trim();
+            const imageInput = document.getElementById('announcementImageFile');
+            if (!textVal) return;
+
+            const processAndSave = (imageUrl) => {
+                if (key) {
+                    const item = clinicAnnouncements.find(a => a.announcementKey === key);
+                    if (item) {
+                        item.text = textVal;
+                        if (imageUrl !== undefined) {
+                            item.imageUrl = imageUrl;
+                        }
+                        saveLocal();
+                        renderAnnouncements();
+                        closeAnnouncementModal();
+
+                        if (navigator.onLine && !key.startsWith('ann_')) {
+                            const updateObj = { text: textVal };
+                            if (imageUrl !== undefined) updateObj.imageUrl = imageUrl;
+                            announcementsDbRef.child(key).update(updateObj);
+                        }
+                    }
+                } else {
+                    const tempKey = 'ann_' + Date.now();
+                    const newAnn = {
+                        announcementKey: tempKey,
+                        text: textVal,
+                        imageUrl: imageUrl || '',
+                        createdAt: new Date().toISOString()
+                    };
+
+                    clinicAnnouncements.unshift(newAnn);
+                    saveLocal();
+                    renderAnnouncements();
+                    closeAnnouncementModal();
+                    playBeepAndShowToast('📢 تم نشر التنبيه بنجاح للجميع!');
+
+                    if (navigator.onLine) {
+                        const uploadData = { text: newAnn.text, imageUrl: newAnn.imageUrl, createdAt: newAnn.createdAt };
+                        announcementsDbRef.push(uploadData).then((pushedRef) => {
+                            const idx = clinicAnnouncements.findIndex(a => a.announcementKey === tempKey);
+                            if (idx !== -1) {
+                                clinicAnnouncements[idx].announcementKey = pushedRef.key;
+                                saveLocal();
+                            }
+                        });
+                    }
+                }
+            };
+
+            if (imageInput.files && imageInput.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(evt) {
+                    processAndSave(evt.target.result);
+                };
+                reader.readAsDataURL(imageInput.files[0]);
+            } else {
+                let existingImageUrl = undefined;
+                if (key) {
+                    const existingItem = clinicAnnouncements.find(a => a.announcementKey === key);
+                    if (existingItem) existingImageUrl = existingItem.imageUrl || '';
+                }
+                processAndSave(existingImageUrl);
+            }
+        }
+
+        function deleteAnnouncement(key) {
+            if (confirm('هل أنت متأكد من حذف هذا التنبيه؟')) {
+                clinicAnnouncements = clinicAnnouncements.filter(a => a.announcementKey !== key);
+                saveLocal();
+                renderAnnouncements();
+
+                if (navigator.onLine && !key.startsWith('ann_')) {
+                    announcementsDbRef.child(key).remove();
+                }
+            }
+        }
+
+        let pendingPriorityCheckbox = null;
+        function checkPriorityAuth(checkbox) {
+            if (checkbox.checked) {
+                pendingPriorityCheckbox = checkbox;
+                checkbox.checked = false;
+                requireAdminAuth(() => {
+                    if (pendingPriorityCheckbox) {
+                        pendingPriorityCheckbox.checked = true;
+                        pendingPriorityCheckbox = null;
+                    }
+                });
+            }
+        }
+
+        function handleProcedureTypeChange(selectElement) {
+            const customWrapper = document.getElementById('customProcedureWrapper');
+            const customInput = document.getElementById('customProcedureInput');
+            if (selectElement.value === 'أخرى') {
+                customWrapper.style.display = 'flex';
+                customInput.setAttribute('required', 'true');
+            } else {
+                customWrapper.style.display = 'none';
+                customInput.removeAttribute('required');
+                customInput.value = '';
+            }
+        }
+
+        document.getElementById('appointmentForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const patientNameVal = document.getElementById('patientName').value.trim();
+            const patientPhoneVal = document.getElementById('patientPhone').value.trim() || '-';
+            const cleanNewPhone = patientPhoneVal !== '-' ? patientPhoneVal.replace(/\D/g, '') : '';
+
+            const isRepeated = records.some(r => {
+                const cleanExistingPhone = (r.patientPhone && r.patientPhone !== '-') ? r.patientPhone.replace(/\D/g, '') : '';
+                const matchPhone = (cleanNewPhone.length >= 8 && cleanExistingPhone === cleanNewPhone);
+                const matchName = (r.patientName && r.patientName.trim().toLowerCase() === patientNameVal.toLowerCase());
+                return matchPhone || matchName;
+            });
+
+            let procedureTypeValue = document.getElementById('procedureType').value;
+            if (procedureTypeValue === 'أخرى') {
+                const customVal = document.getElementById('customProcedureInput').value.trim();
+                procedureTypeValue = customVal !== '' ? customVal : 'أخرى';
+            }
+
+            const tempKey = 'local_' + Date.now();
+            const newRecord = {
+                firebaseKey: tempKey,
+                patientName: patientNameVal,
+                patientPhone: patientPhoneVal,
+                fileNumber: document.getElementById('fileNumber').value.trim() || '-',
+                idNumber: document.getElementById('idNumber').value.trim() || '-',
+                branch: document.getElementById('branch').value,
+                procedureType: procedureTypeValue,
+                contactMethod: document.getElementById('contactMethod').value,
+                serviceRequired: document.getElementById('serviceRequired').value,
+                coordinatorName: document.getElementById('coordinatorName').value,
+                isRecurring: document.getElementById('isRecurring').checked || isRepeated,
+                isRepeatedRequest: isRepeated,
+                createdAt: new Date().toISOString(),
+                actionTaken: '',
+                adminContactMethod: 'قيد الانتظار',
+                adminContactDetail: '',
+                isCopied: false,
+                isPinned: false,
+                isHiddenFromClients: false,
+                deletedAt: null
+            };
+
+            records.unshift(newRecord);
+            saveLocal();
+            renderTable();
+            updateKPIs();
+            updateDailyProgress();
+            renderClientReport();
+
+            if (navigator.onLine) {
+                const uploadData = { ...newRecord };
+                delete uploadData.firebaseKey;
+                dbRef.push(uploadData).then((pushedRef) => {
+                    const idx = records.findIndex(r => r.firebaseKey === tempKey);
+                    if(idx !== -1) { records[idx].firebaseKey = pushedRef.key; saveLocal(); }
+                });
+            }
+
+            this.reset();
+            document.getElementById('customProcedureWrapper').style.display = 'none';
+            playBeepAndShowToast('⚠️ تم إضافة العميل والموعد بنجاح!');
+        });
+
+        function requestTogglePinRecord(key) {
+            requireAdminAuth(() => {
+                let rec = records.find(r => r.firebaseKey === key);
+                if (rec) {
+                    rec.isPinned = !rec.isPinned;
+                    saveLocal();
+                    renderTable();
+                    updatePinnedCountBadge();
+                    renderClientReport();
+
+                    if (navigator.onLine && !key.startsWith('local_')) {
+                        dbRef.child(key).update({ isPinned: rec.isPinned });
+                    }
+                }
+            });
+        }
+
+        function updatePinnedCountBadge() {
+            const count = records.filter(r => r.isPinned && !r.isHiddenFromClients).length;
+            const badgeEl = document.getElementById('pinnedCount');
+            if (badgeEl) badgeEl.innerText = count;
+        }
+
+        function togglePinnedFilter() {
+            isPinnedFilterActive = !isPinnedFilterActive;
+            const btn = document.getElementById('pinnedFilterBtn');
+            const count = records.filter(r => r.isPinned && !r.isHiddenFromClients).length;
+            if (btn) {
+                if (isPinnedFilterActive) {
+                    btn.style.backgroundColor = '#d97706';
+                    btn.style.borderColor = '#f59e0b';
+                    btn.style.boxShadow = '0 0 12px rgba(217, 119, 6, 0.5)';
+                    btn.innerHTML = `<i class="fa-solid fa-thumbtack"></i> 📌 المميزون ( <span id="pinnedCount">${count}</span> )`;
+                } else {
+                    btn.style.backgroundColor = '#16a34a';
+                    btn.style.borderColor = '#22c55e';
+                    btn.style.boxShadow = 'none';
+                    btn.innerHTML = `<i class="fa-solid fa-file-lines"></i> ✅ الكشف العادي ( <span id="pinnedCount">${count}</span> )`;
+                }
+            }
+            renderClientReport();
+        }
+
+        function setDashboardFilter(filterType, btn) {
+            dashboardFilter = filterType;
+            localStorage.setItem('savedDashboardFilter', filterType);
+            
+            document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.dropdown-item').forEach(i => i.classList.remove('active'));
+            
+            if (btn) {
+                btn.classList.add('active');
+                if (btn.classList.contains('dropdown-item')) {
+                    btn.closest('.dropdown-filter-container').querySelector('.dropdown-filter-btn').classList.add('active');
+                }
+            }
+            document.querySelectorAll('.dropdown-content').forEach(dc => dc.classList.remove('show'));
+            renderTable();
+        }
+
+        function setDashboardTimeFilter(timeType, btn) {
+            dashboardTimeFilter = timeType;
+            localStorage.setItem('savedDashboardTimeFilter', timeType);
+            btn.closest('.filter-row').querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+            btn.classList.add('active');
+            renderTable();
+        }
+
+        function updateDailyProgress() {
+            const now = new Date();
+            const todayRecords = records.filter(r => {
+                const d = new Date(r.createdAt);
+                return d.toDateString() === now.toDateString();
+            });
+
+            const totalToday = todayRecords.length;
+            if (totalToday === 0) {
+                document.getElementById('progressText').innerText = '0% (لا توجد حالات اليوم)';
+                document.getElementById('progressBarFill').style.width = '0%';
+                return;
+            }
+
+            const completedToday = todayRecords.filter(r => {
+                const contact = r.adminContactMethod || 'قيد الانتظار';
+                const hasAction = r.actionTaken && r.actionTaken.trim() !== '';
+                return contact !== 'قيد الانتظار' || hasAction;
+            }).length;
+
+            const percentage = Math.round((completedToday / totalToday) * 100);
+            document.getElementById('progressText').innerText = `${percentage}% (${completedToday} من ${totalToday} حالات مُنجزة)`;
+            document.getElementById('progressBarFill').style.width = `${percentage}%`;
+        }
+
+        function renderTable() {
+            const tbody = document.getElementById('tableBody');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+
+            syncFilterTabsUI();
+
+            let filteredList = [...records];
+            const now = new Date();
+
+            if (dashboardFilter === 'priority') {
+                filteredList = filteredList.filter(r => r.isRecurring);
+            } else if (dashboardFilter === 'repeated') {
+                filteredList = filteredList.filter(r => r.isRepeatedRequest);
+            } else if (dashboardFilter === 'plants') {
+                filteredList = filteredList.filter(r => r.procedureType && r.procedureType.includes('زراعة'));
+            } else if (dashboardFilter === 'extraction') {
+                filteredList = filteredList.filter(r => r.procedureType && r.procedureType.includes('خلع'));
+            } else if (dashboardFilter === 'review') {
+                filteredList = filteredList.filter(r => r.procedureType && r.procedureType.includes('مراجعه'));
+            } else if (dashboardFilter === 'inquiries_all') {
+                filteredList = filteredList.filter(r => r.procedureType && r.procedureType.includes('استفسارات'));
+            } else if (dashboardFilter === 'inquiries_done') {
+                filteredList = filteredList.filter(r => {
+                    const isQ = (r.procedureType && r.procedureType.includes('استفسارات'));
+                    const hasChange = (r.adminContactMethod && r.adminContactMethod !== 'قيد الانتظار') || (r.actionTaken && r.actionTaken.trim() !== '');
+                    return isQ && hasChange;
+                });
+            } else if (dashboardFilter === 'inquiries_pending') {
+                filteredList = filteredList.filter(r => {
+                    const isQ = (r.procedureType && r.procedureType.includes('استفسارات'));
+                    const isPending = (!r.adminContactMethod || r.adminContactMethod === 'قيد الانتظار') && (!r.actionTaken || r.actionTaken.trim() === '');
+                    return isQ && isPending;
+                });
+            } else if (dashboardFilter === 'no_inquiries_all') {
+                filteredList = filteredList.filter(r => !r.procedureType || !r.procedureType.includes('استفسارات'));
+            } else if (dashboardFilter === 'no_inquiries_done') {
+                filteredList = filteredList.filter(r => {
+                    const isNotQ = (!r.procedureType || !r.procedureType.includes('استفسارات'));
+                    const hasChange = (r.adminContactMethod && r.adminContactMethod !== 'قيد الانتظار') || (r.actionTaken && r.actionTaken.trim() !== '');
+                    return isNotQ && hasChange;
+                });
+            } else if (dashboardFilter === 'no_inquiries_pending') {
+                filteredList = filteredList.filter(r => {
+                    const isNotQ = (!r.procedureType || !r.procedureType.includes('استفسارات'));
+                    const isPending = (!r.adminContactMethod || r.adminContactMethod === 'قيد الانتظار') && (!r.actionTaken || r.actionTaken.trim() === '');
+                    return isNotQ && isPending;
+                });
+            }
+
+            if (dashboardTimeFilter === 'today') {
+                filteredList = filteredList.filter(r => {
+                    const d = new Date(r.createdAt);
+                    return d.toDateString() === now.toDateString();
+                });
+            } else if (dashboardTimeFilter === 'week') {
+                filteredList = filteredList.filter(r => {
+                    const diffTime = now - new Date(r.createdAt);
+                    return diffTime <= 7 * 24 * 60 * 60 * 1000;
+                });
+            } else if (dashboardTimeFilter === 'month') {
+                filteredList = filteredList.filter(r => {
+                    const d = new Date(r.createdAt);
+                    return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+                });
+            }
+
+            filteredList.sort((a, b) => {
+                if (a.isRecurring && !b.isRecurring) return -1;
+                if (!a.isRecurring && b.isRecurring) return 1;
+                return new Date(b.createdAt) - new Date(a.createdAt);
+            });
+
+            filteredList.forEach((record, index) => {
+                const tr = document.createElement('tr');
+                if (record.isRecurring) {
+                    tr.classList.add('row-priority-pulse');
+                }
+
+                const currentContact = record.adminContactMethod || 'قيد الانتظار';
+                const isOther = !['قيد الانتظار', 'قيد الإجراء', 'تم التواصل', 'معلق', 'اعتذر'].includes(currentContact);
+                const selectVal = isOther ? 'أخرى' : currentContact;
+                const otherDetail = isOther ? currentContact : (record.adminContactDetail || '');
+
+                if (selectVal === 'اعتذر') {
+                    tr.classList.add('row-apologized');
+                }
+
+                let statusBadgeHTML = '';
+                if (record.isRecurring) {
+                    statusBadgeHTML += '<span class="status-badge badge-priority">⭐ أولوية</span><br>';
+                }
+                if (record.isRepeatedRequest) {
+                    statusBadgeHTML += '<span class="status-badge badge-repeated">🔄 متكررة</span><br>';
+                }
+
+                let sClass = 'badge-other';
+                if (selectVal === 'قيد الانتظار') sClass = 'badge-pending';
+                else if (selectVal === 'قيد الإجراء') sClass = 'badge-inprogress';
+                else if (selectVal === 'تم التواصل') sClass = 'badge-completed';
+                else if (selectVal === 'معلق') sClass = 'badge-suspended';
+                else if (selectVal === 'اعتذر') sClass = 'badge-apologized';
+
+                statusBadgeHTML += `<span class="status-badge ${sClass}">${selectVal}</span>`;
+
+                const proc = record.procedureType || '-';
+                let procClass = 'proc-default';
+                if (proc.includes('زراعة')) procClass = 'proc-plant';
+                else if (proc.includes('خلع')) procClass = 'proc-extraction';
+                else if (proc.includes('جراحه')) procClass = 'proc-surgery';
+                else if (proc.includes('فك خياطه')) procClass = 'proc-stitches';
+                else if (proc.includes('مراجعه')) procClass = 'proc-review';
+                else if (proc.includes('استفسارات')) procClass = 'proc-inquiry';
+
+                const isPinned = record.isPinned;
+
+                tr.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td>${formatDateOnly(record.createdAt)}</td>
+                    <td>${statusBadgeHTML}</td>
+                    <td><strong>${record.patientName}</strong></td>
+                    <td>${record.patientPhone}</td>
+                    <td>${record.fileNumber || '-'}</td>
+                    <td><span class="proc-badge ${procClass}">${proc}</span></td>
+                    <td><div class="service-cell-box">${record.serviceRequired}</div></td>
+                    <td>${record.coordinatorName}</td>
+                    <td>
+                        <select class="table-input" id="adminContact_${record.firebaseKey}" onchange="handleContactChange('${record.firebaseKey}')">
+                            <option value="قيد الانتظار" ${selectVal === 'قيد الانتظار' ? 'selected' : ''}>قيد الانتظار</option>
+                            <option value="قيد الإجراء" ${selectVal === 'قيد الإجراء' ? 'selected' : ''}>قيد الإجراء 🔄</option>
+                            <option value="تم التواصل" ${selectVal === 'تم التواصل' ? 'selected' : ''}>تم التواصل ✅</option>
+                            <option value="معلق" ${selectVal === 'معلق' ? 'selected' : ''}>معلق 🟡</option>
+                            <option value="اعتذر" ${selectVal === 'اعتذر' ? 'selected' : ''}>اعتذر ❌</option>
+                            <option value="أخرى" ${selectVal === 'أخرى' ? 'selected' : ''}>أخرى ✍️</option>
+                        </select>
+                        <input type="text" class="table-input" id="adminOther_${record.firebaseKey}" placeholder="التفاصيل..." value="${otherDetail}" style="margin-top: 5px; ${selectVal === 'أخرى' ? '' : 'display:none;'}">
+                    </td>
+                    <td><textarea class="table-input" id="action_${record.firebaseKey}">${record.actionTaken || ''}</textarea></td>
+                    <td>
+                        <button class="btn-pin-action ${isPinned ? 'pinned' : ''}" onclick="requestTogglePinRecord('${record.firebaseKey}')" title="${isPinned ? 'إلغاء التثبيت' : 'تثبيت العميل (يتطلب باسورد)'}"><i class="fa-solid fa-thumbtack"></i></button>
+                        <button class="btn-save-action" onclick="saveAdminUpdate('${record.firebaseKey}')" title="حفظ"><i class="fa-solid fa-floppy-disk"></i></button>
+                        <button class="btn-edit-action" onclick="openEditModal('${record.firebaseKey}')" title="تعديل"><i class="fa-solid fa-pen"></i></button>
+                        <button class="btn-delete-action" onclick="deleteRecord('${record.firebaseKey}')" title="حذف"><i class="fa-solid fa-trash"></i></button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+            filterTable();
+        }
+
+        function handleContactChange(key) {
+            const selectVal = document.getElementById(`adminContact_${key}`).value;
+            const otherInput = document.getElementById(`adminOther_${key}`);
+            if (selectVal === 'أخرى') {
+                otherInput.style.display = 'block';
+                otherInput.focus();
+            } else {
+                otherInput.style.display = 'none';
+                otherInput.value = '';
+            }
+        }
+
+        function saveAdminUpdate(key) {
+            const actionVal = document.getElementById(`action_${key}`).value;
+            let adminContactSelect = document.getElementById(`adminContact_${key}`).value;
+            const otherInputVal = document.getElementById(`adminOther_${key}`).value.trim();
+
+            if (adminContactSelect === 'أخرى' && otherInputVal !== '') {
+                adminContactSelect = otherInputVal;
+            }
+
+            let rec = records.find(r => r.firebaseKey === key);
+            if (rec) { 
+                rec.actionTaken = actionVal; 
+                rec.adminContactMethod = adminContactSelect; 
+                saveLocal(); 
+                renderTable(); 
+                updateKPIs();
+                updateDailyProgress();
+                renderClientReport();
+            }
+
+            if (navigator.onLine && !key.startsWith('local_')) {
+                dbRef.child(key).update({ actionTaken: actionVal, adminContactMethod: adminContactSelect });
+            }
+            alert('تم التحديث بنجاح!');
+        }
+
+        function openEditModal(key) {
+            const rec = records.find(r => r.firebaseKey === key);
+            if (!rec) return;
+
+            document.getElementById('editFirebaseKey').value = rec.firebaseKey;
+            document.getElementById('editPatientName').value = rec.patientName || '';
+            document.getElementById('editPatientPhone').value = rec.patientPhone || '';
+            document.getElementById('editFileNumber').value = rec.fileNumber || '';
+            document.getElementById('editIdNumber').value = rec.idNumber || '';
+            document.getElementById('editBranch').value = rec.branch || 'معشي';
+            document.getElementById('editContactMethod').value = rec.contactMethod || 'اتصال';
+            document.getElementById('editCoordinatorName').value = rec.coordinatorName || '';
+            document.getElementById('editProcedureType').value = rec.procedureType || 'مراجعه';
+            document.getElementById('editServiceRequired').value = rec.serviceRequired || '';
+            
+            originalEditPriorityState = !!rec.isRecurring;
+            originalEditRepeatedState = !!rec.isRepeatedRequest;
+
+            document.getElementById('editIsRecurring').checked = originalEditPriorityState;
+            document.getElementById('editIsRepeatedRequest').checked = originalEditRepeatedState;
+
+            document.getElementById('editModal').classList.add('open');
+        }
+
+        function closeEditModal() {
+            document.getElementById('editModal').classList.remove('open');
+        }
+
+        function executeActualEdit() {
+            const key = document.getElementById('editFirebaseKey').value;
+            let rec = records.find(r => r.firebaseKey === key);
+            if (!rec) return;
+
+            rec.patientName = document.getElementById('editPatientName').value.trim();
+            rec.patientPhone = document.getElementById('editPatientPhone').value.trim() || '-';
+            rec.fileNumber = document.getElementById('editFileNumber').value.trim() || '-';
+            rec.idNumber = document.getElementById('editIdNumber').value.trim() || '-';
+            rec.branch = document.getElementById('editBranch').value;
+            rec.contactMethod = document.getElementById('editContactMethod').value;
+            rec.coordinatorName = document.getElementById('editCoordinatorName').value.trim();
+            rec.procedureType = document.getElementById('editProcedureType').value;
+            rec.serviceRequired = document.getElementById('editServiceRequired').value.trim();
+            rec.isRecurring = document.getElementById('editIsRecurring').checked;
+            rec.isRepeatedRequest = document.getElementById('editIsRepeatedRequest').checked;
+
+            saveLocal();
+            renderTable();
+            updateKPIs();
+            updateDailyProgress();
+            renderClientReport();
+            closeEditModal();
+
+            if (navigator.onLine && !key.startsWith('local_')) {
+                dbRef.child(key).update({
+                    patientName: rec.patientName,
+                    patientPhone: rec.patientPhone,
+                    fileNumber: rec.fileNumber,
+                    idNumber: rec.idNumber,
+                    branch: rec.branch,
+                    contactMethod: rec.contactMethod,
+                    coordinatorName: rec.coordinatorName,
+                    procedureType: rec.procedureType,
+                    serviceRequired: rec.serviceRequired,
+                    isRecurring: rec.isRecurring,
+                    isRepeatedRequest: rec.isRepeatedRequest
+                });
+            }
+            alert('تم تعديل البيانات بنجاح!');
+        }
+
+        function saveEditedRecord(e) {
+            e.preventDefault();
+            const currentPriorityUI = document.getElementById('editIsRecurring').checked;
+            const currentRepeatedUI = document.getElementById('editIsRepeatedRequest').checked;
+
+            if (currentPriorityUI !== originalEditPriorityState || currentRepeatedUI !== originalEditRepeatedState) {
+                requireAdminAuth(() => {
+                    executeActualEdit();
+                });
+            } else {
+                executeActualEdit();
+            }
+        }
+
+        function deleteRecord(key) {
+            requireAdminAuth(() => {
+                if (confirm('هل أنت متأكد من حذف هذا العميل؟')) {
+                    const itemIdx = records.findIndex(r => r.firebaseKey === key);
+                    if (itemIdx !== -1) {
+                        records.splice(itemIdx, 1);
+                        saveLocal();
+                        renderTable();
+                        updateKPIs();
+                        updateDailyProgress();
+                        renderClientReport();
+                        updatePinnedCountBadge();
+
+                        if (navigator.onLine && !key.startsWith('local_')) {
+                            dbRef.child(key).remove();
+                        }
+                    }
+                }
+            });
+        }
+
+        let draggedCardIndex = null;
+        let activeTouchHandle = null;
+
+        function renderCSLinks() {
+            const container = document.getElementById('linksGridContainer');
+            if (!container) return;
+            container.innerHTML = '';
+
+            if (csLinks.length === 0) {
+                container.innerHTML = `
+                    <div style="grid-column: 1/-1; text-align: center; padding: 30px; color: var(--text-muted);">
+                        لا توجد روابط مضافة حالياً. انقر على "إضافة رابط جديد" لإضافة أول رابط للدليل الشامل.
+                    </div>
+                `;
+                return;
+            }
+
+            csLinks.forEach((item, index) => {
+                const card = document.createElement('div');
+                card.className = 'link-card';
+                card.setAttribute('data-index', index);
+                card.setAttribute('draggable', 'true');
+
+                card.innerHTML = `
+                    <div class="drag-handle" title="امسك من هنا للترتيب بالسحب (يتطلب باسورد الإدارة)"><i class="fa-solid fa-grip-vertical"></i></div>
+                    <div class="link-card-header">
+                        <i class="fa-solid fa-globe"></i>
+                        <span>${item.title}</span>
+                    </div>
+                    <div class="link-card-desc">${item.desc || 'لا يوجد وصف مُضاف.'}</div>
+                    <div class="link-card-actions">
+                        <button type="button" class="btn-open-link" onclick="secureOpenLink('${item.url}')"><i class="fa-solid fa-arrow-up-right-from-square"></i> فتح الموقع</button>
+                        <button class="btn-edit-action" onclick="openEditLinkModal('${item.linkKey}')" title="تعديل الرابط"><i class="fa-solid fa-pen"></i></button>
+                        <button class="btn-delete-action" onclick="deleteCSLink('${item.linkKey}')" title="حذف الرابط"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                `;
+
+                const handle = card.querySelector('.drag-handle');
+
+                card.addEventListener('dragstart', (e) => {
+                    requireAdminAuth(() => {
+                        draggedCardIndex = index;
+                        card.classList.add('dragging');
+                        e.dataTransfer.effectAllowed = 'move';
+                    });
+                });
+
+                card.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    card.classList.add('drag-over');
+                });
+
+                card.addEventListener('dragleave', () => {
+                    card.classList.remove('drag-over');
+                });
+
+                card.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    card.classList.remove('drag-over');
+                    const targetIdx = parseInt(card.getAttribute('data-index'));
+                    if (draggedCardIndex !== null && draggedCardIndex !== targetIdx) {
+                        reorderCSLinks(draggedCardIndex, targetIdx);
+                    }
+                });
+
+                card.addEventListener('dragend', () => {
+                    card.classList.remove('dragging');
+                    document.querySelectorAll('.link-card').forEach(c => c.classList.remove('drag-over'));
+                    draggedCardIndex = null;
+                });
+
+                handle.addEventListener('touchstart', (e) => {
+                    e.preventDefault();
+                    requireAdminAuth(() => {
+                        activeTouchHandle = card;
+                        draggedCardIndex = index;
+                        card.classList.add('dragging');
+                    });
+                }, { passive: false });
+
+                handle.addEventListener('touchmove', (e) => {
+                    if (!activeTouchHandle) return;
+                    const touchLoc = e.touches[0];
+                    const targetEl = document.elementFromPoint(touchLoc.clientX, touchLoc.clientY);
+
+                    document.querySelectorAll('.link-card').forEach(c => c.classList.remove('drag-over'));
+                    if (targetEl) {
+                        const targetCard = targetEl.closest('.link-card');
+                        if (targetCard && targetCard !== activeTouchHandle) {
+                            targetCard.classList.add('drag-over');
+                        }
+                    }
+                }, { passive: true });
+
+                handle.addEventListener('touchend', (e) => {
+                    if (!activeTouchHandle) return;
+                    const touchLoc = e.changedTouches[0];
+                    const targetEl = document.elementFromPoint(touchLoc.clientX, touchLoc.clientY);
+
+                    activeTouchHandle.classList.remove('dragging');
+                    document.querySelectorAll('.link-card').forEach(c => c.classList.remove('drag-over'));
+
+                    if (targetEl) {
+                        const targetCard = targetEl.closest('.link-card');
+                        if (targetCard) {
+                            const targetIdx = parseInt(targetCard.getAttribute('data-index'));
+                            if (draggedCardIndex !== null && draggedCardIndex !== targetIdx) {
+                                reorderCSLinks(draggedCardIndex, targetIdx);
+                            }
+                        }
+                    }
+
+                    activeTouchHandle = null;
+                    draggedCardIndex = null;
+                });
+
+                container.appendChild(card);
+            });
+        }
+
+        function secureOpenLink(url) {
+            window.open(url, '_blank');
+        }
+
+        function reorderCSLinks(fromIdx, toIdx) {
+            const movedItem = csLinks.splice(fromIdx, 1)[0];
+            csLinks.splice(toIdx, 0, movedItem);
+
+            csLinks.forEach((link, idx) => {
+                link.orderIndex = idx;
+                if (navigator.onLine && !link.linkKey.startsWith('link_')) {
+                    linksDbRef.child(link.linkKey).update({ orderIndex: idx });
+                }
+            });
+
+            saveLocal();
+            renderCSLinks();
+        }
+
+        function openAddLinkModal() {
+            requireAdminAuth(() => {
+                document.getElementById('linkKey').value = '';
+                document.getElementById('linkTitle').value = '';
+                document.getElementById('linkUrl').value = '';
+                document.getElementById('linkDesc').value = '';
+                document.getElementById('linkModalTitle').innerHTML = '<i class="fa-solid fa-link"></i> إضافة رابط جديد';
+                document.getElementById('linkModal').classList.add('open');
+            });
+        }
+
+        function openEditLinkModal(key) {
+            requireAdminAuth(() => {
+                const item = csLinks.find(l => l.linkKey === key);
+                if (!item) return;
+                document.getElementById('linkKey').value = item.linkKey;
+                document.getElementById('linkTitle').value = item.title || '';
+                document.getElementById('linkUrl').value = item.url || '';
+                document.getElementById('linkDesc').value = item.desc || '';
+                document.getElementById('linkModalTitle').innerHTML = '<i class="fa-solid fa-pen"></i> تعديل بيانات الرابط';
+                document.getElementById('linkModal').classList.add('open');
+            });
+        }
+
+        function closeLinkModal() {
+            document.getElementById('linkModal').classList.remove('open');
+        }
+
+        function saveLinkItem(e) {
+            e.preventDefault();
+            const key = document.getElementById('linkKey').value;
+            const title = document.getElementById('linkTitle').value.trim();
+            const url = document.getElementById('linkUrl').value.trim();
+            const desc = document.getElementById('linkDesc').value.trim();
+
+            if (key) {
+                let item = csLinks.find(l => l.linkKey === key);
+                if (item) {
+                    item.title = title;
+                    item.url = url;
+                    item.desc = desc;
+
+                    if (navigator.onLine && !key.startsWith('link_')) {
+                        linksDbRef.child(key).update({ title, url, desc });
+                    }
+                }
+            } else {
+                const tempKey = 'link_' + Date.now();
+                const newOrderIndex = csLinks.length;
+                const newLink = { linkKey: tempKey, title, url, desc, orderIndex: newOrderIndex };
+                csLinks.push(newLink);
+
+                if (navigator.onLine) {
+                    linksDbRef.push({ title, url, desc, orderIndex: newOrderIndex }).then((pushedRef) => {
+                        const idx = csLinks.findIndex(l => l.linkKey === tempKey);
+                        if (idx !== -1) { csLinks[idx].linkKey = pushedRef.key; saveLocal(); }
+                    });
+                }
+            }
+
+            saveLocal();
+            renderCSLinks();
+            closeLinkModal();
+        }
+
+        function deleteCSLink(key) {
+            requireAdminAuth(() => {
+                if (confirm('هل أنت متأكد من حذف هذا الرابط من الدليل الشامل؟')) {
+                    const idx = csLinks.findIndex(l => l.linkKey === key);
+                    if (idx !== -1) {
+                        csLinks.splice(idx, 1);
+                        saveLocal();
+                        renderCSLinks();
+
+                        if (navigator.onLine && !key.startsWith('link_')) {
+                            linksDbRef.child(key).remove();
+                        }
+                    }
+                }
+            });
+        }
+
+        function setClientTimeFilterSelect(hours) {
+            clientHoursFilter = hours;
+            localStorage.setItem('savedClientHoursFilter', hours);
+            renderClientReport();
+        }
+
+        function getOpenFilteredRecords() {
+            let openRecords = records.filter(r => {
+                if (r.isHiddenFromClients) return false;
+                if (isPinnedFilterActive && !r.isPinned) return false;
+                return true;
+            });
+
+            if (clientHoursFilter !== 'all' && !isPinnedFilterActive) {
                 const now = new Date();
                 openRecords = openRecords.filter(r => {
                     const diffHours = (now - new Date(r.createdAt)) / (1000 * 60 * 60);
                     return diffHours <= parseFloat(clientHoursFilter);
                 });
             }
-
-            const searchVal = (document.getElementById('clientSearchInput')?.value || '').trim().toLowerCase();
-            if (searchVal !== '') {
-                openRecords = openRecords.filter(r => {
-                    return (r.patientName || '').toLowerCase().includes(searchVal) ||
-                           (r.patientPhone || '').toLowerCase().includes(searchVal) ||
-                           (r.fileNumber || '').toLowerCase().includes(searchVal) ||
-                           (r.serviceRequired || '').toLowerCase().includes(searchVal);
-                });
-            }
-
-            container.innerHTML = '';
-            
-            // تحديث عداد صفحة الكشف
-            const countEl = document.getElementById('pinnedCount');
-            if (countEl) countEl.innerText = openRecords.length;
-
-            if (openRecords.length === 0) {
-                container.innerHTML = '<div style="text-align:center; padding:30px; color:var(--text-muted); font-size:1rem;">لا توجد عملاء مسجلين حالياً أو مطابقة للبحث.</div>';
-                return;
-            }
-
-            openRecords.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-
-            openRecords.forEach((rec, index) => {
-                const card = document.createElement('div');
-                card.className = `client-card-wrapper ${rec.isCopied ? 'is-copied' : ''}`;
-
-                const fileStr = (rec.fileNumber && rec.fileNumber !== '-') ? ` ${rec.fileNumber}` : '';
-                const phoneStr = (rec.patientPhone && rec.patientPhone !== '-') ? rec.patientPhone : '-';
-                const serviceStr = rec.serviceRequired || '-';
-                const dateTimeStr = formatDateTimeFullCustom(rec.createdAt);
-                const keyJson = JSON.stringify([rec.firebaseKey]).replace(/"/g, '&quot;');
-
-                card.innerHTML = `
-                    <div class="client-card-header">
-                        <div class="client-title">
-                            <input type="checkbox" class="client-select-chk" data-keys="${keyJson}">
-                            <span>${index + 1}- ${rec.patientName}${fileStr}</span>
-                            <button class="copied-btn ${rec.isCopied ? 'active' : ''}" onclick="toggleCopiedStatusGroup('${rec.firebaseKey}')">
-                                <i class="fa-solid ${rec.isCopied ? 'fa-circle-check' : 'fa-check'}"></i> ${rec.isCopied ? 'تم النسخ ✅' : 'تعليم كمنسوخ'}
-                            </button>
-                        </div>
-                        ${dateTimeStr ? `<span class="client-datetime-badge"><i class="fa-regular fa-clock"></i> ${dateTimeStr}</span>` : ''}
-                    </div>
-                    <div class="client-info-row"><span class="info-label">رقم الجوال:</span> ${phoneStr}</div>
-                    <div class="client-info-row">${serviceStr}</div>
-                    <div class="client-actions-row">
-                        <button class="btn-client-action delete-to-trash" onclick="hideClientGroupFromReport('${rec.firebaseKey}')">حذف</button>
-                    </div>
-                `;
-                container.appendChild(card);
-            });
-        }
-
-        function toggleCopiedStatusGroup(key) {
-            let rec = records.find(r => r.firebaseKey === key);
-            if (rec) {
-                rec.isCopied = !rec.isCopied;
-                saveLocal();
-                renderClientReport();
-                if (navigator.onLine && !key.startsWith('local_')) {
-                    dbRef.child(key).update({ isCopied: rec.isCopied });
-                }
-            }
-        }
-
-        function hideClientGroupFromReport(key) {
-            requireAdminAuth(() => {
-                let rec = records.find(r => r.firebaseKey === key);
-                if (rec) {
-                    rec.isHiddenFromClients = true;
-                    saveLocal();
-                    renderClientReport();
-                    if (navigator.onLine && !key.startsWith('local_')) {
-                        dbRef.child(key).update({ isHiddenFromClients: true });
-                    }
-                }
-            });
-        }
-
-        function setClientTimeFilterSelect(val) {
-            clientHoursFilter = val;
-            renderClientReport();
-        }
-
-        function togglePinnedFilter() {
-            // زر العرض الشامل لتحديث القائمة يدوياً لو تطلب الأمر
-            renderClientReport();
-        }
-
-        function copyClientReport() {
-            let openRecords = records.filter(r => !r.isHiddenFromClients && !r.isCopied);
-            if (openRecords.length === 0) {
-                return alert('لا يوجد عملاء جدد للنسخ!');
-            }
-            let reportText = ``;
-            openRecords.forEach((item, idx) => {
-                const fileStr = (item.fileNumber && item.fileNumber !== '-') ? ` ${item.fileNumber}` : '';
-                reportText += `${idx + 1}- ${item.patientName}${fileStr}\nرقم الجوال: ${item.patientPhone}\n${item.serviceRequired}\n\n`;
-            });
-            navigator.clipboard.writeText(reportText.trim()).then(() => {
-                alert('تم نسخ الكشف بنجاح!');
-                openRecords.forEach(r => r.isCopied = true);
-                saveLocal();
-                renderClientReport();
-            });
+            return openRecords;
         }
 
         function formatDateTimeFullCustom(isoString) {
             if (!isoString) return '';
             try {
                 const d = new Date(isoString);
+                const day = String(d.getDate()).padStart(2, '0');
+                const month = String(d.getMonth() + 1).padStart(2, '0');
+                const year = d.getFullYear();
+                
                 let hours = d.getHours();
                 const minutes = String(d.getMinutes()).padStart(2, '0');
+                const seconds = String(d.getSeconds()).padStart(2, '0');
                 const ampm = hours >= 12 ? 'PM' : 'AM';
-                hours = hours % 12 || 12;
-                return `${d.getDate()}/${d.getMonth()+1}/${d.getFullYear()} , ${hours}:${minutes}${ampm}`;
+                hours = hours % 12;
+                hours = hours ? hours : 12;
+                const hoursStr = String(hours).padStart(2, '0');
+
+                return `${day}/${month}/${year} , ${hoursStr}:${minutes}:${seconds}${ampm}`;
             } catch(e) { return isoString; }
         }
 
-        // دجاجة الدعم والروابط وجدول المواعيد الأساسي
-        function renderTable() {
-            const tbody = document.getElementById('tableBody');
-            if (!tbody) return;
-            tbody.innerHTML = '';
-            records.forEach((record, index) => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td>${index + 1}</td>
-                    <td>${record.createdAt ? record.createdAt.slice(0,10) : '-'}</td>
-                    <td><span class="status-badge badge-pending">${record.adminContactMethod || 'قيد الانتظار'}</span></td>
-                    <td><strong>${record.patientName}</strong></td>
-                    <td>${record.patientPhone}</td>
-                    <td>${record.fileNumber || '-'}</td>
-                    <td>${record.procedureType || '-'}</td>
-                    <td><div class="service-cell-box">${record.serviceRequired}</div></td>
-                    <td>${record.coordinatorName}</td>
-                    <td>-</td>
-                    <td>-</td>
-                    <td>-</td>
-                `;
-                tbody.appendChild(tr);
+        // إمكانية تبديل حالة "تم النسخ" والتحويل الفوري للترتيب
+        function toggleCopiedStatusGroup(keysArray) {
+            const firstRec = records.find(r => keysArray.includes(r.firebaseKey));
+            const targetState = !firstRec?.isCopied;
+            
+            keysArray.forEach(k => {
+                const rec = records.find(r => r.firebaseKey === k);
+                if (rec) {
+                    rec.isCopied = targetState;
+                    if (navigator.onLine && !k.startsWith('local_')) {
+                        dbRef.child(k).update({ isCopied: targetState });
+                    }
+                }
+            });
+            saveLocal();
+            renderClientReport();
+        }
+
+        function hideClientGroupFromReport(keysArray) {
+            requireAdminAuth(() => {
+                const nowIso = new Date().toISOString();
+                keysArray.forEach(k => {
+                    let rec = records.find(r => r.firebaseKey === k);
+                    if (rec) {
+                        rec.isHiddenFromClients = true;
+                        rec.deletedAt = nowIso;
+                        if (navigator.onLine && !k.startsWith('local_')) {
+                            dbRef.child(k).update({ isHiddenFromClients: true, deletedAt: nowIso });
+                        }
+                    }
+                });
+                saveLocal();
+                renderClientReport();
+                renderTrashModalList();
             });
         }
 
-        function updateKPIs() {
-            const totalEl = document.getElementById('kpi-total');
-            if (totalEl) totalEl.innerText = records.length;
+        function permanentDeleteGroupFromReport(keysArray) {
+            requireAdminAuth(() => {
+                if (confirm('⚠️ تنبيه: هل أنت متأكد من الحذف النهائي للعميل وجميع طلباته المكررة من النظام بالكامل؟')) {
+                    records = records.filter(r => !keysArray.includes(r.firebaseKey));
+                    saveLocal();
+                    renderTable();
+                    updateKPIs();
+                    updateDailyProgress();
+                    renderClientReport();
+                    renderTrashModalList();
+                    updatePinnedCountBadge();
+
+                    keysArray.forEach(k => {
+                        if (navigator.onLine && !k.startsWith('local_')) {
+                            dbRef.child(k).remove();
+                        }
+                    });
+                    alert('تم الحذف النهائي للعميل وجميع طلباته المنسوبة إليه.');
+                }
+            });
         }
 
-        function renderCSLinks() {
-            const container = document.getElementById('linksGridContainer');
+        function restoreClientToReport(key) {
+            requireAdminAuth(() => {
+                let rec = records.find(r => r.firebaseKey === key);
+                if (rec) {
+                    rec.isHiddenFromClients = false;
+                    rec.deletedAt = null;
+                    saveLocal();
+                    renderClientReport();
+                    renderTrashModalList();
+                    if (navigator.onLine && !key.startsWith('local_')) {
+                        dbRef.child(key).update({ isHiddenFromClients: false, deletedAt: null });
+                    }
+                }
+            });
+        }
+
+        function permanentDeleteClientFromReport(key) {
+            requireAdminAuth(() => {
+                if (confirm('⚠️ تنبيه: هل أنت متأكد من الحذف النهائي لهذا العميل من النظام بالكامل؟ لا يمكن استرجاعه بعد الآن.')) {
+                    const idx = records.findIndex(r => r.firebaseKey === key);
+                    if (idx !== -1) {
+                        records.splice(idx, 1);
+                        saveLocal();
+                        renderTable();
+                        updateKPIs();
+                        updateDailyProgress();
+                        renderClientReport();
+                        renderTrashModalList();
+                        updatePinnedCountBadge();
+
+                        if (navigator.onLine && !key.startsWith('local_')) {
+                            dbRef.child(key).remove();
+                        }
+                        alert('تم الحذف النهائي للعميل بنجاح.');
+                    }
+                }
+            });
+        }
+
+        function checkTrashAuthAndOpen() {
+            requireAdminAuth(() => {
+                openTrashModal();
+            });
+        }
+
+        function openTrashModal() {
+            renderTrashModalList();
+            document.getElementById('trashModal').classList.add('open');
+        }
+
+        function closeTrashModal() {
+            document.getElementById('trashModal').classList.remove('open');
+        }
+
+        function renderTrashModalList() {
+            const trashContainer = document.getElementById('trashModalList');
+            if (!trashContainer) return;
+            trashContainer.innerHTML = '';
+
+            let hiddenRecords = records.filter(r => r.isHiddenFromClients);
+
+            if (hiddenRecords.length === 0) {
+                trashContainer.innerHTML = '<div style="text-align:center; padding:20px; color:var(--text-muted); font-size:0.9rem;">سلة المحذوفات فارغة تماماً</div>';
+                return;
+            }
+
+            hiddenRecords.sort((a, b) => new Date(b.deletedAt || b.createdAt) - new Date(a.deletedAt || a.createdAt));
+
+            hiddenRecords.forEach((item, index) => {
+                const card = document.createElement('div');
+                card.className = 'client-card-wrapper';
+
+                const fileStr = (item.fileNumber && item.fileNumber !== '-') ? ` ${item.fileNumber}` : '';
+                const phoneStr = (item.patientPhone && item.patientPhone !== '-') ? item.patientPhone : '-';
+                const serviceStr = item.serviceRequired || '-';
+                const dateTimeStr = formatDateTimeFullCustom(item.createdAt);
+
+                card.innerHTML = `
+                    <div class="client-card-header">
+                        <div class="client-title">
+                            <span>${index + 1}- ${item.patientName}${fileStr}</span>
+                        </div>
+                        ${dateTimeStr ? `<span class="client-datetime-badge"><i class="fa-regular fa-clock"></i> ${dateTimeStr}</span>` : ''}
+                    </div>
+                    <div class="client-info-row"><span class="info-label">رقم الجوال:</span> ${phoneStr}</div>
+                    <div class="client-info-row">${serviceStr}</div>
+                    <div class="client-actions-row">
+                        <button class="btn-client-action restore" onclick="restoreClientToReport('${item.firebaseKey}')">
+                            <i class="fa-solid fa-rotate-left"></i> استرجاع
+                        </button>
+                        <button class="btn-client-action permanent-delete" onclick="permanentDeleteClientFromReport('${item.firebaseKey}')">
+                            <i class="fa-solid fa-trash-can"></i> حذف نهائي
+                        </button>
+                    </div>
+                `;
+                trashContainer.appendChild(card);
+            });
+        }
+
+        // عرض الكشف مع ترتيب العملاء غير المنسوخين أولاً، ثم المنسوخين في الأسفل
+        function renderClientReport() {
+            const container = document.getElementById('clientReportList');
             if (!container) return;
             container.innerHTML = '';
-            csLinks.forEach(item => {
+
+            let openRecords = getOpenFilteredRecords();
+
+            const searchInputEl = document.getElementById('clientSearchInput');
+            if (searchInputEl) {
+                const searchVal = searchInputEl.value.trim().toLowerCase();
+                if (searchVal !== '') {
+                    openRecords = openRecords.filter(r => {
+                        const name = (r.patientName || '').toLowerCase();
+                        const phone = (r.patientPhone || '').toLowerCase();
+                        const file = (r.fileNumber || '').toLowerCase();
+                        const id = (r.idNumber || '').toLowerCase();
+                        const service = (r.serviceRequired || '').toLowerCase();
+                        return name.includes(searchVal) || phone.includes(searchVal) || file.includes(searchVal) || id.includes(searchVal) || service.includes(searchVal);
+                    });
+                }
+            }
+
+            if (openRecords.length === 0) {
+                container.innerHTML = '<div style="text-align:center; padding:30px; color:var(--text-muted); font-size:1rem;">لا توجد نتائج أو حالات طابقت البحث 🎉</div>';
+                return;
+            }
+
+            const groupedMap = new Map();
+
+            openRecords.forEach(record => {
+                const cleanPhone = (record.patientPhone && record.patientPhone !== '-') ? record.patientPhone.replace(/\D/g, '') : '';
+                const groupKey = (cleanPhone.length >= 8) ? cleanPhone : (record.patientName || '').trim().toLowerCase();
+
+                if (!groupedMap.has(groupKey)) {
+                    groupedMap.set(groupKey, []);
+                }
+                groupedMap.get(groupKey).push(record);
+            });
+
+            let consolidatedList = [];
+
+            groupedMap.forEach((groupRecords) => {
+                groupRecords.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+                const mainRecord = groupRecords[0];
+                const allKeys = groupRecords.map(r => r.firebaseKey);
+                const isRepeatedGroup = groupRecords.length > 1 || groupRecords.some(r => r.isRepeatedRequest);
+                const isCopiedGroup = groupRecords.every(r => r.isCopied);
+                const isPinnedGroup = groupRecords.some(r => r.isPinned);
+
+                const uniqueServices = [];
+                groupRecords.forEach(r => {
+                    const txt = (r.serviceRequired || '').trim();
+                    if (txt && !uniqueServices.includes(txt)) {
+                        uniqueServices.push(txt);
+                    }
+                });
+
+                const combinedServicesStr = uniqueServices.join(' / ');
+
+                consolidatedList.push({
+                    mainRecord: mainRecord,
+                    allKeys: allKeys,
+                    servicesCombined: combinedServicesStr,
+                    isRepeated: isRepeatedGroup,
+                    isCopied: isCopiedGroup,
+                    isPinned: isPinnedGroup,
+                    latestCreatedAt: mainRecord.createdAt
+                });
+            });
+
+            // الترتيب الأساسي: الحالات غير المنسوخين أولاً، ثم المنسوخين في أسفل القائمة
+            consolidatedList.sort((a, b) => {
+                if (a.isCopied !== b.isCopied) {
+                    return a.isCopied ? 1 : -1;
+                }
+                return new Date(b.latestCreatedAt) - new Date(a.latestCreatedAt);
+            });
+
+            consolidatedList.forEach((item, index) => {
                 const card = document.createElement('div');
-                card.className = 'link-card';
+                const rec = item.mainRecord;
+                const isCopied = item.isCopied;
+                const isPinned = item.isPinned;
+
+                card.className = `client-card-wrapper ${isCopied ? 'is-copied' : ''}`;
+
+                const fileStr = (rec.fileNumber && rec.fileNumber !== '-') ? ` ${rec.fileNumber}` : '';
+                const idStr = (rec.idNumber && rec.idNumber !== '-') ? rec.idNumber : '';
+                const phoneStr = (rec.patientPhone && rec.patientPhone !== '-') ? rec.patientPhone : '-';
+                const serviceStr = item.servicesCombined || '-';
+                const dateTimeStr = formatDateTimeFullCustom(item.latestCreatedAt);
+                const keysJsonStr = JSON.stringify(item.allKeys).replace(/"/g, '&quot;');
+
+                const pinBtnHTML = `
+                    <button class="copied-btn" style="background-color: ${isPinned ? '#d97706' : '#475569'}; border-color: ${isPinned ? '#f59e0b' : '#64748b'}; color: #ffffff;" onclick="requestTogglePinRecord('${rec.firebaseKey}')" title="${isPinned ? 'إلغاء التثبيت من المميزين' : 'تثبيت في المميزين'}">
+                        📌 ${isPinned ? 'المميزون' : 'تثبيت'}
+                    </button>
+                `;
+
+                const copyBtnHTML = !isPinnedFilterActive ? `
+                    <button class="copied-btn ${isCopied ? 'active' : ''}" onclick="toggleCopiedStatusGroup(${keysJsonStr})">
+                        <i class="fa-solid ${isCopied ? 'fa-circle-check' : 'fa-check'}"></i> ${isCopied ? 'تم النسخ ✅' : 'تعليم كمنسوخ'}
+                    </button>
+                ` : '';
+
                 card.innerHTML = `
-                    <div class="link-card-header"><i class="fa-solid fa-globe"></i><span>${item.title}</span></div>
-                    <div class="link-card-desc">${item.desc || ''}</div>
-                    <div class="link-card-actions"><button type="button" class="btn-open-link" onclick="window.open('${item.url}', '_blank')">فتح الموقع</button></div>
+                    <div class="client-card-header">
+                        <div class="client-title">
+                            <input type="checkbox" class="client-select-chk" data-keys="${keysJsonStr}">
+                            <span>${index + 1}-${rec.patientName}${fileStr}</span>
+                            <div style="display: flex; gap: 6px; align-items: center; flex-wrap: wrap;">
+                                ${pinBtnHTML}${copyBtnHTML}
+                            </div>
+                        </div>
+                        ${dateTimeStr ? `<span class="client-datetime-badge"><i class="fa-regular fa-clock"></i> ${dateTimeStr}</span>` : ''}
+                    </div>
+                    <div class="client-info-row">
+                        <span class="info-label">رقم الجوال:</span> ${phoneStr}
+                    </div>
+                    ${idStr ? `<div class="client-info-row"><span class="info-label">رقم الهوية:</span> ${idStr}</div>` : ''}
+                    <div class="client-info-row">
+                        ${serviceStr}
+                    </div>
+                    <div class="client-actions-row">
+                        <button class="btn-client-action delete-to-trash" onclick="hideClientGroupFromReport(${keysJsonStr})">
+                            حذف
+                        </button>
+                        <button class="btn-client-action permanent-delete" onclick="permanentDeleteGroupFromReport(${keysJsonStr})">
+                            حذف نهائي
+                        </button>
+                    </div>
                 `;
                 container.appendChild(card);
             });
         }
 
-        function renderAnnouncements() {}
-        function checkTrashAuthAndOpen() { alert('سلة المحذوفات متاحة.'); }
-        function requestDeleteSelectedAccess() {}
-        function requestDeleteRangeAccess() {}
-        function exportToExcel() {}
-        function exportToJSON() {}
-        function importData(e) {}
-        function openClearModal() {}
-        function closeClearModal() {}
-        function openPasswordModal() {}
-        function closePasswordModal() {}
-        function updatePassword() {}
-        function executeFilteredClear() {}
-        function openAddAnnouncementModal() {}
-        function closeAnnouncementModal() {}
-        function saveAnnouncementItem(e) { e.preventDefault(); }
-        function openAddLinkModal() {}
-        function closeLinkModal() {}
-        function saveLinkItem(e) { e.preventDefault(); }
-        function closeTrashModal() {}
-        function openEditModal(key) {}
-        function closeEditModal() {}
-        function saveEditedRecord(e) { e.preventDefault(); }
-        function deleteRecord(key) {}
-        function handleProcedureTypeChange(sel) {}
-        function checkPriorityAuth(chk) {}
-        function filterTable() {}
-        
-        document.getElementById('appointmentForm')?.addEventListener('submit', function(e) {
-            e.preventDefault();
-            const newRec = {
-                firebaseKey: 'local_' + Date.now(),
-                patientName: document.getElementById('patientName').value,
-                patientPhone: document.getElementById('patientPhone').value || '-',
-                fileNumber: document.getElementById('fileNumber').value || '-',
-                branch: document.getElementById('branch').value,
-                procedureType: document.getElementById('procedureType').value,
-                serviceRequired: document.getElementById('serviceRequired').value,
-                coordinatorName: document.getElementById('coordinatorName').value,
-                createdAt: new Date().toISOString(),
-                adminContactMethod: 'قيد الانتظار',
-                isCopied: false,
-                isHiddenFromClients: false
-            };
-            records.unshift(newRec);
+        function copyClientReport() {
+            let openRecords = getOpenFilteredRecords();
+            if (openRecords.length === 0) {
+                return alert('لا يوجد عملاء حالياً للنسخ!');
+            }
+
+            const groupedMap = new Map();
+            const recordsToCopy = isPinnedFilterActive ? openRecords : openRecords.filter(r => !r.isCopied);
+
+            recordsToCopy.forEach(record => {
+                const cleanPhone = (record.patientPhone && record.patientPhone !== '-') ? record.patientPhone.replace(/\D/g, '') : '';
+                const groupKey = (cleanPhone.length >= 8) ? cleanPhone : (record.patientName || '').trim().toLowerCase();
+
+                if (!groupedMap.has(groupKey)) {
+                    groupedMap.set(groupKey, []);
+                }
+                groupedMap.get(groupKey).push(record);
+            });
+
+            if (groupedMap.size === 0 && !isPinnedFilterActive) {
+                return alert('جميع العملاء الموجودين تم وضع علامة "تم النسخ" عليهم سابقاً!');
+            }
+
+            let reportText = ``;
+            let idx = 1;
+
+            groupedMap.forEach((groupRecords) => {
+                groupRecords.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                const item = groupRecords[0];
+
+                const fileStr = (item.fileNumber && item.fileNumber !== '-') ? ` ${item.fileNumber}` : '';
+                const idStr = (item.idNumber && item.idNumber !== '-') ? `رقم الهوية: ${item.idNumber}\n` : '';
+                const phoneStr = (item.patientPhone && item.patientPhone !== '-') ? item.patientPhone : '-';
+
+                const uniqueServices = [];
+                groupRecords.forEach(r => {
+                    const txt = (r.serviceRequired || '').trim();
+                    if (txt && !uniqueServices.includes(txt)) uniqueServices.push(txt);
+                });
+                const serviceStr = uniqueServices.join(' / ') || '-';
+
+                reportText += `${idx}- ${item.patientName}${fileStr}\nرقم الجوال: ${phoneStr}\n${idStr}${serviceStr}\n\n`;
+                idx++;
+            });
+
+            navigator.clipboard.writeText(reportText.trim()).then(() => alert(`تم نسخ (${groupedMap.size}) عميل بنجاح!`));
+        }
+
+        function requestDeleteSelectedAccess() {
+            const checkboxes = document.querySelectorAll('.client-select-chk:checked');
+            if (checkboxes.length === 0) {
+                return alert('يرجى اختيار عميل واحد على الأقل من الخانات المحددة!');
+            }
+            requireAdminAuth(() => {
+                if (confirm('هل أنت متأكد من الحذف النهائي للعملاء المحددين من النظام بالكامل؟')) {
+                    let keysToDelete = [];
+                    checkboxes.forEach(cb => {
+                        const attr = cb.getAttribute('data-keys');
+                        if (attr) {
+                            try {
+                                const parsed = JSON.parse(attr);
+                                keysToDelete = keysToDelete.concat(parsed);
+                            } catch(e) {}
+                        }
+                    });
+
+                    records = records.filter(r => !keysToDelete.includes(r.firebaseKey));
+                    saveLocal();
+                    renderTable();
+                    updateKPIs();
+                    updateDailyProgress();
+                    renderClientReport();
+                    renderTrashModalList();
+                    updatePinnedCountBadge();
+
+                    keysToDelete.forEach(k => {
+                        if (navigator.onLine && !k.startsWith('local_')) {
+                            dbRef.child(k).remove();
+                        }
+                    });
+                    alert('تم الحذف النهائي للمحددين بنجاح.');
+                }
+            });
+        }
+
+        function requestDeleteRangeAccess() {
+            requireAdminAuth(() => {
+                const filterDesc = clientHoursFilter === 'all' ? 'جميع الأوقات' : `آخر ${clientHoursFilter} ساعة`;
+                if (confirm(`⚠️ تحذير إدارة: هل أنت متأكد تماماً من رغبتك في حذف مسح الفترة (${filterDesc}) نهائياً من النظام؟`)) {
+                    executeDeleteClientsTimeRange();
+                }
+            });
+        }
+
+        function executeDeleteClientsTimeRange() {
+            const now = new Date();
+            let keysToDelete = [];
+
+            records = records.filter(r => {
+                let shouldDelete = false;
+                if (!r.isHiddenFromClients) {
+                    if (clientHoursFilter === 'all') {
+                        shouldDelete = true;
+                    } else {
+                        const diffHours = (now - new Date(r.createdAt)) / (1000 * 60 * 60);
+                        if (diffHours <= parseFloat(clientHoursFilter)) shouldDelete = true;
+                    }
+                }
+
+                if (shouldDelete && !r.firebaseKey.startsWith('local_')) {
+                    keysToDelete.push(r.firebaseKey);
+                }
+                return !shouldDelete;
+            });
+
             saveLocal();
             renderTable();
-            renderClientReport();
             updateKPIs();
-            this.reset();
-            alert('تم الحفظ بنجاح!');
-            if (navigator.onLine) dbRef.push(newRec);
-        });
+            updateDailyProgress();
+            renderClientReport();
+            renderTrashModalList();
+            updatePinnedCountBadge();
+
+            keysToDelete.forEach(k => {
+                if (navigator.onLine) {
+                    dbRef.child(k).remove();
+                }
+            });
+            alert('تم مسح الحالات المحددة نهائياً بنجاح.');
+        }
+
+        function updateKPIs() {
+            document.getElementById('kpi-total').innerText = records.length;
+            document.getElementById('kpi-recurring').innerText = records.filter(r => r.isRecurring).length;
+            document.getElementById('kpi-repeated').innerText = records.filter(r => r.isRepeatedRequest).length;
+            document.getElementById('kpi-plants').innerText = records.filter(r => (r.procedureType && r.procedureType.includes('زراعة'))).length;
+            
+            const extractionsCount = records.filter(r => r.procedureType && r.procedureType.includes('خلع')).length;
+            const reviewsCount = records.filter(r => r.procedureType && r.procedureType.includes('مراجعه')).length;
+
+            const kExt = document.getElementById('kpi-extractions');
+            const kRev = document.getElementById('kpi-reviews');
+            if (kExt) kExt.innerText = extractionsCount;
+            if (kRev) kRev.innerText = reviewsCount;
+        }
+
+        function formatDateOnly(isoString) {
+            if (!isoString) return '-';
+            try {
+                const d = new Date(isoString);
+                const day = String(d.getDate()).padStart(2, '0');
+                const month = String(d.getMonth() + 1).padStart(2, '0');
+                const year = d.getFullYear();
+                return `${day}/${month}/${year}`;
+            } catch (e) { return isoString; }
+        }
+
+        function filterTable() {
+            const input = document.getElementById('searchInput').value.toLowerCase();
+            document.querySelectorAll('#tableBody tr').forEach(row => {
+                row.style.display = row.innerText.toLowerCase().includes(input) ? '' : 'none';
+            });
+        }
+
+        function openClearModal() { 
+            requireAdminAuth(() => {
+                document.getElementById('clearModal').classList.add('open');
+            });
+        }
+        function closeClearModal() { document.getElementById('clearModal').classList.remove('open'); }
+        
+        function openPasswordModal() { 
+            requireAdminAuth(() => {
+                document.getElementById('passwordModal').classList.add('open');
+            });
+        }
+        function closePasswordModal() { document.getElementById('passwordModal').classList.remove('open'); }
+
+        function updatePassword() {
+            const oldP = document.getElementById('oldPassword').value;
+            const newP = document.getElementById('newPassword').value;
+            if (oldP === localStorage.getItem('adminPassword')) {
+                localStorage.setItem('adminPassword', newP);
+                alert('تم تغيير كلمة المرور بنجاح!');
+                closePasswordModal();
+            } else { alert('كلمة المرور الحالية خاطئة!'); }
+        }
+
+        function executeFilteredClear() {
+            const pass = document.getElementById('clearPasswordInput').value;
+            if (pass === localStorage.getItem('adminPassword')) {
+                records = [];
+                saveLocal();
+                renderTable();
+                updateKPIs();
+                updateDailyProgress();
+                renderClientReport();
+                renderTrashModalList();
+                updatePinnedCountBadge();
+                closeClearModal();
+                if (navigator.onLine) dbRef.set(null);
+            } else { alert('كلمة المرور غير صحيحة!'); }
+        }
+
+        function exportToExcel() {
+            const worksheet = XLSX.utils.json_to_sheet(records);
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, "المواعيد");
+            XLSX.writeFile(workbook, `Appointments_${new Date().toISOString().slice(0,10)}.xlsx`);
+        }
+
+        function exportToJSON() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(records, null, 2));
+            const a = document.createElement('a'); a.href = dataStr; a.download = `Appointments_Backup.json`; a.click();
+        }
+
+        function importData(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            const fileName = file.name.toLowerCase();
+
+            if (fileName.endsWith('.json')) {
+                const reader = new FileReader();
+                reader.onload = function(evt) {
+                    try {
+                        const imported = JSON.parse(evt.target.result);
+                        if (Array.isArray(imported)) {
+                            imported.forEach(item => {
+                                delete item.firebaseKey;
+                                records.unshift(item);
+                                if (navigator.onLine) {
+                                    dbRef.push(item);
+                                }
+                            });
+                            saveLocal(); 
+                            renderTable(); 
+                            updateKPIs(); 
+                            updateDailyProgress(); 
+                            renderClientReport();
+                            renderTrashModalList();
+                            updatePinnedCountBadge();
+                            alert('تم استيراد وحفظ ملف JSON وسحابة Firebase بنجاح!');
+                        }
+                    } catch(err) { alert('خطأ في تحليل ملف الـ JSON'); }
+                };
+                reader.readAsText(file);
+            } else if (fileName.endsWith('.xlsx') || fileName.endsWith('.xls')) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        const data = new Uint8Array(e.target.result);
+                        const workbook = XLSX.read(data, { type: 'array' });
+                        const firstSheetName = workbook.SheetNames[0];
+                        const worksheet = workbook.Sheets[firstSheetName];
+                        const jsonSheetData = XLSX.utils.sheet_to_json(worksheet);
+
+                        if (Array.isArray(jsonSheetData) && jsonSheetData.length > 0) {
+                            jsonSheetData.forEach(row => {
+                                const formattedRow = {
+                                    patientName: row.patientName || row['اسم العميل'] || 'بدون اسم',
+                                    patientPhone: row.patientPhone || row['رقم الجوال'] || '-',
+                                    fileNumber: row.fileNumber || row['رقم الملف'] || '-',
+                                    idNumber: row.idNumber || row['رقم الهوية / الإقامة'] || '-',
+                                    branch: row.branch || row['الفرع'] || 'معشي',
+                                    procedureType: row.procedureType || row['نوع الإجراء'] || 'أخرى',
+                                    contactMethod: row.contactMethod || row['طريقة التواصل'] || 'اتصال',
+                                    serviceRequired: row.serviceRequired || row['الخدمة المطلوبة / تفاصيل المشكلة والطلب'] || '-',
+                                    coordinatorName: row.coordinatorName || row['اسم المنسق'] || 'مسؤول',
+                                    isRecurring: !!row.isRecurring,
+                                    isRepeatedRequest: !!row.isRepeatedRequest,
+                                    createdAt: row.createdAt || new Date().toISOString(),
+                                    actionTaken: '',
+                                    adminContactMethod: 'قيد الانتظار',
+                                    adminContactDetail: '',
+                                    isCopied: false,
+                                    isPinned: false,
+                                    isHiddenFromClients: false,
+                                    deletedAt: null
+                                };
+
+                                records.unshift(formattedRow);
+                                if (navigator.onLine) {
+                                    dbRef.push(formattedRow);
+                                }
+                            });
+
+                            saveLocal();
+                            renderTable();
+                            updateKPIs();
+                            updateDailyProgress();
+                            renderClientReport();
+                            renderTrashModalList();
+                            updatePinnedCountBadge();
+                            alert('تم استيراد وحفظ ملف الـ Excel وسحابة Firebase بنجاح!');
+                        } else {
+                            alert('ملف الـ Excel فارغ أو لا يحتوي على بيانات مطابقة.');
+                        }
+                    } catch (err) {
+                        alert('حدث خطأ أثناء قراءة ملف الـ Excel. تأكد من أنه ملف صالح تم تصديره من نفس النظام.');
+                    }
+                };
+                reader.readAsArrayBuffer(file);
+            } else {
+                alert('نوع الملف غير مدعوم. يرجى اختيار ملف JSON أو Excel صالح.');
+            }
+            e.target.value = false;
+        }
     </script>
 </body>
 </html>
