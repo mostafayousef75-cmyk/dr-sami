@@ -2701,24 +2701,29 @@
         }
 
         function getOpenFilteredRecords() {
-            let openRecords = records.filter(r => {
-                if (r.isHiddenFromClients) return false;
-                if (isPinnedFilterActive && !r.isPinned) return false;
-
-                const isPending = !r.adminContactMethod || r.adminContactMethod === 'قيد الانتظار';
-                const noAction = !r.actionTaken || r.actionTaken.trim() === '';
-                return isPending && noAction;
-            });
-
-            if (clientHoursFilter !== 'all' && !isPinnedFilterActive) {
-                const now = new Date();
-                openRecords = openRecords.filter(r => {
-                    const diffHours = (now - new Date(r.createdAt)) / (1000 * 60 * 60);
-                    return diffHours <= parseFloat(clientHoursFilter);
-                });
-            }
-            return openRecords;
+    let openRecords = records.filter(r => {
+        if (r.isHiddenFromClients) return false;
+        
+        // إذا كان فلتر المميزين مفعلاً، اعرض كل مثبت بغض النظر عن حالة التواصل
+        if (isPinnedFilterActive) {
+            return !!r.isPinned;
         }
+
+        // الحالات العادية في صفحة الكشف (قيد الانتظار وبدون إجراء)
+        const isPending = !r.adminContactMethod || r.adminContactMethod === 'قيد الانتظار';
+        const noAction = !r.actionTaken || r.actionTaken.trim() === '';
+        return isPending && noAction;
+    });
+
+    if (clientHoursFilter !== 'all' && !isPinnedFilterActive) {
+        const now = new Date();
+        openRecords = openRecords.filter(r => {
+            const diffHours = (now - new Date(r.createdAt)) / (1000 * 60 * 60);
+            return diffHours <= parseFloat(clientHoursFilter);
+        });
+    }
+    return openRecords;
+}
 
         function formatDateTimeFullCustom(isoString) {
             if (!isoString) return '';
