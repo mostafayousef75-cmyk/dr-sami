@@ -406,7 +406,6 @@
         }
         .filter-tab.active { background-color: var(--primary-color); color: white; border-color: var(--primary-color); }
 
-        /* القوائم المنسدلة المخصصة للفلاتر */
         .dropdown-filter-container {
             position: relative;
             display: inline-block;
@@ -505,6 +504,10 @@
         .btn-save-action { background-color: var(--success-color); color: #fff; border: none; padding: 5px 8px; border-radius: 4px; cursor: pointer; }
         .btn-edit-action { background-color: var(--primary-color); color: #fff; border: none; padding: 5px 8px; border-radius: 4px; cursor: pointer; }
         .btn-delete-action { background-color: var(--danger-color); color: #fff; border: none; padding: 5px 8px; border-radius: 4px; cursor: pointer; }
+        
+        /* زر تثبيت/تمييز العميل في الإجراءات */
+        .btn-pin-action { background-color: #d97706; color: #fff; border: none; padding: 5px 8px; border-radius: 4px; cursor: pointer; }
+        .btn-pin-action.pinned { background-color: #ca8a04; box-shadow: 0 0 6px #f59e0b; }
 
         @keyframes priorityPulse {
             0% { background-color: rgba(124, 58, 237, 0.25); }
@@ -684,6 +687,7 @@
         .btn-client-action.delete-to-trash { background-color: var(--danger-color); }
         .btn-client-action.restore { background-color: var(--success-color); }
         .btn-client-action.permanent-delete { background-color: var(--danger-color); }
+        .btn-client-action.unpin-item { background-color: var(--warning-color); }
 
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 2000; justify-content: center; align-items: center; padding: 15px; }
         .modal.open { display: flex; }
@@ -943,7 +947,7 @@
                                     <button class="filter-tab" data-filter="extraction" onclick="setDashboardFilter('extraction', this)">حالات الخلع 🩺</button>
                                     <button class="filter-tab" data-filter="review" onclick="setDashboardFilter('review', this)">حالات المراجعة 📋</button>
                                     
-                                    <!-- قائمة منسدلة للاستفسارات -->
+                                    <!-- قائمة الاستفسارات -->
                                     <div class="dropdown-filter-container" id="inquiriesDropdownContainer">
                                         <button class="dropdown-filter-btn" id="inquiriesDropdownBtn" onclick="toggleDropdown('inquiriesDropdownContent')">
                                             <i class="fa-solid fa-comments"></i> الاستفسارات <i class="fa-solid fa-chevron-down" style="font-size:0.7rem;"></i>
@@ -955,7 +959,7 @@
                                         </div>
                                     </div>
 
-                                    <!-- قائمة منسدلة للكشفيات والمواعيد -->
+                                    <!-- قائمة الكشفيات والمواعيد -->
                                     <div class="dropdown-filter-container" id="appointmentsDropdownContainer">
                                         <button class="dropdown-filter-btn" id="appointmentsDropdownBtn" onclick="toggleDropdown('appointmentsDropdownContent')">
                                             <i class="fa-solid fa-stethoscope"></i> الكشفيات والمواعيد <i class="fa-solid fa-chevron-down" style="font-size:0.7rem;"></i>
@@ -1027,6 +1031,11 @@
                                     <option value="720">شهر</option>
                                 </select>
 
+                                <!-- زر فلتر العملاء المُميّزين (المثبتين) -->
+                                <button class="action-btn" id="pinnedFilterBtn" onclick="togglePinnedFilter()" style="background-color: #d97706;">
+                                    <i class="fa-solid fa-thumbtack"></i> العملاء المُميّزون (<span id="pinnedCount">0</span>)
+                                </button>
+
                                 <button class="action-btn copy-btn" onclick="copyClientReport()"><i class="fa-solid fa-copy"></i> نسخ الكشف</button>
                                 <button class="action-btn select-del-btn" onclick="requestDeleteSelectedAccess()"><i class="fa-solid fa-trash-can"></i> حذف المحددين</button>
                                 <button class="action-btn clear-all" onclick="requestDeleteRangeAccess()"><i class="fa-solid fa-trash"></i> مسح الفترة</button>
@@ -1058,7 +1067,6 @@
                 <button class="close-modal-btn" onclick="closeTrashModal()">&times;</button>
             </div>
             <div id="trashModalList" style="display: flex; flex-direction: column; gap: 10px; max-height: 60vh; overflow-y: auto;">
-                <!-- المحذوفات تظهر هنا بترتيب الأحدث للأقدم -->
             </div>
         </div>
     </div>
@@ -1208,6 +1216,8 @@
         let dashboardFilter = localStorage.getItem('savedDashboardFilter') || 'all';
         let dashboardTimeFilter = localStorage.getItem('savedDashboardTimeFilter') || 'all';
         let clientHoursFilter = localStorage.getItem('savedClientHoursFilter') || '8';
+        let isPinnedFilterActive = false; // فلتر العملاء المُميزين في صفحة الكشف
+        
         let originalEditPriorityState = false;
         let originalEditRepeatedState = false;
         let isInitialLoad = true;
@@ -1262,10 +1272,10 @@
         }
 
         function saveLocal() { 
-            localStorage.setItem('cachedAppointments_v11', JSON.stringify(records));
+            localStorage.setItem('cachedAppointments_v12', JSON.stringify(records));
         }
 
-        const cached = localStorage.getItem('cachedAppointments_v11');
+        const cached = localStorage.getItem('cachedAppointments_v12');
         if (cached) { try { records = JSON.parse(cached); lastKnownRecordsCount = records.length; } catch(e) { records = []; } }
 
         function syncFilterTabsUI() {
@@ -1279,7 +1289,6 @@
                     }
                 });
 
-                // تفعيل قائمة الاستفسارات
                 const inquiriesBtn = document.getElementById('inquiriesDropdownBtn');
                 const isInquiriesActive = dashboardFilter.startsWith('inquiries_');
                 if (isInquiriesActive) {
@@ -1296,7 +1305,6 @@
                     statusContainer.querySelectorAll('#inquiriesDropdownContent .dropdown-item').forEach(item => item.classList.remove('active'));
                 }
 
-                // تفعيل قائمة الكشفيات والمواعيد
                 const appointmentsBtn = document.getElementById('appointmentsDropdownBtn');
                 const isAppointmentsActive = dashboardFilter.startsWith('no_inquiries_');
                 if (isAppointmentsActive) {
@@ -1324,18 +1332,17 @@
                     }
                 });
             }
+            updatePinnedCountBadge();
         }
 
         function toggleDropdown(contentId) {
             const content = document.getElementById(contentId);
-            // إغلاق أي قوائم أخرى مفتوحة أولاً
             document.querySelectorAll('.dropdown-content').forEach(dc => {
                 if (dc.id !== contentId) dc.classList.remove('show');
             });
             content.classList.toggle('show');
         }
 
-        // إغلاق القوائم عند النقر خارجها
         window.addEventListener('click', function(e) {
             if (!e.target.closest('.dropdown-filter-container')) {
                 document.querySelectorAll('.dropdown-content').forEach(dc => dc.classList.remove('show'));
@@ -1494,6 +1501,7 @@
                 adminContactMethod: 'قيد الانتظار',
                 adminContactDetail: '',
                 isCopied: false,
+                isPinned: false, // خاص بتثبيت العميل في القائمة المخصصة
                 isHiddenFromClients: false,
                 deletedAt: null
             };
@@ -1518,6 +1526,43 @@
             document.getElementById('customProcedureWrapper').style.display = 'none';
             playBeepAndShowToast('⚠️ تم إضافة العميل والموعد بنجاح!');
         });
+
+        // دالة تثبيت أو إلغاء تثبيت العميل من جدول مؤشر الأداء والمواعيد
+        function togglePinRecord(key) {
+            let rec = records.find(r => r.firebaseKey === key);
+            if (rec) {
+                rec.isPinned = !rec.isPinned;
+                saveLocal();
+                renderTable();
+                updatePinnedCountBadge();
+                renderClientReport();
+
+                if (navigator.onLine && !key.startsWith('local_')) {
+                    dbRef.child(key).update({ isPinned: rec.isPinned });
+                }
+
+                playBeepAndShowToast(rec.isPinned ? '📌 تم تثبيت العميل في قائمة الكشف المخصصة' : '✖️ تم إزالة العميل من القائمة المخصصة');
+            }
+        }
+
+        function updatePinnedCountBadge() {
+            const pinnedCount = records.filter(r => r.isPinned && !r.isHiddenFromClients).length;
+            const badgeEl = document.getElementById('pinnedCount');
+            if (badgeEl) badgeEl.innerText = pinnedCount;
+        }
+
+        function togglePinnedFilter() {
+            isPinnedFilterActive = !isPinnedFilterActive;
+            const btn = document.getElementById('pinnedFilterBtn');
+            if (isPinnedFilterActive) {
+                btn.style.backgroundColor = '#16a34a';
+                btn.style.boxShadow = '0 0 10px rgba(22, 163, 74, 0.4)';
+            } else {
+                btn.style.backgroundColor = '#d97706';
+                btn.style.boxShadow = 'none';
+            }
+            renderClientReport();
+        }
 
         function setDashboardFilter(filterType, btn) {
             dashboardFilter = filterType;
@@ -1679,6 +1724,8 @@
                 else if (proc.includes('مراجعه')) procClass = 'proc-review';
                 else if (proc.includes('استفسارات')) procClass = 'proc-inquiry';
 
+                const isPinned = record.isPinned;
+
                 tr.innerHTML = `
                     <td>${index + 1}</td>
                     <td>${formatDateOnly(record.createdAt)}</td>
@@ -1702,6 +1749,7 @@
                     </td>
                     <td><textarea class="table-input" id="action_${record.firebaseKey}">${record.actionTaken || ''}</textarea></td>
                     <td>
+                        <button class="btn-pin-action ${isPinned ? 'pinned' : ''}" onclick="togglePinRecord('${record.firebaseKey}')" title="${isPinned ? 'إلغاء التثبيت من القائمة المخصصة' : 'تثبيت العميل في القائمة المخصصة'}"><i class="fa-solid fa-thumbtack"></i></button>
                         <button class="btn-save-action" onclick="saveAdminUpdate('${record.firebaseKey}')" title="حفظ"><i class="fa-solid fa-floppy-disk"></i></button>
                         <button class="btn-edit-action" onclick="openEditModal('${record.firebaseKey}')" title="تعديل"><i class="fa-solid fa-pen"></i></button>
                         <button class="btn-delete-action" onclick="deleteRecord('${record.firebaseKey}')" title="حذف"><i class="fa-solid fa-trash"></i></button>
@@ -1845,6 +1893,7 @@
                         updateKPIs();
                         updateDailyProgress();
                         renderClientReport();
+                        updatePinnedCountBadge();
 
                         if (navigator.onLine && !key.startsWith('local_')) {
                             dbRef.child(key).remove();
@@ -1863,12 +1912,16 @@
         function getOpenFilteredRecords() {
             let openRecords = records.filter(r => {
                 if (r.isHiddenFromClients) return false;
+                
+                // إذا كان فلتر العملاء المُميزين (المثبتين) مفعلاً، نعرض فقط من تم تثبيته
+                if (isPinnedFilterActive && !r.isPinned) return false;
+
                 const isPending = !r.adminContactMethod || r.adminContactMethod === 'قيد الانتظار';
                 const noAction = !r.actionTaken || r.actionTaken.trim() === '';
                 return isPending && noAction;
             });
 
-            if (clientHoursFilter !== 'all') {
+            if (clientHoursFilter !== 'all' && !isPinnedFilterActive) {
                 const now = new Date();
                 openRecords = openRecords.filter(r => {
                     const diffHours = (now - new Date(r.createdAt)) / (1000 * 60 * 60);
@@ -1945,6 +1998,7 @@
                     updateDailyProgress();
                     renderClientReport();
                     renderTrashModalList();
+                    updatePinnedCountBadge();
 
                     keysArray.forEach(k => {
                         if (navigator.onLine && !k.startsWith('local_')) {
@@ -1966,7 +2020,7 @@
                     renderClientReport();
                     renderTrashModalList();
                     if (navigator.onLine && !key.startsWith('local_')) {
-                        dbRef.child(k).update({ isHiddenFromClients: false, deletedAt: null });
+                        dbRef.child(key).update({ isHiddenFromClients: false, deletedAt: null });
                     }
                     playBeepAndShowToast('↩️ تم استرجاع العميل إلى صفحة الكشف بنجاح!');
                 }
@@ -1985,6 +2039,7 @@
                         updateDailyProgress();
                         renderClientReport();
                         renderTrashModalList();
+                        updatePinnedCountBadge();
 
                         if (navigator.onLine && !key.startsWith('local_')) {
                             dbRef.child(key).remove();
@@ -2103,6 +2158,7 @@
                 const allKeys = groupRecords.map(r => r.firebaseKey);
                 const isRepeatedGroup = groupRecords.length > 1 || groupRecords.some(r => r.isRepeatedRequest);
                 const isCopiedGroup = groupRecords.every(r => r.isCopied);
+                const isPinnedGroup = groupRecords.some(r => r.isPinned);
 
                 const uniqueServices = [];
                 groupRecords.forEach(r => {
@@ -2120,6 +2176,7 @@
                     servicesCombined: combinedServicesStr,
                     isRepeated: isRepeatedGroup,
                     isCopied: isCopiedGroup,
+                    isPinned: isPinnedGroup,
                     latestCreatedAt: mainRecord.createdAt
                 });
             });
@@ -2162,6 +2219,9 @@
                         ${serviceStr}
                     </div>
                     <div class="client-actions-row">
+                        <button class="btn-client-action unpin-item" onclick="togglePinRecord('${rec.firebaseKey}')">
+                            <i class="fa-solid fa-thumbtack"></i> إزالة من المُميّزين
+                        </button>
                         <button class="btn-client-action delete-to-trash" onclick="hideClientGroupFromReport(${keysJsonStr})">
                             <i class="fa-solid fa-trash"></i> حذف
                         </button>
@@ -2245,6 +2305,7 @@
                     updateDailyProgress();
                     renderClientReport();
                     renderTrashModalList();
+                    updatePinnedCountBadge();
 
                     keysToDelete.forEach(k => {
                         if (navigator.onLine && !k.startsWith('local_')) {
@@ -2293,6 +2354,7 @@
             updateDailyProgress();
             renderClientReport();
             renderTrashModalList();
+            updatePinnedCountBadge();
 
             keysToDelete.forEach(k => {
                 if (navigator.onLine) {
@@ -2369,6 +2431,7 @@
                 updateDailyProgress();
                 renderClientReport();
                 renderTrashModalList();
+                updatePinnedCountBadge();
                 closeClearModal();
                 if (navigator.onLine) dbRef.set(null);
             } else { alert('كلمة المرور غير صحيحة!'); }
@@ -2410,6 +2473,7 @@
                             updateDailyProgress(); 
                             renderClientReport();
                             renderTrashModalList();
+                            updatePinnedCountBadge();
                             alert('تم استيراد وحفظ ملف JSON وسحابة Firebase بنجاح!');
                         }
                     } catch(err) { alert('خطأ في تحليل ملف الـ JSON'); }
@@ -2444,6 +2508,7 @@
                                     adminContactMethod: 'قيد الانتظار',
                                     adminContactDetail: '',
                                     isCopied: false,
+                                    isPinned: false,
                                     isHiddenFromClients: false,
                                     deletedAt: null
                                 };
@@ -2460,6 +2525,7 @@
                             updateDailyProgress();
                             renderClientReport();
                             renderTrashModalList();
+                            updatePinnedCountBadge();
                             alert('تم استيراد وحفظ ملف الـ Excel وسحابة Firebase بنجاح!');
                         } else {
                             alert('ملف الـ Excel فارغ أو لا يحتوي على بيانات مطابقة.');
@@ -2472,7 +2538,7 @@
             } else {
                 alert('نوع الملف غير مدعوم. يرجى اختيار ملف JSON أو Excel صالح.');
             }
-            e.target.value = '';
+            e.target.value = false;
         }
     </script>
 </body>
