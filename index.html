@@ -1186,7 +1186,7 @@
                             <button class="action-btn copy-btn" onclick="openAddLinkModal()"><i class="fa-solid fa-plus"></i> إضافة رابط جديد</button>
                         </div>
                         <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 10px;">
-                            💡 **حماية المواقع:** فتح أو ترتيب أو تعديل أو حذف أي رابط يتطلب **كلمة مرور الموقع / الإدارة**. اضغط على أيقونة المقبض الزرقاء <i class="fa-solid fa-grip-vertical" style="color: var(--primary-color);"></i> للترتيب بالسحب.
+                            💡 **حماية المواقع:** الترتيب أو التعديل أو الحذف لأي رابط يتطلب **كلمة مرور الإدارة**. فتح الموقع متاح مباشرة. اضغط على أيقونة المقبض الزرقاء <i class="fa-solid fa-grip-vertical" style="color: var(--primary-color);"></i> للترتيب بالسحب.
                         </p>
 
                         <div class="links-grid" id="linksGridContainer">
@@ -1211,7 +1211,7 @@
                 <div class="form-grid">
                     <div class="input-field full-width">
                         <label>عنوان الرابط / الموقع *</label>
-                        <input type="text" id="linkTitle" required placeholder="مثال: رابط نظام بيفاتيل Bevatel">
+                        <input type="text" id="linkTitle" required placeholder="مثال: نظام بيفاتيل Bevatel">
                     </div>
                     <div class="input-field full-width">
                         <label>الرابط (URL) *</label>
@@ -2150,7 +2150,6 @@
 
                 const handle = card.querySelector('.drag-handle');
 
-                // حماية السحب والترتيب بكلمة المرور
                 handle.addEventListener('mousedown', (e) => {
                     e.preventDefault();
                     requireAdminAuth(() => {
@@ -2188,7 +2187,6 @@
                     draggedCardIndex = null;
                 });
 
-                // السحب المباشر للموبايل من مقبض السحب (محمي بكلمة المرور)
                 handle.addEventListener('touchstart', (e) => {
                     e.preventDefault();
                     requireAdminAuth(() => {
@@ -2240,10 +2238,9 @@
             });
         }
 
+        // تم إلغاء طلب كلمة المرور عند فتح الموقع ليفتح مباشرة
         function secureOpenLink(url) {
-            requireAdminAuth(() => {
-                window.open(url, '_blank');
-            });
+            window.open(url, '_blank');
         }
 
         function reorderCSLinks(fromIdx, toIdx) {
