@@ -1623,14 +1623,19 @@
         }
 
         function saveLocal() { 
-            localStorage.setItem('cachedAppointments_v22', JSON.stringify(records));
+            localStorage.setItem('cachedAppointments_v23', JSON.stringify(records));
             localStorage.setItem('cachedCSLinks_v1', JSON.stringify(csLinks));
             localStorage.setItem('cachedAnnouncements_v2', JSON.stringify(clinicAnnouncements));
         }
 
-        // قراءة التخزين المحلي مع حماية البيانات من الإلغاء الشكلي
-        const cached = localStorage.getItem('cachedAppointments_v22') || localStorage.getItem('cachedAppointments_v20') || localStorage.getItem('cachedAppointments_v16');
-        if (cached) { try { records = JSON.parse(cached); lastKnownRecordsCount = records.length; } catch(e) { records = []; } }
+        // قراءة التخزين المحلي فوراً لمنع اختفاء البيانات عند تحديث الصفحة (Refresh)
+        const cached = localStorage.getItem('cachedAppointments_v23') || localStorage.getItem('cachedAppointments_v22') || localStorage.getItem('cachedAppointments_v20') || localStorage.getItem('cachedAppointments_v16');
+        if (cached) { 
+            try { 
+                records = JSON.parse(cached); 
+                lastKnownRecordsCount = records.length; 
+            } catch(e) { records = []; } 
+        }
 
         const cachedLinks = localStorage.getItem('cachedCSLinks_v1');
         if (cachedLinks) { try { csLinks = JSON.parse(cachedLinks); } catch(e) { csLinks = []; } }
@@ -1732,7 +1737,7 @@
             renderClientReport();
         });
 
-        // المزامنة الدائمة مع Firebase لمنع اختفاء البيانات عند عمل Refresh
+        // مزامنة Firebase مع حماية البيانات المحلية من التفريغ الفارغ
         dbRef.on('value', (snapshot) => {
             const data = snapshot.val();
             if (data) {
@@ -1745,12 +1750,13 @@
                 }
                 lastKnownRecordsCount = records.length;
                 saveLocal();
-            } else if (isInitialLoad && records.length > 0) {
-                // المحافظة على التخزين المحلي في حال ضعف الاتصال
             } else {
-                records = [];
-                lastKnownRecordsCount = 0;
-                saveLocal();
+                // إذا لم توجد بيانات بالسحابة وكان لدينا بيانات محلية، لا نقوم بمسحها لتجنب الاختفاء
+                if (records.length === 0) {
+                    records = [];
+                    lastKnownRecordsCount = 0;
+                    saveLocal();
+                }
             }
             isInitialLoad = false;
             renderTable();
@@ -1767,8 +1773,6 @@
                 for (let key in data) { cloudLinks.push({ linkKey: key, ...data[key] }); }
                 cloudLinks.sort((a, b) => (a.orderIndex || 0) - (b.orderIndex || 0));
                 csLinks = cloudLinks;
-            } else {
-                csLinks = [];
             }
             saveLocal();
             renderCSLinks();
@@ -1781,8 +1785,6 @@
                 for (let key in data) { cloudAnnouncements.push({ announcementKey: key, ...data[key] }); }
                 cloudAnnouncements.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
                 clinicAnnouncements = cloudAnnouncements;
-            } else {
-                clinicAnnouncements = [];
             }
             saveLocal();
             renderAnnouncements();
@@ -1865,7 +1867,8 @@
 
                 card.innerHTML = `
                     <div class="announcement-body-content">
-                        <div class="announcement-body-text">${item.text}</div>${thumbnailHTML}
+                        <div class="announcement-body-text">${item.text}</div>
+                        ${thumbnailHTML}
                     </div>
                     <div class="announcement-footer-row">
                         <span><i class="fa-regular fa-clock"></i> ${dateStr}</span>
@@ -3006,7 +3009,8 @@
                             <input type="checkbox" class="client-select-chk" data-keys="${keysJsonStr}">
                             <span>${index + 1}-${rec.patientName}${fileStr}</span>
                             <div style="display: flex; gap: 6px; align-items: center; flex-wrap: wrap;">
-                                ${pinBtnHTML}${copyBtnHTML}
+                                ${pinBtnHTML}
+                                ${copyBtnHTML}
                             </div>
                         </div>
                         ${dateTimeStr ? `<span class="client-datetime-badge"><i class="fa-regular fa-clock"></i> ${dateTimeStr}</span>` : ''}
