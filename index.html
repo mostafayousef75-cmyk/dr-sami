@@ -2905,138 +2905,140 @@
         }
 
         function renderClientReport() {
-            const container = document.getElementById('clientReportList');
-            if (!container) return;
-            container.innerHTML = '';
+    const container = document.getElementById('clientReportList');
+    if (!container) return;
+    container.innerHTML = '';
 
-            let openRecords = getOpenFilteredRecords();
+    let openRecords = getOpenFilteredRecords();
 
-            const searchInputEl = document.getElementById('clientSearchInput');
-            if (searchInputEl) {
-                const searchVal = searchInputEl.value.trim().toLowerCase();
-                if (searchVal !== '') {
-                    openRecords = openRecords.filter(r => {
-                        const name = (r.patientName || '').toLowerCase();
-                        const phone = (r.patientPhone || '').toLowerCase();
-                        const file = (r.fileNumber || '').toLowerCase();
-                        const id = (r.idNumber || '').toLowerCase();
-                        const service = (r.serviceRequired || '').toLowerCase();
-                        return name.includes(searchVal) || phone.includes(searchVal) || file.includes(searchVal) || id.includes(searchVal) || service.includes(searchVal);
-                    });
-                }
-            }
-
-            if (openRecords.length === 0) {
-                container.innerHTML = '<div style="text-align:center; padding:30px; color:var(--text-muted); font-size:1rem;">لا توجد نتائج أو حالات طابقت البحث 🎉</div>';
-                return;
-            }
-
-            const groupedMap = new Map();
-
-            openRecords.forEach(record => {
-                const cleanPhone = (record.patientPhone && record.patientPhone !== '-') ? record.patientPhone.replace(/\D/g, '') : '';
-                const groupKey = (cleanPhone.length >= 8) ? cleanPhone : (record.patientName || '').trim().toLowerCase();
-
-                if (!groupedMap.has(groupKey)) {
-                    groupedMap.set(groupKey, []);
-                }
-                groupedMap.get(groupKey).push(record);
-            });
-
-            let consolidatedList = [];
-
-            groupedMap.forEach((groupRecords) => {
-                groupRecords.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-
-                const mainRecord = groupRecords[0];
-                const allKeys = groupRecords.map(r => r.firebaseKey);
-                const isRepeatedGroup = groupRecords.length > 1 || groupRecords.some(r => r.isRepeatedRequest);
-                const isCopiedGroup = groupRecords.every(r => r.isCopied);
-                const isPinnedGroup = groupRecords.some(r => r.isPinned);
-
-                const uniqueServices = [];
-                groupRecords.forEach(r => {
-                    const txt = (r.serviceRequired || '').trim();
-                    if (txt && !uniqueServices.includes(txt)) {
-                        uniqueServices.push(txt);
-                    }
-                });
-
-                const combinedServicesStr = uniqueServices.join(' / ');
-
-                consolidatedList.push({
-                    mainRecord: mainRecord,
-                    allKeys: allKeys,
-                    servicesCombined: combinedServicesStr,
-                    isRepeated: isRepeatedGroup,
-                    isCopied: isCopiedGroup,
-                    isPinned: isPinnedGroup,
-                    latestCreatedAt: mainRecord.createdAt
-                });
-            });
-
-            consolidatedList.sort((a, b) => {
-                if (a.isCopied !== b.isCopied) {
-                    return a.isCopied ? 1 : -1;
-                }
-                return new Date(b.latestCreatedAt) - new Date(a.latestCreatedAt);
-            });
-
-            consolidatedList.forEach((item, index) => {
-                const card = document.createElement('div');
-                const rec = item.mainRecord;
-                const isCopied = item.isCopied;
-                card.className = `client-card-wrapper ${isCopied && !isPinnedFilterActive ? 'is-copied' : ''}`;
-
-                const fileStr = (rec.fileNumber && rec.fileNumber !== '-') ? ` ${rec.fileNumber}` : '';
-                const idStr = (rec.idNumber && rec.idNumber !== '-') ? rec.idNumber : '';
-                const phoneStr = (rec.patientPhone && rec.patientPhone !== '-') ? rec.patientPhone : '-';
-                const serviceStr = item.servicesCombined || '-';
-                const dateTimeStr = formatDateTimeFullCustom(item.latestCreatedAt);
-                const keysJsonStr = JSON.stringify(item.allKeys).replace(/"/g, '&quot;');
-
-                let headerActionsHTML = '';
-                if (isPinnedFilterActive) {
-                    headerActionsHTML = `
-                        <button class="copied-btn active" style="background-color: #d97706; border-color: #f59e0b;" onclick="requestTogglePinRecord('${rec.firebaseKey}')">
-                            📌 المميزون
-                        </button>
-                    `;
-                } else {
-                    headerActionsHTML = `
-                        <button class="copied-btn ${isCopied ? 'active' : ''}" onclick="toggleCopiedStatusGroup(${keysJsonStr})">
-                            <i class="fa-solid ${isCopied ? 'fa-circle-check' : 'fa-check'}"></i> ${isCopied ? 'تم النسخ' : 'تعليم كمنسوخ'}
-                        </button>
-                    `;
-                }
-
-                card.innerHTML = `
-                    <div class="client-card-header">
-                        <div class="client-title">
-                            <input type="checkbox" class="client-select-chk" data-keys="${keysJsonStr}">
-                            <span>${index + 1}-${rec.patientName}${fileStr}</span>${headerActionsHTML}
-                        </div>
-                        ${dateTimeStr ? `<span class="client-datetime-badge"><i class="fa-regular fa-clock"></i> ${dateTimeStr}</span>` : ''}
-                    </div>
-                    <div class="client-info-row">
-                        <span class="info-label">رقم الجوال:</span> ${phoneStr}
-                    </div>
-                    ${idStr ? `<div class="client-info-row"><span class="info-label">رقم الهوية:</span> ${idStr}</div>` : ''}
-                    <div class="client-info-row">
-                        ${serviceStr}
-                    </div>
-                    <div class="client-actions-row">
-                        <button class="btn-client-action delete-to-trash" onclick="hideClientGroupFromReport(${keysJsonStr})">
-                            حذف
-                        </button>
-                        <button class="btn-client-action permanent-delete" onclick="permanentDeleteGroupFromReport(${keysJsonStr})">
-                            حذف نهائي
-                        </button>
-                    </div>
-                `;
-                container.appendChild(card);
+    const searchInputEl = document.getElementById('clientSearchInput');
+    if (searchInputEl) {
+        const searchVal = searchInputEl.value.trim().toLowerCase();
+        if (searchVal !== '') {
+            openRecords = openRecords.filter(r => {
+                const name = (r.patientName || '').toLowerCase();
+                const phone = (r.patientPhone || '').toLowerCase();
+                const file = (r.fileNumber || '').toLowerCase();
+                const id = (r.idNumber || '').toLowerCase();
+                const service = (r.serviceRequired || '').toLowerCase();
+                return name.includes(searchVal) || phone.includes(searchVal) || file.includes(searchVal) || id.includes(searchVal) || service.includes(searchVal);
             });
         }
+    }
+
+    if (openRecords.length === 0) {
+        container.innerHTML = '<div style="text-align:center; padding:30px; color:var(--text-muted); font-size:1rem;">لا توجد نتائج أو حالات طابقت البحث 🎉</div>';
+        return;
+    }
+
+    const groupedMap = new Map();
+
+    openRecords.forEach(record => {
+        const cleanPhone = (record.patientPhone && record.patientPhone !== '-') ? record.patientPhone.replace(/\D/g, '') : '';
+        const groupKey = (cleanPhone.length >= 8) ? cleanPhone : (record.patientName || '').trim().toLowerCase();
+
+        if (!groupedMap.has(groupKey)) {
+            groupedMap.set(groupKey, []);
+        }
+        groupedMap.get(groupKey).push(record);
+    });
+
+    let consolidatedList = [];
+
+    groupedMap.forEach((groupRecords) => {
+        groupRecords.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+        const mainRecord = groupRecords[0];
+        const allKeys = groupRecords.map(r => r.firebaseKey);
+        const isRepeatedGroup = groupRecords.length > 1 || groupRecords.some(r => r.isRepeatedRequest);
+        const isCopiedGroup = groupRecords.every(r => r.isCopied);
+        const isPinnedGroup = groupRecords.some(r => r.isPinned);
+
+        const uniqueServices = [];
+        groupRecords.forEach(r => {
+            const txt = (r.serviceRequired || '').trim();
+            if (txt && !uniqueServices.includes(txt)) {
+                uniqueServices.push(txt);
+            }
+        });
+
+        const combinedServicesStr = uniqueServices.join(' / ');
+
+        consolidatedList.push({
+            mainRecord: mainRecord,
+            allKeys: allKeys,
+            servicesCombined: combinedServicesStr,
+            isRepeated: isRepeatedGroup,
+            isCopied: isCopiedGroup,
+            isPinned: isPinnedGroup,
+            latestCreatedAt: mainRecord.createdAt
+        });
+    });
+
+    consolidatedList.sort((a, b) => {
+        if (a.isCopied !== b.isCopied) {
+            return a.isCopied ? 1 : -1;
+        }
+        return new Date(b.latestCreatedAt) - new Date(a.latestCreatedAt);
+    });
+
+    consolidatedList.forEach((item, index) => {
+        const card = document.createElement('div');
+        const rec = item.mainRecord;
+        const isCopied = item.isCopied;
+        card.className = `client-card-wrapper ${isCopied && !isPinnedFilterActive ? 'is-copied' : ''}`;
+
+        const fileStr = (rec.fileNumber && rec.fileNumber !== '-') ? ` ${rec.fileNumber}` : '';
+        const idStr = (rec.idNumber && rec.idNumber !== '-') ? rec.idNumber : '';
+        const phoneStr = (rec.patientPhone && rec.patientPhone !== '-') ? rec.patientPhone : '-';
+        const serviceStr = item.servicesCombined || '-';
+        const dateTimeStr = formatDateTimeFullCustom(item.latestCreatedAt);
+        const keysJsonStr = JSON.stringify(item.allKeys).replace(/"/g, '&quot;');
+
+        let headerActionsHTML = '';
+        
+        // إظهار أزرار وشارات الهيدر بناءً على حالة التثبيت أو النسخ العادي
+        if (isPinnedFilterActive || item.isPinned) {
+            headerActionsHTML = `
+                <button class="copied-btn active" style="background-color: #d97706; border-color: #f59e0b; color: #ffffff;" onclick="requestTogglePinRecord('${rec.firebaseKey}')" title="اضغط لإلغاء التثبيت">
+                    📌 المميزون
+                </button>
+            `;
+        } else {
+            headerActionsHTML = `
+                <button class="copied-btn ${isCopied ? 'active' : ''}" onclick="toggleCopiedStatusGroup(${keysJsonStr})">
+                    <i class="fa-solid ${isCopied ? 'fa-circle-check' : 'fa-check'}"></i> ${isCopied ? 'تم النسخ' : 'تعليم كمنسوخ'}
+                </button>
+            `;
+        }
+
+        card.innerHTML = `
+            <div class="client-card-header">
+                <div class="client-title">
+                    <input type="checkbox" class="client-select-chk" data-keys="${keysJsonStr}">
+                    <span>${index + 1}-${rec.patientName}${fileStr}</span>${headerActionsHTML}
+                </div>
+                ${dateTimeStr ? `<span class="client-datetime-badge"><i class="fa-regular fa-clock"></i> ${dateTimeStr}</span>` : ''}
+            </div>
+            <div class="client-info-row">
+                <span class="info-label">رقم الجوال:</span> ${phoneStr}
+            </div>
+            ${idStr ? `<div class="client-info-row"><span class="info-label">رقم الهوية:</span> ${idStr}</div>` : ''}
+            <div class="client-info-row">
+                ${serviceStr}
+            </div>
+            <div class="client-actions-row">
+                <button class="btn-client-action delete-to-trash" onclick="hideClientGroupFromReport(${keysJsonStr})">
+                    حذف
+                </button>
+                <button class="btn-client-action permanent-delete" onclick="permanentDeleteGroupFromReport(${keysJsonStr})">
+                    حذف نهائي
+                </button>
+            </div>
+        `;
+        container.appendChild(card);
+    });
+}
 
         function copyClientReport() {
             let openRecords = getOpenFilteredRecords();
