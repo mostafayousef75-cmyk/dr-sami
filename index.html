@@ -1622,14 +1622,14 @@
             }
         }
 
-        // توحيد مفاتيح التخزين لتجنب التضارب بين الأجهزة
         function saveLocal() { 
-            localStorage.setItem('cachedAppointments_v20', JSON.stringify(records));
+            localStorage.setItem('cachedAppointments_v22', JSON.stringify(records));
             localStorage.setItem('cachedCSLinks_v1', JSON.stringify(csLinks));
             localStorage.setItem('cachedAnnouncements_v2', JSON.stringify(clinicAnnouncements));
         }
 
-        const cached = localStorage.getItem('cachedAppointments_v20') || localStorage.getItem('cachedAppointments_v16');
+        // قراءة التخزين المحلي مع حماية البيانات من الإلغاء الشكلي
+        const cached = localStorage.getItem('cachedAppointments_v22') || localStorage.getItem('cachedAppointments_v20') || localStorage.getItem('cachedAppointments_v16');
         if (cached) { try { records = JSON.parse(cached); lastKnownRecordsCount = records.length; } catch(e) { records = []; } }
 
         const cachedLinks = localStorage.getItem('cachedCSLinks_v1');
@@ -1732,7 +1732,7 @@
             renderClientReport();
         });
 
-        // الربط المباشر مع Firebase للتأكد من المزامنة الفورية بين اللابتوب والموبايل
+        // المزامنة الدائمة مع Firebase لمنع اختفاء البيانات عند عمل Refresh
         dbRef.on('value', (snapshot) => {
             const data = snapshot.val();
             if (data) {
@@ -1744,12 +1744,15 @@
                     playBeepAndShowToast('🔔 تم استلام حجز/طلب جديد عبر السحابة!');
                 }
                 lastKnownRecordsCount = records.length;
+                saveLocal();
+            } else if (isInitialLoad && records.length > 0) {
+                // المحافظة على التخزين المحلي في حال ضعف الاتصال
             } else {
                 records = [];
                 lastKnownRecordsCount = 0;
+                saveLocal();
             }
             isInitialLoad = false;
-            saveLocal();
             renderTable();
             updateKPIs();
             updateDailyProgress();
@@ -2734,7 +2737,6 @@
             } catch(e) { return isoString; }
         }
 
-        // إمكانية تبديل حالة "تم النسخ" والتحويل الفوري للترتيب
         function toggleCopiedStatusGroup(keysArray) {
             const firstRec = records.find(r => keysArray.includes(r.firebaseKey));
             const targetState = !firstRec?.isCopied;
@@ -2892,7 +2894,6 @@
             });
         }
 
-        // عرض الكشف مع ترتيب العملاء غير المنسوخين أولاً، ثم المنسوخين في الأسفل
         function renderClientReport() {
             const container = document.getElementById('clientReportList');
             if (!container) return;
@@ -2964,7 +2965,7 @@
                 });
             });
 
-            // الترتيب الأساسي: الحالات غير المنسوخين أولاً، ثم المنسوخين في أسفل القائمة
+            // ترتيب دقيق: العملاء غير المنسوخين في الأعلى، وبمجرد الضغط على تم النسخ ينزل العميل إلى الأسفل
             consolidatedList.sort((a, b) => {
                 if (a.isCopied !== b.isCopied) {
                     return a.isCopied ? 1 : -1;
