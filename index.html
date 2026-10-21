@@ -363,22 +363,25 @@
         .announcement-thumbnail-wrapper:hover img {
             transform: scale(1.08);
         }
-        .announcement-file-attachment {
+        .announcement-file-btn {
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            background: rgba(37, 99, 235, 0.15);
-            border: 1px solid rgba(37, 99, 235, 0.4);
-            padding: 6px 12px;
+            background: rgba(37, 99, 235, 0.18);
+            border: 1px solid rgba(37, 99, 235, 0.5);
+            padding: 7px 14px;
             border-radius: 6px;
-            color: var(--primary-color);
-            text-decoration: none;
-            font-size: 0.82rem;
+            color: #ffffff;
+            font-size: 0.85rem;
             font-weight: 700;
+            cursor: pointer;
+            font-family: var(--font-family);
             margin-top: 5px;
+            transition: all 0.2s ease;
         }
-        .announcement-file-attachment:hover {
-            background: rgba(37, 99, 235, 0.25);
+        .announcement-file-btn:hover {
+            background: var(--primary-color);
+            box-shadow: 0 0 10px rgba(37, 99, 235, 0.4);
         }
         .announcement-footer-row {
             display: flex;
@@ -1842,6 +1845,43 @@
             universalAuthCallback = null;
         }
 
+        // تحويل DataURL إلى Blob فتح احترافي للكمبيوتر والموبايل
+        function openBase64File(dataUrl, fileName = 'file.pdf') {
+            try {
+                if (!dataUrl) return;
+                
+                if (dataUrl.startsWith('http://') || dataUrl.startsWith('https://')) {
+                    window.open(dataUrl, '_blank');
+                    return;
+                }
+
+                const arr = dataUrl.split(',');
+                const mimeMatch = arr[0].match(/:(.*?);/);
+                const mime = mimeMatch ? mimeMatch[1] : 'application/pdf';
+                const bstr = atob(arr[1]);
+                let n = bstr.length;
+                const u8arr = new Uint8Array(n);
+                while (n--) {
+                    u8arr[n] = bstr.charCodeAt(n);
+                }
+                const blob = new Blob([u8arr], { type: mime });
+                const blobUrl = URL.createObjectURL(blob);
+
+                const newWin = window.open(blobUrl, '_blank');
+                if (!newWin || newWin.closed || typeof newWin.closed === 'undefined') {
+                    // إذا كان المتصفح يمنع البوب أب، قم بتنزيل الملف
+                    const a = document.createElement('a');
+                    a.href = blobUrl;
+                    a.download = fileName;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                }
+            } catch(e) {
+                alert('عذراً، لم نتمكن من فتح الملف. حاول تنزيله.');
+            }
+        }
+
         function renderAnnouncements() {
             const container = document.getElementById('announcementsListContainer');
             if (!container) return;
@@ -1867,10 +1907,11 @@
                         `;
                     } else {
                         const fileName = item.fileName || 'فتح الملف المرفق';
+                        const safeKey = item.announcementKey;
                         attachmentHTML = `
-                            <a href="${item.fileUrl}" target="_blank" class="announcement-file-attachment" title="اضغط لفتح الملف">
+                            <button type="button" class="announcement-file-btn" onclick="triggerFileDownload('${safeKey}')" title="اضغط لفتح/تحميل الملف">
                                 <i class="fa-solid fa-file-pdf"></i> ${fileName}
-                            </a>
+                            </button>
                         `;
                     }
                 }
@@ -1893,6 +1934,13 @@
                 `;
                 container.appendChild(card);
             });
+        }
+
+        function triggerFileDownload(key) {
+            const item = clinicAnnouncements.find(a => a.announcementKey === key);
+            if (item && item.fileUrl) {
+                openBase64File(item.fileUrl, item.fileName || 'document.pdf');
+            }
         }
 
         function openImagePreview(url) {
@@ -2829,7 +2877,7 @@
                     renderTrashModalList();
                     updatePinnedCountBadge();
 
-                    keysArray.forEach(k => {
+                    keysToDelete.forEach(k => {
                         if (navigator.onLine && !k.startsWith('local_')) {
                             dbRef.child(k).remove();
                         }
