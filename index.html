@@ -1574,7 +1574,7 @@
         let clinicAnnouncements = [];
         let dashboardFilter = localStorage.getItem('savedDashboardFilter') || 'all';
         let dashboardTimeFilter = localStorage.getItem('savedDashboardTimeFilter') || 'all';
-        let clientHoursFilter = localStorage.getItem('savedClientHoursFilter') || '8';
+        let clientHoursFilter = localStorage.getItem('savedClientHoursFilter') || 'all';
         let isPinnedFilterActive = false;
         
         let originalEditPriorityState = false;
@@ -1740,6 +1740,7 @@
 
             syncFilterTabsUI();
             renderAnnouncements();
+            renderClientReport();
         });
 
         dbRef.on('value', (snapshot) => {
@@ -1845,7 +1846,7 @@
             universalAuthCallback = null;
         }
 
-        // تحويل DataURL إلى Blob فتح احترافي للكمبيوتر والموبايل
+        // فتح الملفات سواء روابط سحابية أو DataURL
         function openBase64File(dataUrl, fileName = 'file.pdf') {
             try {
                 if (!dataUrl) return;
@@ -1869,7 +1870,6 @@
 
                 const newWin = window.open(blobUrl, '_blank');
                 if (!newWin || newWin.closed || typeof newWin.closed === 'undefined') {
-                    // إذا كان المتصفح يمنع البوب أب، قم بتنزيل الملف
                     const a = document.createElement('a');
                     a.href = blobUrl;
                     a.download = fileName;
@@ -2788,14 +2788,12 @@
             renderClientReport();
         }
 
+        // إرجاع كل الحالات المتاحة بدون التعارض مع الحالات المكتملة
         function getOpenFilteredRecords() {
             let openRecords = records.filter(r => {
                 if (r.isHiddenFromClients) return false;
                 if (isPinnedFilterActive && !r.isPinned) return false;
-
-                const isPending = !r.adminContactMethod || r.adminContactMethod === 'قيد الانتظار';
-                const noAction = !r.actionTaken || r.actionTaken.trim() === '';
-                return isPending && noAction;
+                return true;
             });
 
             if (clientHoursFilter !== 'all' && !isPinnedFilterActive) {
@@ -2877,7 +2875,7 @@
                     renderTrashModalList();
                     updatePinnedCountBadge();
 
-                    keysToDelete.forEach(k => {
+                    keysArray.forEach(k => {
                         if (navigator.onLine && !k.startsWith('local_')) {
                             dbRef.child(k).remove();
                         }
@@ -3217,9 +3215,8 @@
             let keysToDelete = [];
 
             records = records.filter(r => {
-                const isPending = (!r.adminContactMethod || r.adminContactMethod === 'قيد الانتظار') && (!r.actionTaken || r.actionTaken.trim() === '');
                 let shouldDelete = false;
-                if (isPending && !r.isHiddenFromClients) {
+                if (!r.isHiddenFromClients) {
                     if (clientHoursFilter === 'all') {
                         shouldDelete = true;
                     } else {
