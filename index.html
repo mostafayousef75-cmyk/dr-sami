@@ -65,8 +65,6 @@
             direction: rtl;
             min-height: 100vh;
             overflow-x: hidden;
-            user-select: text;
-            -webkit-user-select: text;
         }
 
         .app-layout {
@@ -364,6 +362,23 @@
         }
         .announcement-thumbnail-wrapper:hover img {
             transform: scale(1.08);
+        }
+        .announcement-file-attachment {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(37, 99, 235, 0.15);
+            border: 1px solid rgba(37, 99, 235, 0.4);
+            padding: 6px 12px;
+            border-radius: 6px;
+            color: var(--primary-color);
+            text-decoration: none;
+            font-size: 0.82rem;
+            font-weight: 700;
+            margin-top: 5px;
+        }
+        .announcement-file-attachment:hover {
+            background: rgba(37, 99, 235, 0.25);
         }
         .announcement-footer-row {
             display: flex;
@@ -687,14 +702,11 @@
             box-shadow: 0 2px 6px rgba(0,0,0,0.3);
             width: 100%;
             overflow: hidden;
-            user-select: text;
-            -webkit-user-select: text;
         }
 
         .client-card-wrapper.is-copied {
             background-color: rgba(22, 163, 74, 0.06);
             border-color: rgba(22, 163, 74, 0.3);
-            opacity: 0.75;
         }
 
         .client-card-header {
@@ -749,8 +761,6 @@
             color: var(--text-main);
             line-height: 1.5;
             word-break: break-word;
-            user-select: text;
-            -webkit-user-select: text;
         }
 
         .client-info-row .info-label {
@@ -803,7 +813,7 @@
 
         .btn-client-action.delete-to-trash { background-color: var(--danger-color); }
         .btn-client-action.permanent-delete { background-color: var(--danger-color); }
-        .btn-client-action.restore { background-color: var(--success-color); }
+        .btn-client-action.unpin-item { background-color: var(--warning-color); }
 
         .links-grid {
             display: grid;
@@ -822,8 +832,8 @@
             gap: 10px;
             position: relative;
             transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
-            user-select: text;
-            -webkit-user-select: text;
+            user-select: none;
+            -webkit-user-select: none;
             width: 100%;
         }
         .link-card.dragging {
@@ -852,7 +862,6 @@
             padding: 8px 10px;
             touch-action: none;
             z-index: 5;
-            user-select: none;
         }
         .drag-handle:active {
             cursor: grabbing;
@@ -1173,7 +1182,7 @@
 
                     <section class="dashboard-section">
                         <div class="section-header">
-                            <h2><i class="fa-solid fa-database"></i> التصدير واستيراد البيانات</h2>
+                            <h2><i class="fa-solid fa-database"></i> التصدير والاستيراد للادارة</h2>
                         </div>
                         <div class="actions-toolbar">
                             <button class="action-btn excel" onclick="exportToExcel()"><i class="fa-solid fa-file-excel"></i> تصدير Excel</button>
@@ -1299,7 +1308,7 @@
                                 </select>
 
                                 <button class="action-btn" id="pinnedFilterBtn" onclick="togglePinnedFilter()" style="background-color: #16a34a;">
-                                    <i class="fa-solid fa-file-lines"></i> ✅ الكشف العادي ( <span id="pinnedCount">0</span> )
+                                    <i class="fa-solid fa-file-lines"></i> ✅ الكشف العادي (<span id="pinnedCount">0</span>)
                                 </button>
 
                                 <button class="action-btn copy-btn" onclick="copyClientReport()"><i class="fa-solid fa-copy"></i> نسخ الكشف</button>
@@ -1337,7 +1346,7 @@
         </main>
     </div>
 
-    <!-- نافذة إضافة / تعديل تنبيه -->
+    <!-- نافذة إضافة / تعديل تنبيه / إشعار عام جديد مع رفع ملفات أو صور -->
     <div class="modal" id="announcementModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -1352,8 +1361,9 @@
                         <textarea id="announcementText" required placeholder="اكتب التنبيه أو التحديث الجديد للعيادة هنا..."></textarea>
                     </div>
                     <div class="input-field full-width">
-                        <label><i class="fa-solid fa-image"></i> إرفاق صورة مع التنبيه (اختياري)</label>
-                        <input type="file" id="announcementImageFile" accept="image/*" style="padding: 6px; cursor: pointer;">
+                        <label><i class="fa-solid fa-paperclip"></i> إرفاق ملف (PDF, مستندات, صور...) (اختياري)</label>
+                        <input type="file" id="announcementFile" accept=".pdf,.doc,.docx,.xls,.xlsx,.txt,image/*" style="padding: 6px; cursor: pointer;">
+                        <span style="font-size: 0.75rem; color: var(--text-muted); margin-top: 3px;">يمكنك رفع ملفات PDF أو مستندات أو صور ليراها فريق العمل مباشرة.</span>
                     </div>
                 </div>
                 <button type="submit" class="submit-btn" style="margin-top: 15px;"><i class="fa-solid fa-floppy-disk"></i> حفظ ونشر التنبيه</button>
@@ -1361,7 +1371,7 @@
         </div>
     </div>
 
-    <!-- نافذة تكبير الصورة المرفقة -->
+    <!-- نافذة تكبير وعرض الصورة المرفقة بحجم كامل -->
     <div class="modal" id="imagePreviewModal">
         <div class="modal-content" style="max-width: 650px; text-align: center; padding: 15px;">
             <div class="modal-header">
@@ -1374,7 +1384,7 @@
         </div>
     </div>
 
-    <!-- نافذة إضافة / تعديل رابط جديد -->
+    <!-- نافذة إضافة / تعديل رابط جديد في الدليل الشامل -->
     <div class="modal" id="linkModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -1402,7 +1412,7 @@
         </div>
     </div>
 
-    <!-- نافذة سلة المحذوفات -->
+    <!-- نافذة سلة المحذوفات والاسترجاع -->
     <div class="modal" id="trashModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -1413,7 +1423,7 @@
         </div>
     </div>
 
-    <!-- نافذة كلمة المرور -->
+    <!-- نافذة إدخال كلمة المرور الموحدة -->
     <div class="modal" id="passAuthModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -1561,7 +1571,7 @@
         let clinicAnnouncements = [];
         let dashboardFilter = localStorage.getItem('savedDashboardFilter') || 'all';
         let dashboardTimeFilter = localStorage.getItem('savedDashboardTimeFilter') || 'all';
-        let clientHoursFilter = localStorage.getItem('savedClientHoursFilter') || 'all';
+        let clientHoursFilter = localStorage.getItem('savedClientHoursFilter') || '8';
         let isPinnedFilterActive = false;
         
         let originalEditPriorityState = false;
@@ -1622,20 +1632,19 @@
             }
         }
 
-        // توحيد مفاتيح التخزين لتجنب التضارب بين الأجهزة
         function saveLocal() { 
-            localStorage.setItem('cachedAppointments_v20', JSON.stringify(records));
+            localStorage.setItem('cachedAppointments_v16', JSON.stringify(records));
             localStorage.setItem('cachedCSLinks_v1', JSON.stringify(csLinks));
-            localStorage.setItem('cachedAnnouncements_v2', JSON.stringify(clinicAnnouncements));
+            localStorage.setItem('cachedAnnouncements_v3', JSON.stringify(clinicAnnouncements));
         }
 
-        const cached = localStorage.getItem('cachedAppointments_v20') || localStorage.getItem('cachedAppointments_v16');
+        const cached = localStorage.getItem('cachedAppointments_v16');
         if (cached) { try { records = JSON.parse(cached); lastKnownRecordsCount = records.length; } catch(e) { records = []; } }
 
         const cachedLinks = localStorage.getItem('cachedCSLinks_v1');
         if (cachedLinks) { try { csLinks = JSON.parse(cachedLinks); } catch(e) { csLinks = []; } }
 
-        const cachedAnnouncements = localStorage.getItem('cachedAnnouncements_v2');
+        const cachedAnnouncements = localStorage.getItem('cachedAnnouncements_v3') || localStorage.getItem('cachedAnnouncements_v2');
         if (cachedAnnouncements) { try { clinicAnnouncements = JSON.parse(cachedAnnouncements); } catch(e) { clinicAnnouncements = []; } }
 
         function syncFilterTabsUI() {
@@ -1728,11 +1737,8 @@
 
             syncFilterTabsUI();
             renderAnnouncements();
-            renderTable();
-            renderClientReport();
         });
 
-        // الربط المباشر مع Firebase للتأكد من المزامنة الفورية بين اللابتوب والموبايل
         dbRef.on('value', (snapshot) => {
             const data = snapshot.val();
             if (data) {
@@ -1851,18 +1857,27 @@
                 card.className = 'announcement-card';
                 const dateStr = formatDateTimeFullCustom(item.createdAt);
 
-                let thumbnailHTML = '';
-                if (item.imageUrl) {
-                    thumbnailHTML = `
-                        <div class="announcement-thumbnail-wrapper" onclick="openImagePreview('${item.imageUrl}')" title="اضغط لمعاينة الصورة المكبرة">
-                            <img src="${item.imageUrl}" alt="مرفق">
-                        </div>
-                    `;
+                let attachmentHTML = '';
+                if (item.fileUrl) {
+                    if (item.fileType && item.fileType.startsWith('image/')) {
+                        attachmentHTML = `
+                            <div class="announcement-thumbnail-wrapper" onclick="openImagePreview('${item.fileUrl}')" title="اضغط لمعاينة الصورة المكبرة">
+                                <img src="${item.fileUrl}" alt="مرفق">
+                            </div>
+                        `;
+                    } else {
+                        const fileName = item.fileName || 'فتح الملف المرفق';
+                        attachmentHTML = `
+                            <a href="${item.fileUrl}" target="_blank" class="announcement-file-attachment" title="اضغط لفتح الملف">
+                                <i class="fa-solid fa-file-pdf"></i> ${fileName}
+                            </a>
+                        `;
+                    }
                 }
 
                 card.innerHTML = `
                     <div class="announcement-body-content">
-                        <div class="announcement-body-text">${item.text}</div>${thumbnailHTML}
+                        <div class="announcement-body-text">${item.text}</div>${attachmentHTML}
                     </div>
                     <div class="announcement-footer-row">
                         <span><i class="fa-regular fa-clock"></i> ${dateStr}</span>
@@ -1893,7 +1908,7 @@
         function openAddAnnouncementModal() {
             document.getElementById('editAnnouncementKey').value = '';
             document.getElementById('announcementText').value = '';
-            document.getElementById('announcementImageFile').value = '';
+            document.getElementById('announcementFile').value = '';
             document.getElementById('announcementModalTitle').innerHTML = '<i class="fa-solid fa-bullhorn"></i> إضافة تنبيه أو إشعار للعيادة';
             document.getElementById('announcementModal').classList.add('open');
         }
@@ -1903,7 +1918,7 @@
             if (!item) return;
             document.getElementById('editAnnouncementKey').value = item.announcementKey;
             document.getElementById('announcementText').value = item.text || '';
-            document.getElementById('announcementImageFile').value = '';
+            document.getElementById('announcementFile').value = '';
             document.getElementById('announcementModalTitle').innerHTML = '<i class="fa-solid fa-pen"></i> تعديل تنبيه العيادة';
             document.getElementById('announcementModal').classList.add('open');
         }
@@ -1916,24 +1931,31 @@
             e.preventDefault();
             const key = document.getElementById('editAnnouncementKey').value;
             const textVal = document.getElementById('announcementText').value.trim();
-            const imageInput = document.getElementById('announcementImageFile');
+            const fileInput = document.getElementById('announcementFile');
             if (!textVal) return;
 
-            const processAndSave = (imageUrl) => {
+            const processAndSave = (fileUrl, fileType, fileName) => {
                 if (key) {
                     const item = clinicAnnouncements.find(a => a.announcementKey === key);
                     if (item) {
                         item.text = textVal;
-                        if (imageUrl !== undefined) {
-                            item.imageUrl = imageUrl;
+                        if (fileUrl !== undefined) {
+                            item.fileUrl = fileUrl;
+                            item.fileType = fileType;
+                            item.fileName = fileName;
                         }
                         saveLocal();
                         renderAnnouncements();
                         closeAnnouncementModal();
+                        playBeepAndShowToast('✏️ تم تعديل التنبيه بنجاح!');
 
                         if (navigator.onLine && !key.startsWith('ann_')) {
                             const updateObj = { text: textVal };
-                            if (imageUrl !== undefined) updateObj.imageUrl = imageUrl;
+                            if (fileUrl !== undefined) {
+                                updateObj.fileUrl = fileUrl;
+                                updateObj.fileType = fileType;
+                                updateObj.fileName = fileName;
+                            }
                             announcementsDbRef.child(key).update(updateObj);
                         }
                     }
@@ -1942,7 +1964,9 @@
                     const newAnn = {
                         announcementKey: tempKey,
                         text: textVal,
-                        imageUrl: imageUrl || '',
+                        fileUrl: fileUrl || '',
+                        fileType: fileType || '',
+                        fileName: fileName || '',
                         createdAt: new Date().toISOString()
                     };
 
@@ -1953,7 +1977,7 @@
                     playBeepAndShowToast('📢 تم نشر التنبيه بنجاح للجميع!');
 
                     if (navigator.onLine) {
-                        const uploadData = { text: newAnn.text, imageUrl: newAnn.imageUrl, createdAt: newAnn.createdAt };
+                        const uploadData = { text: newAnn.text, fileUrl: newAnn.fileUrl, fileType: newAnn.fileType, fileName: newAnn.fileName, createdAt: newAnn.createdAt };
                         announcementsDbRef.push(uploadData).then((pushedRef) => {
                             const idx = clinicAnnouncements.findIndex(a => a.announcementKey === tempKey);
                             if (idx !== -1) {
@@ -1965,19 +1989,26 @@
                 }
             };
 
-            if (imageInput.files && imageInput.files[0]) {
+            if (fileInput.files && fileInput.files[0]) {
+                const file = fileInput.files[0];
                 const reader = new FileReader();
                 reader.onload = function(evt) {
-                    processAndSave(evt.target.result);
+                    processAndSave(evt.target.result, file.type, file.name);
                 };
-                reader.readAsDataURL(imageInput.files[0]);
+                reader.readAsDataURL(file);
             } else {
-                let existingImageUrl = undefined;
+                let existingFileUrl = undefined;
+                let existingFileType = undefined;
+                let existingFileName = undefined;
                 if (key) {
                     const existingItem = clinicAnnouncements.find(a => a.announcementKey === key);
-                    if (existingItem) existingImageUrl = existingItem.imageUrl || '';
+                    if (existingItem) {
+                        existingFileUrl = existingItem.fileUrl || '';
+                        existingFileType = existingItem.fileType || '';
+                        existingFileName = existingItem.fileName || '';
+                    }
                 }
-                processAndSave(existingImageUrl);
+                processAndSave(existingFileUrl, existingFileType, existingFileName);
             }
         }
 
@@ -1990,6 +2021,7 @@
                 if (navigator.onLine && !key.startsWith('ann_')) {
                     announcementsDbRef.child(key).remove();
                 }
+                playBeepAndShowToast('🗑️ تم حذف التنبيه بنجاح!');
             }
         }
 
@@ -2097,6 +2129,8 @@
                     if (navigator.onLine && !key.startsWith('local_')) {
                         dbRef.child(key).update({ isPinned: rec.isPinned });
                     }
+
+                    playBeepAndShowToast(rec.isPinned ? '📌 تم تثبيت العميل في المميزون' : '✖️ تم إزالة العميل من المميزون');
                 }
             });
         }
@@ -2491,7 +2525,6 @@
                 const card = document.createElement('div');
                 card.className = 'link-card';
                 card.setAttribute('data-index', index);
-                card.setAttribute('draggable', 'true');
 
                 card.innerHTML = `
                     <div class="drag-handle" title="امسك من هنا للترتيب بالسحب (يتطلب باسورد الإدارة)"><i class="fa-solid fa-grip-vertical"></i></div>
@@ -2509,23 +2542,28 @@
 
                 const handle = card.querySelector('.drag-handle');
 
-                card.addEventListener('dragstart', (e) => {
+                handle.addEventListener('mousedown', (e) => {
+                    e.preventDefault();
                     requireAdminAuth(() => {
+                        card.setAttribute('draggable', 'true');
                         draggedCardIndex = index;
                         card.classList.add('dragging');
-                        e.dataTransfer.effectAllowed = 'move';
                     });
+                });
+
+                card.addEventListener('dragstart', (e) => {
+                    if (!card.classList.contains('dragging')) {
+                        e.preventDefault();
+                    }
                 });
 
                 card.addEventListener('dragover', (e) => {
                     e.preventDefault();
                     card.classList.add('drag-over');
                 });
-
                 card.addEventListener('dragleave', () => {
                     card.classList.remove('drag-over');
                 });
-
                 card.addEventListener('drop', (e) => {
                     e.preventDefault();
                     card.classList.remove('drag-over');
@@ -2534,8 +2572,8 @@
                         reorderCSLinks(draggedCardIndex, targetIdx);
                     }
                 });
-
                 card.addEventListener('dragend', () => {
+                    card.removeAttribute('draggable');
                     card.classList.remove('dragging');
                     document.querySelectorAll('.link-card').forEach(c => c.classList.remove('drag-over'));
                     draggedCardIndex = null;
@@ -2552,6 +2590,7 @@
 
                 handle.addEventListener('touchmove', (e) => {
                     if (!activeTouchHandle) return;
+                    
                     const touchLoc = e.touches[0];
                     const targetEl = document.elementFromPoint(touchLoc.clientX, touchLoc.clientY);
 
@@ -2566,6 +2605,7 @@
 
                 handle.addEventListener('touchend', (e) => {
                     if (!activeTouchHandle) return;
+
                     const touchLoc = e.changedTouches[0];
                     const targetEl = document.elementFromPoint(touchLoc.clientX, touchLoc.clientY);
 
@@ -2607,6 +2647,7 @@
 
             saveLocal();
             renderCSLinks();
+            playBeepAndShowToast('🔄 تم ترتيب الكروت بنجاح!');
         }
 
         function openAddLinkModal() {
@@ -2672,6 +2713,7 @@
             saveLocal();
             renderCSLinks();
             closeLinkModal();
+            playBeepAndShowToast('✅ تم حفظ الرابط بنجاح!');
         }
 
         function deleteCSLink(key) {
@@ -2686,6 +2728,7 @@
                         if (navigator.onLine && !key.startsWith('link_')) {
                             linksDbRef.child(key).remove();
                         }
+                        playBeepAndShowToast('🗑️ تم حذف الرابط بنجاح!');
                     }
                 }
             });
@@ -2701,7 +2744,10 @@
             let openRecords = records.filter(r => {
                 if (r.isHiddenFromClients) return false;
                 if (isPinnedFilterActive && !r.isPinned) return false;
-                return true;
+
+                const isPending = !r.adminContactMethod || r.adminContactMethod === 'قيد الانتظار';
+                const noAction = !r.actionTaken || r.actionTaken.trim() === '';
+                return isPending && noAction;
             });
 
             if (clientHoursFilter !== 'all' && !isPinnedFilterActive) {
@@ -2734,22 +2780,21 @@
             } catch(e) { return isoString; }
         }
 
-        // إمكانية تبديل حالة "تم النسخ" والتحويل الفوري للترتيب
         function toggleCopiedStatusGroup(keysArray) {
-            const firstRec = records.find(r => keysArray.includes(r.firebaseKey));
-            const targetState = !firstRec?.isCopied;
-            
-            keysArray.forEach(k => {
-                const rec = records.find(r => r.firebaseKey === k);
-                if (rec) {
-                    rec.isCopied = targetState;
-                    if (navigator.onLine && !k.startsWith('local_')) {
-                        dbRef.child(k).update({ isCopied: targetState });
+            requireAdminAuth(() => {
+                const targetState = !records.find(r => keysArray.includes(r.firebaseKey))?.isCopied;
+                keysArray.forEach(k => {
+                    const rec = records.find(r => r.firebaseKey === k);
+                    if (rec) {
+                        rec.isCopied = targetState;
+                        if (navigator.onLine && !k.startsWith('local_')) {
+                            dbRef.child(k).update({ isCopied: targetState });
+                        }
                     }
-                }
+                });
+                saveLocal();
+                renderClientReport();
             });
-            saveLocal();
-            renderClientReport();
         }
 
         function hideClientGroupFromReport(keysArray) {
@@ -2768,6 +2813,7 @@
                 saveLocal();
                 renderClientReport();
                 renderTrashModalList();
+                playBeepAndShowToast('🗑️ تم نقل الطلبات إلى سلة المحذوفات بنجاح!');
             });
         }
 
@@ -2805,6 +2851,7 @@
                     if (navigator.onLine && !key.startsWith('local_')) {
                         dbRef.child(key).update({ isHiddenFromClients: false, deletedAt: null });
                     }
+                    playBeepAndShowToast('↩️ تم استرجاع العميل إلى صفحة الكشف بنجاح!');
                 }
             });
         }
@@ -2892,7 +2939,6 @@
             });
         }
 
-        // عرض الكشف مع ترتيب العملاء غير المنسوخين أولاً، ثم المنسوخين في الأسفل
         function renderClientReport() {
             const container = document.getElementById('clientReportList');
             if (!container) return;
@@ -2964,13 +3010,7 @@
                 });
             });
 
-            // الترتيب الأساسي: الحالات غير المنسوخين أولاً، ثم المنسوخين في أسفل القائمة
-            consolidatedList.sort((a, b) => {
-                if (a.isCopied !== b.isCopied) {
-                    return a.isCopied ? 1 : -1;
-                }
-                return new Date(b.latestCreatedAt) - new Date(a.latestCreatedAt);
-            });
+            consolidatedList.sort((a, b) => new Date(b.latestCreatedAt) - new Date(a.latestCreatedAt));
 
             consolidatedList.forEach((item, index) => {
                 const card = document.createElement('div');
@@ -2978,7 +3018,7 @@
                 const isCopied = item.isCopied;
                 const isPinned = item.isPinned;
 
-                card.className = `client-card-wrapper ${isCopied ? 'is-copied' : ''}`;
+                card.className = `client-card-wrapper ${isCopied && !isPinnedFilterActive ? 'is-copied' : ''}`;
 
                 const fileStr = (rec.fileNumber && rec.fileNumber !== '-') ? ` ${rec.fileNumber}` : '';
                 const idStr = (rec.idNumber && rec.idNumber !== '-') ? rec.idNumber : '';
@@ -2995,7 +3035,7 @@
 
                 const copyBtnHTML = !isPinnedFilterActive ? `
                     <button class="copied-btn ${isCopied ? 'active' : ''}" onclick="toggleCopiedStatusGroup(${keysJsonStr})">
-                        <i class="fa-solid ${isCopied ? 'fa-circle-check' : 'fa-check'}"></i> ${isCopied ? 'تم النسخ ✅' : 'تعليم كمنسوخ'}
+                        <i class="fa-solid ${isCopied ? 'fa-circle-check' : 'fa-check'}"></i> ${isCopied ? 'تم النسخ' : 'تعليم كمنسوخ'}
                     </button>
                 ` : '';
 
@@ -3129,8 +3169,9 @@
             let keysToDelete = [];
 
             records = records.filter(r => {
+                const isPending = (!r.adminContactMethod || r.adminContactMethod === 'قيد الانتظار') && (!r.actionTaken || r.actionTaken.trim() === '');
                 let shouldDelete = false;
-                if (!r.isHiddenFromClients) {
+                if (isPending && !r.isHiddenFromClients) {
                     if (clientHoursFilter === 'all') {
                         shouldDelete = true;
                     } else {
