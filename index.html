@@ -1338,7 +1338,7 @@
                             <button class="action-btn copy-btn" onclick="openAddLinkModal()"><i class="fa-solid fa-plus"></i> إضافة رابط جديد</button>
                         </div>
                         <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 10px;">
-                            💡 **حماية المواقع:** الترتيب أو التعديل أو الحذف لأي رابط يتطلب **كلمة مرور الإدارة**. فتح الموقع متاح مباشرة. اضغط على أيقونة المقبض الزرقاء <i class="fa-solid fa-grip-vertical" style="color: var(--primary-color);"></i> للترتيب بالسحب.
+                            💡 **ترتيب الروابط:** اضغط مع السحب المباشر على أيقونة المقبض الزرقاء <i class="fa-solid fa-grip-vertical" style="color: var(--primary-color);"></i> لترتيب الكروت بسلاسة.
                         </p>
 
                         <div class="links-grid" id="linksGridContainer"></div>
@@ -1579,8 +1579,6 @@
         
         let originalEditPriorityState = false;
         let originalEditRepeatedState = false;
-        let isInitialLoad = true;
-        let lastKnownRecordsCount = 0;
 
         if (!localStorage.getItem('adminPassword')) {
             localStorage.setItem('adminPassword', '1234');
@@ -1642,7 +1640,7 @@
         }
 
         const cached = localStorage.getItem('cachedAppointments_v16');
-        if (cached) { try { records = JSON.parse(cached); lastKnownRecordsCount = records.length; } catch(e) { records = []; } }
+        if (cached) { try { records = JSON.parse(cached); } catch(e) { records = []; } }
 
         const cachedLinks = localStorage.getItem('cachedCSLinks_v1');
         if (cachedLinks) { try { csLinks = JSON.parse(cachedLinks); } catch(e) { csLinks = []; } }
@@ -1749,16 +1747,9 @@
                 const cloudRecords = [];
                 for (let key in data) { cloudRecords.push({ firebaseKey: key, ...data[key] }); }
                 records = cloudRecords;
-                
-                if (!isInitialLoad && records.length > lastKnownRecordsCount) {
-                    playBeepAndShowToast('🔔 تم استلام حجز/طلب جديد عبر السحابة!');
-                }
-                lastKnownRecordsCount = records.length;
             } else {
                 records = [];
-                lastKnownRecordsCount = 0;
             }
-            isInitialLoad = false;
             saveLocal();
             renderTable();
             updateKPIs();
@@ -1795,6 +1786,7 @@
             renderAnnouncements();
         });
 
+        // تشغيل النغمة وعرض الإشعار حصرياً لتنفيذ عمليتين فقط (إضافة عميل / إضافة تنبيه)
         function playBeepAndShowToast(msg) {
             try {
                 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -1809,6 +1801,11 @@
                 osc.stop(audioCtx.currentTime + 0.25);
             } catch(e) { console.log('Audio Context blocked'); }
 
+            showToastOnly(msg);
+        }
+
+        // إظهار إشعار نصي فقط بدون صوت
+        function showToastOnly(msg) {
             const toast = document.getElementById('notificationToast');
             document.getElementById('toastMessage').innerText = msg;
             toast.classList.add('show');
@@ -1846,7 +1843,6 @@
             universalAuthCallback = null;
         }
 
-        // فتح الملفات سواء روابط سحابية أو DataURL
         function openBase64File(dataUrl, fileName = 'file.pdf') {
             try {
                 if (!dataUrl) return;
@@ -1995,7 +1991,7 @@
                         saveLocal();
                         renderAnnouncements();
                         closeAnnouncementModal();
-                        playBeepAndShowToast('✏️ تم تعديل التنبيه بنجاح!');
+                        showToastOnly('✏️ تم تعديل التنبيه بنجاح!');
 
                         if (navigator.onLine && !key.startsWith('ann_')) {
                             const updateObj = { text: textVal };
@@ -2022,6 +2018,8 @@
                     saveLocal();
                     renderAnnouncements();
                     closeAnnouncementModal();
+                    
+                    // تنبيه صوتي عند إضافة تنبيه جديد
                     playBeepAndShowToast('📢 تم نشر التنبيه بنجاح للجميع!');
 
                     if (navigator.onLine) {
@@ -2069,7 +2067,7 @@
                 if (navigator.onLine && !key.startsWith('ann_')) {
                     announcementsDbRef.child(key).remove();
                 }
-                playBeepAndShowToast('🗑️ تم حذف التنبيه بنجاح!');
+                showToastOnly('🗑️ تم حذف التنبيه بنجاح!');
             }
         }
 
@@ -2161,6 +2159,8 @@
 
             this.reset();
             document.getElementById('customProcedureWrapper').style.display = 'none';
+            
+            // تنبيه صوتي عند تسجيل عميل جديد
             playBeepAndShowToast('⚠️ تم إضافة العميل والموعد بنجاح!');
         });
 
@@ -2178,7 +2178,8 @@
                         dbRef.child(key).update({ isPinned: rec.isPinned });
                     }
 
-                    playBeepAndShowToast(rec.isPinned ? '📌 تم تثبيت العميل في المميزون' : '✖️ تم إزالة العميل من المميزون');
+                    // تنبيه نصي بصيغتك عند التثبيت/إلغاء التثبيت
+                    showToastOnly(rec.isPinned ? '📌 تم إضافتها في المتميزون' : '✖️ تم إزالتها من المتميزون');
                 }
             });
         }
@@ -2575,7 +2576,7 @@
                 card.setAttribute('data-index', index);
 
                 card.innerHTML = `
-                    <div class="drag-handle" title="امسك من هنا للترتيب بالسحب (يتطلب باسورد الإدارة)"><i class="fa-solid fa-grip-vertical"></i></div>
+                    <div class="drag-handle" title="اضغط واسحب من هنا لترتيب الكارت"><i class="fa-solid fa-grip-vertical"></i></div>
                     <div class="link-card-header">
                         <i class="fa-solid fa-globe"></i>
                         <span>${item.title}</span>
@@ -2590,13 +2591,12 @@
 
                 const handle = card.querySelector('.drag-handle');
 
+                // تفعيل السحب المباشر بدون باسورد وبسلاسة
                 handle.addEventListener('mousedown', (e) => {
                     e.preventDefault();
-                    requireAdminAuth(() => {
-                        card.setAttribute('draggable', 'true');
-                        draggedCardIndex = index;
-                        card.classList.add('dragging');
-                    });
+                    card.setAttribute('draggable', 'true');
+                    draggedCardIndex = index;
+                    card.classList.add('dragging');
                 });
 
                 card.addEventListener('dragstart', (e) => {
@@ -2609,9 +2609,11 @@
                     e.preventDefault();
                     card.classList.add('drag-over');
                 });
+
                 card.addEventListener('dragleave', () => {
                     card.classList.remove('drag-over');
                 });
+
                 card.addEventListener('drop', (e) => {
                     e.preventDefault();
                     card.classList.remove('drag-over');
@@ -2620,6 +2622,7 @@
                         reorderCSLinks(draggedCardIndex, targetIdx);
                     }
                 });
+
                 card.addEventListener('dragend', () => {
                     card.removeAttribute('draggable');
                     card.classList.remove('dragging');
@@ -2627,18 +2630,15 @@
                     draggedCardIndex = null;
                 });
 
+                // دعم السحب عبر اللمس للـ Touch Mobile
                 handle.addEventListener('touchstart', (e) => {
-                    e.preventDefault();
-                    requireAdminAuth(() => {
-                        activeTouchHandle = card;
-                        draggedCardIndex = index;
-                        card.classList.add('dragging');
-                    });
-                }, { passive: false });
+                    activeTouchHandle = card;
+                    draggedCardIndex = index;
+                    card.classList.add('dragging');
+                }, { passive: true });
 
                 handle.addEventListener('touchmove', (e) => {
                     if (!activeTouchHandle) return;
-                    
                     const touchLoc = e.touches[0];
                     const targetEl = document.elementFromPoint(touchLoc.clientX, touchLoc.clientY);
 
@@ -2695,7 +2695,7 @@
 
             saveLocal();
             renderCSLinks();
-            playBeepAndShowToast('🔄 تم ترتيب الكروت بنجاح!');
+            showToastOnly('🔄 تم ترتيب الكروت بنجاح!');
         }
 
         function openAddLinkModal() {
@@ -2761,7 +2761,7 @@
             saveLocal();
             renderCSLinks();
             closeLinkModal();
-            playBeepAndShowToast('✅ تم حفظ الرابط بنجاح!');
+            showToastOnly('✅ تم حفظ الرابط بنجاح!');
         }
 
         function deleteCSLink(key) {
@@ -2776,7 +2776,7 @@
                         if (navigator.onLine && !key.startsWith('link_')) {
                             linksDbRef.child(key).remove();
                         }
-                        playBeepAndShowToast('🗑️ تم حذف الرابط بنجاح!');
+                        showToastOnly('🗑️ تم حذف الرابط بنجاح!');
                     }
                 }
             });
@@ -2788,7 +2788,6 @@
             renderClientReport();
         }
 
-        // إرجاع كل الحالات المتاحة بدون التعارض مع الحالات المكتملة
         function getOpenFilteredRecords() {
             let openRecords = records.filter(r => {
                 if (r.isHiddenFromClients) return false;
@@ -2859,7 +2858,7 @@
                 saveLocal();
                 renderClientReport();
                 renderTrashModalList();
-                playBeepAndShowToast('🗑️ تم نقل الطلبات إلى سلة المحذوفات بنجاح!');
+                showToastOnly('🗑️ تم نقل الطلبات إلى سلة المحذوفات بنجاح!');
             });
         }
 
@@ -2897,7 +2896,7 @@
                     if (navigator.onLine && !key.startsWith('local_')) {
                         dbRef.child(key).update({ isHiddenFromClients: false, deletedAt: null });
                     }
-                    playBeepAndShowToast('↩️ تم استرجاع العميل إلى صفحة الكشف بنجاح!');
+                    showToastOnly('↩️ تم استرجاع العميل إلى صفحة الكشف بنجاح!');
                 }
             });
         }
