@@ -1338,7 +1338,7 @@
                             <button class="action-btn copy-btn" onclick="openAddLinkModal()"><i class="fa-solid fa-plus"></i> إضافة رابط جديد</button>
                         </div>
                         <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 10px;">
-                            💡 **ترتيب الروابط:** اضغط مع السحب المباشر على أيقونة المقبض الزرقاء <i class="fa-solid fa-grip-vertical" style="color: var(--primary-color);"></i> لترتيب الكروت بسلاسة.
+                            💡 **ترتيب الروابط:** اضغط باستمرار مع السحب المباشر على أيقونة المقبض الزرقاء <i class="fa-solid fa-grip-vertical" style="color: var(--primary-color);"></i> لترتيب الكروت بسلاسة.
                         </p>
 
                         <div class="links-grid" id="linksGridContainer"></div>
@@ -1786,7 +1786,6 @@
             renderAnnouncements();
         });
 
-        // تشغيل النغمة وعرض الإشعار حصرياً لتنفيذ عمليتين فقط (إضافة عميل / إضافة تنبيه)
         function playBeepAndShowToast(msg) {
             try {
                 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -1804,7 +1803,6 @@
             showToastOnly(msg);
         }
 
-        // إظهار إشعار نصي فقط بدون صوت
         function showToastOnly(msg) {
             const toast = document.getElementById('notificationToast');
             document.getElementById('toastMessage').innerText = msg;
@@ -2019,7 +2017,6 @@
                     renderAnnouncements();
                     closeAnnouncementModal();
                     
-                    // تنبيه صوتي عند إضافة تنبيه جديد
                     playBeepAndShowToast('📢 تم نشر التنبيه بنجاح للجميع!');
 
                     if (navigator.onLine) {
@@ -2160,7 +2157,6 @@
             this.reset();
             document.getElementById('customProcedureWrapper').style.display = 'none';
             
-            // تنبيه صوتي عند تسجيل عميل جديد
             playBeepAndShowToast('⚠️ تم إضافة العميل والموعد بنجاح!');
         });
 
@@ -2178,7 +2174,6 @@
                         dbRef.child(key).update({ isPinned: rec.isPinned });
                     }
 
-                    // تنبيه نصي بصيغتك عند التثبيت/إلغاء التثبيت
                     showToastOnly(rec.isPinned ? '📌 تم إضافتها في المتميزون' : '✖️ تم إزالتها من المتميزون');
                 }
             });
@@ -2576,7 +2571,7 @@
                 card.setAttribute('data-index', index);
 
                 card.innerHTML = `
-                    <div class="drag-handle" title="اضغط واسحب من هنا لترتيب الكارت"><i class="fa-solid fa-grip-vertical"></i></div>
+                    <div class="drag-handle" title="اضغط باستمرار واسحب من هنا للترتيب"><i class="fa-solid fa-grip-vertical"></i></div>
                     <div class="link-card-header">
                         <i class="fa-solid fa-globe"></i>
                         <span>${item.title}</span>
@@ -2591,12 +2586,18 @@
 
                 const handle = card.querySelector('.drag-handle');
 
-                // تفعيل السحب المباشر بدون باسورد وبسلاسة
+                // تفعيل السحب فقط عند الضغط باستمرار على مربع المقبض مع طلب باسورد الإدارة للحماية
                 handle.addEventListener('mousedown', (e) => {
                     e.preventDefault();
-                    card.setAttribute('draggable', 'true');
-                    draggedCardIndex = index;
-                    card.classList.add('dragging');
+                    requireAdminAuth(() => {
+                        card.setAttribute('draggable', 'true');
+                        draggedCardIndex = index;
+                        card.classList.add('dragging');
+                        
+                        // محاكاة بدء السحب الفوري بناءً على رغبة المستخدم في الضغط المستمر
+                        const dragEvent = new DragEvent('dragstart', { bubbles: true, cancelable: true });
+                        card.dispatchEvent(dragEvent);
+                    });
                 });
 
                 card.addEventListener('dragstart', (e) => {
@@ -2630,11 +2631,13 @@
                     draggedCardIndex = null;
                 });
 
-                // دعم السحب عبر اللمس للـ Touch Mobile
+                // دعم السحب باللمس للـ Mobile
                 handle.addEventListener('touchstart', (e) => {
-                    activeTouchHandle = card;
-                    draggedCardIndex = index;
-                    card.classList.add('dragging');
+                    requireAdminAuth(() => {
+                        activeTouchHandle = card;
+                        draggedCardIndex = index;
+                        card.classList.add('dragging');
+                    });
                 }, { passive: true });
 
                 handle.addEventListener('touchmove', (e) => {
@@ -3416,7 +3419,7 @@
                         alert('حدث خطأ أثناء قراءة ملف الـ Excel. تأكد من أنه ملف صالح تم تصديره من نفس النظام.');
                     }
                 };
-                reader.readAsArrayBuffer(file);
+                reader.readAsArrayBuffer(e.target.result);
             } else {
                 alert('نوع الملف غير مدعوم. يرجى اختيار ملف JSON أو Excel صالح.');
             }
