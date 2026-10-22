@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مجمع ماجستي الطبي - إدارة المواعيد وكشف العملاء</title>
+    <title>مجمع ماجستي الطبي - إدارة مواعيد الأطباء وكشف العملاء</title>
     
     <!-- خط Tajawal -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -74,7 +74,7 @@
         }
 
         .sidebar {
-            width: 270px;
+            width: 280px;
             background-color: var(--bg-sidebar);
             color: #fff;
             display: flex;
@@ -87,6 +87,7 @@
             right: 0;
             z-index: 1000;
             transition: transform 0.3s ease;
+            overflow-y: auto;
         }
 
         .app-layout.sidebar-collapsed .sidebar {
@@ -130,22 +131,51 @@
 
         .toggle-sidebar-btn:hover { background: var(--primary-color); }
 
+        .sidebar-section-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-top: 15px;
+            margin-bottom: 5px;
+            padding-right: 10px;
+            font-weight: 700;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .add-doc-btn {
+            background: rgba(37, 99, 235, 0.2);
+            color: #60a5fa;
+            border: 1px solid rgba(37, 99, 235, 0.4);
+            border-radius: 4px;
+            padding: 2px 8px;
+            font-size: 0.72rem;
+            cursor: pointer;
+            font-family: var(--font-family);
+        }
+
+        .add-doc-btn:hover {
+            background: var(--primary-color);
+            color: #fff;
+        }
+
         .sidebar-menu {
             display: flex;
             flex-direction: column;
-            gap: 10px;
-            margin-top: 25px;
+            gap: 6px;
+            margin-top: 10px;
         }
 
         .menu-item {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
             color: #94a3b8;
             text-decoration: none;
-            padding: 14px 16px;
+            padding: 10px 14px;
             border-radius: var(--radius-md);
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             font-weight: 600;
             cursor: pointer;
             border: 1px solid transparent;
@@ -163,9 +193,9 @@
             box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
         }
 
-        body.light-theme .menu-item.active {
-            background-color: #e2e8f0;
-            color: #1e293b;
+        .menu-item-sub {
+            padding-right: 25px;
+            font-size: 0.85rem;
         }
 
         .cloud-badge {
@@ -178,16 +208,17 @@
             gap: 8px;
             justify-content: center;
             color: #fff;
+            margin-top: 20px;
         }
 
         .online-dot { width: 10px; height: 10px; background-color: #22c55e; border-radius: 50%; box-shadow: 0 0 8px #22c55e; display: inline-block; }
 
         .main-wrapper {
-            margin-right: 270px;
+            margin-right: 280px;
             flex: 1;
             display: flex;
             flex-direction: column;
-            width: calc(100% - 270px);
+            width: calc(100% - 280px);
             min-width: 0;
         }
 
@@ -285,6 +316,37 @@
             gap: 8px;
         }
 
+        .doctor-selector-bar {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            padding-bottom: 5px;
+            margin-bottom: 10px;
+        }
+
+        .doctor-tab-btn {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-family: var(--font-family);
+            font-size: 0.88rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+        }
+
+        .doctor-tab-btn.active {
+            background: var(--primary-color);
+            color: #fff;
+            border-color: var(--primary-color);
+            box-shadow: 0 2px 8px rgba(37, 99, 235, 0.4);
+        }
+
         .clinic-announcements-box {
             background: linear-gradient(135deg, rgba(37, 99, 235, 0.12), rgba(124, 58, 237, 0.12));
             border: 1px solid var(--primary-color);
@@ -342,90 +404,6 @@
             word-break: break-word;
             white-space: pre-wrap;
             flex: 1;
-        }
-        .announcement-thumbnail-wrapper {
-            width: 55px;
-            height: 55px;
-            border-radius: 6px;
-            overflow: hidden;
-            border: 1px solid var(--border-color);
-            cursor: pointer;
-            flex-shrink: 0;
-            position: relative;
-            background: #000;
-        }
-        .announcement-thumbnail-wrapper img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.2s;
-        }
-        .announcement-thumbnail-wrapper:hover img {
-            transform: scale(1.08);
-        }
-        .announcement-file-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: rgba(37, 99, 235, 0.18);
-            border: 1px solid rgba(37, 99, 235, 0.5);
-            padding: 7px 14px;
-            border-radius: 6px;
-            color: #ffffff;
-            font-size: 0.85rem;
-            font-weight: 700;
-            cursor: pointer;
-            font-family: var(--font-family);
-            margin-top: 5px;
-            transition: all 0.2s ease;
-        }
-        .announcement-file-btn:hover {
-            background: var(--primary-color);
-            box-shadow: 0 0 10px rgba(37, 99, 235, 0.4);
-        }
-        .announcement-footer-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            border-top: 1px solid var(--border-color);
-            padding-top: 8px;
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            flex-wrap: wrap;
-            gap: 8px;
-        }
-        .announcement-actions-group {
-            display: flex;
-            gap: 6px;
-            align-items: center;
-        }
-        .btn-edit-announcement-card {
-            background-color: var(--primary-color);
-            color: #fff;
-            border: none;
-            padding: 5px 10px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-family: var(--font-family);
-            font-size: 0.78rem;
-            font-weight: 700;
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-        }
-        .btn-delete-announcement-card {
-            background-color: var(--danger-color);
-            color: #fff;
-            border: none;
-            padding: 5px 10px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-family: var(--font-family);
-            font-size: 0.78rem;
-            font-weight: 700;
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
         }
 
         .progress-box {
@@ -549,36 +527,6 @@
         }
         .filter-tab.active { background-color: var(--primary-color); color: white; border-color: var(--primary-color); }
 
-        .dropdown-filter-container {
-            position: relative;
-            display: inline-block;
-        }
-        .dropdown-filter-btn {
-            padding: 5px 12px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-surface); color: var(--text-main); font-family: var(--font-family); font-size: 0.78rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;
-        }
-        .dropdown-filter-btn.active {
-            background-color: var(--primary-color); color: white; border-color: var(--primary-color);
-        }
-        .dropdown-content {
-            display: none;
-            position: absolute;
-            right: 0;
-            top: 105%;
-            background-color: var(--bg-surface);
-            min-width: 210px;
-            box-shadow: 0 8px 16px rgba(0,0,0,0.4);
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius-md);
-            z-index: 99;
-            padding: 5px;
-        }
-        .dropdown-content.show { display: flex; flex-direction: column; gap: 4px; }
-        .dropdown-item {
-            padding: 7px 10px; text-align: right; border-radius: 4px; background: transparent; border: none; color: var(--text-main); font-family: var(--font-family); font-size: 0.78rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px;
-        }
-        .dropdown-item:hover { background: var(--border-color); }
-        .dropdown-item.active { background: var(--primary-color); color: white; }
-
         .search-field { position: relative; width: 100%; max-width: 300px; }
         .search-field input {
             width: 100%; padding: 7px 34px 7px 10px; border: 1px solid var(--border-color); border-radius: var(--radius-md); background-color: var(--bg-base); color: var(--text-main); font-family: var(--font-family); font-size: 0.85rem;
@@ -622,7 +570,7 @@
         .badge-other { background-color: #0d9488; }
 
         .proc-badge { padding: 4px 10px; border-radius: 6px; font-size: 0.8rem; font-weight: 700; display: inline-block; text-align: center; }
-        .proc-plant { background-color: #0d9488; color: #ffffff; border: 1px solid #14b8a6; box-shadow: 0 0 10px rgba(13, 148, 136, 0.3); } 
+        .proc-plant { background-color: #0d9488; color: #ffffff; } 
         .proc-extraction { background-color: #c2410c; color: #ffffff; } 
         .proc-surgery { background-color: #b91c1c; color: #ffffff; } 
         .proc-stitches { background-color: #7e22ce; color: #ffffff; } 
@@ -652,19 +600,8 @@
         .btn-save-action { background-color: var(--success-color); color: #fff; border: none; padding: 5px 8px; border-radius: 4px; cursor: pointer; }
         .btn-edit-action { background-color: var(--primary-color); color: #fff; border: none; padding: 5px 8px; border-radius: 4px; cursor: pointer; }
         .btn-delete-action { background-color: var(--danger-color); color: #fff; border: none; padding: 5px 8px; border-radius: 4px; cursor: pointer; }
-        
         .btn-pin-action { background-color: #d97706; color: #fff; border: none; padding: 5px 8px; border-radius: 4px; cursor: pointer; }
         .btn-pin-action.pinned { background-color: #ca8a04; box-shadow: 0 0 6px #f59e0b; }
-
-        @keyframes priorityPulse {
-            0% { background-color: rgba(124, 58, 237, 0.25); }
-            50% { background-color: rgba(124, 58, 237, 0.05); }
-            100% { background-color: rgba(124, 58, 237, 0.25); }
-        }
-        .row-priority-pulse {
-            animation: priorityPulse 1.8s infinite ease-in-out;
-            border-right: 4px solid var(--accent-purple);
-        }
 
         #notificationToast {
             position: fixed;
@@ -721,281 +658,12 @@
             flex-wrap: wrap;
         }
 
-        .client-card-header .client-title {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 1rem;
-            font-weight: 700;
-            color: var(--text-main);
-            flex-wrap: wrap;
-            flex: 1;
-            min-width: 180px;
-        }
-
-        .client-card-header .client-select-chk {
-            width: 18px;
-            height: 18px;
-            cursor: pointer;
-            accent-color: var(--primary-color);
-            flex-shrink: 0;
-        }
-
-        .client-datetime-badge {
-            font-family: Arial, sans-serif;
-            font-size: 0.75rem;
-            font-weight: 700;
-            color: #ffffff;
-            background: rgba(37, 99, 235, 0.25);
-            padding: 4px 8px;
-            border-radius: 4px;
-            border: 1px solid rgba(37, 99, 235, 0.4);
-            direction: ltr;
-            white-space: normal;
-            word-break: break-word;
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            max-width: 100%;
-        }
-
-        .client-info-row {
-            font-size: 0.9rem;
-            color: var(--text-main);
-            line-height: 1.5;
-            word-break: break-word;
-        }
-
-        .client-info-row .info-label {
-            color: var(--text-muted);
-            font-weight: 600;
-        }
-
-        .copied-btn {
-            background: #d97706;
-            color: #ffffff;
-            border: none;
-            padding: 4px 10px;
-            border-radius: 4px;
-            font-family: var(--font-family);
-            font-size: 0.78rem;
-            font-weight: 700;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            white-space: nowrap;
-        }
-
-        .copied-btn.active {
-            background: var(--success-color);
-        }
-
-        .client-actions-row {
-            display: flex;
-            gap: 8px;
-            margin-top: 6px;
-            justify-content: flex-end;
-            width: 100%;
-            flex-wrap: wrap;
-        }
-
-        .btn-client-action {
-            padding: 6px 12px;
-            border-radius: 4px;
-            border: none;
-            color: #fff;
-            font-family: var(--font-family);
-            font-size: 0.8rem;
-            font-weight: 700;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .btn-client-action.delete-to-trash { background-color: var(--danger-color); }
-        .btn-client-action.permanent-delete { background-color: var(--danger-color); }
-        .btn-client-action.unpin-item { background-color: var(--warning-color); }
-
-        .links-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 15px;
-            margin-top: 15px;
-            width: 100%;
-        }
-        .link-card {
-            background: var(--bg-base);
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius-md);
-            padding: 15px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            position: relative;
-            transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
-            user-select: none;
-            -webkit-user-select: none;
-            width: 100%;
-        }
-        .link-card.dragging {
-            opacity: 0.4;
-            border: 2px dashed var(--primary-color);
-            transform: scale(0.98);
-        }
-        .link-card.drag-over {
-            border: 2px solid var(--accent-purple);
-            box-shadow: 0 0 12px rgba(124, 58, 237, 0.4);
-            transform: translateY(-4px);
-        }
-        .link-card:hover {
-            border-color: var(--primary-color);
-        }
-        .drag-handle {
-            position: absolute;
-            top: 8px;
-            left: 8px;
-            color: var(--primary-color);
-            background: rgba(37, 99, 235, 0.1);
-            border: 1px solid rgba(37, 99, 235, 0.3);
-            border-radius: 6px;
-            font-size: 1.1rem;
-            cursor: grab;
-            padding: 8px 10px;
-            touch-action: none;
-            z-index: 5;
-        }
-        .drag-handle:active {
-            cursor: grabbing;
-            background: var(--primary-color);
-            color: #ffffff;
-        }
-        .link-card-header {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-weight: 700;
-            font-size: 1rem;
-            color: var(--text-main);
-            padding-left: 35px;
-            word-break: break-word;
-        }
-        .link-card-header i {
-            color: var(--primary-color);
-            font-size: 1.2rem;
-            flex-shrink: 0;
-        }
-        .link-card-desc {
-            font-size: 0.82rem;
-            color: var(--text-muted);
-            line-height: 1.4;
-            min-height: 35px;
-            word-break: break-word;
-        }
-        .link-card-actions {
-            display: flex;
-            gap: 8px;
-            margin-top: 5px;
-            flex-wrap: wrap;
-        }
-        .btn-open-link {
-            flex: 1;
-            background-color: var(--primary-color);
-            color: #fff;
-            text-decoration: none;
-            padding: 8px 12px;
-            border-radius: var(--radius-md);
-            font-size: 0.85rem;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            white-space: nowrap;
-            cursor: pointer;
-            border: none;
-        }
-        .btn-open-link:hover { background-color: var(--primary-hover); }
-
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 2000; justify-content: center; align-items: center; padding: 15px; }
         .modal.open { display: flex; }
         .modal-content { background: var(--bg-surface); border-radius: var(--radius-lg); width: 100%; max-width: 520px; max-height: 90vh; overflow-y: auto; padding: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); border: 1px solid var(--border-color); color: var(--text-main); }
         .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid var(--border-color); padding-bottom: 8px; }
         .modal-header h3 { color: var(--primary-color); font-size: 1.1rem; }
         .close-modal-btn { background: none; border: none; font-size: 1.3rem; color: var(--text-muted); cursor: pointer; }
-
-        .client-header-controls {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            flex-wrap: wrap;
-            width: 100%;
-            justify-content: flex-end;
-        }
-
-        @media (max-width: 768px) {
-            .content-body { padding: 10px; gap: 12px; }
-            .dashboard-section { padding: 12px; }
-            
-            .client-header-controls {
-                display: grid;
-                grid-template-columns: repeat(2, 1fr);
-                gap: 8px;
-                width: 100%;
-            }
-            .client-header-controls select {
-                grid-column: span 2;
-                width: 100%;
-            }
-            .client-header-controls .action-btn {
-                width: 100%;
-                justify-content: center;
-            }
-
-            .client-card-header {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 8px;
-            }
-            
-            .client-datetime-badge {
-                width: 100%;
-                justify-content: flex-start;
-                font-size: 0.72rem;
-            }
-
-            .client-actions-row {
-                justify-content: stretch;
-            }
-            .btn-client-action {
-                flex: 1;
-                justify-content: center;
-            }
-
-            .links-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        @media (max-width: 992px) {
-            .sidebar {
-                transform: translateX(100%);
-            }
-            .app-layout:not(.sidebar-collapsed) .sidebar {
-                transform: translateX(100%);
-            }
-            .app-layout.sidebar-open .sidebar {
-                transform: translateX(0) !important;
-            }
-            .main-wrapper {
-                margin-right: 0 !important;
-                width: 100% !important;
-            }
-            .open-sidebar-btn {
-                display: inline-flex !important;
-            }
-        }
     </style>
 </head>
 <body>
@@ -1008,37 +676,41 @@
     <div class="app-layout" id="appLayout">
         
         <aside class="sidebar">
-            <div class="sidebar-header">
-                <div class="brand-info">
-                    <div class="brand-icon"><i class="fa-solid fa-hospital"></i></div>
-                    <div class="brand-text">
-                        <h2>مجمع ماجستي</h2>
-                        <p>د. سامي - التنسيق الطبي</p>
+            <div>
+                <div class="sidebar-header">
+                    <div class="brand-info">
+                        <div class="brand-icon"><i class="fa-solid fa-hospital"></i></div>
+                        <div class="brand-text">
+                            <h2>مجمع ماجستي</h2>
+                            <p>التنسيق الطبي وإدارة المواعيد</p>
+                        </div>
                     </div>
+                    <button class="toggle-sidebar-btn" onclick="toggleSidebar()" title="إغلاق القائمة">
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </button>
                 </div>
-                <button class="toggle-sidebar-btn" onclick="toggleSidebar()" title="إغلاق القائمة">
-                    <i class="fa-solid fa-chevron-right"></i>
-                </button>
-            </div>
 
-            <nav class="sidebar-menu">
-                <div class="menu-item active" id="menu-dashboard" onclick="switchPage('dashboard')">
-                    <i class="fa-solid fa-chart-line"></i>
-                    <span>مؤشر الأداء والمواعيد</span>
+                <div class="sidebar-section-label">
+                    <span>الأطباء والعيادات</span>
+                    <button class="add-doc-btn" onclick="openAddDoctorModal()"><i class="fa-solid fa-plus"></i> إضافة طبيب</button>
                 </div>
-                <div class="menu-item" id="menu-clients" onclick="switchPage('clients')">
-                    <i class="fa-solid fa-file-lines"></i>
-                    <span>صفحة الكشف</span>
-                </div>
-                <div class="menu-item" id="menu-csguide" onclick="switchPage('csguide')">
-                    <i class="fa-solid fa-book-bookmark"></i>
-                    <span>الدليل الشامل لـ (خدمة العملاء)</span>
-                </div>
-            </nav>
+                
+                <nav class="sidebar-menu" id="doctorsNavMenu">
+                    <!-- سيتم توليد الأطباء ديناميكياً هنا -->
+                </nav>
+
+                <div class="sidebar-section-label">أدوات الإدارة</div>
+                <nav class="sidebar-menu">
+                    <div class="menu-item" id="menu-csguide" onclick="switchPage('csguide')">
+                        <i class="fa-solid fa-book-bookmark"></i>
+                        <span>الدليل الشامل للخدمة</span>
+                    </div>
+                </nav>
+            </div>
 
             <div class="sidebar-footer">
                 <div class="cloud-badge">
-                    <span class="online-dot"></span> <span>متصل بالسحابة 🟢</span>
+                    <span class="online-dot"></span> <span id="currentDoctorCloudText">متصل بالسحابة 🟢</span>
                 </div>
             </div>
         </aside>
@@ -1049,7 +721,7 @@
                     <button class="open-sidebar-btn" id="openSidebarBtn" onclick="toggleSidebar()">
                         <i class="fa-solid fa-bars"></i> القائمة
                     </button>
-                    <h1 id="pageTitle">مؤشر الأداء والمواعيد</h1>
+                    <h1 id="pageTitle">مؤشر الأداء والمواعيد - د. سامي</h1>
                 </div>
                 <div class="header-actions">
                     <button class="theme-toggle-btn" id="themeToggleBtn" onclick="toggleTheme()" title="تبديل المظهر">
@@ -1060,7 +732,12 @@
 
             <div class="content-body">
                 
-                <!-- صفحة مؤشر الأداء والمواعيد -->
+                <!-- شريط تنقل الأطباء السريع -->
+                <div class="doctor-selector-bar" id="doctorQuickBar">
+                    <!-- سيتم إضافة أزرار التنقل السريع للأطباء -->
+                </div>
+
+                <!-- صفحة مؤشر الأداء والمواعيد (تتغير حسب الطبيب المحدد) -->
                 <div id="page-dashboard" class="page-view">
                     
                     <section class="clinic-announcements-box">
@@ -1077,7 +754,7 @@
 
                     <section class="dashboard-section">
                         <div class="section-header">
-                            <h2><i class="fa-solid fa-chart-pie"></i> ملخص مؤشرات الأداء (KPIs)</h2>
+                            <h2><i class="fa-solid fa-chart-pie"></i> ملخص مؤشرات الأداء (KPIs) - <span class="active-doctor-label">د. سامي</span></h2>
                         </div>
                         <div class="kpi-cards-grid">
                             <div class="kpi-card blue">
@@ -1109,7 +786,7 @@
 
                     <section class="dashboard-section">
                         <div class="section-header">
-                            <h2><i class="fa-solid fa-calendar-plus"></i> تسجيل موعد / طلب جديد</h2>
+                            <h2><i class="fa-solid fa-calendar-plus"></i> تسجيل موعد جديد لـ (<span class="active-doctor-label">د. سامي</span>)</h2>
                         </div>
                         <form id="appointmentForm">
                             <div class="form-grid">
@@ -1153,7 +830,7 @@
                                 </div>
                                 <div class="input-field">
                                     <label>نوع الإجراء *</label>
-                                    <select id="procedureType" required onchange="handleProcedureTypeChange(this)">
+                                    <select id="procedureType" required>
                                         <option value="">اختر نوع الإجراء...</option>
                                         <option value="زراعة">زراعة</option>
                                         <option value="خلع">خلع</option>
@@ -1164,102 +841,27 @@
                                         <option value="أخرى">أخرى</option>
                                     </select>
                                 </div>
-                                <div class="input-field" id="customProcedureWrapper" style="display: none;">
-                                    <label>اكتب نوع الإجراء الآخر *</label>
-                                    <input type="text" id="customProcedureInput" placeholder="اكتب نوع الإجراء هنا...">
-                                </div>
                                 <div class="input-field full-width">
                                     <label>الخدمة المطلوبة / تفاصيل المشكلة والطلب *</label>
-                                    <textarea id="serviceRequired" required placeholder="اكتب تفاصيل طلب العميل المشكلة أو الموعد المطلوب..."></textarea>
+                                    <textarea id="serviceRequired" required placeholder="اكتب تفاصيل طلب العميل..."></textarea>
                                 </div>
                                 <div class="input-field full-width">
                                     <label class="priority-checkbox">
-                                        <input type="checkbox" id="isRecurring" onchange="checkPriorityAuth(this)">
+                                        <input type="checkbox" id="isRecurring">
                                         <span>إعطاء أولوية ⭐ (يتطلب باسورد الإدارة)</span>
                                     </label>
                                 </div>
                             </div>
-                            <button type="submit" class="submit-btn"><i class="fa-solid fa-floppy-disk"></i> حفظ الموعد</button>
+                            <button type="submit" class="submit-btn"><i class="fa-solid fa-floppy-disk"></i> حفظ الموعد للطبيب الحالي</button>
                         </form>
                     </section>
 
                     <section class="dashboard-section">
                         <div class="section-header">
-                            <h2><i class="fa-solid fa-database"></i> التصدير والاستيراد للادارة</h2>
-                        </div>
-                        <div class="actions-toolbar">
-                            <button class="action-btn excel" onclick="exportToExcel()"><i class="fa-solid fa-file-excel"></i> تصدير Excel</button>
-                            <button class="action-btn json" onclick="exportToJSON()"><i class="fa-solid fa-file-code"></i> تصدير JSON</button>
-                            <label class="action-btn import">
-                                <i class="fa-solid fa-file-import"></i> استيراد ملفات
-                                <input type="file" id="importFile" accept=".json,.xlsx,.xls" onchange="importData(event)" hidden>
-                            </label>
-                            <button class="action-btn clear-all" onclick="openClearModal()"><i class="fa-solid fa-trash-can"></i> مسح بفلتر وباسورد</button>
-                            <button class="action-btn settings" onclick="openPasswordModal()"><i class="fa-solid fa-key"></i> تغيير كلمة المرور</button>
-                        </div>
-                    </section>
-
-                    <section class="dashboard-section">
-                        <div class="section-header">
-                            <h2><i class="fa-solid fa-list-check"></i> جدول المواعيد والمتابعة</h2>
+                            <h2><i class="fa-solid fa-list-check"></i> جدول مواعيد - <span class="active-doctor-label">د. سامي</span></h2>
                             <div class="search-field">
                                 <i class="fa-solid fa-magnifying-glass"></i>
                                 <input type="text" id="searchInput" oninput="filterTable()" placeholder="بحث باسم العميل، الجوال...">
-                            </div>
-                        </div>
-
-                        <div class="progress-box">
-                            <div class="progress-info-row">
-                                <span><i class="fa-solid fa-chart-line"></i> نسبة الإنجاز اليومي للحالات</span>
-                                <span id="progressText">0% (0 من 0)</span>
-                            </div>
-                            <div class="progress-bar-container">
-                                <div class="progress-bar-fill" id="progressBarFill"></div>
-                            </div>
-                        </div>
-
-                        <div class="filter-container-box">
-                            <div class="filter-row">
-                                <span class="filter-label"><i class="fa-solid fa-filter"></i> فلاتر الحالات:</span>
-                                <div class="filter-tabs" id="statusFilterTabs">
-                                    <button class="filter-tab" data-filter="all" onclick="setDashboardFilter('all', this)">الكل</button>
-                                    <button class="filter-tab" data-filter="priority" onclick="setDashboardFilter('priority', this)">حالات ذات أولوية ⭐</button>
-                                    <button class="filter-tab" data-filter="repeated" onclick="setDashboardFilter('repeated', this)">طلبات متكررة 🔄</button>
-                                    <button class="filter-tab" data-filter="plants" onclick="setDashboardFilter('plants', this)">حالات الزراعة 🦷</button>
-                                    <button class="filter-tab" data-filter="extraction" onclick="setDashboardFilter('extraction', this)">حالات الخلع 🩺</button>
-                                    <button class="filter-tab" data-filter="review" onclick="setDashboardFilter('review', this)">حالات المراجعة 📋</button>
-                                    
-                                    <div class="dropdown-filter-container" id="inquiriesDropdownContainer">
-                                        <button class="dropdown-filter-btn" id="inquiriesDropdownBtn" onclick="toggleDropdown('inquiriesDropdownContent')">
-                                            <i class="fa-solid fa-comments"></i> الاستفسارات <i class="fa-solid fa-chevron-down" style="font-size:0.7rem;"></i>
-                                        </button>
-                                        <div class="dropdown-content" id="inquiriesDropdownContent">
-                                            <button class="dropdown-item" data-filter="inquiries_all" onclick="setDashboardFilter('inquiries_all', this)">💬 كل الاستفسارات</button>
-                                            <button class="dropdown-item" data-filter="inquiries_done" onclick="setDashboardFilter('inquiries_done', this)">✅ استفسارات تم إجراءها</button>
-                                            <button class="dropdown-item" data-filter="inquiries_pending" onclick="setDashboardFilter('inquiries_pending', this)">⏳ استفسارات لم يتم إجراؤها</button>
-                                        </div>
-                                    </div>
-
-                                    <div class="dropdown-filter-container" id="appointmentsDropdownContainer">
-                                        <button class="dropdown-filter-btn" id="appointmentsDropdownBtn" onclick="toggleDropdown('appointmentsDropdownContent')">
-                                            <i class="fa-solid fa-stethoscope"></i> الكشفيات والمواعيد <i class="fa-solid fa-chevron-down" style="font-size:0.7rem;"></i>
-                                        </button>
-                                        <div class="dropdown-content" id="appointmentsDropdownContent">
-                                            <button class="dropdown-item" data-filter="no_inquiries_all" onclick="setDashboardFilter('no_inquiries_all', this)">📋 كل الكشفيات والمواعيد</button>
-                                            <button class="dropdown-item" data-filter="no_inquiries_done" onclick="setDashboardFilter('no_inquiries_done', this)">✅ تم عليها إجراءات</button>
-                                            <button class="dropdown-item" data-filter="no_inquiries_pending" onclick="setDashboardFilter('no_inquiries_pending', this)">⏳ لم يتم عليها أي إجراء</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="filter-row" style="border-top: 1px dashed var(--border-color); padding-top: 8px;">
-                                <span class="filter-label"><i class="fa-solid fa-clock"></i> النطاق الزمني:</span>
-                                <div class="filter-tabs" id="timeFilterTabs">
-                                    <button class="filter-tab" data-time="all" onclick="setDashboardTimeFilter('all', this)">كل الأوقات</button>
-                                    <button class="filter-tab" data-time="today" onclick="setDashboardTimeFilter('today', this)">اليوم</button>
-                                    <button class="filter-tab" data-time="week" onclick="setDashboardTimeFilter('week', this)">الأسبوع</button>
-                                    <button class="filter-tab" data-time="month" onclick="setDashboardTimeFilter('month', this)">الشهر</button>
-                                </div>
                             </div>
                         </div>
 
@@ -1288,60 +890,20 @@
 
                 </div>
 
-                <!-- صفحة الكشف -->
+                <!-- صفحة الكشف للعيادة المحددة -->
                 <div id="page-clients" class="page-view hidden">
                     <section class="dashboard-section">
-                        <div style="display: flex; flex-direction: column; gap: 12px; background: var(--bg-base); padding: 12px 15px; border-radius: 8px; border: 1px solid var(--border-color); margin-bottom: 15px;">
-                            <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
-                                <h2 style="font-size: 1.1rem; color: var(--primary-color); font-weight: 700;">
-                                    <i class="fa-solid fa-file-lines"></i> صفحة الكشف
-                                </h2>
-                            </div>
-                            
-                            <div class="client-header-controls">
-                                <select id="clientHoursSelect" onchange="setClientTimeFilterSelect(this.value)" style="background: var(--bg-surface); color: var(--text-main); border: 1px solid var(--border-color); padding: 8px 10px; border-radius: 6px; font-family: var(--font-family); font-size: 0.85rem; cursor: pointer;">
-                                    <option value="all">كل الأوقات</option>
-                                    <option value="6">آخر 6 ساعات</option>
-                                    <option value="8">آخر 8 ساعات</option>
-                                    <option value="12">آخر 12 ساعة</option>
-                                    <option value="24">آخر 24 ساعة</option>
-                                    <option value="48">آخر 48 ساعة</option>
-                                    <option value="168">أسبوع</option>
-                                    <option value="720">شهر</option>
-                                </select>
-
-                                <button class="action-btn" id="pinnedFilterBtn" onclick="togglePinnedFilter()" style="background-color: #16a34a;">
-                                    <i class="fa-solid fa-file-lines"></i> ✅ الكشف العادي (<span id="pinnedCount">0</span>)
-                                </button>
-
-                                <button class="action-btn copy-btn" onclick="copyClientReport()"><i class="fa-solid fa-copy"></i> نسخ الكشف</button>
-                                <button class="action-btn select-del-btn" onclick="requestDeleteSelectedAccess()"><i class="fa-solid fa-trash-can"></i> حذف المحددين</button>
-                                <button class="action-btn clear-all" onclick="requestDeleteRangeAccess()"><i class="fa-solid fa-trash"></i> مسح الفترة</button>
-                                <button class="action-btn trash-view-btn" onclick="checkTrashAuthAndOpen()"><i class="fa-solid fa-rotate-left"></i> سلة المحذوفات</button>
-                            </div>
-                        </div>
-
-                        <div style="margin-bottom: 12px; display: flex; gap: 10px; align-items: center; background: var(--bg-base); padding: 10px 12px; border-radius: 8px; border: 1px solid var(--border-color);">
-                            <i class="fa-solid fa-magnifying-glass" style="color: var(--text-muted);"></i>
-                            <input type="text" id="clientSearchInput" oninput="renderClientReport()" placeholder="بحث بالاسم، رقم الجوال، رقم الملف، الهوية..." style="width: 100%; background: transparent; border: none; outline: none; color: var(--text-main); font-family: var(--font-family); font-size: 0.88rem;">
-                        </div>
-
+                        <h2><i class="fa-solid fa-file-lines"></i> صفحة كشف العيادة - <span class="active-doctor-label">د. سامي</span></h2>
+                        <br>
                         <div id="clientReportList" class="client-report-container"></div>
                     </section>
                 </div>
 
-                <!-- الدليل الشامل لـ (خدمة العملاء) -->
+                <!-- الدليل الشامل -->
                 <div id="page-csguide" class="page-view hidden">
                     <section class="dashboard-section">
-                        <div class="section-header">
-                            <h2><i class="fa-solid fa-book-bookmark"></i> الدليل الشامل لـ (خدمة العملاء)</h2>
-                            <button class="action-btn copy-btn" onclick="openAddLinkModal()"><i class="fa-solid fa-plus"></i> إضافة رابط جديد</button>
-                        </div>
-                        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 10px;">
-                            💡 **ترتيب الروابط:** اضغط باستمرار مع السحب المباشر على أيقونة المقبض الزرقاء <i class="fa-solid fa-grip-vertical" style="color: var(--primary-color);"></i> لترتيب الكروت بسلاسة.
-                        </p>
-
-                        <div class="links-grid" id="linksGridContainer"></div>
+                        <h2><i class="fa-solid fa-book-bookmark"></i> الدليل الشامل لـ (خدمة العملاء)</h2>
+                        <p style="margin-top: 10px; color: var(--text-muted);">دليل الأدوات والروابط الهامة الموحدة للمجمع.</p>
                     </section>
                 </div>
 
@@ -1349,910 +911,139 @@
         </main>
     </div>
 
-    <!-- نافذة إضافة / تعديل تنبيه / إشعار عام جديد مع رفع ملفات أو صور -->
-    <div class="modal" id="announcementModal">
+    <!-- نافذة إضافة طبيب جديد -->
+    <div class="modal" id="addDoctorModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 id="announcementModalTitle"><i class="fa-solid fa-bullhorn"></i> إضافة تنبيه أو إشعار للعيادة</h3>
-                <button class="close-modal-btn" onclick="closeAnnouncementModal()">&times;</button>
+                <h3><i class="fa-solid fa-user-doctor"></i> إضافة طبيب جديد إلى النظام</h3>
+                <button class="close-modal-btn" onclick="closeAddDoctorModal()">&times;</button>
             </div>
-            <form id="announcementForm" onsubmit="saveAnnouncementItem(event)">
-                <input type="hidden" id="editAnnouncementKey">
+            <form onsubmit="saveNewDoctor(event)">
                 <div class="form-grid">
                     <div class="input-field full-width">
-                        <label>نص التنبيه أو الملاحظة *</label>
-                        <textarea id="announcementText" required placeholder="اكتب التنبيه أو التحديث الجديد للعيادة هنا..."></textarea>
-                    </div>
-                    <div class="input-field full-width">
-                        <label><i class="fa-solid fa-paperclip"></i> إرفاق ملف (PDF, مستندات, صور...) (اختياري)</label>
-                        <input type="file" id="announcementFile" accept=".pdf,.doc,.docx,.xls,.xlsx,.txt,image/*" style="padding: 6px; cursor: pointer;">
-                        <span style="font-size: 0.75rem; color: var(--text-muted); margin-top: 3px;">يمكنك رفع ملفات PDF أو مستندات أو صور ليراها فريق العمل مباشرة.</span>
+                        <label>اسم الدكتور الكامل *</label>
+                        <input type="text" id="newDoctorName" required placeholder="مثال: د. عبد الله">
                     </div>
                 </div>
-                <button type="submit" class="submit-btn" style="margin-top: 15px;"><i class="fa-solid fa-floppy-disk"></i> حفظ ونشر التنبيه</button>
-            </form>
-        </div>
-    </div>
-
-    <!-- نافذة تكبير وعرض الصورة المرفقة بحجم كامل -->
-    <div class="modal" id="imagePreviewModal">
-        <div class="modal-content" style="max-width: 650px; text-align: center; padding: 15px;">
-            <div class="modal-header">
-                <h3><i class="fa-solid fa-image"></i> معاينة الصورة المرفقة</h3>
-                <button class="close-modal-btn" onclick="closeImagePreviewModal()">&times;</button>
-            </div>
-            <div style="width: 100%; max-height: 75vh; overflow: hidden; display: flex; align-items: center; justify-content: center; background: #000; border-radius: 8px;">
-                <img id="previewFullImageTag" src="" alt="صورة مرفقة" style="max-width: 100%; max-height: 70vh; object-fit: contain;">
-            </div>
-        </div>
-    </div>
-
-    <!-- نافذة إضافة / تعديل رابط جديد في الدليل الشامل -->
-    <div class="modal" id="linkModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 id="linkModalTitle"><i class="fa-solid fa-link"></i> إضافة رابط جديد</h3>
-                <button class="close-modal-btn" onclick="closeLinkModal()">&times;</button>
-            </div>
-            <form id="linkForm" onsubmit="saveLinkItem(event)">
-                <input type="hidden" id="linkKey">
-                <div class="form-grid">
-                    <div class="input-field full-width">
-                        <label>عنوان الرابط / الموقع *</label>
-                        <input type="text" id="linkTitle" required placeholder="مثال: نظام بيفاتيل Bevatel">
-                    </div>
-                    <div class="input-field full-width">
-                        <label>الرابط (URL) *</label>
-                        <input type="url" id="linkUrl" required placeholder="https://example.com">
-                    </div>
-                    <div class="input-field full-width">
-                        <label>وصف مختصر</label>
-                        <textarea id="linkDesc" placeholder="اكتب وصفاً مختصراً للرابط والهدف منه..."></textarea>
-                    </div>
-                </div>
-                <button type="submit" class="submit-btn" style="margin-top: 15px;"><i class="fa-solid fa-floppy-disk"></i> حفظ الرابط</button>
-            </form>
-        </div>
-    </div>
-
-    <!-- نافذة سلة المحذوفات والاسترجاع -->
-    <div class="modal" id="trashModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3><i class="fa-solid fa-rotate-left"></i> سلة المحذوفات والاسترجاع</h3>
-                <button class="close-modal-btn" onclick="closeTrashModal()">&times;</button>
-            </div>
-            <div id="trashModalList" style="display: flex; flex-direction: column; gap: 10px; max-height: 60vh; overflow-y: auto;"></div>
-        </div>
-    </div>
-
-    <!-- نافذة إدخال كلمة المرور الموحدة -->
-    <div class="modal" id="passAuthModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3><i class="fa-solid fa-shield-halved"></i> تأكيد كلمة مرور الإدارة</h3>
-                <button class="close-modal-btn" onclick="cancelUniversalAuth()">&times;</button>
-            </div>
-            <div class="form-grid">
-                <div class="input-field full-width">
-                    <label>أدخل كلمة مرور الموقع للمتابعة *</label>
-                    <input type="password" id="authPassInput" placeholder="كلمة المرور">
-                </div>
-            </div>
-            <button type="button" class="submit-btn" onclick="confirmUniversalAuth()">تأكيد</button>
-        </div>
-    </div>
-
-    <div class="modal" id="clearModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3><i class="fa-solid fa-trash-can"></i> مسح البيانات بكلمة مرور</h3>
-                <button class="close-modal-btn" onclick="closeClearModal()">&times;</button>
-            </div>
-            <div class="form-grid">
-                <div class="input-field full-width">
-                    <label>اختر نطاق المسح *</label>
-                    <select id="clearRange" class="table-input">
-                        <option value="today">مسح حالات اليوم فقط</option>
-                        <option value="week">مسح حالات الأسبوع الأخير</option>
-                        <option value="month">مسح حالات الشهر الحالي</option>
-                        <option value="all">مسح جميع البيانات بالكامل ⚠️</option>
-                    </select>
-                </div>
-                <div class="input-field full-width">
-                    <label>كلمة المرور *</label>
-                    <input type="password" id="clearPasswordInput" placeholder="أدخل كلمة المرور">
-                </div>
-            </div>
-            <button type="button" class="submit-btn" style="background-color: var(--danger-color); margin-top: 15px;" onclick="executeFilteredClear()">تنفيذ الحذف</button>
-        </div>
-    </div>
-
-    <div class="modal" id="passwordModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3><i class="fa-solid fa-key"></i> تغيير كلمة المرور</h3>
-                <button class="close-modal-btn" onclick="closePasswordModal()">&times;</button>
-            </div>
-            <div class="form-grid">
-                <div class="input-field full-width"><label>كلمة المرور الحالية *</label><input type="password" id="oldPassword"></div>
-                <div class="input-field full-width"><label>كلمة المرور الجديدة *</label><input type="password" id="newPassword"></div>
-            </div>
-            <button type="button" class="submit-btn" style="margin-top: 15px;" onclick="updatePassword()">حفظ كلمة المرور</button>
-        </div>
-    </div>
-
-    <div class="modal" id="editModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3><i class="fa-solid fa-pen-to-square"></i> تعديل بيانات العميل</h3>
-                <button class="close-modal-btn" onclick="closeEditModal()">&times;</button>
-            </div>
-            <form id="editForm" onsubmit="saveEditedRecord(event)">
-                <input type="hidden" id="editFirebaseKey">
-                <div class="form-grid">
-                    <div class="input-field">
-                        <label>اسم العميل *</label>
-                        <input type="text" id="editPatientName" required>
-                    </div>
-                    <div class="input-field">
-                        <label>رقم الجوال</label>
-                        <input type="tel" id="editPatientPhone">
-                    </div>
-                    <div class="input-field">
-                        <label>رقم الملف</label>
-                        <input type="text" id="editFileNumber">
-                    </div>
-                    <div class="input-field">
-                        <label>رقم الهوية / الإقامة</label>
-                        <input type="text" id="editIdNumber">
-                    </div>
-                    <div class="input-field">
-                        <label>الفرع *</label>
-                        <select id="editBranch" required>
-                            <option value="معشي">فرع معشي</option>
-                            <option value="الوسام">فرع الوسام</option>
-                        </select>
-                    </div>
-                    <div class="input-field">
-                        <label>طريقة التواصل *</label>
-                        <select id="editContactMethod" required>
-                            <option value="اتصال">اتصال هاتفي</option>
-                            <option value="شات">واتساب / شات</option>
-                            <option value="بالاستقبال">بالاستقبال</option>
-                            <option value="أخرى">أخرى</option>
-                        </select>
-                    </div>
-                    <div class="input-field">
-                        <label>اسم المنسق *</label>
-                        <input type="text" id="editCoordinatorName" required>
-                    </div>
-                    <div class="input-field">
-                        <label>نوع الإجراء *</label>
-                        <select id="editProcedureType" required>
-                            <option value="زراعة">زراعة</option>
-                            <option value="خلع">خلع</option>
-                            <option value="جراحه">جراحه</option>
-                            <option value="فك خياطه">فك خياطه</option>
-                            <option value="مراجعه">مراجعه</option>
-                            <option value="استفسارات">استفسارات</option>
-                            <option value="أخرى">أخرى</option>
-                        </select>
-                    </div>
-                    <div class="input-field full-width">
-                        <label>الخدمة المطلوبة / تفاصيل المشكلة والطلب *</label>
-                        <textarea id="editServiceRequired" required></textarea>
-                    </div>
-                    <div class="input-field full-width">
-                        <label class="priority-checkbox">
-                            <input type="checkbox" id="editIsRecurring">
-                            <span>تعيين كحالة ذات أولوية ⭐ (يتطلب باسورد)</span>
-                        </label>
-                    </div>
-                    <div class="input-field full-width">
-                        <label class="repeated-checkbox">
-                            <input type="checkbox" id="editIsRepeatedRequest">
-                            <span>حالة طلب متكرر 🔄 (الغِ التحديد لإزالة الشارة)</span>
-                        </label>
-                    </div>
-                </div>
-                <button type="submit" class="submit-btn" style="margin-top: 12px;"><i class="fa-solid fa-floppy-disk"></i> حفظ التعديلات</button>
+                <button type="submit" class="submit-btn" style="margin-top: 15px;"><i class="fa-solid fa-plus"></i> إنشاء صفحة وقاعدة بيانات الدكتور</button>
             </form>
         </div>
     </div>
 
     <script>
+        // إعدادات Firebase
         const firebaseConfig = { databaseURL: "https://dr-sami-default-rtdb.firebaseio.com/" };
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
-        const dbRef = database.ref('appointments');
-        const linksDbRef = database.ref('cs_guide_links');
-        const announcementsDbRef = database.ref('clinic_announcements');
+
+        // الأطباء الافتراضيون + استرجاع الأطباء من التخزين المحلي
+        let defaultDoctors = [
+            { id: 'dr_sami', name: 'د. سامي', dbPath: 'appointments' },
+            { id: 'dr_mahmoud', name: 'د. محمود', dbPath: 'doctors/dr_mahmoud/appointments' },
+            { id: 'dr_abdullah', name: 'د. عبد الله', dbPath: 'doctors/dr_abdullah/appointments' }
+        ];
+
+        let doctorsList = JSON.parse(localStorage.getItem('registeredDoctors')) || defaultDoctors;
+        let currentDoctorId = localStorage.getItem('activeDoctorId') || 'dr_sami';
 
         let records = [];
-        let csLinks = [];
-        let clinicAnnouncements = [];
-        let dashboardFilter = localStorage.getItem('savedDashboardFilter') || 'all';
-        let dashboardTimeFilter = localStorage.getItem('savedDashboardTimeFilter') || 'all';
-        let clientHoursFilter = localStorage.getItem('savedClientHoursFilter') || 'all';
-        let isPinnedFilterActive = false;
-        
-        let originalEditPriorityState = false;
-        let originalEditRepeatedState = false;
+        let dbRef = null;
 
-        if (!localStorage.getItem('adminPassword')) {
-            localStorage.setItem('adminPassword', '1234');
+        function saveDoctorsToLocal() {
+            localStorage.setItem('registeredDoctors', JSON.stringify(doctorsList));
         }
 
-        const savedTheme = localStorage.getItem('theme');
-        if (savedTheme === 'light') {
-            document.body.classList.add('light-theme');
-            document.getElementById('themeIcon').classList.replace('fa-moon', 'fa-sun');
+        function getCurrentDoctor() {
+            return doctorsList.find(d => d.id === currentDoctorId) || doctorsList[0];
         }
 
-        function toggleTheme() {
-            document.body.classList.toggle('light-theme');
-            const isLight = document.body.classList.contains('light-theme');
-            localStorage.setItem('theme', isLight ? 'light' : 'dark');
-            document.getElementById('themeIcon').classList.replace(isLight ? 'fa-sun' : 'fa-moon', isLight ? 'fa-moon' : 'fa-sun');
+        function switchDoctor(docId) {
+            currentDoctorId = docId;
+            localStorage.setItem('activeDoctorId', docId);
+            initDoctorDatabase();
+            renderDoctorsMenu();
+            updateDoctorUI();
         }
 
-        function toggleSidebar() {
-            const appLayout = document.getElementById('appLayout');
-            if (window.innerWidth <= 992) {
-                appLayout.classList.toggle('sidebar-open');
-            } else {
-                appLayout.classList.toggle('sidebar-collapsed');
-            }
+        function updateDoctorUI() {
+            const doc = getCurrentDoctor();
+            document.querySelectorAll('.active-doctor-label').forEach(el => el.innerText = doc.name);
+            document.getElementById('pageTitle').innerText = `مؤشر الأداء والمواعيد - ${doc.name}`;
+            document.getElementById('currentDoctorCloudText').innerText = `سحابة (${doc.name}) 🟢`;
         }
 
-        function switchPage(page) {
-            document.querySelectorAll('.page-view').forEach(p => p.classList.add('hidden'));
-            document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active'));
+        function initDoctorDatabase() {
+            const doc = getCurrentDoctor();
+            if (dbRef) dbRef.off(); // إلغاء الاستماع القديم
 
-            localStorage.setItem('activePage', page);
-
-            if (page === 'dashboard') {
-                document.getElementById('page-dashboard').classList.remove('hidden');
-                document.getElementById('menu-dashboard').classList.add('active');
-                document.getElementById('pageTitle').innerText = 'مؤشر الأداء والمواعيد';
-            } else if (page === 'clients') {
-                document.getElementById('page-clients').classList.remove('hidden');
-                document.getElementById('menu-clients').classList.add('active');
-                document.getElementById('pageTitle').innerText = 'صفحة الكشف';
+            dbRef = database.ref(doc.dbPath);
+            dbRef.on('value', (snapshot) => {
+                const data = snapshot.val();
+                if (data) {
+                    const cloudRecords = [];
+                    for (let key in data) { cloudRecords.push({ firebaseKey: key, ...data[key] }); }
+                    records = cloudRecords;
+                } else {
+                    records = [];
+                }
+                renderTable();
+                updateKPIs();
                 renderClientReport();
-            } else if (page === 'csguide') {
-                document.getElementById('page-csguide').classList.remove('hidden');
-                document.getElementById('menu-csguide').classList.add('active');
-                document.getElementById('pageTitle').innerText = 'الدليل الشامل لـ (خدمة العملاء)';
-                renderCSLinks();
-            }
-
-            if (window.innerWidth <= 992) {
-                document.getElementById('appLayout').classList.remove('sidebar-open');
-            }
-        }
-
-        function saveLocal() { 
-            localStorage.setItem('cachedAppointments_v16', JSON.stringify(records));
-            localStorage.setItem('cachedCSLinks_v1', JSON.stringify(csLinks));
-            localStorage.setItem('cachedAnnouncements_v3', JSON.stringify(clinicAnnouncements));
-        }
-
-        const cached = localStorage.getItem('cachedAppointments_v16');
-        if (cached) { try { records = JSON.parse(cached); } catch(e) { records = []; } }
-
-        const cachedLinks = localStorage.getItem('cachedCSLinks_v1');
-        if (cachedLinks) { try { csLinks = JSON.parse(cachedLinks); } catch(e) { csLinks = []; } }
-
-        const cachedAnnouncements = localStorage.getItem('cachedAnnouncements_v3') || localStorage.getItem('cachedAnnouncements_v2');
-        if (cachedAnnouncements) { try { clinicAnnouncements = JSON.parse(cachedAnnouncements); } catch(e) { clinicAnnouncements = []; } }
-
-        function syncFilterTabsUI() {
-            const statusContainer = document.getElementById('statusFilterTabs');
-            if (statusContainer) {
-                statusContainer.querySelectorAll('.filter-tab').forEach(btn => {
-                    if (btn.getAttribute('data-filter') === dashboardFilter) {
-                        btn.classList.add('active');
-                    } else {
-                        btn.classList.remove('active');
-                    }
-                });
-
-                const inquiriesBtn = document.getElementById('inquiriesDropdownBtn');
-                const isInquiriesActive = dashboardFilter.startsWith('inquiries_');
-                if (isInquiriesActive) {
-                    inquiriesBtn.classList.add('active');
-                    statusContainer.querySelectorAll('#inquiriesDropdownContent .dropdown-item').forEach(item => {
-                        if (item.getAttribute('data-filter') === dashboardFilter) {
-                            item.classList.add('active');
-                        } else {
-                            item.classList.remove('active');
-                        }
-                    });
-                } else {
-                    inquiriesBtn.classList.remove('active');
-                    statusContainer.querySelectorAll('#inquiriesDropdownContent .dropdown-item').forEach(item => item.classList.remove('active'));
-                }
-
-                const appointmentsBtn = document.getElementById('appointmentsDropdownBtn');
-                const isAppointmentsActive = dashboardFilter.startsWith('no_inquiries_');
-                if (isAppointmentsActive) {
-                    appointmentsBtn.classList.add('active');
-                    statusContainer.querySelectorAll('#appointmentsDropdownContent .dropdown-item').forEach(item => {
-                        if (item.getAttribute('data-filter') === dashboardFilter) {
-                            item.classList.add('active');
-                        } else {
-                            item.classList.remove('active');
-                        }
-                    });
-                } else {
-                    appointmentsBtn.classList.remove('active');
-                    statusContainer.querySelectorAll('#appointmentsDropdownContent .dropdown-item').forEach(item => item.classList.remove('active'));
-                }
-            }
-
-            const timeContainer = document.getElementById('timeFilterTabs');
-            if (timeContainer) {
-                timeContainer.querySelectorAll('.filter-tab').forEach(btn => {
-                    if (btn.getAttribute('data-time') === dashboardTimeFilter) {
-                        btn.classList.add('active');
-                    } else {
-                        btn.classList.remove('active');
-                    }
-                });
-            }
-            updatePinnedCountBadge();
-        }
-
-        function toggleDropdown(contentId) {
-            const content = document.getElementById(contentId);
-            document.querySelectorAll('.dropdown-content').forEach(dc => {
-                if (dc.id !== contentId) dc.classList.remove('show');
             });
-            content.classList.toggle('show');
         }
 
-        window.addEventListener('click', function(e) {
-            if (!e.target.closest('.dropdown-filter-container')) {
-                document.querySelectorAll('.dropdown-content').forEach(dc => dc.classList.remove('show'));
-            }
-        });
+        function renderDoctorsMenu() {
+            const menuContainer = document.getElementById('doctorsNavMenu');
+            const quickBar = document.getElementById('doctorQuickBar');
+            menuContainer.innerHTML = '';
+            quickBar.innerHTML = '';
 
-        window.addEventListener('DOMContentLoaded', () => {
-            const activePage = localStorage.getItem('activePage') || 'dashboard';
-            switchPage(activePage);
-
-            const hoursSelect = document.getElementById('clientHoursSelect');
-            if (hoursSelect) {
-                hoursSelect.value = clientHoursFilter;
-            }
-
-            isPinnedFilterActive = false;
-            const btn = document.getElementById('pinnedFilterBtn');
-            if (btn) {
-                btn.style.backgroundColor = '#16a34a';
-                btn.style.borderColor = '#22c55e';
-                btn.style.boxShadow = 'none';
-            }
-
-            syncFilterTabsUI();
-            renderAnnouncements();
-            renderClientReport();
-        });
-
-        dbRef.on('value', (snapshot) => {
-            const data = snapshot.val();
-            if (data) {
-                const cloudRecords = [];
-                for (let key in data) { cloudRecords.push({ firebaseKey: key, ...data[key] }); }
-                records = cloudRecords;
-            } else {
-                records = [];
-            }
-            saveLocal();
-            renderTable();
-            updateKPIs();
-            updateDailyProgress();
-            renderClientReport();
-            renderTrashModalList();
-        });
-
-        linksDbRef.on('value', (snapshot) => {
-            const data = snapshot.val();
-            if (data) {
-                const cloudLinks = [];
-                for (let key in data) { cloudLinks.push({ linkKey: key, ...data[key] }); }
-                cloudLinks.sort((a, b) => (a.orderIndex || 0) - (b.orderIndex || 0));
-                csLinks = cloudLinks;
-            } else {
-                csLinks = [];
-            }
-            saveLocal();
-            renderCSLinks();
-        });
-
-        announcementsDbRef.on('value', (snapshot) => {
-            const data = snapshot.val();
-            if (data) {
-                const cloudAnnouncements = [];
-                for (let key in data) { cloudAnnouncements.push({ announcementKey: key, ...data[key] }); }
-                cloudAnnouncements.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-                clinicAnnouncements = cloudAnnouncements;
-            } else {
-                clinicAnnouncements = [];
-            }
-            saveLocal();
-            renderAnnouncements();
-        });
-
-        function playBeepAndShowToast(msg) {
-            try {
-                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                const osc = audioCtx.createOscillator();
-                const gain = audioCtx.createGain();
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(587.33, audioCtx.currentTime);
-                gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
-                osc.connect(gain);
-                gain.connect(audioCtx.destination);
-                osc.start();
-                osc.stop(audioCtx.currentTime + 0.25);
-            } catch(e) { console.log('Audio Context blocked'); }
-
-            showToastOnly(msg);
-        }
-
-        function showToastOnly(msg) {
-            const toast = document.getElementById('notificationToast');
-            document.getElementById('toastMessage').innerText = msg;
-            toast.classList.add('show');
-            setTimeout(() => { toast.classList.remove('show'); }, 3500);
-        }
-
-        let universalAuthCallback = null;
-
-        function requireAdminAuth(callback) {
-            if (sessionStorage.getItem('isAdminAuth') === 'true') {
-                callback();
-            } else {
-                universalAuthCallback = callback;
-                document.getElementById('authPassInput').value = '';
-                document.getElementById('passAuthModal').classList.add('open');
-            }
-        }
-
-        function confirmUniversalAuth() {
-            const pass = document.getElementById('authPassInput').value;
-            if (pass === localStorage.getItem('adminPassword')) {
-                sessionStorage.setItem('isAdminAuth', 'true');
-                document.getElementById('passAuthModal').classList.remove('open');
-                if (universalAuthCallback) {
-                    universalAuthCallback();
-                    universalAuthCallback = null;
-                }
-            } else {
-                alert('كلمة المرور غير صحيحة!');
-            }
-        }
-
-        function cancelUniversalAuth() {
-            document.getElementById('passAuthModal').classList.remove('open');
-            universalAuthCallback = null;
-        }
-
-        function openBase64File(dataUrl, fileName = 'file.pdf') {
-            try {
-                if (!dataUrl) return;
+            doctorsList.forEach(doc => {
+                const isActive = doc.id === currentDoctorId;
                 
-                if (dataUrl.startsWith('http://') || dataUrl.startsWith('https://')) {
-                    window.open(dataUrl, '_blank');
-                    return;
-                }
+                // القائمة الجانبية
+                const menuItem = document.createElement('div');
+                menuItem.className = `menu-item menu-item-sub ${isActive ? 'active' : ''}`;
+                menuItem.onclick = () => switchDoctor(doc.id);
+                menuItem.innerHTML = `<i class="fa-solid fa-user-doctor"></i> <span>${doc.name}</span>`;
+                menuContainer.appendChild(menuItem);
 
-                const arr = dataUrl.split(',');
-                const mimeMatch = arr[0].match(/:(.*?);/);
-                const mime = mimeMatch ? mimeMatch[1] : 'application/pdf';
-                const bstr = atob(arr[1]);
-                let n = bstr.length;
-                const u8arr = new Uint8Array(n);
-                while (n--) {
-                    u8arr[n] = bstr.charCodeAt(n);
-                }
-                const blob = new Blob([u8arr], { type: mime });
-                const blobUrl = URL.createObjectURL(blob);
-
-                const newWin = window.open(blobUrl, '_blank');
-                if (!newWin || newWin.closed || typeof newWin.closed === 'undefined') {
-                    const a = document.createElement('a');
-                    a.href = blobUrl;
-                    a.download = fileName;
-                    document.body.appendChild(a);
-                    a.click();
-                    document.body.removeChild(a);
-                }
-            } catch(e) {
-                alert('عذراً، لم نتمكن من فتح الملف. حاول تنزيله.');
-            }
-        }
-
-        function renderAnnouncements() {
-            const container = document.getElementById('announcementsListContainer');
-            if (!container) return;
-            container.innerHTML = '';
-
-            if (clinicAnnouncements.length === 0) {
-                container.innerHTML = '<div style="text-align: center; color: var(--text-muted); font-size: 0.85rem; padding: 10px;">لا توجد تنبيهات جديدة حالياً. انقر على "إضافة تنبيه جديد" لإرسال تحديث للعيادة.</div>';
-                return;
-            }
-
-            clinicAnnouncements.forEach(item => {
-                const card = document.createElement('div');
-                card.className = 'announcement-card';
-                const dateStr = formatDateTimeFullCustom(item.createdAt);
-
-                let attachmentHTML = '';
-                if (item.fileUrl) {
-                    if (item.fileType && item.fileType.startsWith('image/')) {
-                        attachmentHTML = `
-                            <div class="announcement-thumbnail-wrapper" onclick="openImagePreview('${item.fileUrl}')" title="اضغط لمعاينة الصورة المكبرة">
-                                <img src="${item.fileUrl}" alt="مرفق">
-                            </div>
-                        `;
-                    } else {
-                        const fileName = item.fileName || 'فتح الملف المرفق';
-                        const safeKey = item.announcementKey;
-                        attachmentHTML = `
-                            <button type="button" class="announcement-file-btn" onclick="triggerFileDownload('${safeKey}')" title="اضغط لفتح/تحميل الملف">
-                                <i class="fa-solid fa-file-pdf"></i> ${fileName}
-                            </button>
-                        `;
-                    }
-                }
-
-                card.innerHTML = `
-                    <div class="announcement-body-content">
-                        <div class="announcement-body-text">${item.text}</div>${attachmentHTML}
-                    </div>
-                    <div class="announcement-footer-row">
-                        <span><i class="fa-regular fa-clock"></i> ${dateStr}</span>
-                        <div class="announcement-actions-group">
-                            <button class="btn-edit-announcement-card" onclick="openEditAnnouncementModal('${item.announcementKey}')" title="تعديل التنبيه">
-                                <i class="fa-solid fa-pen"></i> تعديل
-                            </button>
-                            <button class="btn-delete-announcement-card" onclick="deleteAnnouncement('${item.announcementKey}')" title="حذف التنبيه">
-                                <i class="fa-solid fa-trash-can"></i> حذف
-                            </button>
-                        </div>
-                    </div>
-                `;
-                container.appendChild(card);
+                // الشريط السريع
+                const tabBtn = document.createElement('button');
+                tabBtn.className = `doctor-tab-btn ${isActive ? 'active' : ''}`;
+                tabBtn.onclick = () => switchDoctor(doc.id);
+                tabBtn.innerHTML = `<i class="fa-solid fa-stethoscope"></i> ${doc.name}`;
+                quickBar.appendChild(tabBtn);
             });
         }
 
-        function triggerFileDownload(key) {
-            const item = clinicAnnouncements.find(a => a.announcementKey === key);
-            if (item && item.fileUrl) {
-                openBase64File(item.fileUrl, item.fileName || 'document.pdf');
-            }
+        function openAddDoctorModal() {
+            document.getElementById('addDoctorModal').classList.add('open');
         }
 
-        function openImagePreview(url) {
-            document.getElementById('previewFullImageTag').src = url;
-            document.getElementById('imagePreviewModal').classList.add('open');
+        function closeAddDoctorModal() {
+            document.getElementById('addDoctorModal').classList.remove('open');
         }
 
-        function closeImagePreviewModal() {
-            document.getElementById('imagePreviewModal').classList.remove('open');
-            document.getElementById('previewFullImageTag').src = '';
-        }
-
-        function openAddAnnouncementModal() {
-            document.getElementById('editAnnouncementKey').value = '';
-            document.getElementById('announcementText').value = '';
-            document.getElementById('announcementFile').value = '';
-            document.getElementById('announcementModalTitle').innerHTML = '<i class="fa-solid fa-bullhorn"></i> إضافة تنبيه أو إشعار للعيادة';
-            document.getElementById('announcementModal').classList.add('open');
-        }
-
-        function openEditAnnouncementModal(key) {
-            const item = clinicAnnouncements.find(a => a.announcementKey === key);
-            if (!item) return;
-            document.getElementById('editAnnouncementKey').value = item.announcementKey;
-            document.getElementById('announcementText').value = item.text || '';
-            document.getElementById('announcementFile').value = '';
-            document.getElementById('announcementModalTitle').innerHTML = '<i class="fa-solid fa-pen"></i> تعديل تنبيه العيادة';
-            document.getElementById('announcementModal').classList.add('open');
-        }
-
-        function closeAnnouncementModal() {
-            document.getElementById('announcementModal').classList.remove('open');
-        }
-
-        function saveAnnouncementItem(e) {
+        function saveNewDoctor(e) {
             e.preventDefault();
-            const key = document.getElementById('editAnnouncementKey').value;
-            const textVal = document.getElementById('announcementText').value.trim();
-            const fileInput = document.getElementById('announcementFile');
-            if (!textVal) return;
+            const nameVal = document.getElementById('newDoctorName').value.trim();
+            if (!nameVal) return;
 
-            const processAndSave = (fileUrl, fileType, fileName) => {
-                if (key) {
-                    const item = clinicAnnouncements.find(a => a.announcementKey === key);
-                    if (item) {
-                        item.text = textVal;
-                        if (fileUrl !== undefined) {
-                            item.fileUrl = fileUrl;
-                            item.fileType = fileType;
-                            item.fileName = fileName;
-                        }
-                        saveLocal();
-                        renderAnnouncements();
-                        closeAnnouncementModal();
-                        showToastOnly('✏️ تم تعديل التنبيه بنجاح!');
-
-                        if (navigator.onLine && !key.startsWith('ann_')) {
-                            const updateObj = { text: textVal };
-                            if (fileUrl !== undefined) {
-                                updateObj.fileUrl = fileUrl;
-                                updateObj.fileType = fileType;
-                                updateObj.fileName = fileName;
-                            }
-                            announcementsDbRef.child(key).update(updateObj);
-                        }
-                    }
-                } else {
-                    const tempKey = 'ann_' + Date.now();
-                    const newAnn = {
-                        announcementKey: tempKey,
-                        text: textVal,
-                        fileUrl: fileUrl || '',
-                        fileType: fileType || '',
-                        fileName: fileName || '',
-                        createdAt: new Date().toISOString()
-                    };
-
-                    clinicAnnouncements.unshift(newAnn);
-                    saveLocal();
-                    renderAnnouncements();
-                    closeAnnouncementModal();
-                    
-                    playBeepAndShowToast('📢 تم نشر التنبيه بنجاح للجميع!');
-
-                    if (navigator.onLine) {
-                        const uploadData = { text: newAnn.text, fileUrl: newAnn.fileUrl, fileType: newAnn.fileType, fileName: newAnn.fileName, createdAt: newAnn.createdAt };
-                        announcementsDbRef.push(uploadData).then((pushedRef) => {
-                            const idx = clinicAnnouncements.findIndex(a => a.announcementKey === tempKey);
-                            if (idx !== -1) {
-                                clinicAnnouncements[idx].announcementKey = pushedRef.key;
-                                saveLocal();
-                            }
-                        });
-                    }
-                }
+            const newId = 'dr_' + Date.now();
+            const newDoc = {
+                id: newId,
+                name: nameVal.startsWith('د.') ? nameVal : `د. ${nameVal}`,
+                dbPath: `doctors/${newId}/appointments`
             };
 
-            if (fileInput.files && fileInput.files[0]) {
-                const file = fileInput.files[0];
-                const reader = new FileReader();
-                reader.onload = function(evt) {
-                    processAndSave(evt.target.result, file.type, file.name);
-                };
-                reader.readAsDataURL(file);
-            } else {
-                let existingFileUrl = undefined;
-                let existingFileType = undefined;
-                let existingFileName = undefined;
-                if (key) {
-                    const existingItem = clinicAnnouncements.find(a => a.announcementKey === key);
-                    if (existingItem) {
-                        existingFileUrl = existingItem.fileUrl || '';
-                        existingFileType = existingItem.fileType || '';
-                        existingFileName = existingItem.fileName || '';
-                    }
-                }
-                processAndSave(existingFileUrl, existingFileType, existingFileName);
-            }
-        }
-
-        function deleteAnnouncement(key) {
-            if (confirm('هل أنت متأكد من حذف هذا التنبيه؟')) {
-                clinicAnnouncements = clinicAnnouncements.filter(a => a.announcementKey !== key);
-                saveLocal();
-                renderAnnouncements();
-
-                if (navigator.onLine && !key.startsWith('ann_')) {
-                    announcementsDbRef.child(key).remove();
-                }
-                showToastOnly('🗑️ تم حذف التنبيه بنجاح!');
-            }
-        }
-
-        let pendingPriorityCheckbox = null;
-        function checkPriorityAuth(checkbox) {
-            if (checkbox.checked) {
-                pendingPriorityCheckbox = checkbox;
-                checkbox.checked = false;
-                requireAdminAuth(() => {
-                    if (pendingPriorityCheckbox) {
-                        pendingPriorityCheckbox.checked = true;
-                        pendingPriorityCheckbox = null;
-                    }
-                });
-            }
-        }
-
-        function handleProcedureTypeChange(selectElement) {
-            const customWrapper = document.getElementById('customProcedureWrapper');
-            const customInput = document.getElementById('customProcedureInput');
-            if (selectElement.value === 'أخرى') {
-                customWrapper.style.display = 'flex';
-                customInput.setAttribute('required', 'true');
-            } else {
-                customWrapper.style.display = 'none';
-                customInput.removeAttribute('required');
-                customInput.value = '';
-            }
-        }
-
-        document.getElementById('appointmentForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const patientNameVal = document.getElementById('patientName').value.trim();
-            const patientPhoneVal = document.getElementById('patientPhone').value.trim() || '-';
-            const cleanNewPhone = patientPhoneVal !== '-' ? patientPhoneVal.replace(/\D/g, '') : '';
-
-            const isRepeated = records.some(r => {
-                const cleanExistingPhone = (r.patientPhone && r.patientPhone !== '-') ? r.patientPhone.replace(/\D/g, '') : '';
-                const matchPhone = (cleanNewPhone.length >= 8 && cleanExistingPhone === cleanNewPhone);
-                const matchName = (r.patientName && r.patientName.trim().toLowerCase() === patientNameVal.toLowerCase());
-                return matchPhone || matchName;
-            });
-
-            let procedureTypeValue = document.getElementById('procedureType').value;
-            if (procedureTypeValue === 'أخرى') {
-                const customVal = document.getElementById('customProcedureInput').value.trim();
-                procedureTypeValue = customVal !== '' ? customVal : 'أخرى';
-            }
-
-            const tempKey = 'local_' + Date.now();
-            const newRecord = {
-                firebaseKey: tempKey,
-                patientName: patientNameVal,
-                patientPhone: patientPhoneVal,
-                fileNumber: document.getElementById('fileNumber').value.trim() || '-',
-                idNumber: document.getElementById('idNumber').value.trim() || '-',
-                branch: document.getElementById('branch').value,
-                procedureType: procedureTypeValue,
-                contactMethod: document.getElementById('contactMethod').value,
-                serviceRequired: document.getElementById('serviceRequired').value,
-                coordinatorName: document.getElementById('coordinatorName').value,
-                isRecurring: document.getElementById('isRecurring').checked || isRepeated,
-                isRepeatedRequest: isRepeated,
-                createdAt: new Date().toISOString(),
-                actionTaken: '',
-                adminContactMethod: 'قيد الانتظار',
-                adminContactDetail: '',
-                isCopied: false,
-                isPinned: false,
-                isHiddenFromClients: false,
-                deletedAt: null
-            };
-
-            records.unshift(newRecord);
-            saveLocal();
-            renderTable();
-            updateKPIs();
-            updateDailyProgress();
-            renderClientReport();
-
-            if (navigator.onLine) {
-                const uploadData = { ...newRecord };
-                delete uploadData.firebaseKey;
-                dbRef.push(uploadData).then((pushedRef) => {
-                    const idx = records.findIndex(r => r.firebaseKey === tempKey);
-                    if(idx !== -1) { records[idx].firebaseKey = pushedRef.key; saveLocal(); }
-                });
-            }
-
-            this.reset();
-            document.getElementById('customProcedureWrapper').style.display = 'none';
+            doctorsList.push(newDoc);
+            saveDoctorsToLocal();
+            closeAddDoctorModal();
+            document.getElementById('newDoctorName').value = '';
             
-            playBeepAndShowToast('⚠️ تم إضافة العميل والموعد بنجاح!');
-        });
-
-        function requestTogglePinRecord(key) {
-            requireAdminAuth(() => {
-                let rec = records.find(r => r.firebaseKey === key);
-                if (rec) {
-                    rec.isPinned = !rec.isPinned;
-                    saveLocal();
-                    renderTable();
-                    updatePinnedCountBadge();
-                    renderClientReport();
-
-                    if (navigator.onLine && !key.startsWith('local_')) {
-                        dbRef.child(key).update({ isPinned: rec.isPinned });
-                    }
-
-                    showToastOnly(rec.isPinned ? '📌 تم إضافتها في المتميزون' : '✖️ تم إزالتها من المتميزون');
-                }
-            });
-        }
-
-        function updatePinnedCountBadge() {
-            const count = records.filter(r => r.isPinned && !r.isHiddenFromClients).length;
-            const badgeEl = document.getElementById('pinnedCount');
-            if (badgeEl) badgeEl.innerText = count;
-        }
-
-        function togglePinnedFilter() {
-            isPinnedFilterActive = !isPinnedFilterActive;
-            const btn = document.getElementById('pinnedFilterBtn');
-            const count = records.filter(r => r.isPinned && !r.isHiddenFromClients).length;
-            if (btn) {
-                if (isPinnedFilterActive) {
-                    btn.style.backgroundColor = '#d97706';
-                    btn.style.borderColor = '#f59e0b';
-                    btn.style.boxShadow = '0 0 12px rgba(217, 119, 6, 0.5)';
-                    btn.innerHTML = `<i class="fa-solid fa-thumbtack"></i> 📌 المميزون ( <span id="pinnedCount">${count}</span> )`;
-                } else {
-                    btn.style.backgroundColor = '#16a34a';
-                    btn.style.borderColor = '#22c55e';
-                    btn.style.boxShadow = 'none';
-                    btn.innerHTML = `<i class="fa-solid fa-file-lines"></i> ✅ الكشف العادي ( <span id="pinnedCount">${count}</span> )`;
-                }
-            }
-            renderClientReport();
-        }
-
-        function setDashboardFilter(filterType, btn) {
-            dashboardFilter = filterType;
-            localStorage.setItem('savedDashboardFilter', filterType);
-            
-            document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.dropdown-item').forEach(i => i.classList.remove('active'));
-            
-            if (btn) {
-                btn.classList.add('active');
-                if (btn.classList.contains('dropdown-item')) {
-                    btn.closest('.dropdown-filter-container').querySelector('.dropdown-filter-btn').classList.add('active');
-                }
-            }
-            document.querySelectorAll('.dropdown-content').forEach(dc => dc.classList.remove('show'));
-            renderTable();
-        }
-
-        function setDashboardTimeFilter(timeType, btn) {
-            dashboardTimeFilter = timeType;
-            localStorage.setItem('savedDashboardTimeFilter', timeType);
-            btn.closest('.filter-row').querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
-            btn.classList.add('active');
-            renderTable();
-        }
-
-        function updateDailyProgress() {
-            const now = new Date();
-            const todayRecords = records.filter(r => {
-                const d = new Date(r.createdAt);
-                return d.toDateString() === now.toDateString();
-            });
-
-            const totalToday = todayRecords.length;
-            if (totalToday === 0) {
-                document.getElementById('progressText').innerText = '0% (لا توجد حالات اليوم)';
-                document.getElementById('progressBarFill').style.width = '0%';
-                return;
-            }
-
-            const completedToday = todayRecords.filter(r => {
-                const contact = r.adminContactMethod || 'قيد الانتظار';
-                const hasAction = r.actionTaken && r.actionTaken.trim() !== '';
-                return contact !== 'قيد الانتظار' || hasAction;
-            }).length;
-
-            const percentage = Math.round((completedToday / totalToday) * 100);
-            document.getElementById('progressText').innerText = `${percentage}% (${completedToday} من ${totalToday} حالات مُنجزة)`;
-            document.getElementById('progressBarFill').style.width = `${percentage}%`;
+            switchDoctor(newId);
+            alert(`تم إنشاء صفحة وسحابة خاصة لـ (${newDoc.name}) بنجاح!`);
         }
 
         function renderTable() {
@@ -2260,993 +1051,26 @@
             if (!tbody) return;
             tbody.innerHTML = '';
 
-            syncFilterTabsUI();
-
-            let filteredList = [...records];
-            const now = new Date();
-
-            if (dashboardFilter === 'priority') {
-                filteredList = filteredList.filter(r => r.isRecurring);
-            } else if (dashboardFilter === 'repeated') {
-                filteredList = filteredList.filter(r => r.isRepeatedRequest);
-            } else if (dashboardFilter === 'plants') {
-                filteredList = filteredList.filter(r => r.procedureType && r.procedureType.includes('زراعة'));
-            } else if (dashboardFilter === 'extraction') {
-                filteredList = filteredList.filter(r => r.procedureType && r.procedureType.includes('خلع'));
-            } else if (dashboardFilter === 'review') {
-                filteredList = filteredList.filter(r => r.procedureType && r.procedureType.includes('مراجعه'));
-            } else if (dashboardFilter === 'inquiries_all') {
-                filteredList = filteredList.filter(r => r.procedureType && r.procedureType.includes('استفسارات'));
-            } else if (dashboardFilter === 'inquiries_done') {
-                filteredList = filteredList.filter(r => {
-                    const isQ = (r.procedureType && r.procedureType.includes('استفسارات'));
-                    const hasChange = (r.adminContactMethod && r.adminContactMethod !== 'قيد الانتظار') || (r.actionTaken && r.actionTaken.trim() !== '');
-                    return isQ && hasChange;
-                });
-            } else if (dashboardFilter === 'inquiries_pending') {
-                filteredList = filteredList.filter(r => {
-                    const isQ = (r.procedureType && r.procedureType.includes('استفسارات'));
-                    const isPending = (!r.adminContactMethod || r.adminContactMethod === 'قيد الانتظار') && (!r.actionTaken || r.actionTaken.trim() === '');
-                    return isQ && isPending;
-                });
-            } else if (dashboardFilter === 'no_inquiries_all') {
-                filteredList = filteredList.filter(r => !r.procedureType || !r.procedureType.includes('استفسارات'));
-            } else if (dashboardFilter === 'no_inquiries_done') {
-                filteredList = filteredList.filter(r => {
-                    const isNotQ = (!r.procedureType || !r.procedureType.includes('استفسارات'));
-                    const hasChange = (r.adminContactMethod && r.adminContactMethod !== 'قيد الانتظار') || (r.actionTaken && r.actionTaken.trim() !== '');
-                    return isNotQ && hasChange;
-                });
-            } else if (dashboardFilter === 'no_inquiries_pending') {
-                filteredList = filteredList.filter(r => {
-                    const isNotQ = (!r.procedureType || !r.procedureType.includes('استفسارات'));
-                    const isPending = (!r.adminContactMethod || r.adminContactMethod === 'قيد الانتظار') && (!r.actionTaken || r.actionTaken.trim() === '');
-                    return isNotQ && isPending;
-                });
-            }
-
-            if (dashboardTimeFilter === 'today') {
-                filteredList = filteredList.filter(r => {
-                    const d = new Date(r.createdAt);
-                    return d.toDateString() === now.toDateString();
-                });
-            } else if (dashboardTimeFilter === 'week') {
-                filteredList = filteredList.filter(r => {
-                    const diffTime = now - new Date(r.createdAt);
-                    return diffTime <= 7 * 24 * 60 * 60 * 1000;
-                });
-            } else if (dashboardTimeFilter === 'month') {
-                filteredList = filteredList.filter(r => {
-                    const d = new Date(r.createdAt);
-                    return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
-                });
-            }
-
-            filteredList.sort((a, b) => {
-                if (a.isRecurring && !b.isRecurring) return -1;
-                if (!a.isRecurring && b.isRecurring) return 1;
-                return new Date(b.createdAt) - new Date(a.createdAt);
-            });
-
-            filteredList.forEach((record, index) => {
+            records.forEach((record, index) => {
                 const tr = document.createElement('tr');
-                if (record.isRecurring) {
-                    tr.classList.add('row-priority-pulse');
-                }
-
-                const currentContact = record.adminContactMethod || 'قيد الانتظار';
-                const isOther = !['قيد الانتظار', 'قيد الإجراء', 'تم التواصل', 'معلق', 'اعتذر'].includes(currentContact);
-                const selectVal = isOther ? 'أخرى' : currentContact;
-                const otherDetail = isOther ? currentContact : (record.adminContactDetail || '');
-
-                if (selectVal === 'اعتذر') {
-                    tr.classList.add('row-apologized');
-                }
-
-                let statusBadgeHTML = '';
-                if (record.isRecurring) {
-                    statusBadgeHTML += '<span class="status-badge badge-priority">⭐ أولوية</span><br>';
-                }
-                if (record.isRepeatedRequest) {
-                    statusBadgeHTML += '<span class="status-badge badge-repeated">🔄 متكررة</span><br>';
-                }
-
-                let sClass = 'badge-other';
-                if (selectVal === 'قيد الانتظار') sClass = 'badge-pending';
-                else if (selectVal === 'قيد الإجراء') sClass = 'badge-inprogress';
-                else if (selectVal === 'تم التواصل') sClass = 'badge-completed';
-                else if (selectVal === 'معلق') sClass = 'badge-suspended';
-                else if (selectVal === 'اعتذر') sClass = 'badge-apologized';
-
-                statusBadgeHTML += `<span class="status-badge ${sClass}">${selectVal}</span>`;
-
-                const proc = record.procedureType || '-';
-                let procClass = 'proc-default';
-                if (proc.includes('زراعة')) procClass = 'proc-plant';
-                else if (proc.includes('خلع')) procClass = 'proc-extraction';
-                else if (proc.includes('جراحه')) procClass = 'proc-surgery';
-                else if (proc.includes('فك خياطه')) procClass = 'proc-stitches';
-                else if (proc.includes('مراجعه')) procClass = 'proc-review';
-                else if (proc.includes('استفسارات')) procClass = 'proc-inquiry';
-
-                const isPinned = record.isPinned;
-
                 tr.innerHTML = `
                     <td>${index + 1}</td>
-                    <td>${formatDateOnly(record.createdAt)}</td>
-                    <td>${statusBadgeHTML}</td>
+                    <td>${record.createdAt ? record.createdAt.slice(0,10) : '-'}</td>
+                    <td><span class="status-badge badge-inprogress">${record.adminContactMethod || 'قيد الانتظار'}</span></td>
                     <td><strong>${record.patientName}</strong></td>
                     <td>${record.patientPhone}</td>
                     <td>${record.fileNumber || '-'}</td>
-                    <td><span class="proc-badge ${procClass}">${proc}</span></td>
+                    <td><span class="proc-badge proc-default">${record.procedureType || '-'}</span></td>
                     <td><div class="service-cell-box">${record.serviceRequired}</div></td>
                     <td>${record.coordinatorName}</td>
+                    <td>${record.adminContactMethod || 'قيد الانتظار'}</td>
+                    <td>${record.actionTaken || '-'}</td>
                     <td>
-                        <select class="table-input" id="adminContact_${record.firebaseKey}" onchange="handleContactChange('${record.firebaseKey}')">
-                            <option value="قيد الانتظار" ${selectVal === 'قيد الانتظار' ? 'selected' : ''}>قيد الانتظار</option>
-                            <option value="قيد الإجراء" ${selectVal === 'قيد الإجراء' ? 'selected' : ''}>قيد الإجراء 🔄</option>
-                            <option value="تم التواصل" ${selectVal === 'تم التواصل' ? 'selected' : ''}>تم التواصل ✅</option>
-                            <option value="معلق" ${selectVal === 'معلق' ? 'selected' : ''}>معلق 🟡</option>
-                            <option value="اعتذر" ${selectVal === 'اعتذر' ? 'selected' : ''}>اعتذر ❌</option>
-                            <option value="أخرى" ${selectVal === 'أخرى' ? 'selected' : ''}>أخرى ✍️</option>
-                        </select>
-                        <input type="text" class="table-input" id="adminOther_${record.firebaseKey}" placeholder="التفاصيل..." value="${otherDetail}" style="margin-top: 5px; ${selectVal === 'أخرى' ? '' : 'display:none;'}">
-                    </td>
-                    <td><textarea class="table-input" id="action_${record.firebaseKey}">${record.actionTaken || ''}</textarea></td>
-                    <td>
-                        <button class="btn-pin-action ${isPinned ? 'pinned' : ''}" onclick="requestTogglePinRecord('${record.firebaseKey}')" title="${isPinned ? 'إلغاء التثبيت' : 'تثبيت العميل (يتطلب باسورد)'}"><i class="fa-solid fa-thumbtack"></i></button>
-                        <button class="btn-save-action" onclick="saveAdminUpdate('${record.firebaseKey}')" title="حفظ"><i class="fa-solid fa-floppy-disk"></i></button>
-                        <button class="btn-edit-action" onclick="openEditModal('${record.firebaseKey}')" title="تعديل"><i class="fa-solid fa-pen"></i></button>
-                        <button class="btn-delete-action" onclick="deleteRecord('${record.firebaseKey}')" title="حذف"><i class="fa-solid fa-trash"></i></button>
+                        <button class="btn-delete-action" onclick="deleteRecord('${record.firebaseKey}')"><i class="fa-solid fa-trash"></i></button>
                     </td>
                 `;
                 tbody.appendChild(tr);
             });
-            filterTable();
-        }
-
-        function handleContactChange(key) {
-            const selectVal = document.getElementById(`adminContact_${key}`).value;
-            const otherInput = document.getElementById(`adminOther_${key}`);
-            if (selectVal === 'أخرى') {
-                otherInput.style.display = 'block';
-                otherInput.focus();
-            } else {
-                otherInput.style.display = 'none';
-                otherInput.value = '';
-            }
-        }
-
-        function saveAdminUpdate(key) {
-            const actionVal = document.getElementById(`action_${key}`).value;
-            let adminContactSelect = document.getElementById(`adminContact_${key}`).value;
-            const otherInputVal = document.getElementById(`adminOther_${key}`).value.trim();
-
-            if (adminContactSelect === 'أخرى' && otherInputVal !== '') {
-                adminContactSelect = otherInputVal;
-            }
-
-            let rec = records.find(r => r.firebaseKey === key);
-            if (rec) { 
-                rec.actionTaken = actionVal; 
-                rec.adminContactMethod = adminContactSelect; 
-                saveLocal(); 
-                renderTable(); 
-                updateKPIs();
-                updateDailyProgress();
-                renderClientReport();
-            }
-
-            if (navigator.onLine && !key.startsWith('local_')) {
-                dbRef.child(key).update({ actionTaken: actionVal, adminContactMethod: adminContactSelect });
-            }
-            alert('تم التحديث بنجاح!');
-        }
-
-        function openEditModal(key) {
-            const rec = records.find(r => r.firebaseKey === key);
-            if (!rec) return;
-
-            document.getElementById('editFirebaseKey').value = rec.firebaseKey;
-            document.getElementById('editPatientName').value = rec.patientName || '';
-            document.getElementById('editPatientPhone').value = rec.patientPhone || '';
-            document.getElementById('editFileNumber').value = rec.fileNumber || '';
-            document.getElementById('editIdNumber').value = rec.idNumber || '';
-            document.getElementById('editBranch').value = rec.branch || 'معشي';
-            document.getElementById('editContactMethod').value = rec.contactMethod || 'اتصال';
-            document.getElementById('editCoordinatorName').value = rec.coordinatorName || '';
-            document.getElementById('editProcedureType').value = rec.procedureType || 'مراجعه';
-            document.getElementById('editServiceRequired').value = rec.serviceRequired || '';
-            
-            originalEditPriorityState = !!rec.isRecurring;
-            originalEditRepeatedState = !!rec.isRepeatedRequest;
-
-            document.getElementById('editIsRecurring').checked = originalEditPriorityState;
-            document.getElementById('editIsRepeatedRequest').checked = originalEditRepeatedState;
-
-            document.getElementById('editModal').classList.add('open');
-        }
-
-        function closeEditModal() {
-            document.getElementById('editModal').classList.remove('open');
-        }
-
-        function executeActualEdit() {
-            const key = document.getElementById('editFirebaseKey').value;
-            let rec = records.find(r => r.firebaseKey === key);
-            if (!rec) return;
-
-            rec.patientName = document.getElementById('editPatientName').value.trim();
-            rec.patientPhone = document.getElementById('editPatientPhone').value.trim() || '-';
-            rec.fileNumber = document.getElementById('editFileNumber').value.trim() || '-';
-            rec.idNumber = document.getElementById('editIdNumber').value.trim() || '-';
-            rec.branch = document.getElementById('editBranch').value;
-            rec.contactMethod = document.getElementById('editContactMethod').value;
-            rec.coordinatorName = document.getElementById('editCoordinatorName').value.trim();
-            rec.procedureType = document.getElementById('editProcedureType').value;
-            rec.serviceRequired = document.getElementById('editServiceRequired').value.trim();
-            rec.isRecurring = document.getElementById('editIsRecurring').checked;
-            rec.isRepeatedRequest = document.getElementById('editIsRepeatedRequest').checked;
-
-            saveLocal();
-            renderTable();
-            updateKPIs();
-            updateDailyProgress();
-            renderClientReport();
-            closeEditModal();
-
-            if (navigator.onLine && !key.startsWith('local_')) {
-                dbRef.child(key).update({
-                    patientName: rec.patientName,
-                    patientPhone: rec.patientPhone,
-                    fileNumber: rec.fileNumber,
-                    idNumber: rec.idNumber,
-                    branch: rec.branch,
-                    contactMethod: rec.contactMethod,
-                    coordinatorName: rec.coordinatorName,
-                    procedureType: rec.procedureType,
-                    serviceRequired: rec.serviceRequired,
-                    isRecurring: rec.isRecurring,
-                    isRepeatedRequest: rec.isRepeatedRequest
-                });
-            }
-            alert('تم تعديل البيانات بنجاح!');
-        }
-
-        function saveEditedRecord(e) {
-            e.preventDefault();
-            const currentPriorityUI = document.getElementById('editIsRecurring').checked;
-            const currentRepeatedUI = document.getElementById('editIsRepeatedRequest').checked;
-
-            if (currentPriorityUI !== originalEditPriorityState || currentRepeatedUI !== originalEditRepeatedState) {
-                requireAdminAuth(() => {
-                    executeActualEdit();
-                });
-            } else {
-                executeActualEdit();
-            }
-        }
-
-        function deleteRecord(key) {
-            requireAdminAuth(() => {
-                if (confirm('هل أنت متأكد من حذف هذا العميل؟')) {
-                    const itemIdx = records.findIndex(r => r.firebaseKey === key);
-                    if (itemIdx !== -1) {
-                        records.splice(itemIdx, 1);
-                        saveLocal();
-                        renderTable();
-                        updateKPIs();
-                        updateDailyProgress();
-                        renderClientReport();
-                        updatePinnedCountBadge();
-
-                        if (navigator.onLine && !key.startsWith('local_')) {
-                            dbRef.child(key).remove();
-                        }
-                    }
-                }
-            });
-        }
-
-        let draggedCardIndex = null;
-        let activeTouchHandle = null;
-
-        function renderCSLinks() {
-            const container = document.getElementById('linksGridContainer');
-            if (!container) return;
-            container.innerHTML = '';
-
-            if (csLinks.length === 0) {
-                container.innerHTML = `
-                    <div style="grid-column: 1/-1; text-align: center; padding: 30px; color: var(--text-muted);">
-                        لا توجد روابط مضافة حالياً. انقر على "إضافة رابط جديد" لإضافة أول رابط للدليل الشامل.
-                    </div>
-                `;
-                return;
-            }
-
-            csLinks.forEach((item, index) => {
-                const card = document.createElement('div');
-                card.className = 'link-card';
-                card.setAttribute('data-index', index);
-
-                card.innerHTML = `
-                    <div class="drag-handle" title="اضغط باستمرار واسحب من هنا للترتيب"><i class="fa-solid fa-grip-vertical"></i></div>
-                    <div class="link-card-header">
-                        <i class="fa-solid fa-globe"></i>
-                        <span>${item.title}</span>
-                    </div>
-                    <div class="link-card-desc">${item.desc || 'لا يوجد وصف مُضاف.'}</div>
-                    <div class="link-card-actions">
-                        <button type="button" class="btn-open-link" onclick="secureOpenLink('${item.url}')"><i class="fa-solid fa-arrow-up-right-from-square"></i> فتح الموقع</button>
-                        <button class="btn-edit-action" onclick="openEditLinkModal('${item.linkKey}')" title="تعديل الرابط"><i class="fa-solid fa-pen"></i></button>
-                        <button class="btn-delete-action" onclick="deleteCSLink('${item.linkKey}')" title="حذف الرابط"><i class="fa-solid fa-trash"></i></button>
-                    </div>
-                `;
-
-                const handle = card.querySelector('.drag-handle');
-
-                // تفعيل السحب فقط عند الضغط باستمرار على مربع المقبض مع طلب باسورد الإدارة للحماية
-                handle.addEventListener('mousedown', (e) => {
-                    e.preventDefault();
-                    requireAdminAuth(() => {
-                        card.setAttribute('draggable', 'true');
-                        draggedCardIndex = index;
-                        card.classList.add('dragging');
-                        
-                        // محاكاة بدء السحب الفوري بناءً على رغبة المستخدم في الضغط المستمر
-                        const dragEvent = new DragEvent('dragstart', { bubbles: true, cancelable: true });
-                        card.dispatchEvent(dragEvent);
-                    });
-                });
-
-                card.addEventListener('dragstart', (e) => {
-                    if (!card.classList.contains('dragging')) {
-                        e.preventDefault();
-                    }
-                });
-
-                card.addEventListener('dragover', (e) => {
-                    e.preventDefault();
-                    card.classList.add('drag-over');
-                });
-
-                card.addEventListener('dragleave', () => {
-                    card.classList.remove('drag-over');
-                });
-
-                card.addEventListener('drop', (e) => {
-                    e.preventDefault();
-                    card.classList.remove('drag-over');
-                    const targetIdx = parseInt(card.getAttribute('data-index'));
-                    if (draggedCardIndex !== null && draggedCardIndex !== targetIdx) {
-                        reorderCSLinks(draggedCardIndex, targetIdx);
-                    }
-                });
-
-                card.addEventListener('dragend', () => {
-                    card.removeAttribute('draggable');
-                    card.classList.remove('dragging');
-                    document.querySelectorAll('.link-card').forEach(c => c.classList.remove('drag-over'));
-                    draggedCardIndex = null;
-                });
-
-                // دعم السحب باللمس للـ Mobile
-                handle.addEventListener('touchstart', (e) => {
-                    requireAdminAuth(() => {
-                        activeTouchHandle = card;
-                        draggedCardIndex = index;
-                        card.classList.add('dragging');
-                    });
-                }, { passive: true });
-
-                handle.addEventListener('touchmove', (e) => {
-                    if (!activeTouchHandle) return;
-                    const touchLoc = e.touches[0];
-                    const targetEl = document.elementFromPoint(touchLoc.clientX, touchLoc.clientY);
-
-                    document.querySelectorAll('.link-card').forEach(c => c.classList.remove('drag-over'));
-                    if (targetEl) {
-                        const targetCard = targetEl.closest('.link-card');
-                        if (targetCard && targetCard !== activeTouchHandle) {
-                            targetCard.classList.add('drag-over');
-                        }
-                    }
-                }, { passive: true });
-
-                handle.addEventListener('touchend', (e) => {
-                    if (!activeTouchHandle) return;
-
-                    const touchLoc = e.changedTouches[0];
-                    const targetEl = document.elementFromPoint(touchLoc.clientX, touchLoc.clientY);
-
-                    activeTouchHandle.classList.remove('dragging');
-                    document.querySelectorAll('.link-card').forEach(c => c.classList.remove('drag-over'));
-
-                    if (targetEl) {
-                        const targetCard = targetEl.closest('.link-card');
-                        if (targetCard) {
-                            const targetIdx = parseInt(targetCard.getAttribute('data-index'));
-                            if (draggedCardIndex !== null && draggedCardIndex !== targetIdx) {
-                                reorderCSLinks(draggedCardIndex, targetIdx);
-                            }
-                        }
-                    }
-
-                    activeTouchHandle = null;
-                    draggedCardIndex = null;
-                });
-
-                container.appendChild(card);
-            });
-        }
-
-        function secureOpenLink(url) {
-            window.open(url, '_blank');
-        }
-
-        function reorderCSLinks(fromIdx, toIdx) {
-            const movedItem = csLinks.splice(fromIdx, 1)[0];
-            csLinks.splice(toIdx, 0, movedItem);
-
-            csLinks.forEach((link, idx) => {
-                link.orderIndex = idx;
-                if (navigator.onLine && !link.linkKey.startsWith('link_')) {
-                    linksDbRef.child(link.linkKey).update({ orderIndex: idx });
-                }
-            });
-
-            saveLocal();
-            renderCSLinks();
-            showToastOnly('🔄 تم ترتيب الكروت بنجاح!');
-        }
-
-        function openAddLinkModal() {
-            requireAdminAuth(() => {
-                document.getElementById('linkKey').value = '';
-                document.getElementById('linkTitle').value = '';
-                document.getElementById('linkUrl').value = '';
-                document.getElementById('linkDesc').value = '';
-                document.getElementById('linkModalTitle').innerHTML = '<i class="fa-solid fa-link"></i> إضافة رابط جديد';
-                document.getElementById('linkModal').classList.add('open');
-            });
-        }
-
-        function openEditLinkModal(key) {
-            requireAdminAuth(() => {
-                const item = csLinks.find(l => l.linkKey === key);
-                if (!item) return;
-                document.getElementById('linkKey').value = item.linkKey;
-                document.getElementById('linkTitle').value = item.title || '';
-                document.getElementById('linkUrl').value = item.url || '';
-                document.getElementById('linkDesc').value = item.desc || '';
-                document.getElementById('linkModalTitle').innerHTML = '<i class="fa-solid fa-pen"></i> تعديل بيانات الرابط';
-                document.getElementById('linkModal').classList.add('open');
-            });
-        }
-
-        function closeLinkModal() {
-            document.getElementById('linkModal').classList.remove('open');
-        }
-
-        function saveLinkItem(e) {
-            e.preventDefault();
-            const key = document.getElementById('linkKey').value;
-            const title = document.getElementById('linkTitle').value.trim();
-            const url = document.getElementById('linkUrl').value.trim();
-            const desc = document.getElementById('linkDesc').value.trim();
-
-            if (key) {
-                let item = csLinks.find(l => l.linkKey === key);
-                if (item) {
-                    item.title = title;
-                    item.url = url;
-                    item.desc = desc;
-
-                    if (navigator.onLine && !key.startsWith('link_')) {
-                        linksDbRef.child(key).update({ title, url, desc });
-                    }
-                }
-            } else {
-                const tempKey = 'link_' + Date.now();
-                const newOrderIndex = csLinks.length;
-                const newLink = { linkKey: tempKey, title, url, desc, orderIndex: newOrderIndex };
-                csLinks.push(newLink);
-
-                if (navigator.onLine) {
-                    linksDbRef.push({ title, url, desc, orderIndex: newOrderIndex }).then((pushedRef) => {
-                        const idx = csLinks.findIndex(l => l.linkKey === tempKey);
-                        if (idx !== -1) { csLinks[idx].linkKey = pushedRef.key; saveLocal(); }
-                    });
-                }
-            }
-
-            saveLocal();
-            renderCSLinks();
-            closeLinkModal();
-            showToastOnly('✅ تم حفظ الرابط بنجاح!');
-        }
-
-        function deleteCSLink(key) {
-            requireAdminAuth(() => {
-                if (confirm('هل أنت متأكد من حذف هذا الرابط من الدليل الشامل؟')) {
-                    const idx = csLinks.findIndex(l => l.linkKey === key);
-                    if (idx !== -1) {
-                        csLinks.splice(idx, 1);
-                        saveLocal();
-                        renderCSLinks();
-
-                        if (navigator.onLine && !key.startsWith('link_')) {
-                            linksDbRef.child(key).remove();
-                        }
-                        showToastOnly('🗑️ تم حذف الرابط بنجاح!');
-                    }
-                }
-            });
-        }
-
-        function setClientTimeFilterSelect(hours) {
-            clientHoursFilter = hours;
-            localStorage.setItem('savedClientHoursFilter', hours);
-            renderClientReport();
-        }
-
-        function getOpenFilteredRecords() {
-            let openRecords = records.filter(r => {
-                if (r.isHiddenFromClients) return false;
-                if (isPinnedFilterActive && !r.isPinned) return false;
-                return true;
-            });
-
-            if (clientHoursFilter !== 'all' && !isPinnedFilterActive) {
-                const now = new Date();
-                openRecords = openRecords.filter(r => {
-                    const diffHours = (now - new Date(r.createdAt)) / (1000 * 60 * 60);
-                    return diffHours <= parseFloat(clientHoursFilter);
-                });
-            }
-            return openRecords;
-        }
-
-        function formatDateTimeFullCustom(isoString) {
-            if (!isoString) return '';
-            try {
-                const d = new Date(isoString);
-                const day = String(d.getDate()).padStart(2, '0');
-                const month = String(d.getMonth() + 1).padStart(2, '0');
-                const year = d.getFullYear();
-                
-                let hours = d.getHours();
-                const minutes = String(d.getMinutes()).padStart(2, '0');
-                const seconds = String(d.getSeconds()).padStart(2, '0');
-                const ampm = hours >= 12 ? 'PM' : 'AM';
-                hours = hours % 12;
-                hours = hours ? hours : 12;
-                const hoursStr = String(hours).padStart(2, '0');
-
-                return `${day}/${month}/${year} , ${hoursStr}:${minutes}:${seconds}${ampm}`;
-            } catch(e) { return isoString; }
-        }
-
-        function toggleCopiedStatusGroup(keysArray) {
-            requireAdminAuth(() => {
-                const targetState = !records.find(r => keysArray.includes(r.firebaseKey))?.isCopied;
-                keysArray.forEach(k => {
-                    const rec = records.find(r => r.firebaseKey === k);
-                    if (rec) {
-                        rec.isCopied = targetState;
-                        if (navigator.onLine && !k.startsWith('local_')) {
-                            dbRef.child(k).update({ isCopied: targetState });
-                        }
-                    }
-                });
-                saveLocal();
-                renderClientReport();
-            });
-        }
-
-        function hideClientGroupFromReport(keysArray) {
-            requireAdminAuth(() => {
-                const nowIso = new Date().toISOString();
-                keysArray.forEach(k => {
-                    let rec = records.find(r => r.firebaseKey === k);
-                    if (rec) {
-                        rec.isHiddenFromClients = true;
-                        rec.deletedAt = nowIso;
-                        if (navigator.onLine && !k.startsWith('local_')) {
-                            dbRef.child(k).update({ isHiddenFromClients: true, deletedAt: nowIso });
-                        }
-                    }
-                });
-                saveLocal();
-                renderClientReport();
-                renderTrashModalList();
-                showToastOnly('🗑️ تم نقل الطلبات إلى سلة المحذوفات بنجاح!');
-            });
-        }
-
-        function permanentDeleteGroupFromReport(keysArray) {
-            requireAdminAuth(() => {
-                if (confirm('⚠️ تنبيه: هل أنت متأكد من الحذف النهائي للعميل وجميع طلباته المكررة من النظام بالكامل؟')) {
-                    records = records.filter(r => !keysArray.includes(r.firebaseKey));
-                    saveLocal();
-                    renderTable();
-                    updateKPIs();
-                    updateDailyProgress();
-                    renderClientReport();
-                    renderTrashModalList();
-                    updatePinnedCountBadge();
-
-                    keysArray.forEach(k => {
-                        if (navigator.onLine && !k.startsWith('local_')) {
-                            dbRef.child(k).remove();
-                        }
-                    });
-                    alert('تم الحذف النهائي للعميل وجميع طلباته المنسوبة إليه.');
-                }
-            });
-        }
-
-        function restoreClientToReport(key) {
-            requireAdminAuth(() => {
-                let rec = records.find(r => r.firebaseKey === key);
-                if (rec) {
-                    rec.isHiddenFromClients = false;
-                    rec.deletedAt = null;
-                    saveLocal();
-                    renderClientReport();
-                    renderTrashModalList();
-                    if (navigator.onLine && !key.startsWith('local_')) {
-                        dbRef.child(key).update({ isHiddenFromClients: false, deletedAt: null });
-                    }
-                    showToastOnly('↩️ تم استرجاع العميل إلى صفحة الكشف بنجاح!');
-                }
-            });
-        }
-
-        function permanentDeleteClientFromReport(key) {
-            requireAdminAuth(() => {
-                if (confirm('⚠️ تنبيه: هل أنت متأكد من الحذف النهائي لهذا العميل من النظام بالكامل؟ لا يمكن استرجاعه بعد الآن.')) {
-                    const idx = records.findIndex(r => r.firebaseKey === key);
-                    if (idx !== -1) {
-                        records.splice(idx, 1);
-                        saveLocal();
-                        renderTable();
-                        updateKPIs();
-                        updateDailyProgress();
-                        renderClientReport();
-                        renderTrashModalList();
-                        updatePinnedCountBadge();
-
-                        if (navigator.onLine && !key.startsWith('local_')) {
-                            dbRef.child(key).remove();
-                        }
-                        alert('تم الحذف النهائي للعميل بنجاح.');
-                    }
-                }
-            });
-        }
-
-        function checkTrashAuthAndOpen() {
-            requireAdminAuth(() => {
-                openTrashModal();
-            });
-        }
-
-        function openTrashModal() {
-            renderTrashModalList();
-            document.getElementById('trashModal').classList.add('open');
-        }
-
-        function closeTrashModal() {
-            document.getElementById('trashModal').classList.remove('open');
-        }
-
-        function renderTrashModalList() {
-            const trashContainer = document.getElementById('trashModalList');
-            if (!trashContainer) return;
-            trashContainer.innerHTML = '';
-
-            let hiddenRecords = records.filter(r => r.isHiddenFromClients);
-
-            if (hiddenRecords.length === 0) {
-                trashContainer.innerHTML = '<div style="text-align:center; padding:20px; color:var(--text-muted); font-size:0.9rem;">سلة المحذوفات فارغة تماماً</div>';
-                return;
-            }
-
-            hiddenRecords.sort((a, b) => new Date(b.deletedAt || b.createdAt) - new Date(a.deletedAt || a.createdAt));
-
-            hiddenRecords.forEach((item, index) => {
-                const card = document.createElement('div');
-                card.className = 'client-card-wrapper';
-
-                const fileStr = (item.fileNumber && item.fileNumber !== '-') ? ` ${item.fileNumber}` : '';
-                const phoneStr = (item.patientPhone && item.patientPhone !== '-') ? item.patientPhone : '-';
-                const serviceStr = item.serviceRequired || '-';
-                const dateTimeStr = formatDateTimeFullCustom(item.createdAt);
-
-                card.innerHTML = `
-                    <div class="client-card-header">
-                        <div class="client-title">
-                            <span>${index + 1}- ${item.patientName}${fileStr}</span>
-                        </div>
-                        ${dateTimeStr ? `<span class="client-datetime-badge"><i class="fa-regular fa-clock"></i> ${dateTimeStr}</span>` : ''}
-                    </div>
-                    <div class="client-info-row"><span class="info-label">رقم الجوال:</span> ${phoneStr}</div>
-                    <div class="client-info-row">${serviceStr}</div>
-                    <div class="client-actions-row">
-                        <button class="btn-client-action restore" onclick="restoreClientToReport('${item.firebaseKey}')">
-                            <i class="fa-solid fa-rotate-left"></i> استرجاع
-                        </button>
-                        <button class="btn-client-action permanent-delete" onclick="permanentDeleteClientFromReport('${item.firebaseKey}')">
-                            <i class="fa-solid fa-trash-can"></i> حذف نهائي
-                        </button>
-                    </div>
-                `;
-                trashContainer.appendChild(card);
-            });
-        }
-
-        function renderClientReport() {
-            const container = document.getElementById('clientReportList');
-            if (!container) return;
-            container.innerHTML = '';
-
-            let openRecords = getOpenFilteredRecords();
-
-            const searchInputEl = document.getElementById('clientSearchInput');
-            if (searchInputEl) {
-                const searchVal = searchInputEl.value.trim().toLowerCase();
-                if (searchVal !== '') {
-                    openRecords = openRecords.filter(r => {
-                        const name = (r.patientName || '').toLowerCase();
-                        const phone = (r.patientPhone || '').toLowerCase();
-                        const file = (r.fileNumber || '').toLowerCase();
-                        const id = (r.idNumber || '').toLowerCase();
-                        const service = (r.serviceRequired || '').toLowerCase();
-                        return name.includes(searchVal) || phone.includes(searchVal) || file.includes(searchVal) || id.includes(searchVal) || service.includes(searchVal);
-                    });
-                }
-            }
-
-            if (openRecords.length === 0) {
-                container.innerHTML = '<div style="text-align:center; padding:30px; color:var(--text-muted); font-size:1rem;">لا توجد نتائج أو حالات طابقت البحث 🎉</div>';
-                return;
-            }
-
-            const groupedMap = new Map();
-
-            openRecords.forEach(record => {
-                const cleanPhone = (record.patientPhone && record.patientPhone !== '-') ? record.patientPhone.replace(/\D/g, '') : '';
-                const groupKey = (cleanPhone.length >= 8) ? cleanPhone : (record.patientName || '').trim().toLowerCase();
-
-                if (!groupedMap.has(groupKey)) {
-                    groupedMap.set(groupKey, []);
-                }
-                groupedMap.get(groupKey).push(record);
-            });
-
-            let consolidatedList = [];
-
-            groupedMap.forEach((groupRecords) => {
-                groupRecords.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-
-                const mainRecord = groupRecords[0];
-                const allKeys = groupRecords.map(r => r.firebaseKey);
-                const isRepeatedGroup = groupRecords.length > 1 || groupRecords.some(r => r.isRepeatedRequest);
-                const isCopiedGroup = groupRecords.every(r => r.isCopied);
-                const isPinnedGroup = groupRecords.some(r => r.isPinned);
-
-                const uniqueServices = [];
-                groupRecords.forEach(r => {
-                    const txt = (r.serviceRequired || '').trim();
-                    if (txt && !uniqueServices.includes(txt)) {
-                        uniqueServices.push(txt);
-                    }
-                });
-
-                const combinedServicesStr = uniqueServices.join(' / ');
-
-                consolidatedList.push({
-                    mainRecord: mainRecord,
-                    allKeys: allKeys,
-                    servicesCombined: combinedServicesStr,
-                    isRepeated: isRepeatedGroup,
-                    isCopied: isCopiedGroup,
-                    isPinned: isPinnedGroup,
-                    latestCreatedAt: mainRecord.createdAt
-                });
-            });
-
-            consolidatedList.sort((a, b) => new Date(b.latestCreatedAt) - new Date(a.latestCreatedAt));
-
-            consolidatedList.forEach((item, index) => {
-                const card = document.createElement('div');
-                const rec = item.mainRecord;
-                const isCopied = item.isCopied;
-                const isPinned = item.isPinned;
-
-                card.className = `client-card-wrapper ${isCopied && !isPinnedFilterActive ? 'is-copied' : ''}`;
-
-                const fileStr = (rec.fileNumber && rec.fileNumber !== '-') ? ` ${rec.fileNumber}` : '';
-                const idStr = (rec.idNumber && rec.idNumber !== '-') ? rec.idNumber : '';
-                const phoneStr = (rec.patientPhone && rec.patientPhone !== '-') ? rec.patientPhone : '-';
-                const serviceStr = item.servicesCombined || '-';
-                const dateTimeStr = formatDateTimeFullCustom(item.latestCreatedAt);
-                const keysJsonStr = JSON.stringify(item.allKeys).replace(/"/g, '&quot;');
-
-                const pinBtnHTML = `
-                    <button class="copied-btn" style="background-color: ${isPinned ? '#d97706' : '#475569'}; border-color: ${isPinned ? '#f59e0b' : '#64748b'}; color: #ffffff;" onclick="requestTogglePinRecord('${rec.firebaseKey}')" title="${isPinned ? 'إلغاء التثبيت من المميزين' : 'تثبيت في المميزين'}">
-                        📌 ${isPinned ? 'المميزون' : 'تثبيت'}
-                    </button>
-                `;
-
-                const copyBtnHTML = !isPinnedFilterActive ? `
-                    <button class="copied-btn ${isCopied ? 'active' : ''}" onclick="toggleCopiedStatusGroup(${keysJsonStr})">
-                        <i class="fa-solid ${isCopied ? 'fa-circle-check' : 'fa-check'}"></i> ${isCopied ? 'تم النسخ' : 'تعليم كمنسوخ'}
-                    </button>
-                ` : '';
-
-                card.innerHTML = `
-                    <div class="client-card-header">
-                        <div class="client-title">
-                            <input type="checkbox" class="client-select-chk" data-keys="${keysJsonStr}">
-                            <span>${index + 1}-${rec.patientName}${fileStr}</span>
-                            <div style="display: flex; gap: 6px; align-items: center; flex-wrap: wrap;">
-                                ${pinBtnHTML}${copyBtnHTML}
-                            </div>
-                        </div>
-                        ${dateTimeStr ? `<span class="client-datetime-badge"><i class="fa-regular fa-clock"></i> ${dateTimeStr}</span>` : ''}
-                    </div>
-                    <div class="client-info-row">
-                        <span class="info-label">رقم الجوال:</span> ${phoneStr}
-                    </div>
-                    ${idStr ? `<div class="client-info-row"><span class="info-label">رقم الهوية:</span> ${idStr}</div>` : ''}
-                    <div class="client-info-row">
-                        ${serviceStr}
-                    </div>
-                    <div class="client-actions-row">
-                        <button class="btn-client-action delete-to-trash" onclick="hideClientGroupFromReport(${keysJsonStr})">
-                            حذف
-                        </button>
-                        <button class="btn-client-action permanent-delete" onclick="permanentDeleteGroupFromReport(${keysJsonStr})">
-                            حذف نهائي
-                        </button>
-                    </div>
-                `;
-                container.appendChild(card);
-            });
-        }
-
-        function copyClientReport() {
-            let openRecords = getOpenFilteredRecords();
-            if (openRecords.length === 0) {
-                return alert('لا يوجد عملاء حالياً للنسخ!');
-            }
-
-            const groupedMap = new Map();
-            const recordsToCopy = isPinnedFilterActive ? openRecords : openRecords.filter(r => !r.isCopied);
-
-            recordsToCopy.forEach(record => {
-                const cleanPhone = (record.patientPhone && record.patientPhone !== '-') ? record.patientPhone.replace(/\D/g, '') : '';
-                const groupKey = (cleanPhone.length >= 8) ? cleanPhone : (record.patientName || '').trim().toLowerCase();
-
-                if (!groupedMap.has(groupKey)) {
-                    groupedMap.set(groupKey, []);
-                }
-                groupedMap.get(groupKey).push(record);
-            });
-
-            if (groupedMap.size === 0 && !isPinnedFilterActive) {
-                return alert('جميع العملاء الموجودين تم وضع علامة "تم النسخ" عليهم سابقاً!');
-            }
-
-            let reportText = ``;
-            let idx = 1;
-
-            groupedMap.forEach((groupRecords) => {
-                groupRecords.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-                const item = groupRecords[0];
-
-                const fileStr = (item.fileNumber && item.fileNumber !== '-') ? ` ${item.fileNumber}` : '';
-                const idStr = (item.idNumber && item.idNumber !== '-') ? `رقم الهوية: ${item.idNumber}\n` : '';
-                const phoneStr = (item.patientPhone && item.patientPhone !== '-') ? item.patientPhone : '-';
-
-                const uniqueServices = [];
-                groupRecords.forEach(r => {
-                    const txt = (r.serviceRequired || '').trim();
-                    if (txt && !uniqueServices.includes(txt)) uniqueServices.push(txt);
-                });
-                const serviceStr = uniqueServices.join(' / ') || '-';
-
-                reportText += `${idx}- ${item.patientName}${fileStr}\nرقم الجوال: ${phoneStr}\n${idStr}${serviceStr}\n\n`;
-                idx++;
-            });
-
-            navigator.clipboard.writeText(reportText.trim()).then(() => alert(`تم نسخ (${groupedMap.size}) عميل بنجاح!`));
-        }
-
-        function requestDeleteSelectedAccess() {
-            const checkboxes = document.querySelectorAll('.client-select-chk:checked');
-            if (checkboxes.length === 0) {
-                return alert('يرجى اختيار عميل واحد على الأقل من الخانات المحددة!');
-            }
-            requireAdminAuth(() => {
-                if (confirm('هل أنت متأكد من الحذف النهائي للعملاء المحددين من النظام بالكامل؟')) {
-                    let keysToDelete = [];
-                    checkboxes.forEach(cb => {
-                        const attr = cb.getAttribute('data-keys');
-                        if (attr) {
-                            try {
-                                const parsed = JSON.parse(attr);
-                                keysToDelete = keysToDelete.concat(parsed);
-                            } catch(e) {}
-                        }
-                    });
-
-                    records = records.filter(r => !keysToDelete.includes(r.firebaseKey));
-                    saveLocal();
-                    renderTable();
-                    updateKPIs();
-                    updateDailyProgress();
-                    renderClientReport();
-                    renderTrashModalList();
-                    updatePinnedCountBadge();
-
-                    keysToDelete.forEach(k => {
-                        if (navigator.onLine && !k.startsWith('local_')) {
-                            dbRef.child(k).remove();
-                        }
-                    });
-                    alert('تم الحذف النهائي للمحددين بنجاح.');
-                }
-            });
-        }
-
-        function requestDeleteRangeAccess() {
-            requireAdminAuth(() => {
-                const filterDesc = clientHoursFilter === 'all' ? 'جميع الأوقات' : `آخر ${clientHoursFilter} ساعة`;
-                if (confirm(`⚠️ تحذير إدارة: هل أنت متأكد تماماً من رغبتك في حذف مسح الفترة (${filterDesc}) نهائياً من النظام؟`)) {
-                    executeDeleteClientsTimeRange();
-                }
-            });
-        }
-
-        function executeDeleteClientsTimeRange() {
-            const now = new Date();
-            let keysToDelete = [];
-
-            records = records.filter(r => {
-                let shouldDelete = false;
-                if (!r.isHiddenFromClients) {
-                    if (clientHoursFilter === 'all') {
-                        shouldDelete = true;
-                    } else {
-                        const diffHours = (now - new Date(r.createdAt)) / (1000 * 60 * 60);
-                        if (diffHours <= parseFloat(clientHoursFilter)) shouldDelete = true;
-                    }
-                }
-
-                if (shouldDelete && !r.firebaseKey.startsWith('local_')) {
-                    keysToDelete.push(r.firebaseKey);
-                }
-                return !shouldDelete;
-            });
-
-            saveLocal();
-            renderTable();
-            updateKPIs();
-            updateDailyProgress();
-            renderClientReport();
-            renderTrashModalList();
-            updatePinnedCountBadge();
-
-            keysToDelete.forEach(k => {
-                if (navigator.onLine) {
-                    dbRef.child(k).remove();
-                }
-            });
-            alert('تم مسح الحالات المحددة نهائياً بنجاح.');
         }
 
         function updateKPIs() {
@@ -3254,177 +1078,84 @@
             document.getElementById('kpi-recurring').innerText = records.filter(r => r.isRecurring).length;
             document.getElementById('kpi-repeated').innerText = records.filter(r => r.isRepeatedRequest).length;
             document.getElementById('kpi-plants').innerText = records.filter(r => (r.procedureType && r.procedureType.includes('زراعة'))).length;
-            
-            const extractionsCount = records.filter(r => r.procedureType && r.procedureType.includes('خلع')).length;
-            const reviewsCount = records.filter(r => r.procedureType && r.procedureType.includes('مراجعه')).length;
-
-            const kExt = document.getElementById('kpi-extractions');
-            const kRev = document.getElementById('kpi-reviews');
-            if (kExt) kExt.innerText = extractionsCount;
-            if (kRev) kRev.innerText = reviewsCount;
+            document.getElementById('kpi-extractions').innerText = records.filter(r => (r.procedureType && r.procedureType.includes('خلع'))).length;
+            document.getElementById('kpi-reviews').innerText = records.filter(r => (r.procedureType && r.procedureType.includes('مراجعه'))).length;
         }
 
-        function formatDateOnly(isoString) {
-            if (!isoString) return '-';
-            try {
-                const d = new Date(isoString);
-                const day = String(d.getDate()).padStart(2, '0');
-                const month = String(d.getMonth() + 1).padStart(2, '0');
-                const year = d.getFullYear();
-                return `${day}/${month}/${year}`;
-            } catch (e) { return isoString; }
-        }
+        function renderClientReport() {
+            const container = document.getElementById('clientReportList');
+            if (!container) return;
+            container.innerHTML = '';
 
-        function filterTable() {
-            const input = document.getElementById('searchInput').value.toLowerCase();
-            document.querySelectorAll('#tableBody tr').forEach(row => {
-                row.style.display = row.innerText.toLowerCase().includes(input) ? '' : 'none';
-            });
-        }
-
-        function openClearModal() { 
-            requireAdminAuth(() => {
-                document.getElementById('clearModal').classList.add('open');
-            });
-        }
-        function closeClearModal() { document.getElementById('clearModal').classList.remove('open'); }
-        
-        function openPasswordModal() { 
-            requireAdminAuth(() => {
-                document.getElementById('passwordModal').classList.add('open');
-            });
-        }
-        function closePasswordModal() { document.getElementById('passwordModal').classList.remove('open'); }
-
-        function updatePassword() {
-            const oldP = document.getElementById('oldPassword').value;
-            const newP = document.getElementById('newPassword').value;
-            if (oldP === localStorage.getItem('adminPassword')) {
-                localStorage.setItem('adminPassword', newP);
-                alert('تم تغيير كلمة المرور بنجاح!');
-                closePasswordModal();
-            } else { alert('كلمة المرور الحالية خاطئة!'); }
-        }
-
-        function executeFilteredClear() {
-            const pass = document.getElementById('clearPasswordInput').value;
-            if (pass === localStorage.getItem('adminPassword')) {
-                records = [];
-                saveLocal();
-                renderTable();
-                updateKPIs();
-                updateDailyProgress();
-                renderClientReport();
-                renderTrashModalList();
-                updatePinnedCountBadge();
-                closeClearModal();
-                if (navigator.onLine) dbRef.set(null);
-            } else { alert('كلمة المرور غير صحيحة!'); }
-        }
-
-        function exportToExcel() {
-            const worksheet = XLSX.utils.json_to_sheet(records);
-            const workbook = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(workbook, worksheet, "المواعيد");
-            XLSX.writeFile(workbook, `Appointments_${new Date().toISOString().slice(0,10)}.xlsx`);
-        }
-
-        function exportToJSON() {
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(records, null, 2));
-            const a = document.createElement('a'); a.href = dataStr; a.download = `Appointments_Backup.json`; a.click();
-        }
-
-        function importData(e) {
-            const file = e.target.files[0];
-            if (!file) return;
-            const fileName = file.name.toLowerCase();
-
-            if (fileName.endsWith('.json')) {
-                const reader = new FileReader();
-                reader.onload = function(evt) {
-                    try {
-                        const imported = JSON.parse(evt.target.result);
-                        if (Array.isArray(imported)) {
-                            imported.forEach(item => {
-                                delete item.firebaseKey;
-                                records.unshift(item);
-                                if (navigator.onLine) {
-                                    dbRef.push(item);
-                                }
-                            });
-                            saveLocal(); 
-                            renderTable(); 
-                            updateKPIs(); 
-                            updateDailyProgress(); 
-                            renderClientReport();
-                            renderTrashModalList();
-                            updatePinnedCountBadge();
-                            alert('تم استيراد وحفظ ملف JSON وسحابة Firebase بنجاح!');
-                        }
-                    } catch(err) { alert('خطأ في تحليل ملف الـ JSON'); }
-                };
-                reader.readAsText(file);
-            } else if (fileName.endsWith('.xlsx') || fileName.endsWith('.xls')) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    try {
-                        const data = new Uint8Array(e.target.result);
-                        const workbook = XLSX.read(data, { type: 'array' });
-                        const firstSheetName = workbook.SheetNames[0];
-                        const worksheet = workbook.Sheets[firstSheetName];
-                        const jsonSheetData = XLSX.utils.sheet_to_json(worksheet);
-
-                        if (Array.isArray(jsonSheetData) && jsonSheetData.length > 0) {
-                            jsonSheetData.forEach(row => {
-                                const formattedRow = {
-                                    patientName: row.patientName || row['اسم العميل'] || 'بدون اسم',
-                                    patientPhone: row.patientPhone || row['رقم الجوال'] || '-',
-                                    fileNumber: row.fileNumber || row['رقم الملف'] || '-',
-                                    idNumber: row.idNumber || row['رقم الهوية / الإقامة'] || '-',
-                                    branch: row.branch || row['الفرع'] || 'معشي',
-                                    procedureType: row.procedureType || row['نوع الإجراء'] || 'أخرى',
-                                    contactMethod: row.contactMethod || row['طريقة التواصل'] || 'اتصال',
-                                    serviceRequired: row.serviceRequired || row['الخدمة المطلوبة / تفاصيل المشكلة والطلب'] || '-',
-                                    coordinatorName: row.coordinatorName || row['اسم المنسق'] || 'مسؤول',
-                                    isRecurring: !!row.isRecurring,
-                                    isRepeatedRequest: !!row.isRepeatedRequest,
-                                    createdAt: row.createdAt || new Date().toISOString(),
-                                    actionTaken: '',
-                                    adminContactMethod: 'قيد الانتظار',
-                                    adminContactDetail: '',
-                                    isCopied: false,
-                                    isPinned: false,
-                                    isHiddenFromClients: false,
-                                    deletedAt: null
-                                };
-
-                                records.unshift(formattedRow);
-                                if (navigator.onLine) {
-                                    dbRef.push(formattedRow);
-                                }
-                            });
-
-                            saveLocal();
-                            renderTable();
-                            updateKPIs();
-                            updateDailyProgress();
-                            renderClientReport();
-                            renderTrashModalList();
-                            updatePinnedCountBadge();
-                            alert('تم استيراد وحفظ ملف الـ Excel وسحابة Firebase بنجاح!');
-                        } else {
-                            alert('ملف الـ Excel فارغ أو لا يحتوي على بيانات مطابقة.');
-                        }
-                    } catch (err) {
-                        alert('حدث خطأ أثناء قراءة ملف الـ Excel. تأكد من أنه ملف صالح تم تصديره من نفس النظام.');
-                    }
-                };
-                reader.readAsArrayBuffer(e.target.result);
-            } else {
-                alert('نوع الملف غير مدعوم. يرجى اختيار ملف JSON أو Excel صالح.');
+            if (records.length === 0) {
+                container.innerHTML = '<div style="text-align:center; padding:20px; color:var(--text-muted);">لا توجد حالات حالياً لصفحة الكشف.</div>';
+                return;
             }
-            e.target.value = false;
+
+            records.forEach((rec, idx) => {
+                const card = document.createElement('div');
+                card.className = 'client-card-wrapper';
+                card.innerHTML = `
+                    <div class="client-card-header">
+                        <strong>${idx + 1}- ${rec.patientName} (${rec.fileNumber || 'بدون ملف'})</strong>
+                    </div>
+                    <div>الجوال: ${rec.patientPhone}</div>
+                    <div>الخدمة: ${rec.serviceRequired}</div>
+                `;
+                container.appendChild(card);
+            });
         }
+
+        document.getElementById('appointmentForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const newRecord = {
+                patientName: document.getElementById('patientName').value.trim(),
+                patientPhone: document.getElementById('patientPhone').value.trim() || '-',
+                fileNumber: document.getElementById('fileNumber').value.trim() || '-',
+                idNumber: document.getElementById('idNumber').value.trim() || '-',
+                branch: document.getElementById('branch').value,
+                procedureType: document.getElementById('procedureType').value,
+                contactMethod: document.getElementById('contactMethod').value,
+                serviceRequired: document.getElementById('serviceRequired').value,
+                coordinatorName: document.getElementById('coordinatorName').value,
+                isRecurring: document.getElementById('isRecurring').checked,
+                createdAt: new Date().toISOString(),
+                adminContactMethod: 'قيد الانتظار',
+                actionTaken: ''
+            };
+
+            if (dbRef) dbRef.push(newRecord);
+            this.reset();
+            alert('تم تسجيل الموعد بنجاح للطبيب المختار!');
+        });
+
+        function deleteRecord(key) {
+            if (confirm('هل أنت متأكد من الحذف؟')) {
+                if (dbRef) dbRef.child(key).remove();
+            }
+        }
+
+        function switchPage(page) {
+            document.querySelectorAll('.page-view').forEach(p => p.classList.add('hidden'));
+            if (page === 'dashboard') document.getElementById('page-dashboard').classList.remove('hidden');
+            if (page === 'clients') document.getElementById('page-clients').classList.remove('hidden');
+            if (page === 'csguide') document.getElementById('page-csguide').classList.remove('hidden');
+        }
+
+        function toggleSidebar() {
+            document.getElementById('appLayout').classList.toggle('sidebar-collapsed');
+        }
+
+        function toggleTheme() {
+            document.body.classList.toggle('light-theme');
+        }
+
+        // التهيئة الابتدائية
+        window.addEventListener('DOMContentLoaded', () => {
+            renderDoctorsMenu();
+            initDoctorDatabase();
+            updateDoctorUI();
+        });
     </script>
 </body>
 </html>
