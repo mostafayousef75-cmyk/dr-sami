@@ -363,6 +363,26 @@
         .announcement-thumbnail-wrapper:hover img {
             transform: scale(1.08);
         }
+        .announcement-file-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(37, 99, 235, 0.18);
+            border: 1px solid rgba(37, 99, 235, 0.5);
+            padding: 7px 14px;
+            border-radius: 6px;
+            color: #ffffff;
+            font-size: 0.85rem;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: var(--font-family);
+            margin-top: 5px;
+            transition: all 0.2s ease;
+        }
+        .announcement-file-btn:hover {
+            background: var(--primary-color);
+            box-shadow: 0 0 10px rgba(37, 99, 235, 0.4);
+        }
         .announcement-footer-row {
             display: flex;
             align-items: center;
@@ -1318,7 +1338,7 @@
                             <button class="action-btn copy-btn" onclick="openAddLinkModal()"><i class="fa-solid fa-plus"></i> إضافة رابط جديد</button>
                         </div>
                         <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 10px;">
-                            💡 **حماية المواقع:** الترتيب أو التعديل أو الحذف لأي رابط يتطلب **كلمة مرور الإدارة**. فتح الموقع متاح مباشرة. اضغط على أيقونة المقبض الزرقاء <i class="fa-solid fa-grip-vertical" style="color: var(--primary-color);"></i> للترتيب بالسحب.
+                            💡 **ترتيب الروابط:** اضغط باستمرار مع السحب المباشر على أيقونة المقبض الزرقاء <i class="fa-solid fa-grip-vertical" style="color: var(--primary-color);"></i> لترتيب الكروت بسلاسة.
                         </p>
 
                         <div class="links-grid" id="linksGridContainer"></div>
@@ -1329,7 +1349,7 @@
         </main>
     </div>
 
-    <!-- نافذة إضافة / تعديل تنبيه / إشعار عام جديد مع رفع صورة -->
+    <!-- نافذة إضافة / تعديل تنبيه / إشعار عام جديد مع رفع ملفات أو صور -->
     <div class="modal" id="announcementModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -1344,8 +1364,9 @@
                         <textarea id="announcementText" required placeholder="اكتب التنبيه أو التحديث الجديد للعيادة هنا..."></textarea>
                     </div>
                     <div class="input-field full-width">
-                        <label><i class="fa-solid fa-image"></i> إرفاق صورة مع التنبيه (اختياري)</label>
-                        <input type="file" id="announcementImageFile" accept="image/*" style="padding: 6px; cursor: pointer;">
+                        <label><i class="fa-solid fa-paperclip"></i> إرفاق ملف (PDF, مستندات, صور...) (اختياري)</label>
+                        <input type="file" id="announcementFile" accept=".pdf,.doc,.docx,.xls,.xlsx,.txt,image/*" style="padding: 6px; cursor: pointer;">
+                        <span style="font-size: 0.75rem; color: var(--text-muted); margin-top: 3px;">يمكنك رفع ملفات PDF أو مستندات أو صور ليراها فريق العمل مباشرة.</span>
                     </div>
                 </div>
                 <button type="submit" class="submit-btn" style="margin-top: 15px;"><i class="fa-solid fa-floppy-disk"></i> حفظ ونشر التنبيه</button>
@@ -1553,13 +1574,11 @@
         let clinicAnnouncements = [];
         let dashboardFilter = localStorage.getItem('savedDashboardFilter') || 'all';
         let dashboardTimeFilter = localStorage.getItem('savedDashboardTimeFilter') || 'all';
-        let clientHoursFilter = localStorage.getItem('savedClientHoursFilter') || '8';
+        let clientHoursFilter = localStorage.getItem('savedClientHoursFilter') || 'all';
         let isPinnedFilterActive = false;
         
         let originalEditPriorityState = false;
         let originalEditRepeatedState = false;
-        let isInitialLoad = true;
-        let lastKnownRecordsCount = 0;
 
         if (!localStorage.getItem('adminPassword')) {
             localStorage.setItem('adminPassword', '1234');
@@ -1617,16 +1636,16 @@
         function saveLocal() { 
             localStorage.setItem('cachedAppointments_v16', JSON.stringify(records));
             localStorage.setItem('cachedCSLinks_v1', JSON.stringify(csLinks));
-            localStorage.setItem('cachedAnnouncements_v2', JSON.stringify(clinicAnnouncements));
+            localStorage.setItem('cachedAnnouncements_v3', JSON.stringify(clinicAnnouncements));
         }
 
         const cached = localStorage.getItem('cachedAppointments_v16');
-        if (cached) { try { records = JSON.parse(cached); lastKnownRecordsCount = records.length; } catch(e) { records = []; } }
+        if (cached) { try { records = JSON.parse(cached); } catch(e) { records = []; } }
 
         const cachedLinks = localStorage.getItem('cachedCSLinks_v1');
         if (cachedLinks) { try { csLinks = JSON.parse(cachedLinks); } catch(e) { csLinks = []; } }
 
-        const cachedAnnouncements = localStorage.getItem('cachedAnnouncements_v2');
+        const cachedAnnouncements = localStorage.getItem('cachedAnnouncements_v3') || localStorage.getItem('cachedAnnouncements_v2');
         if (cachedAnnouncements) { try { clinicAnnouncements = JSON.parse(cachedAnnouncements); } catch(e) { clinicAnnouncements = []; } }
 
         function syncFilterTabsUI() {
@@ -1719,6 +1738,7 @@
 
             syncFilterTabsUI();
             renderAnnouncements();
+            renderClientReport();
         });
 
         dbRef.on('value', (snapshot) => {
@@ -1727,16 +1747,9 @@
                 const cloudRecords = [];
                 for (let key in data) { cloudRecords.push({ firebaseKey: key, ...data[key] }); }
                 records = cloudRecords;
-                
-                if (!isInitialLoad && records.length > lastKnownRecordsCount) {
-                    playBeepAndShowToast('🔔 تم استلام حجز/طلب جديد عبر السحابة!');
-                }
-                lastKnownRecordsCount = records.length;
             } else {
                 records = [];
-                lastKnownRecordsCount = 0;
             }
-            isInitialLoad = false;
             saveLocal();
             renderTable();
             updateKPIs();
@@ -1787,6 +1800,10 @@
                 osc.stop(audioCtx.currentTime + 0.25);
             } catch(e) { console.log('Audio Context blocked'); }
 
+            showToastOnly(msg);
+        }
+
+        function showToastOnly(msg) {
             const toast = document.getElementById('notificationToast');
             document.getElementById('toastMessage').innerText = msg;
             toast.classList.add('show');
@@ -1824,6 +1841,41 @@
             universalAuthCallback = null;
         }
 
+        function openBase64File(dataUrl, fileName = 'file.pdf') {
+            try {
+                if (!dataUrl) return;
+                
+                if (dataUrl.startsWith('http://') || dataUrl.startsWith('https://')) {
+                    window.open(dataUrl, '_blank');
+                    return;
+                }
+
+                const arr = dataUrl.split(',');
+                const mimeMatch = arr[0].match(/:(.*?);/);
+                const mime = mimeMatch ? mimeMatch[1] : 'application/pdf';
+                const bstr = atob(arr[1]);
+                let n = bstr.length;
+                const u8arr = new Uint8Array(n);
+                while (n--) {
+                    u8arr[n] = bstr.charCodeAt(n);
+                }
+                const blob = new Blob([u8arr], { type: mime });
+                const blobUrl = URL.createObjectURL(blob);
+
+                const newWin = window.open(blobUrl, '_blank');
+                if (!newWin || newWin.closed || typeof newWin.closed === 'undefined') {
+                    const a = document.createElement('a');
+                    a.href = blobUrl;
+                    a.download = fileName;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                }
+            } catch(e) {
+                alert('عذراً، لم نتمكن من فتح الملف. حاول تنزيله.');
+            }
+        }
+
         function renderAnnouncements() {
             const container = document.getElementById('announcementsListContainer');
             if (!container) return;
@@ -1839,19 +1891,28 @@
                 card.className = 'announcement-card';
                 const dateStr = formatDateTimeFullCustom(item.createdAt);
 
-                let thumbnailHTML = '';
-                if (item.imageUrl) {
-                    thumbnailHTML = `
-                        <div class="announcement-thumbnail-wrapper" onclick="openImagePreview('${item.imageUrl}')" title="اضغط لمعاينة الصورة المكبرة">
-                            <img src="${item.imageUrl}" alt="مرفق">
-                        </div>
-                    `;
+                let attachmentHTML = '';
+                if (item.fileUrl) {
+                    if (item.fileType && item.fileType.startsWith('image/')) {
+                        attachmentHTML = `
+                            <div class="announcement-thumbnail-wrapper" onclick="openImagePreview('${item.fileUrl}')" title="اضغط لمعاينة الصورة المكبرة">
+                                <img src="${item.fileUrl}" alt="مرفق">
+                            </div>
+                        `;
+                    } else {
+                        const fileName = item.fileName || 'فتح الملف المرفق';
+                        const safeKey = item.announcementKey;
+                        attachmentHTML = `
+                            <button type="button" class="announcement-file-btn" onclick="triggerFileDownload('${safeKey}')" title="اضغط لفتح/تحميل الملف">
+                                <i class="fa-solid fa-file-pdf"></i> ${fileName}
+                            </button>
+                        `;
+                    }
                 }
 
                 card.innerHTML = `
                     <div class="announcement-body-content">
-                        <div class="announcement-body-text">${item.text}</div>
-                        ${thumbnailHTML}
+                        <div class="announcement-body-text">${item.text}</div>${attachmentHTML}
                     </div>
                     <div class="announcement-footer-row">
                         <span><i class="fa-regular fa-clock"></i> ${dateStr}</span>
@@ -1869,6 +1930,13 @@
             });
         }
 
+        function triggerFileDownload(key) {
+            const item = clinicAnnouncements.find(a => a.announcementKey === key);
+            if (item && item.fileUrl) {
+                openBase64File(item.fileUrl, item.fileName || 'document.pdf');
+            }
+        }
+
         function openImagePreview(url) {
             document.getElementById('previewFullImageTag').src = url;
             document.getElementById('imagePreviewModal').classList.add('open');
@@ -1882,7 +1950,7 @@
         function openAddAnnouncementModal() {
             document.getElementById('editAnnouncementKey').value = '';
             document.getElementById('announcementText').value = '';
-            document.getElementById('announcementImageFile').value = '';
+            document.getElementById('announcementFile').value = '';
             document.getElementById('announcementModalTitle').innerHTML = '<i class="fa-solid fa-bullhorn"></i> إضافة تنبيه أو إشعار للعيادة';
             document.getElementById('announcementModal').classList.add('open');
         }
@@ -1892,7 +1960,7 @@
             if (!item) return;
             document.getElementById('editAnnouncementKey').value = item.announcementKey;
             document.getElementById('announcementText').value = item.text || '';
-            document.getElementById('announcementImageFile').value = '';
+            document.getElementById('announcementFile').value = '';
             document.getElementById('announcementModalTitle').innerHTML = '<i class="fa-solid fa-pen"></i> تعديل تنبيه العيادة';
             document.getElementById('announcementModal').classList.add('open');
         }
@@ -1905,25 +1973,31 @@
             e.preventDefault();
             const key = document.getElementById('editAnnouncementKey').value;
             const textVal = document.getElementById('announcementText').value.trim();
-            const imageInput = document.getElementById('announcementImageFile');
+            const fileInput = document.getElementById('announcementFile');
             if (!textVal) return;
 
-            const processAndSave = (imageUrl) => {
+            const processAndSave = (fileUrl, fileType, fileName) => {
                 if (key) {
                     const item = clinicAnnouncements.find(a => a.announcementKey === key);
                     if (item) {
                         item.text = textVal;
-                        if (imageUrl !== undefined) {
-                            item.imageUrl = imageUrl;
+                        if (fileUrl !== undefined) {
+                            item.fileUrl = fileUrl;
+                            item.fileType = fileType;
+                            item.fileName = fileName;
                         }
                         saveLocal();
                         renderAnnouncements();
                         closeAnnouncementModal();
-                        playBeepAndShowToast('✏️ تم تعديل التنبيه بنجاح!');
+                        showToastOnly('✏️ تم تعديل التنبيه بنجاح!');
 
                         if (navigator.onLine && !key.startsWith('ann_')) {
                             const updateObj = { text: textVal };
-                            if (imageUrl !== undefined) updateObj.imageUrl = imageUrl;
+                            if (fileUrl !== undefined) {
+                                updateObj.fileUrl = fileUrl;
+                                updateObj.fileType = fileType;
+                                updateObj.fileName = fileName;
+                            }
                             announcementsDbRef.child(key).update(updateObj);
                         }
                     }
@@ -1932,7 +2006,9 @@
                     const newAnn = {
                         announcementKey: tempKey,
                         text: textVal,
-                        imageUrl: imageUrl || '',
+                        fileUrl: fileUrl || '',
+                        fileType: fileType || '',
+                        fileName: fileName || '',
                         createdAt: new Date().toISOString()
                     };
 
@@ -1940,10 +2016,11 @@
                     saveLocal();
                     renderAnnouncements();
                     closeAnnouncementModal();
+                    
                     playBeepAndShowToast('📢 تم نشر التنبيه بنجاح للجميع!');
 
                     if (navigator.onLine) {
-                        const uploadData = { text: newAnn.text, imageUrl: newAnn.imageUrl, createdAt: newAnn.createdAt };
+                        const uploadData = { text: newAnn.text, fileUrl: newAnn.fileUrl, fileType: newAnn.fileType, fileName: newAnn.fileName, createdAt: newAnn.createdAt };
                         announcementsDbRef.push(uploadData).then((pushedRef) => {
                             const idx = clinicAnnouncements.findIndex(a => a.announcementKey === tempKey);
                             if (idx !== -1) {
@@ -1955,19 +2032,26 @@
                 }
             };
 
-            if (imageInput.files && imageInput.files[0]) {
+            if (fileInput.files && fileInput.files[0]) {
+                const file = fileInput.files[0];
                 const reader = new FileReader();
                 reader.onload = function(evt) {
-                    processAndSave(evt.target.result);
+                    processAndSave(evt.target.result, file.type, file.name);
                 };
-                reader.readAsDataURL(imageInput.files[0]);
+                reader.readAsDataURL(file);
             } else {
-                let existingImageUrl = undefined;
+                let existingFileUrl = undefined;
+                let existingFileType = undefined;
+                let existingFileName = undefined;
                 if (key) {
                     const existingItem = clinicAnnouncements.find(a => a.announcementKey === key);
-                    if (existingItem) existingImageUrl = existingItem.imageUrl || '';
+                    if (existingItem) {
+                        existingFileUrl = existingItem.fileUrl || '';
+                        existingFileType = existingItem.fileType || '';
+                        existingFileName = existingItem.fileName || '';
+                    }
                 }
-                processAndSave(existingImageUrl);
+                processAndSave(existingFileUrl, existingFileType, existingFileName);
             }
         }
 
@@ -1980,7 +2064,7 @@
                 if (navigator.onLine && !key.startsWith('ann_')) {
                     announcementsDbRef.child(key).remove();
                 }
-                playBeepAndShowToast('🗑️ تم حذف التنبيه بنجاح!');
+                showToastOnly('🗑️ تم حذف التنبيه بنجاح!');
             }
         }
 
@@ -2072,6 +2156,7 @@
 
             this.reset();
             document.getElementById('customProcedureWrapper').style.display = 'none';
+            
             playBeepAndShowToast('⚠️ تم إضافة العميل والموعد بنجاح!');
         });
 
@@ -2089,7 +2174,7 @@
                         dbRef.child(key).update({ isPinned: rec.isPinned });
                     }
 
-                    playBeepAndShowToast(rec.isPinned ? '📌 تم تثبيت العميل في المميزون' : '✖️ تم إزالة العميل من المميزون');
+                    showToastOnly(rec.isPinned ? '📌 تم إضافتها في المتميزون' : '✖️ تم إزالتها من المتميزون');
                 }
             });
         }
@@ -2486,7 +2571,7 @@
                 card.setAttribute('data-index', index);
 
                 card.innerHTML = `
-                    <div class="drag-handle" title="امسك من هنا للترتيب بالسحب (يتطلب باسورد الإدارة)"><i class="fa-solid fa-grip-vertical"></i></div>
+                    <div class="drag-handle" title="اضغط باستمرار واسحب من هنا للترتيب"><i class="fa-solid fa-grip-vertical"></i></div>
                     <div class="link-card-header">
                         <i class="fa-solid fa-globe"></i>
                         <span>${item.title}</span>
@@ -2501,12 +2586,17 @@
 
                 const handle = card.querySelector('.drag-handle');
 
+                // تفعيل السحب فقط عند الضغط باستمرار على مربع المقبض مع طلب باسورد الإدارة للحماية
                 handle.addEventListener('mousedown', (e) => {
                     e.preventDefault();
                     requireAdminAuth(() => {
                         card.setAttribute('draggable', 'true');
                         draggedCardIndex = index;
                         card.classList.add('dragging');
+                        
+                        // محاكاة بدء السحب الفوري بناءً على رغبة المستخدم في الضغط المستمر
+                        const dragEvent = new DragEvent('dragstart', { bubbles: true, cancelable: true });
+                        card.dispatchEvent(dragEvent);
                     });
                 });
 
@@ -2520,9 +2610,11 @@
                     e.preventDefault();
                     card.classList.add('drag-over');
                 });
+
                 card.addEventListener('dragleave', () => {
                     card.classList.remove('drag-over');
                 });
+
                 card.addEventListener('drop', (e) => {
                     e.preventDefault();
                     card.classList.remove('drag-over');
@@ -2531,6 +2623,7 @@
                         reorderCSLinks(draggedCardIndex, targetIdx);
                     }
                 });
+
                 card.addEventListener('dragend', () => {
                     card.removeAttribute('draggable');
                     card.classList.remove('dragging');
@@ -2538,18 +2631,17 @@
                     draggedCardIndex = null;
                 });
 
+                // دعم السحب باللمس للـ Mobile
                 handle.addEventListener('touchstart', (e) => {
-                    e.preventDefault();
                     requireAdminAuth(() => {
                         activeTouchHandle = card;
                         draggedCardIndex = index;
                         card.classList.add('dragging');
                     });
-                }, { passive: false });
+                }, { passive: true });
 
                 handle.addEventListener('touchmove', (e) => {
                     if (!activeTouchHandle) return;
-                    
                     const touchLoc = e.touches[0];
                     const targetEl = document.elementFromPoint(touchLoc.clientX, touchLoc.clientY);
 
@@ -2606,7 +2698,7 @@
 
             saveLocal();
             renderCSLinks();
-            playBeepAndShowToast('🔄 تم ترتيب الكروت بنجاح!');
+            showToastOnly('🔄 تم ترتيب الكروت بنجاح!');
         }
 
         function openAddLinkModal() {
@@ -2672,7 +2764,7 @@
             saveLocal();
             renderCSLinks();
             closeLinkModal();
-            playBeepAndShowToast('✅ تم حفظ الرابط بنجاح!');
+            showToastOnly('✅ تم حفظ الرابط بنجاح!');
         }
 
         function deleteCSLink(key) {
@@ -2687,7 +2779,7 @@
                         if (navigator.onLine && !key.startsWith('link_')) {
                             linksDbRef.child(key).remove();
                         }
-                        playBeepAndShowToast('🗑️ تم حذف الرابط بنجاح!');
+                        showToastOnly('🗑️ تم حذف الرابط بنجاح!');
                     }
                 }
             });
@@ -2703,10 +2795,7 @@
             let openRecords = records.filter(r => {
                 if (r.isHiddenFromClients) return false;
                 if (isPinnedFilterActive && !r.isPinned) return false;
-
-                const isPending = !r.adminContactMethod || r.adminContactMethod === 'قيد الانتظار';
-                const noAction = !r.actionTaken || r.actionTaken.trim() === '';
-                return isPending && noAction;
+                return true;
             });
 
             if (clientHoursFilter !== 'all' && !isPinnedFilterActive) {
@@ -2772,7 +2861,7 @@
                 saveLocal();
                 renderClientReport();
                 renderTrashModalList();
-                playBeepAndShowToast('🗑️ تم نقل الطلبات إلى سلة المحذوفات بنجاح!');
+                showToastOnly('🗑️ تم نقل الطلبات إلى سلة المحذوفات بنجاح!');
             });
         }
 
@@ -2810,7 +2899,7 @@
                     if (navigator.onLine && !key.startsWith('local_')) {
                         dbRef.child(key).update({ isHiddenFromClients: false, deletedAt: null });
                     }
-                    playBeepAndShowToast('↩️ تم استرجاع العميل إلى صفحة الكشف بنجاح!');
+                    showToastOnly('↩️ تم استرجاع العميل إلى صفحة الكشف بنجاح!');
                 }
             });
         }
@@ -3004,8 +3093,7 @@
                             <input type="checkbox" class="client-select-chk" data-keys="${keysJsonStr}">
                             <span>${index + 1}-${rec.patientName}${fileStr}</span>
                             <div style="display: flex; gap: 6px; align-items: center; flex-wrap: wrap;">
-                                ${pinBtnHTML}
-                                ${copyBtnHTML}
+                                ${pinBtnHTML}${copyBtnHTML}
                             </div>
                         </div>
                         ${dateTimeStr ? `<span class="client-datetime-badge"><i class="fa-regular fa-clock"></i> ${dateTimeStr}</span>` : ''}
@@ -3129,9 +3217,8 @@
             let keysToDelete = [];
 
             records = records.filter(r => {
-                const isPending = (!r.adminContactMethod || r.adminContactMethod === 'قيد الانتظار') && (!r.actionTaken || r.actionTaken.trim() === '');
                 let shouldDelete = false;
-                if (isPending && !r.isHiddenFromClients) {
+                if (!r.isHiddenFromClients) {
                     if (clientHoursFilter === 'all') {
                         shouldDelete = true;
                     } else {
@@ -3332,7 +3419,7 @@
                         alert('حدث خطأ أثناء قراءة ملف الـ Excel. تأكد من أنه ملف صالح تم تصديره من نفس النظام.');
                     }
                 };
-                reader.readAsArrayBuffer(file);
+                reader.readAsArrayBuffer(e.target.result);
             } else {
                 alert('نوع الملف غير مدعوم. يرجى اختيار ملف JSON أو Excel صالح.');
             }
