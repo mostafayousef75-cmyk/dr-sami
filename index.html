@@ -2440,6 +2440,23 @@
             if (navigator.onLine && !key.startsWith('local_')) {
                 dbRef.child(key).update({ actionTaken: actionVal, adminContactMethod: adminContactSelect });
             }
+
+            // إرسال البيانات فوراً إلى Make Webhook للربط العكسي مع الشيت
+            if (rec) {
+                fetch('https://hook.eu1.make.com/vni4fstrdgrsx77u13rb7ouc', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        firebaseKey: key,
+                        patientName: rec.patientName,
+                        patientPhone: rec.patientPhone,
+                        fileNumber: rec.fileNumber,
+                        adminContactMethod: adminContactSelect,
+                        actionTaken: actionVal
+                    })
+                }).catch(err => console.log('Webhook error:', err));
+            }
+
             alert('تم التحديث بنجاح!');
         }
 
@@ -2586,7 +2603,6 @@
 
                 const handle = card.querySelector('.drag-handle');
 
-                // تفعيل السحب فقط عند الضغط باستمرار على مربع المقبض مع طلب باسورد الإدارة للحماية
                 handle.addEventListener('mousedown', (e) => {
                     e.preventDefault();
                     requireAdminAuth(() => {
@@ -2594,7 +2610,6 @@
                         draggedCardIndex = index;
                         card.classList.add('dragging');
                         
-                        // محاكاة بدء السحب الفوري بناءً على رغبة المستخدم في الضغط المستمر
                         const dragEvent = new DragEvent('dragstart', { bubbles: true, cancelable: true });
                         card.dispatchEvent(dragEvent);
                     });
@@ -2631,7 +2646,6 @@
                     draggedCardIndex = null;
                 });
 
-                // دعم السحب باللمس للـ Mobile
                 handle.addEventListener('touchstart', (e) => {
                     requireAdminAuth(() => {
                         activeTouchHandle = card;
