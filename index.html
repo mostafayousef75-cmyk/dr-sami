@@ -2179,14 +2179,14 @@
                         dbRef.child(key).update({ isPinned: rec.isPinned });
                     }
 
-                    showToastOnly(rec.isPinned ? '📌 تم إضافتها في المتميزون' : '✖️ تم إزالتها من المتميزون');
+                    showToastOnly(rec.isPinned ? '📌 تم التثبيت في المميزين' : '✖️ تم إزالتها من المميزين');
                 }
             });
         }
 
         function updatePinnedCountBadge() {
-            // تجميع وتحديث الرقم الفعلي للعملاء المعروضين في الكشف العادي
-            let openRecords = records.filter(r => !r.isHiddenFromClients && !r.isPinned);
+            // حساب عدد العملاء الجدد/الذين عليهم زر "تعليم كمنسوخ" (غير المنسوخين) فقط
+            let openRecords = records.filter(r => !r.isHiddenFromClients);
             if (clientHoursFilter !== 'all') {
                 const now = new Date();
                 openRecords = openRecords.filter(r => {
@@ -2199,11 +2199,24 @@
             openRecords.forEach(record => {
                 const cleanPhone = (record.patientPhone && record.patientPhone !== '-') ? record.patientPhone.replace(/\D/g, '') : '';
                 const groupKey = (cleanPhone.length >= 8) ? cleanPhone : (record.patientName || '').trim().toLowerCase();
-                groupedMap.set(groupKey, true);
+                
+                if (!groupedMap.has(groupKey)) {
+                    groupedMap.set(groupKey, []);
+                }
+                groupedMap.get(groupKey).push(record);
+            });
+
+            let uncopiedGroupCount = 0;
+            groupedMap.forEach((groupRecords) => {
+                // العميل يعتبر "غير منسوخ" إذا كان به على الأقل طلب واحد لم يُنسخ بعد
+                const isGroupCopied = groupRecords.every(r => r.isCopied);
+                if (!isGroupCopied) {
+                    uncopiedGroupCount++;
+                }
             });
 
             const badgeEl = document.getElementById('pinnedCount');
-            if (badgeEl) badgeEl.innerText = isPinnedFilterActive ? records.filter(r => r.isPinned && !r.isHiddenFromClients).length : groupedMap.size;
+            if (badgeEl) badgeEl.innerText = uncopiedGroupCount;
         }
 
         function togglePinnedFilter() {
@@ -2812,7 +2825,6 @@
             let openRecords = records.filter(r => {
                 if (r.isHiddenFromClients) return false;
                 if (isPinnedFilterActive && !r.isPinned) return false;
-                if (!isPinnedFilterActive && r.isPinned) return false;
                 return true;
             });
 
@@ -3078,7 +3090,7 @@
                 });
             });
 
-            // ترتيب الكروت بحيث ينزل المنسوخ إلى الأسفل ويظهر غير المنسوخ في الأعلى
+            // ترتيب الكروت بحيث ينزل المنسوخ لأسفل، وغير المنسوخ لأعلى
             consolidatedList.sort((a, b) => {
                 if (a.isCopied !== b.isCopied) {
                     return a.isCopied ? 1 : -1;
