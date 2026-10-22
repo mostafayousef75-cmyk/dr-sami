@@ -710,6 +710,7 @@
         .client-card-wrapper.is-copied {
             background-color: rgba(22, 163, 74, 0.06);
             border-color: rgba(22, 163, 74, 0.3);
+            opacity: 0.85;
         }
 
         .client-card-header {
@@ -817,6 +818,10 @@
         .btn-client-action.delete-to-trash { background-color: var(--danger-color); }
         .btn-client-action.permanent-delete { background-color: var(--danger-color); }
         .btn-client-action.unpin-item { background-color: var(--warning-color); }
+        .btn-client-action.restore { 
+            background-color: var(--success-color) !important; 
+            color: #ffffff !important; 
+        }
 
         .links-grid {
             display: grid;
@@ -2180,26 +2185,41 @@
         }
 
         function updatePinnedCountBadge() {
-            const count = records.filter(r => r.isPinned && !r.isHiddenFromClients).length;
+            // تجميع وتحديث الرقم الفعلي للعملاء المعروضين في الكشف العادي
+            let openRecords = records.filter(r => !r.isHiddenFromClients && !r.isPinned);
+            if (clientHoursFilter !== 'all') {
+                const now = new Date();
+                openRecords = openRecords.filter(r => {
+                    const diffHours = (now - new Date(r.createdAt)) / (1000 * 60 * 60);
+                    return diffHours <= parseFloat(clientHoursFilter);
+                });
+            }
+            
+            const groupedMap = new Map();
+            openRecords.forEach(record => {
+                const cleanPhone = (record.patientPhone && record.patientPhone !== '-') ? record.patientPhone.replace(/\D/g, '') : '';
+                const groupKey = (cleanPhone.length >= 8) ? cleanPhone : (record.patientName || '').trim().toLowerCase();
+                groupedMap.set(groupKey, true);
+            });
+
             const badgeEl = document.getElementById('pinnedCount');
-            if (badgeEl) badgeEl.innerText = count;
+            if (badgeEl) badgeEl.innerText = isPinnedFilterActive ? records.filter(r => r.isPinned && !r.isHiddenFromClients).length : groupedMap.size;
         }
 
         function togglePinnedFilter() {
             isPinnedFilterActive = !isPinnedFilterActive;
             const btn = document.getElementById('pinnedFilterBtn');
-            const count = records.filter(r => r.isPinned && !r.isHiddenFromClients).length;
             if (btn) {
                 if (isPinnedFilterActive) {
                     btn.style.backgroundColor = '#d97706';
                     btn.style.borderColor = '#f59e0b';
                     btn.style.boxShadow = '0 0 12px rgba(217, 119, 6, 0.5)';
-                    btn.innerHTML = `<i class="fa-solid fa-thumbtack"></i> 📌 المميزون ( <span id="pinnedCount">${count}</span> )`;
+                    btn.innerHTML = `<i class="fa-solid fa-thumbtack"></i> 📌 المميزون ( <span id="pinnedCount">0</span> )`;
                 } else {
                     btn.style.backgroundColor = '#16a34a';
                     btn.style.borderColor = '#22c55e';
                     btn.style.boxShadow = 'none';
-                    btn.innerHTML = `<i class="fa-solid fa-file-lines"></i> ✅ الكشف العادي ( <span id="pinnedCount">${count}</span> )`;
+                    btn.innerHTML = `<i class="fa-solid fa-file-lines"></i> ✅ الكشف العادي ( <span id="pinnedCount">0</span> )`;
                 }
             }
             renderClientReport();
@@ -2586,7 +2606,6 @@
 
                 const handle = card.querySelector('.drag-handle');
 
-                // تفعيل السحب فقط عند الضغط باستمرار على مربع المقبض مع طلب باسورد الإدارة للحماية
                 handle.addEventListener('mousedown', (e) => {
                     e.preventDefault();
                     requireAdminAuth(() => {
@@ -2594,7 +2613,6 @@
                         draggedCardIndex = index;
                         card.classList.add('dragging');
                         
-                        // محاكاة بدء السحب الفوري بناءً على رغبة المستخدم في الضغط المستمر
                         const dragEvent = new DragEvent('dragstart', { bubbles: true, cancelable: true });
                         card.dispatchEvent(dragEvent);
                     });
@@ -2631,7 +2649,6 @@
                     draggedCardIndex = null;
                 });
 
-                // دعم السحب باللمس للـ Mobile
                 handle.addEventListener('touchstart', (e) => {
                     requireAdminAuth(() => {
                         activeTouchHandle = card;
@@ -2795,6 +2812,7 @@
             let openRecords = records.filter(r => {
                 if (r.isHiddenFromClients) return false;
                 if (isPinnedFilterActive && !r.isPinned) return false;
+                if (!isPinnedFilterActive && r.isPinned) return false;
                 return true;
             });
 
@@ -2992,6 +3010,8 @@
             if (!container) return;
             container.innerHTML = '';
 
+            updatePinnedCountBadge();
+
             let openRecords = getOpenFilteredRecords();
 
             const searchInputEl = document.getElementById('clientSearchInput');
@@ -3058,7 +3078,13 @@
                 });
             });
 
-            consolidatedList.sort((a, b) => new Date(b.latestCreatedAt) - new Date(a.latestCreatedAt));
+            // ترتيب الكروت بحيث ينزل المنسوخ إلى الأسفل ويظهر غير المنسوخ في الأعلى
+            consolidatedList.sort((a, b) => {
+                if (a.isCopied !== b.isCopied) {
+                    return a.isCopied ? 1 : -1;
+                }
+                return new Date(b.latestCreatedAt) - new Date(a.latestCreatedAt);
+            });
 
             consolidatedList.forEach((item, index) => {
                 const card = document.createElement('div');
