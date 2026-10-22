@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مجمع ماجستي الطبي - إدارة المواعيد وكشف العملاء</title>
+    <title>مجمع ماجستي الطبي - إدارة مواعيد الأطباء وكشف العملاء</title>
     
     <!-- خط Tajawal -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -157,7 +157,7 @@
             display: flex;
             flex-direction: column;
             gap: 6px;
-            margin-top: 10px;
+            margin-top: 8px;
         }
 
         .menu-item {
@@ -303,12 +303,7 @@
             gap: 18px;
         }
 
-        .page-view {
-            display: flex;
-            flex-direction: column;
-            gap: 18px;
-        }
-
+        .page-view { display: flex; flex-direction: column; gap: 18px; }
         .hidden { display: none !important; }
 
         .dashboard-section {
@@ -365,7 +360,7 @@
             display: flex;
             flex-direction: column;
             gap: 10px;
-            max-height: 280px;
+            max-height: 250px;
             overflow-y: auto;
         }
         .announcement-card {
@@ -379,36 +374,17 @@
             border-right: 4px solid var(--warning-color);
             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
         }
+        .announcement-body-content { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+        .announcement-body-text { font-size: 0.9rem; color: var(--text-main); line-height: 1.6; word-break: break-word; white-space: pre-wrap; flex: 1; }
+        .announcement-footer-row { display: flex; align-items: center; justify-content: space-between; border-top: 1px solid var(--border-color); padding-top: 8px; font-size: 0.75rem; color: var(--text-muted); }
+        .btn-delete-announcement-card { background-color: var(--danger-color); color: #fff; border: none; padding: 4px 10px; border-radius: 4px; cursor: pointer; font-size: 0.75rem; font-weight: 700; }
 
         .progress-box {
-            background: var(--bg-base);
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius-md);
-            padding: 12px 15px;
-            margin-bottom: 14px;
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
+            background: var(--bg-base); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 12px 15px; margin-bottom: 14px; display: flex; flex-direction: column; gap: 6px;
         }
-        .progress-info-row {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.85rem;
-            font-weight: 700;
-        }
-        .progress-bar-container {
-            width: 100%;
-            height: 10px;
-            background: var(--border-color);
-            border-radius: 5px;
-            overflow: hidden;
-        }
-        .progress-bar-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--primary-color), var(--success-color));
-            width: 0%;
-            transition: width 0.4s ease;
-        }
+        .progress-info-row { display: flex; justify-content: space-between; font-size: 0.85rem; font-weight: 700; }
+        .progress-bar-container { width: 100%; height: 10px; background: var(--border-color); border-radius: 5px; overflow: hidden; }
+        .progress-bar-fill { height: 100%; background: linear-gradient(90deg, var(--primary-color), var(--success-color)); width: 0%; transition: width 0.4s ease; }
 
         .kpi-cards-grid {
             display: grid;
@@ -434,10 +410,7 @@
         .kpi-card.warning { border-color: var(--warning-color); }
         .kpi-card.indigo { border-color: #4f46e5; }
 
-        .kpi-icon-box {
-            font-size: 1.2rem; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: var(--bg-base); color: var(--text-main); flex-shrink: 0;
-        }
-
+        .kpi-icon-box { font-size: 1.2rem; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: var(--bg-base); color: var(--text-main); flex-shrink: 0; }
         .kpi-info h3 { font-size: 0.75rem; color: var(--text-muted); font-weight: 500; }
         .kpi-value { font-size: 1.1rem; font-weight: 800; color: var(--text-main); }
 
@@ -478,19 +451,10 @@
         .action-btn.trash-view-btn { background-color: #d97706; }
 
         .filter-container-box {
-            background: var(--bg-base);
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius-lg);
-            padding: 10px 12px;
-            margin-bottom: 14px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
+            background: var(--bg-base); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 10px 12px; margin-bottom: 14px; display: flex; flex-direction: column; gap: 10px;
         }
-
         .filter-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
         .filter-label { font-size: 0.82rem; font-weight: 700; color: var(--text-muted); min-width: 90px; display: flex; align-items: center; gap: 6px; }
-
         .filter-tabs { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
         .filter-tab {
             padding: 5px 10px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-surface); color: var(--text-main); font-family: var(--font-family); font-size: 0.78rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 5px;
@@ -512,18 +476,10 @@
         }
         .search-field i { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); color: var(--text-muted); }
 
-        .table-container { 
-            max-height: 550px; 
-            overflow-y: auto; 
-            position: relative;
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius-md);
-        }
-
+        .table-container { max-height: 550px; overflow-y: auto; position: relative; border: 1px solid var(--border-color); border-radius: var(--radius-md); }
         table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
         table th { background-color: var(--bg-base); color: var(--text-muted); font-weight: 700; position: sticky; top: 0; z-index: 10; }
         table th, table td { padding: 8px 8px; text-align: right; border-bottom: 1px solid var(--border-color); vertical-align: middle; color: var(--text-main); }
-
         tr.row-apologized { background-color: rgba(220, 38, 38, 0.18) !important; border-right: 4px solid var(--danger-color); }
 
         .status-badge { padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; color: #fff; display: inline-block; margin-bottom: 2px; }
@@ -546,9 +502,7 @@
         .proc-default { background-color: #334155; color: #ffffff; } 
 
         .table-input { width: 100%; padding: 6px; border: 1px solid var(--border-color); border-radius: var(--radius-md); background: var(--bg-base); color: var(--text-main); font-family: var(--font-family); font-size: 0.85rem; }
-        
         .service-cell-box { width: 200px; white-space: pre-wrap; word-break: break-word; padding: 3px 6px; background: var(--bg-base); border-radius: 4px; border: 1px solid var(--border-color); font-size: 0.82rem; line-height: 1.3; color: var(--text-main); }
-
         textarea.table-input { resize: vertical; min-height: 45px; }
 
         .btn-save-action { background-color: var(--success-color); color: #fff; border: none; padding: 5px 8px; border-radius: 4px; cursor: pointer; }
@@ -563,29 +517,29 @@
         #notificationToast.show { transform: translateY(0); opacity: 1; }
 
         .client-report-container { display: flex; flex-direction: column; gap: 12px; width: 100%; }
-
         .client-card-wrapper {
             background-color: var(--bg-base); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 14px 16px; display: flex; flex-direction: column; gap: 10px; position: relative; box-shadow: 0 2px 6px rgba(0,0,0,0.3); width: 100%; overflow: hidden;
         }
-
         .client-card-wrapper.is-copied { background-color: rgba(22, 163, 74, 0.06); border-color: rgba(22, 163, 74, 0.3); }
-
         .client-card-header { display: flex; align-items: flex-start; justify-content: space-between; width: 100%; gap: 10px; flex-wrap: wrap; }
-        .client-card-header .client-title { display: flex; align-items: center; gap: 8px; font-size: 1rem; font-weight: 700; color: var(--text-main); flex-wrap: wrap; flex: 1; min-width: 180px; }
-        .client-card-header .client-select-chk { width: 18px; height: 18px; cursor: pointer; accent-color: var(--primary-color); flex-shrink: 0; }
-
+        .client-title { display: flex; align-items: center; gap: 8px; font-size: 1rem; font-weight: 700; color: var(--text-main); flex-wrap: wrap; flex: 1; }
+        .client-select-chk { width: 18px; height: 18px; cursor: pointer; accent-color: var(--primary-color); flex-shrink: 0; }
         .client-datetime-badge { font-family: Arial, sans-serif; font-size: 0.75rem; font-weight: 700; color: #ffffff; background: rgba(37, 99, 235, 0.25); padding: 4px 8px; border-radius: 4px; border: 1px solid rgba(37, 99, 235, 0.4); direction: ltr; display: inline-flex; align-items: center; gap: 4px; }
-
         .client-info-row { font-size: 0.9rem; color: var(--text-main); line-height: 1.5; word-break: break-word; }
         .client-info-row .info-label { color: var(--text-muted); font-weight: 600; }
-
         .copied-btn { background: #d97706; color: #ffffff; border: none; padding: 4px 10px; border-radius: 4px; font-family: var(--font-family); font-size: 0.78rem; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; white-space: nowrap; }
         .copied-btn.active { background: var(--success-color); }
-
         .client-actions-row { display: flex; gap: 8px; margin-top: 6px; justify-content: flex-end; width: 100%; flex-wrap: wrap; }
         .btn-client-action { padding: 6px 12px; border-radius: 4px; border: none; color: #fff; font-family: var(--font-family); font-size: 0.8rem; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; }
         .btn-client-action.delete-to-trash { background-color: var(--danger-color); }
         .btn-client-action.permanent-delete { background-color: var(--danger-color); }
+
+        .links-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 15px; margin-top: 15px; width: 100%; }
+        .link-card { background: var(--bg-base); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 15px; display: flex; flex-direction: column; gap: 10px; position: relative; width: 100%; }
+        .drag-handle { position: absolute; top: 8px; left: 8px; color: var(--primary-color); background: rgba(37, 99, 235, 0.1); border: 1px solid rgba(37, 99, 235, 0.3); border-radius: 6px; font-size: 1.1rem; cursor: grab; padding: 8px 10px; z-index: 5; }
+        .link-card-header { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 1rem; color: var(--text-main); padding-left: 35px; word-break: break-word; }
+        .link-card-desc { font-size: 0.82rem; color: var(--text-muted); line-height: 1.4; min-height: 35px; word-break: break-word; }
+        .btn-open-link { flex: 1; background-color: var(--primary-color); color: #fff; text-decoration: none; padding: 8px 12px; border-radius: var(--radius-md); font-size: 0.85rem; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 6px; cursor: pointer; border: none; }
 
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 2000; justify-content: center; align-items: center; padding: 15px; }
         .modal.open { display: flex; }
@@ -611,7 +565,7 @@
                         <div class="brand-icon"><i class="fa-solid fa-hospital"></i></div>
                         <div class="brand-text">
                             <h2>مجمع ماجستي</h2>
-                            <p>إدارة المواعيد والتنسيق الطبي</p>
+                            <p>التنسيق الطبي وإدارة المواعيد</p>
                         </div>
                     </div>
                     <button class="toggle-sidebar-btn" onclick="toggleSidebar()" title="إغلاق القائمة">
@@ -663,7 +617,7 @@
                 </div>
             </header>
 
-            <!-- شريط تنقل الأطباء -->
+            <!-- شريط تنقل الأطباء السريع -->
             <div class="doctor-selector-bar" id="doctorQuickBar"></div>
 
             <div class="content-body">
@@ -671,10 +625,11 @@
                 <!-- صفحة مؤشر الأداء والمواعيد -->
                 <div id="page-dashboard" class="page-view">
                     
+                    <!-- صندوق التنبيهات (عام + خاص بالطبيب) -->
                     <section class="clinic-announcements-box">
                         <div class="announcement-header-row">
                             <div class="announcement-title">
-                                <i class="fa-solid fa-bullhorn"></i> تنبيهات وإشعارات العيادة العامة
+                                <i class="fa-solid fa-bullhorn"></i> تنبيهات وإشعارات العيادة (<span class="active-doctor-label">د. سامي</span> والعام)
                             </div>
                             <button class="action-btn copy-btn" onclick="openAddAnnouncementModal()" style="padding: 6px 12px; font-size: 0.8rem;">
                                 <i class="fa-solid fa-plus"></i> إضافة تنبيه جديد
@@ -683,38 +638,17 @@
                         <div class="announcements-grid" id="announcementsListContainer"></div>
                     </section>
 
+                    <!-- ملخص KPIs مخصص لكل طبيب -->
                     <section class="dashboard-section">
                         <div class="section-header">
                             <h2><i class="fa-solid fa-chart-pie"></i> ملخص مؤشرات الأداء (KPIs) - <span class="active-doctor-label">د. سامي</span></h2>
                         </div>
-                        <div class="kpi-cards-grid">
-                            <div class="kpi-card blue">
-                                <div class="kpi-icon-box"><i class="fa-solid fa-users"></i></div>
-                                <div class="kpi-info"><h3>إجمالي الحالات</h3><span class="kpi-value" id="kpi-total">0</span></div>
-                            </div>
-                            <div class="kpi-card purple">
-                                <div class="kpi-icon-box"><i class="fa-solid fa-star"></i></div>
-                                <div class="kpi-info"><h3>حالات ذات أولوية</h3><span class="kpi-value" id="kpi-recurring">0</span></div>
-                            </div>
-                            <div class="kpi-card pink">
-                                <div class="kpi-icon-box"><i class="fa-solid fa-rotate-right"></i></div>
-                                <div class="kpi-info"><h3>الطلبات المتكررة</h3><span class="kpi-value" id="kpi-repeated">0</span></div>
-                            </div>
-                            <div class="kpi-card teal">
-                                <div class="kpi-icon-box"><i class="fa-solid fa-tooth"></i></div>
-                                <div class="kpi-info"><h3>حالات الزراعة</h3><span class="kpi-value" id="kpi-plants">0</span></div>
-                            </div>
-                            <div class="kpi-card warning">
-                                <div class="kpi-icon-box"><i class="fa-solid fa-stethoscope"></i></div>
-                                <div class="kpi-info"><h3>حالات الخلع</h3><span class="kpi-value" id="kpi-extractions">0</span></div>
-                            </div>
-                            <div class="kpi-card indigo">
-                                <div class="kpi-icon-box"><i class="fa-solid fa-clipboard-list"></i></div>
-                                <div class="kpi-info"><h3>حالات المراجعة</h3><span class="kpi-value" id="kpi-reviews">0</span></div>
-                            </div>
+                        <div class="kpi-cards-grid" id="kpiCardsContainer">
+                            <!-- سيتم توليد الـ KPIs ديناميكياً حسب تخصص الطبيب -->
                         </div>
                     </section>
 
+                    <!-- تسجيل موعد جديد مع اختيار الطبيب أوتوماتيكياً -->
                     <section class="dashboard-section">
                         <div class="section-header">
                             <h2><i class="fa-solid fa-calendar-plus"></i> تسجيل موعد / طلب جديد</h2>
@@ -722,9 +656,9 @@
                         <form id="appointmentForm">
                             <div class="form-grid">
                                 <div class="input-field">
-                                    <label>اختر الطبيب المعالج *</label>
+                                    <label>اختر الطبيب المعالج أوتوماتيكياً *</label>
                                     <select id="targetDoctorSelect" required style="border: 2px solid var(--primary-color); font-weight: 700;">
-                                        <!-- توليد خيارات الأطباء ديناميكياً -->
+                                        <!-- خيارات الأطباء -->
                                     </select>
                                 </div>
                                 <div class="input-field">
@@ -780,7 +714,7 @@
                                 </div>
                                 <div class="input-field full-width">
                                     <label>الخدمة المطلوبة / تفاصيل المشكلة والطلب *</label>
-                                    <textarea id="serviceRequired" required placeholder="اكتب تفاصيل طلب العميل المشكلة أو الموعد المطلوب..."></textarea>
+                                    <textarea id="serviceRequired" required placeholder="اكتب تفاصيل طلب العميل..."></textarea>
                                 </div>
                                 <div class="input-field full-width">
                                     <label class="priority-checkbox">
@@ -789,13 +723,14 @@
                                     </label>
                                 </div>
                             </div>
-                            <button type="submit" class="submit-btn"><i class="fa-solid fa-floppy-disk"></i> حفظ الموعد للطبيب المحـدد</button>
+                            <button type="submit" class="submit-btn"><i class="fa-solid fa-floppy-disk"></i> حفظ الموعد وتوجيهه لسحابة الطبيب</button>
                         </form>
                     </section>
 
+                    <!-- جدول المواعيد مع الفلاتر الأصلية الكاملة -->
                     <section class="dashboard-section">
                         <div class="section-header">
-                            <h2><i class="fa-solid fa-list-check"></i> جدول مواعيد - <span class="active-doctor-label">د. سامي</span></h2>
+                            <h2><i class="fa-solid fa-list-check"></i> جدول المواعيد والمتابعة - <span class="active-doctor-label">د. سامي</span></h2>
                             <div class="search-field">
                                 <i class="fa-solid fa-magnifying-glass"></i>
                                 <input type="text" id="searchInput" oninput="filterTable()" placeholder="بحث باسم العميل، الجوال...">
@@ -822,6 +757,39 @@
                                     <button class="filter-tab" data-filter="plants" onclick="setDashboardFilter('plants', this)">حالات الزراعة 🦷</button>
                                     <button class="filter-tab" data-filter="extraction" onclick="setDashboardFilter('extraction', this)">حالات الخلع 🩺</button>
                                     <button class="filter-tab" data-filter="review" onclick="setDashboardFilter('review', this)">حالات المراجعة 📋</button>
+                                    
+                                    <!-- فلاتر الاستفسارات الأصلية -->
+                                    <div class="dropdown-filter-container">
+                                        <button class="dropdown-filter-btn" id="inquiriesDropdownBtn" onclick="toggleDropdown('inquiriesDropdownContent')">
+                                            <i class="fa-solid fa-comments"></i> الاستفسارات <i class="fa-solid fa-chevron-down" style="font-size:0.7rem;"></i>
+                                        </button>
+                                        <div class="dropdown-content" id="inquiriesDropdownContent">
+                                            <button class="dropdown-item" onclick="setDashboardFilter('inquiries_all', this)">💬 كل الاستفسارات</button>
+                                            <button class="dropdown-item" onclick="setDashboardFilter('inquiries_done', this)">✅ استفسارات تم إجراءها</button>
+                                            <button class="dropdown-item" onclick="setDashboardFilter('inquiries_pending', this)">⏳ استفسارات لم يتم إجراؤها</button>
+                                        </div>
+                                    </div>
+
+                                    <!-- فلاتر الكشفيات والمواعيد الأصلية -->
+                                    <div class="dropdown-filter-container">
+                                        <button class="dropdown-filter-btn" id="appointmentsDropdownBtn" onclick="toggleDropdown('appointmentsDropdownContent')">
+                                            <i class="fa-solid fa-stethoscope"></i> الكشفيات والمواعيد <i class="fa-solid fa-chevron-down" style="font-size:0.7rem;"></i>
+                                        </button>
+                                        <div class="dropdown-content" id="appointmentsDropdownContent">
+                                            <button class="dropdown-item" onclick="setDashboardFilter('no_inquiries_all', this)">📋 كل الكشفيات والمواعيد</button>
+                                            <button class="dropdown-item" onclick="setDashboardFilter('no_inquiries_done', this)">✅ تم عليها إجراءات</button>
+                                            <button class="dropdown-item" onclick="setDashboardFilter('no_inquiries_pending', this)">⏳ لم يتم عليها أي إجراء</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="filter-row" style="border-top: 1px dashed var(--border-color); padding-top: 8px;">
+                                <span class="filter-label"><i class="fa-solid fa-clock"></i> النطاق الزمني:</span>
+                                <div class="filter-tabs" id="timeFilterTabs">
+                                    <button class="filter-tab active" data-time="all" onclick="setDashboardTimeFilter('all', this)">كل الأوقات</button>
+                                    <button class="filter-tab" data-time="today" onclick="setDashboardTimeFilter('today', this)">اليوم</button>
+                                    <button class="filter-tab" data-time="week" onclick="setDashboardTimeFilter('week', this)">الأسبوع</button>
+                                    <button class="filter-tab" data-time="month" onclick="setDashboardTimeFilter('month', this)">الشهر</button>
                                 </div>
                             </div>
                         </div>
@@ -851,7 +819,7 @@
 
                 </div>
 
-                <!-- صفحة الكشف -->
+                <!-- صفحة الكشف الأصلية كاملة -->
                 <div id="page-clients" class="page-view hidden">
                     <section class="dashboard-section">
                         <div style="display: flex; flex-direction: column; gap: 12px; background: var(--bg-base); padding: 12px 15px; border-radius: 8px; border: 1px solid var(--border-color); margin-bottom: 15px;">
@@ -861,22 +829,44 @@
                                 </h2>
                             </div>
                             
-                            <div class="client-header-controls" style="display: flex; gap: 8px; flex-wrap: wrap;">
+                            <div class="client-header-controls" style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+                                <select id="clientHoursSelect" onchange="setClientTimeFilterSelect(this.value)" style="background: var(--bg-surface); color: var(--text-main); border: 1px solid var(--border-color); padding: 8px 10px; border-radius: 6px; font-family: var(--font-family); font-size: 0.85rem; cursor: pointer;">
+                                    <option value="all">كل الأوقات</option>
+                                    <option value="24">آخر 24 ساعة</option>
+                                    <option value="168">أسبوع</option>
+                                    <option value="720">شهر</option>
+                                </select>
+
+                                <button class="action-btn" id="pinnedFilterBtn" onclick="togglePinnedFilter()" style="background-color: #16a34a;">
+                                    <i class="fa-solid fa-file-lines"></i> ✅ الكشف العادي (<span id="pinnedCount">0</span>)
+                                </button>
+
                                 <button class="action-btn copy-btn" onclick="copyClientReport()"><i class="fa-solid fa-copy"></i> نسخ الكشف</button>
                                 <button class="action-btn select-del-btn" onclick="requestDeleteSelectedAccess()"><i class="fa-solid fa-trash-can"></i> حذف المحددين</button>
                                 <button class="action-btn trash-view-btn" onclick="openTrashModal()"><i class="fa-solid fa-rotate-left"></i> سلة المحذوفات</button>
                             </div>
                         </div>
 
+                        <div style="margin-bottom: 12px; display: flex; gap: 10px; align-items: center; background: var(--bg-base); padding: 10px 12px; border-radius: 8px; border: 1px solid var(--border-color);">
+                            <i class="fa-solid fa-magnifying-glass" style="color: var(--text-muted);"></i>
+                            <input type="text" id="clientSearchInput" oninput="renderClientReport()" placeholder="بحث بالاسم، رقم الجوال، رقم الملف، الهوية..." style="width: 100%; background: transparent; border: none; outline: none; color: var(--text-main); font-family: var(--font-family); font-size: 0.88rem;">
+                        </div>
+
                         <div id="clientReportList" class="client-report-container"></div>
                     </section>
                 </div>
 
-                <!-- الدليل الشامل -->
+                <!-- الدليل الشامل لخدمة العملاء -->
                 <div id="page-csguide" class="page-view hidden">
                     <section class="dashboard-section">
-                        <h2><i class="fa-solid fa-book-bookmark"></i> الدليل الشامل لـ (خدمة العملاء)</h2>
-                        <p style="margin-top: 10px; color: var(--text-muted);">دليل الأدوات والروابط الموحدة لموظفي الخدمة والتنسيق.</p>
+                        <div class="section-header">
+                            <h2><i class="fa-solid fa-book-bookmark"></i> الدليل الشامل لـ (خدمة العملاء)</h2>
+                            <button class="action-btn copy-btn" onclick="openAddLinkModal()"><i class="fa-solid fa-plus"></i> إضافة رابط جديد</button>
+                        </div>
+                        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 10px;">
+                            💡 يمكنك الضغط على "فتح الموقع" للوصول السريع للأنظمة والروابط.
+                        </p>
+                        <div class="links-grid" id="linksGridContainer"></div>
                     </section>
                 </div>
 
@@ -884,22 +874,94 @@
         </main>
     </div>
 
+    <!-- نافذة إضافة تنبيه جديد -->
+    <div class="modal" id="announcementModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-bullhorn"></i> إضافة تنبيه أو إشعار</h3>
+                <button class="close-modal-btn" onclick="closeAnnouncementModal()">&times;</button>
+            </div>
+            <form onsubmit="saveAnnouncementItem(event)">
+                <div class="form-grid">
+                    <div class="input-field full-width">
+                        <label>مستوى النشر *</label>
+                        <select id="announcementScope" style="font-weight: 700;">
+                            <option value="general">🌍 إشعار عام لكل العيادة والمنسقين</option>
+                            <option value="doctor">🩺 إشعار خاص بعيادة الطبيب الحالي فقط</option>
+                        </select>
+                    </div>
+                    <div class="input-field full-width">
+                        <label>نص التنبيه *</label>
+                        <textarea id="announcementText" required placeholder="اكتب تفاصيل التنبيه..."></textarea>
+                    </div>
+                </div>
+                <button type="submit" class="submit-btn" style="margin-top: 15px;"><i class="fa-solid fa-floppy-disk"></i> نشر التنبيه</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- نافذة إضافة رابط جديد للدليل الشامل -->
+    <div class="modal" id="linkModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-link"></i> إضافة رابط جديد للدليل</h3>
+                <button class="close-modal-btn" onclick="closeLinkModal()">&times;</button>
+            </div>
+            <form onsubmit="saveLinkItem(event)">
+                <div class="form-grid">
+                    <div class="input-field full-width">
+                        <label>عنوان الرابط *</label>
+                        <input type="text" id="linkTitle" required placeholder="مثال: منصة بيفاتيل">
+                    </div>
+                    <div class="input-field full-width">
+                        <label>رابط الـ URL *</label>
+                        <input type="url" id="linkUrl" required placeholder="https://...">
+                    </div>
+                    <div class="input-field full-width">
+                        <label>وصف مختصر</label>
+                        <textarea id="linkDesc" placeholder="وصف الرابط..."></textarea>
+                    </div>
+                </div>
+                <button type="submit" class="submit-btn" style="margin-top: 15px;"><i class="fa-solid fa-floppy-disk"></i> حفظ الرابط</button>
+            </form>
+        </div>
+    </div>
+
     <!-- نافذة إضافة طبيب جديد -->
     <div class="modal" id="addDoctorModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3><i class="fa-solid fa-user-doctor"></i> إضافة طبيب جديد إلى النظام</h3>
+                <h3><i class="fa-solid fa-user-doctor"></i> إضافة طبيب جديد وتخصصه</h3>
                 <button class="close-modal-btn" onclick="closeAddDoctorModal()">&times;</button>
             </div>
             <form onsubmit="saveNewDoctor(event)">
                 <div class="form-grid">
                     <div class="input-field full-width">
                         <label>اسم الدكتور الكامل *</label>
-                        <input type="text" id="newDoctorName" required placeholder="مثال: د. عبد الله">
+                        <input type="text" id="newDoctorName" required placeholder="مثال: د. إبراهيم">
+                    </div>
+                    <div class="input-field full-width">
+                        <label>التخصص الطبي *</label>
+                        <select id="newDoctorSpecialty" required>
+                            <option value="prosthetics">تركيبات وتيجان (مثل د. محمود)</option>
+                            <option value="ortho">تقويم وشد (مثل د. عبد الله)</option>
+                            <option value="general">زراعة وجراحة وعامة (مثل د. سامي)</option>
+                        </select>
                     </div>
                 </div>
-                <button type="submit" class="submit-btn" style="margin-top: 15px;"><i class="fa-solid fa-plus"></i> إنشاء عيادة وسحابة الدكتور</button>
+                <button type="submit" class="submit-btn" style="margin-top: 15px;"><i class="fa-solid fa-plus"></i> إنشاء العيادة والسحابة</button>
             </form>
+        </div>
+    </div>
+
+    <!-- سلة المحذوفات -->
+    <div class="modal" id="trashModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-rotate-left"></i> سلة المحذوفات</h3>
+                <button class="close-modal-btn" onclick="closeTrashModal()">&times;</button>
+            </div>
+            <div id="trashModalList" style="display: flex; flex-direction: column; gap: 10px; max-height: 60vh; overflow-y: auto;"></div>
         </div>
     </div>
 
@@ -909,17 +971,26 @@
         const database = firebase.database();
 
         let defaultDoctors = [
-            { id: 'dr_sami', name: 'د. سامي', dbPath: 'appointments' },
-            { id: 'dr_mahmoud', name: 'د. محمود', dbPath: 'doctors/dr_mahmoud/appointments' },
-            { id: 'dr_abdullah', name: 'د. عبد الله', dbPath: 'doctors/dr_abdullah/appointments' }
+            { id: 'dr_sami', name: 'د. سامي', dbPath: 'appointments', specialty: 'general' },
+            { id: 'dr_mahmoud', name: 'د. محمود', dbPath: 'doctors/dr_mahmoud/appointments', specialty: 'prosthetics' },
+            { id: 'dr_abdullah', name: 'د. عبد الله', dbPath: 'doctors/dr_abdullah/appointments', specialty: 'ortho' }
         ];
 
-        let doctorsList = JSON.parse(localStorage.getItem('registeredDoctors')) || defaultDoctors;
-        let currentDoctorId = localStorage.getItem('activeDoctorId') || 'dr_sami';
+        let doctorsList = JSON.parse(localStorage.getItem('registeredDoctors_v2')) || defaultDoctors;
+        let currentDoctorId = localStorage.getItem('activeDoctorId_v2') || 'dr_sami';
 
         let records = [];
+        let clinicAnnouncements = [];
+        let csLinks = JSON.parse(localStorage.getItem('cachedCSLinks_v1')) || [
+            { linkKey: 'l1', title: 'منصة بيفاتيل Bevatel', url: 'https://bevatel.com', desc: 'منصة الدردشة العامة' },
+            { linkKey: 'l2', title: 'منصة جو Go', url: 'https://go.sa', desc: 'منصة الحجوزات الرئيسية' }
+        ];
+
         let dbRef = null;
         let dashboardFilter = 'all';
+        let dashboardTimeFilter = 'all';
+        let clientHoursFilter = 'all';
+        let isPinnedFilterActive = false;
 
         function getCurrentDoctor() {
             return doctorsList.find(d => d.id === currentDoctorId) || doctorsList[0];
@@ -927,10 +998,11 @@
 
         function switchDoctor(docId) {
             currentDoctorId = docId;
-            localStorage.setItem('activeDoctorId', docId);
+            localStorage.setItem('activeDoctorId_v2', docId);
             initDoctorDatabase();
             renderDoctorsMenu();
             updateDoctorUI();
+            renderAnnouncements();
         }
 
         function updateDoctorUI() {
@@ -939,6 +1011,44 @@
             document.getElementById('pageTitle').innerText = `مؤشر الأداء والمواعيد - ${doc.name}`;
             document.getElementById('currentDoctorCloudText').innerText = `سحابة (${doc.name}) 🟢`;
             document.getElementById('targetDoctorSelect').value = doc.id;
+            renderKPIsStructure(doc.specialty);
+        }
+
+        function renderKPIsStructure(specialty) {
+            const grid = document.getElementById('kpiCardsContainer');
+            grid.innerHTML = '';
+
+            if (specialty === 'prosthetics') {
+                // تخصص د. محمود (تركيبات)
+                grid.innerHTML = `
+                    <div class="kpi-card blue"><div class="kpi-icon-box"><i class="fa-solid fa-users"></i></div><div class="kpi-info"><h3>إجمالي التركيبات</h3><span class="kpi-value" id="kpi-total">0</span></div></div>
+                    <div class="kpi-card purple"><div class="kpi-icon-box"><i class="fa-solid fa-star"></i></div><div class="kpi-info"><h3>حالات ذات أولوية</h3><span class="kpi-value" id="kpi-recurring">0</span></div></div>
+                    <div class="kpi-card pink"><div class="kpi-icon-box"><i class="fa-solid fa-rotate-right"></i></div><div class="kpi-info"><h3>الطلبات المتكررة</h3><span class="kpi-value" id="kpi-repeated">0</span></div></div>
+                    <div class="kpi-card teal"><div class="kpi-icon-box"><i class="fa-solid fa-crown"></i></div><div class="kpi-info"><h3>تركيبات ثابتة</h3><span class="kpi-value" id="kpi-fixed">0</span></div></div>
+                    <div class="kpi-card warning"><div class="kpi-icon-box"><i class="fa-solid fa-teeth"></i></div><div class="kpi-info"><h3>تركيبات متحركة</h3><span class="kpi-value" id="kpi-removable">0</span></div></div>
+                    <div class="kpi-card indigo"><div class="kpi-icon-box"><i class="fa-solid fa-clipboard-list"></i></div><div class="kpi-info"><h3>فينيير ومراجعات</h3><span class="kpi-value" id="kpi-veneers">0</span></div></div>
+                `;
+            } else if (specialty === 'ortho') {
+                // تخصص د. عبد الله (تقويم)
+                grid.innerHTML = `
+                    <div class="kpi-card blue"><div class="kpi-icon-box"><i class="fa-solid fa-users"></i></div><div class="kpi-info"><h3>إجمالي التقويم</h3><span class="kpi-value" id="kpi-total">0</span></div></div>
+                    <div class="kpi-card purple"><div class="kpi-icon-box"><i class="fa-solid fa-star"></i></div><div class="kpi-info"><h3>حالات ذات أولوية</h3><span class="kpi-value" id="kpi-recurring">0</span></div></div>
+                    <div class="kpi-card pink"><div class="kpi-icon-box"><i class="fa-solid fa-rotate-right"></i></div><div class="kpi-info"><h3>الطلبات المتكررة</h3><span class="kpi-value" id="kpi-repeated">0</span></div></div>
+                    <div class="kpi-card teal"><div class="kpi-icon-box"><i class="fa-solid fa-face-smile"></i></div><div class="kpi-info"><h3>تركيب تقويم</h3><span class="kpi-value" id="kpi-ortho-new">0</span></div></div>
+                    <div class="kpi-card warning"><div class="kpi-icon-box"><i class="fa-solid fa-arrows-split-up-and-left"></i></div><div class="kpi-info"><h3>جلسات الشد والضبط</h3><span class="kpi-value" id="kpi-ortho-tight">0</span></div></div>
+                    <div class="kpi-card indigo"><div class="kpi-icon-box"><i class="fa-solid fa-clipboard-list"></i></div><div class="kpi-info"><h3>فك ومراجعات التقويم</h3><span class="kpi-value" id="kpi-ortho-rev">0</span></div></div>
+                `;
+            } else {
+                // الافتراضي (د. سامي - زراعة وجراحة)
+                grid.innerHTML = `
+                    <div class="kpi-card blue"><div class="kpi-icon-box"><i class="fa-solid fa-users"></i></div><div class="kpi-info"><h3>إجمالي الحالات</h3><span class="kpi-value" id="kpi-total">0</span></div></div>
+                    <div class="kpi-card purple"><div class="kpi-icon-box"><i class="fa-solid fa-star"></i></div><div class="kpi-info"><h3>حالات ذات أولوية</h3><span class="kpi-value" id="kpi-recurring">0</span></div></div>
+                    <div class="kpi-card pink"><div class="kpi-icon-box"><i class="fa-solid fa-rotate-right"></i></div><div class="kpi-info"><h3>الطلبات المتكررة</h3><span class="kpi-value" id="kpi-repeated">0</span></div></div>
+                    <div class="kpi-card teal"><div class="kpi-icon-box"><i class="fa-solid fa-tooth"></i></div><div class="kpi-info"><h3>حالات الزراعة</h3><span class="kpi-value" id="kpi-plants">0</span></div></div>
+                    <div class="kpi-card warning"><div class="kpi-icon-box"><i class="fa-solid fa-stethoscope"></i></div><div class="kpi-info"><h3>حالات الخلع</h3><span class="kpi-value" id="kpi-extractions">0</span></div></div>
+                    <div class="kpi-card indigo"><div class="kpi-icon-box"><i class="fa-solid fa-clipboard-list"></i></div><div class="kpi-info"><h3>حالات المراجعة</h3><span class="kpi-value" id="kpi-reviews">0</span></div></div>
+                `;
+            }
         }
 
         function initDoctorDatabase() {
@@ -959,6 +1069,17 @@
                 updateKPIs();
                 renderClientReport();
             });
+
+            // الاستماع للإشعارات العامة والخاصة
+            database.ref('clinic_announcements').on('value', (snap) => {
+                const generalAnn = snap.val() ? Object.keys(snap.val()).map(k => ({ key: k, ...snap.val()[k], scope: 'general' })) : [];
+                database.ref(`doctors/${doc.id}/announcements`).on('value', (snapDoc) => {
+                    const docAnn = snapDoc.val() ? Object.keys(snapDoc.val()).map(k => ({ key: k, ...snapDoc.val()[k], scope: 'doctor' })) : [];
+                    clinicAnnouncements = [...generalAnn, ...docAnn];
+                    clinicAnnouncements.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                    renderAnnouncements();
+                });
+            });
         }
 
         function renderDoctorsMenu() {
@@ -973,21 +1094,18 @@
             doctorsList.forEach(doc => {
                 const isActive = doc.id === currentDoctorId;
                 
-                // القائمة الجانبية
                 const menuItem = document.createElement('div');
                 menuItem.className = `menu-item ${isActive ? 'active' : ''}`;
                 menuItem.onclick = () => switchDoctor(doc.id);
                 menuItem.innerHTML = `<i class="fa-solid fa-user-doctor"></i> <span>${doc.name}</span>`;
                 menuContainer.appendChild(menuItem);
 
-                // الشريط السريع
                 const tabBtn = document.createElement('button');
                 tabBtn.className = `doctor-tab-btn ${isActive ? 'active' : ''}`;
                 tabBtn.onclick = () => switchDoctor(doc.id);
                 tabBtn.innerHTML = `<i class="fa-solid fa-stethoscope"></i> ${doc.name}`;
                 quickBar.appendChild(tabBtn);
 
-                // الخيارات في النموذج
                 const opt = document.createElement('option');
                 opt.value = doc.id;
                 opt.innerText = doc.name;
@@ -1003,31 +1121,43 @@
         function saveNewDoctor(e) {
             e.preventDefault();
             const nameVal = document.getElementById('newDoctorName').value.trim();
+            const specialtyVal = document.getElementById('newDoctorSpecialty').value;
             if (!nameVal) return;
 
             const newId = 'dr_' + Date.now();
             const newDoc = {
                 id: newId,
                 name: nameVal.startsWith('د.') ? nameVal : `د. ${nameVal}`,
-                dbPath: `doctors/${newId}/appointments`
+                dbPath: `doctors/${newId}/appointments`,
+                specialty: specialtyVal
             };
 
             doctorsList.push(newDoc);
-            localStorage.setItem('registeredDoctors', JSON.stringify(doctorsList));
+            localStorage.setItem('registeredDoctors_v2', JSON.stringify(doctorsList));
             closeAddDoctorModal();
             document.getElementById('newDoctorName').value = '';
             switchDoctor(newId);
-            alert(`تم إنشاء عيادة جديدة لـ (${newDoc.name}) بنجاح!`);
+            alert(`تم إنشاء عيادة وتخصص (${newDoc.name}) بنجاح!`);
         }
 
+        // إرسال موعد جديد وتوجيهه أوتوماتيكياً لسحابة الطبيب المختار
         document.getElementById('appointmentForm').addEventListener('submit', function(e) {
             e.preventDefault();
             const chosenDoctorId = document.getElementById('targetDoctorSelect').value;
             const targetDoc = doctorsList.find(d => d.id === chosenDoctorId) || getCurrentDoctor();
 
+            const patientNameVal = document.getElementById('patientName').value.trim();
+            const patientPhoneVal = document.getElementById('patientPhone').value.trim() || '-';
+            const cleanNewPhone = patientPhoneVal !== '-' ? patientPhoneVal.replace(/\D/g, '') : '';
+
+            const isRepeated = records.some(r => {
+                const cleanExistingPhone = (r.patientPhone && r.patientPhone !== '-') ? r.patientPhone.replace(/\D/g, '') : '';
+                return (cleanNewPhone.length >= 8 && cleanExistingPhone === cleanNewPhone) || (r.patientName && r.patientName.trim().toLowerCase() === patientNameVal.toLowerCase());
+            });
+
             const newRecord = {
-                patientName: document.getElementById('patientName').value.trim(),
-                patientPhone: document.getElementById('patientPhone').value.trim() || '-',
+                patientName: patientNameVal,
+                patientPhone: patientPhoneVal,
                 fileNumber: document.getElementById('fileNumber').value.trim() || '-',
                 idNumber: document.getElementById('idNumber').value.trim() || '-',
                 branch: document.getElementById('branch').value,
@@ -1035,42 +1165,174 @@
                 contactMethod: document.getElementById('contactMethod').value,
                 serviceRequired: document.getElementById('serviceRequired').value,
                 coordinatorName: document.getElementById('coordinatorName').value,
-                isRecurring: document.getElementById('isRecurring').checked,
+                isRecurring: document.getElementById('isRecurring').checked || isRepeated,
+                isRepeatedRequest: isRepeated,
                 createdAt: new Date().toISOString(),
                 adminContactMethod: 'قيد الانتظار',
-                actionTaken: ''
+                actionTaken: '',
+                isCopied: false,
+                isPinned: false,
+                isHiddenFromClients: false
             };
 
-            // إرسال السحابة للدكتور المختار أوتوماتيكياً
             database.ref(targetDoc.dbPath).push(newRecord);
-            
             this.reset();
-            alert(`تم إضافة الموعد أوتوماتيكياً إلى حساب (${targetDoc.name}) بنجاح!`);
+            alert(`تم إضافة الموعد وتوجيهه أوتوماتيكياً إلى سحابة (${targetDoc.name}) بنجاح!`);
             
             if (chosenDoctorId !== currentDoctorId) {
                 switchDoctor(chosenDoctorId);
             }
         });
 
+        function renderAnnouncements() {
+            const container = document.getElementById('announcementsListContainer');
+            if (!container) return;
+            container.innerHTML = '';
+
+            if (clinicAnnouncements.length === 0) {
+                container.innerHTML = '<div style="text-align: center; color: var(--text-muted); font-size: 0.85rem; padding: 10px;">لا توجد تنبيهات حالياً.</div>';
+                return;
+            }
+
+            clinicAnnouncements.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'announcement-card';
+                const scopeBadge = item.scope === 'general' ? '🌍 [إشعار عام]' : '🩺 [إشعار خاص بالطبيب]';
+                
+                card.innerHTML = `
+                    <div class="announcement-body-content">
+                        <div class="announcement-body-text"><strong>${scopeBadge}</strong><br>${item.text}</div>
+                    </div>
+                    <div class="announcement-footer-row">
+                        <span>${item.createdAt ? item.createdAt.slice(0,19).replace('T', ' ') : ''}</span>
+                        <button class="btn-delete-announcement-card" onclick="deleteAnnouncement('${item.key}', '${item.scope}')">حذف</button>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function openAddAnnouncementModal() { document.getElementById('announcementModal').classList.add('open'); }
+        function closeAnnouncementModal() { document.getElementById('announcementModal').classList.remove('open'); }
+
+        function saveAnnouncementItem(e) {
+            e.preventDefault();
+            const scope = document.getElementById('announcementScope').value;
+            const text = document.getElementById('announcementText').value.trim();
+            const doc = getCurrentDoctor();
+
+            const item = { text, createdAt: new Date().toISOString() };
+            if (scope === 'general') {
+                database.ref('clinic_announcements').push(item);
+            } else {
+                database.ref(`doctors/${doc.id}/announcements`).push(item);
+            }
+
+            closeAnnouncementModal();
+            document.getElementById('announcementText').value = '';
+            alert('تم نشر التنبيه بنجاح!');
+        }
+
+        function deleteAnnouncement(key, scope) {
+            const doc = getCurrentDoctor();
+            if (confirm('هل أنت متأكد من حذف هذا التنبيه؟')) {
+                if (scope === 'general') {
+                    database.ref(`clinic_announcements/${key}`).remove();
+                } else {
+                    database.ref(`doctors/${doc.id}/announcements/${key}`).remove();
+                }
+            }
+        }
+
+        function toggleDropdown(id) {
+            const el = document.getElementById(id);
+            document.querySelectorAll('.dropdown-content').forEach(d => { if(d.id !== id) d.classList.remove('show'); });
+            el.classList.toggle('show');
+        }
+
+        window.addEventListener('click', (e) => {
+            if (!e.target.closest('.dropdown-filter-container')) {
+                document.querySelectorAll('.dropdown-content').forEach(d => d.classList.remove('show'));
+            }
+        });
+
+        function setDashboardFilter(filterType, btn) {
+            dashboardFilter = filterType;
+            document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+            if (btn && btn.classList.contains('filter-tab')) btn.classList.add('active');
+            document.querySelectorAll('.dropdown-content').forEach(d => d.classList.remove('show'));
+            renderTable();
+        }
+
+        function setDashboardTimeFilter(timeType, btn) {
+            dashboardTimeFilter = timeType;
+            btn.closest('.filter-row').querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+            btn.classList.add('active');
+            renderTable();
+        }
+
         function renderTable() {
             const tbody = document.getElementById('tableBody');
             if (!tbody) return;
             tbody.innerHTML = '';
 
-            records.forEach((record, index) => {
+            let filteredList = [...records];
+            const now = new Date();
+
+            if (dashboardFilter === 'priority') {
+                filteredList = filteredList.filter(r => r.isRecurring);
+            } else if (dashboardFilter === 'repeated') {
+                filteredList = filteredList.filter(r => r.isRepeatedRequest);
+            } else if (dashboardFilter === 'plants') {
+                filteredList = filteredList.filter(r => r.procedureType && r.procedureType.includes('زراعة'));
+            } else if (dashboardFilter === 'extraction') {
+                filteredList = filteredList.filter(r => r.procedureType && r.procedureType.includes('خلع'));
+            } else if (dashboardFilter === 'review') {
+                filteredList = filteredList.filter(r => r.procedureType && r.procedureType.includes('مراجعه'));
+            } else if (dashboardFilter === 'inquiries_all') {
+                filteredList = filteredList.filter(r => r.procedureType && r.procedureType.includes('استفسارات'));
+            } else if (dashboardFilter === 'inquiries_done') {
+                filteredList = filteredList.filter(r => (r.procedureType && r.procedureType.includes('استفسارات')) && r.adminContactMethod !== 'قيد الانتظار');
+            } else if (dashboardFilter === 'inquiries_pending') {
+                filteredList = filteredList.filter(r => (r.procedureType && r.procedureType.includes('استفسارات')) && r.adminContactMethod === 'قيد الانتظار');
+            } else if (dashboardFilter === 'no_inquiries_all') {
+                filteredList = filteredList.filter(r => !r.procedureType || !r.procedureType.includes('استفسارات'));
+            } else if (dashboardFilter === 'no_inquiries_done') {
+                filteredList = filteredList.filter(r => (!r.procedureType || !r.procedureType.includes('استفسارات')) && r.adminContactMethod !== 'قيد الانتظار');
+            } else if (dashboardFilter === 'no_inquiries_pending') {
+                filteredList = filteredList.filter(r => (!r.procedureType || !r.procedureType.includes('استفسارات')) && r.adminContactMethod === 'قيد الانتظار');
+            }
+
+            filteredList.forEach((record, index) => {
                 const tr = document.createElement('tr');
+                const contactMethod = record.adminContactMethod || 'قيد الانتظار';
+
+                let sClass = 'badge-pending';
+                if (contactMethod === 'قيد الإجراء') sClass = 'badge-inprogress';
+                else if (contactMethod === 'تم التواصل') sClass = 'badge-completed';
+                else if (contactMethod === 'معلق') sClass = 'badge-suspended';
+                else if (contactMethod === 'اعتذر') sClass = 'badge-apologized';
+
                 tr.innerHTML = `
                     <td>${index + 1}</td>
                     <td>${record.createdAt ? record.createdAt.slice(0,10) : '-'}</td>
-                    <td><span class="status-badge badge-inprogress">${record.adminContactMethod || 'قيد الانتظار'}</span></td>
+                    <td><span class="status-badge ${sClass}">${contactMethod}</span></td>
                     <td><strong>${record.patientName}</strong></td>
                     <td>${record.patientPhone}</td>
                     <td>${record.fileNumber || '-'}</td>
                     <td><span class="proc-badge proc-default">${record.procedureType || '-'}</span></td>
                     <td><div class="service-cell-box">${record.serviceRequired}</div></td>
                     <td>${record.coordinatorName}</td>
-                    <td>${record.adminContactMethod || 'قيد الانتظار'}</td>
-                    <td>${record.actionTaken || '-'}</td>
+                    <td>
+                        <select class="table-input" onchange="updateRecordContact('${record.firebaseKey}', this.value)">
+                            <option value="قيد الانتظار" ${contactMethod === 'قيد الانتظار' ? 'selected' : ''}>قيد الانتظار</option>
+                            <option value="قيد الإجراء" ${contactMethod === 'قيد الإجراء' ? 'selected' : ''}>قيد الإجراء 🔄</option>
+                            <option value="تم التواصل" ${contactMethod === 'تم التواصل' ? 'selected' : ''}>تم التواصل ✅</option>
+                            <option value="معلق" ${contactMethod === 'معلق' ? 'selected' : ''}>معلق 🟡</option>
+                            <option value="اعتذر" ${contactMethod === 'اعتذر' ? 'selected' : ''}>اعتذر ❌</option>
+                        </select>
+                    </td>
+                    <td><textarea class="table-input" onchange="updateRecordAction('${record.firebaseKey}', this.value)">${record.actionTaken || ''}</textarea></td>
                     <td>
                         <button class="btn-delete-action" onclick="deleteRecord('${record.firebaseKey}')"><i class="fa-solid fa-trash"></i></button>
                     </td>
@@ -1079,46 +1341,140 @@
             });
         }
 
-        function updateKPIs() {
-            document.getElementById('kpi-total').innerText = records.length;
-            document.getElementById('kpi-recurring').innerText = records.filter(r => r.isRecurring).length;
-            document.getElementById('kpi-repeated').innerText = records.filter(r => r.isRepeatedRequest).length;
-            document.getElementById('kpi-plants').innerText = records.filter(r => (r.procedureType && r.procedureType.includes('زراعة'))).length;
-            document.getElementById('kpi-extractions').innerText = records.filter(r => (r.procedureType && r.procedureType.includes('خلع'))).length;
-            document.getElementById('kpi-reviews').innerText = records.filter(r => (r.procedureType && r.procedureType.includes('مراجعه'))).length;
+        function updateRecordContact(key, val) {
+            if (dbRef) dbRef.child(key).update({ adminContactMethod: val });
+        }
+        function updateRecordAction(key, val) {
+            if (dbRef) dbRef.child(key).update({ actionTaken: val });
         }
 
+        function updateKPIs() {
+            const doc = getCurrentDoctor();
+            document.getElementById('kpi-total').innerText = records.length;
+            const recurringEl = document.getElementById('kpi-recurring');
+            const repeatedEl = document.getElementById('kpi-repeated');
+            if(recurringEl) recurringEl.innerText = records.filter(r => r.isRecurring).length;
+            if(repeatedEl) repeatedEl.innerText = records.filter(r => r.isRepeatedRequest).length;
+
+            if (doc.specialty === 'prosthetics') {
+                const fixed = records.filter(r => r.procedureType && (r.procedureType.includes('ثابت') || r.procedureType.includes('تيجان'))).length;
+                const removable = records.filter(r => r.procedureType && r.procedureType.includes('متحرك')).length;
+                const veneers = records.filter(r => r.procedureType && (r.procedureType.includes('فينيير') || r.procedureType.includes('مراجعه'))).length;
+                if(document.getElementById('kpi-fixed')) document.getElementById('kpi-fixed').innerText = fixed;
+                if(document.getElementById('kpi-removable')) document.getElementById('kpi-removable').innerText = removable;
+                if(document.getElementById('kpi-veneers')) document.getElementById('kpi-veneers').innerText = veneers;
+            } else if (doc.specialty === 'ortho') {
+                const orthoNew = records.filter(r => r.procedureType && r.procedureType.includes('تركيب')).length;
+                const orthoTight = records.filter(r => r.procedureType && (r.procedureType.includes('شد') || r.procedureType.includes('ضبط'))).length;
+                const orthoRev = records.filter(r => r.procedureType && (r.procedureType.includes('فك') || r.procedureType.includes('مراجعه'))).length;
+                if(document.getElementById('kpi-ortho-new')) document.getElementById('kpi-ortho-new').innerText = orthoNew;
+                if(document.getElementById('kpi-ortho-tight')) document.getElementById('kpi-ortho-tight').innerText = orthoTight;
+                if(document.getElementById('kpi-ortho-rev')) document.getElementById('kpi-ortho-rev').innerText = orthoRev;
+            } else {
+                if(document.getElementById('kpi-plants')) document.getElementById('kpi-plants').innerText = records.filter(r => r.procedureType && r.procedureType.includes('زراعة')).length;
+                if(document.getElementById('kpi-extractions')) document.getElementById('kpi-extractions').innerText = records.filter(r => r.procedureType && r.procedureType.includes('خلع')).length;
+                if(document.getElementById('kpi-reviews')) document.getElementById('kpi-reviews').innerText = records.filter(r => r.procedureType && r.procedureType.includes('مراجعه')).length;
+            }
+        }
+
+        // صفحة الكشف
         function renderClientReport() {
             const container = document.getElementById('clientReportList');
             if (!container) return;
             container.innerHTML = '';
 
-            if (records.length === 0) {
+            let openRecords = records.filter(r => !r.isHiddenFromClients);
+            if (openRecords.length === 0) {
                 container.innerHTML = '<div style="text-align:center; padding:30px; color:var(--text-muted);">لا توجد حالات حالياً في صفحة الكشف.</div>';
                 return;
             }
 
-            records.forEach((rec, idx) => {
+            openRecords.forEach((rec, idx) => {
                 const card = document.createElement('div');
-                card.className = 'client-card-wrapper';
+                card.className = `client-card-wrapper ${rec.isCopied ? 'is-copied' : ''}`;
                 card.innerHTML = `
                     <div class="client-card-header">
                         <div class="client-title">
+                            <input type="checkbox" class="client-select-chk" data-key="${rec.firebaseKey}">
                             <span>${idx + 1}- ${rec.patientName} ${rec.fileNumber !== '-' ? rec.fileNumber : ''}</span>
+                            <button class="copied-btn ${rec.isCopied ? 'active' : ''}" onclick="toggleCopyStatus('${rec.firebaseKey}')">
+                                ${rec.isCopied ? 'تم النسخ' : 'تعليم كمنسوخ'}
+                            </button>
                         </div>
                         <span class="client-datetime-badge">${rec.createdAt ? rec.createdAt.slice(0,10) : ''}</span>
                     </div>
                     <div class="client-info-row"><span class="info-label">رقم الجوال:</span> ${rec.patientPhone}</div>
                     <div class="client-info-row">${rec.serviceRequired}</div>
+                    <div class="client-actions-row">
+                        <button class="btn-client-action delete-to-trash" onclick="hideClient('${rec.firebaseKey}')">حذف</button>
+                    </div>
                 `;
                 container.appendChild(card);
             });
+        }
+
+        function toggleCopyStatus(key) {
+            const rec = records.find(r => r.firebaseKey === key);
+            if(rec) {
+                const newStatus = !rec.isCopied;
+                if(dbRef) dbRef.child(key).update({ isCopied: newStatus });
+            }
+        }
+
+        function hideClient(key) {
+            if(dbRef) dbRef.child(key).update({ isHiddenFromClients: true });
+        }
+
+        function copyClientReport() {
+            let text = "";
+            records.filter(r => !r.isHiddenFromClients && !r.isCopied).forEach((r, i) => {
+                text += `${i+1}- ${r.patientName}\nرقم الجوال: ${r.patientPhone}\n${r.serviceRequired}\n\n`;
+                if(dbRef) dbRef.child(r.firebaseKey).update({ isCopied: true });
+            });
+            if(text) {
+                navigator.clipboard.writeText(text.trim()).then(() => alert('تم نسخ الكشف بنجاح!'));
+            } else {
+                alert('لا توجد عملاء جدد للنسخ.');
+            }
         }
 
         function deleteRecord(key) {
             if (confirm('هل أنت متأكد من الحذف؟')) {
                 if (dbRef) dbRef.child(key).remove();
             }
+        }
+
+        // الدليل الشامل
+        function renderCSLinks() {
+            const container = document.getElementById('linksGridContainer');
+            if (!container) return;
+            container.innerHTML = '';
+            csLinks.forEach(link => {
+                const card = document.createElement('div');
+                card.className = 'link-card';
+                card.innerHTML = `
+                    <div class="link-card-header"><i class="fa-solid fa-globe"></i><span>${link.title}</span></div>
+                    <div class="link-card-desc">${link.desc || ''}</div>
+                    <button class="btn-open-link" onclick="window.open('${link.url}', '_blank')"><i class="fa-solid fa-arrow-up-right-from-square"></i> فتح الموقع</button>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function openAddLinkModal() { document.getElementById('linkModal').classList.add('open'); }
+        function closeLinkModal() { document.getElementById('linkModal').classList.remove('open'); }
+
+        function saveLinkItem(e) {
+            e.preventDefault();
+            const title = document.getElementById('linkTitle').value.trim();
+            const url = document.getElementById('linkUrl').value.trim();
+            const desc = document.getElementById('linkDesc').value.trim();
+
+            csLinks.push({ linkKey: 'l_' + Date.now(), title, url, desc });
+            localStorage.setItem('cachedCSLinks_v1', JSON.stringify(csLinks));
+            closeLinkModal();
+            renderCSLinks();
+            alert('تم إضافة الرابط بنجاح!');
         }
 
         function switchPage(page) {
@@ -1134,6 +1490,7 @@
             } else if (page === 'csguide') {
                 document.getElementById('page-csguide').classList.remove('hidden');
                 document.getElementById('menu-csguide').classList.add('active');
+                renderCSLinks();
             }
         }
 
@@ -1144,6 +1501,7 @@
             renderDoctorsMenu();
             initDoctorDatabase();
             updateDoctorUI();
+            renderCSLinks();
         });
     </script>
 </body>
