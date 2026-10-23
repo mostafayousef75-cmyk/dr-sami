@@ -412,6 +412,21 @@
             white-space: pre-wrap;
             flex: 1;
         }
+        .announcement-file-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 8px;
+            background: rgba(37, 99, 235, 0.2);
+            border: 1px solid var(--primary-color);
+            color: #60a5fa;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            text-decoration: none;
+            font-weight: 600;
+            margin-top: 5px;
+        }
+        .announcement-file-link:hover { background: var(--primary-color); color: #fff; }
 
         .progress-box {
             background: var(--bg-card);
@@ -636,9 +651,12 @@
             width: 100%; padding: 6px 8px; border: 1px solid var(--border-color); border-radius: var(--radius-md); background: var(--bg-card); color: var(--text-main); font-family: var(--font-family); font-size: 0.8rem;
         }
         
+        /* ضبط حجم مربع "الخدمة / التفاصيل" ليكون بنفس ارتفاع وحجم "إجراء الإدارة" تماماً */
         .service-cell-box {
-            min-width: 140px;
-            max-width: 220px;
+            min-width: 130px;
+            max-width: 200px;
+            max-height: 140px;
+            overflow-y: auto;
             white-space: pre-wrap;
             word-break: break-word;
             padding: 6px 8px;
@@ -667,11 +685,18 @@
             border: 1px solid var(--border-color);
         }
 
-        .btn-save-action { background-color: var(--success-color); color: #fff; border: none; padding: 5px 8px; border-radius: 4px; cursor: pointer; }
-        .btn-edit-action { background-color: var(--primary-color); color: #fff; border: none; padding: 5px 8px; border-radius: 4px; cursor: pointer; }
-        .btn-delete-action { background-color: var(--danger-color); color: #fff; border: none; padding: 5px 8px; border-radius: 4px; cursor: pointer; }
-        
-        .btn-pin-action { background-color: #d97706; color: #fff; border: none; padding: 5px 8px; border-radius: 4px; cursor: pointer; }
+        /* تنسيق أزرار/أيقونات الإجراءات لتبدو عمودية ومرتبة بدلاً من التراص الأفقي الضيق */
+        .action-buttons-column {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 4px;
+            width: 70px;
+        }
+
+        .btn-save-action { background-color: var(--success-color); color: #fff; border: none; padding: 6px; border-radius: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .btn-edit-action { background-color: var(--primary-color); color: #fff; border: none; padding: 6px; border-radius: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .btn-delete-action { background-color: var(--danger-color); color: #fff; border: none; padding: 6px; border-radius: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .btn-pin-action { background-color: #d97706; color: #fff; border: none; padding: 6px; border-radius: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
         .btn-pin-action.pinned { background-color: #ca8a04; box-shadow: 0 0 6px #f59e0b; }
 
         @keyframes priorityPulse {
@@ -704,7 +729,7 @@
         }
         #notificationToast.show { transform: translateY(0); opacity: 1; }
 
-        /* كروت صفحة الكشف والفواصل الاحترافية */
+        /* كروت صفحة الكشف والتلوين بالأخضر عند النسخ دون إخفاء */
         .client-report-container {
             display: flex;
             flex-direction: column;
@@ -725,13 +750,14 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.25);
             width: 100%;
             overflow: hidden;
+            transition: all 0.3s ease;
         }
 
-        .client-card-wrapper.is-copied {
-            background-color: rgba(16, 185, 129, 0.08);
-            border-color: rgba(16, 185, 129, 0.3);
-            border-right-color: var(--success-color);
-            opacity: 0.88;
+        /* كارت الكشف المنسوخ باللون الأخضر المميز مع استمرار ظهوره في مكانه */
+        .client-card-wrapper.is-copied-style {
+            background-color: rgba(16, 185, 129, 0.15) !important;
+            border-color: var(--success-color) !important;
+            border-right: 5px solid var(--success-color) !important;
         }
 
         .client-card-header {
@@ -754,7 +780,6 @@
             min-width: 220px;
         }
 
-        /* ترتيب الأزرار فوق بعضها رآسياً لجعل اسم العميل يتفرد براحته */
         .client-badges-column {
             display: flex;
             flex-direction: column;
@@ -815,8 +840,9 @@
             white-space: nowrap;
         }
 
-        .copied-btn.active {
-            background: var(--success-color);
+        .copied-btn.active-copied {
+            background: var(--success-color) !important;
+            color: #ffffff !important;
         }
 
         .payment-toggle-btn {
@@ -1292,7 +1318,6 @@
                             </div>
                         </div>
 
-                        <!-- الفلاتر المحدثة مع خانة كتابة اسم المنسق -->
                         <div class="filter-container-box">
                             <div class="filter-row">
                                 <span class="filter-label"><i class="fa-solid fa-filter"></i> فلاتر الحالات:</span>
@@ -1351,7 +1376,6 @@
                             </div>
                         </div>
 
-                        <!-- جدول المواعيد والمتابعة العادي كاملاً بدون تقسيم صفحات -->
                         <div class="table-container">
                             <table id="requestsTable">
                                 <thead>
@@ -1369,7 +1393,7 @@
                                         <th>المنسق</th>
                                         <th>تواصل الإدارة</th>
                                         <th>إجراء الإدارة</th>
-                                        <th>إجراءات</th>
+                                        <th style="text-align: center;">إجراءات</th>
                                     </tr>
                                 </thead>
                                 <tbody id="tableBody"></tbody>
@@ -1446,7 +1470,7 @@
         </main>
     </div>
 
-    <!-- نافذة إضافة / تعديل تنبيه -->
+    <!-- نافذة إضافة / تعديل تنبيه بمرفقات وصور -->
     <div class="modal" id="announcementModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -1461,8 +1485,8 @@
                         <textarea id="announcementText" required placeholder="اكتب التنبيه أو التحديث الجديد للعيادة هنا..."></textarea>
                     </div>
                     <div class="input-field full-width">
-                        <label><i class="fa-solid fa-paperclip"></i> إرفاق ملف (PDF, مستندات, صور...) (اختياري)</label>
-                        <input type="file" id="announcementFile" accept=".pdf,.doc,.docx,.xls,.xlsx,.txt,image/*" style="padding: 6px; cursor: pointer;">
+                        <label><i class="fa-solid fa-paperclip"></i> إرفاق ملف / صورة (اختياري)</label>
+                        <input type="file" id="announcementFile" accept="image/*,.pdf,.doc,.docx" style="padding: 6px; cursor: pointer;">
                     </div>
                 </div>
                 <button type="submit" class="submit-btn" style="margin-top: 15px;"><i class="fa-solid fa-floppy-disk"></i> حفظ ونشر التنبيه</button>
@@ -1763,15 +1787,12 @@
         const cachedAnnouncements = localStorage.getItem('cachedAnnouncements_v3');
         if (cachedAnnouncements) { try { clinicAnnouncements = JSON.parse(cachedAnnouncements); } catch(e) { clinicAnnouncements = []; } }
 
-        // دوال التخزين المحلي لحالة النسخ المستقلة لكل جهاز (LocalStorage)
+        // التخزين المحلي لخانات "منسوخ" الخاصة بكل متصفح
         function getLocalCopiedMap() {
-            try {
-                return JSON.parse(localStorage.getItem('localCopiedRecords_v2')) || [];
-            } catch(e) { return []; }
+            try { return JSON.parse(localStorage.getItem('localCopiedRecords_v3')) || []; } catch(e) { return []; }
         }
-
         function setLocalCopiedMap(arr) {
-            localStorage.setItem('localCopiedRecords_v2', JSON.stringify(arr));
+            localStorage.setItem('localCopiedRecords_v3', JSON.stringify(arr));
         }
 
         function syncFilterTabsUI() {
@@ -1966,13 +1987,14 @@
             universalAuthCallback = null;
         }
 
+        // عرض التنبيهات مع دعم المرفقات والصور
         function renderAnnouncements() {
             const container = document.getElementById('announcementsListContainer');
             if (!container) return;
             container.innerHTML = '';
 
             if (clinicAnnouncements.length === 0) {
-                container.innerHTML = '<div style="text-align: center; color: var(--text-muted); font-size: 0.85rem; padding: 10px;">لا توجد تنبيهات جديدة حالياً. انقر على "إضافة تنبيه جديد" لإرسال تحديث للعيادة.</div>';
+                container.innerHTML = '<div style="text-align: center; color: var(--text-muted); font-size: 0.85rem; padding: 10px;">لا توجد تنبيهات جديدة حالياً. انقر على "إضافة تنبيه جديد".</div>';
                 return;
             }
 
@@ -1981,15 +2003,20 @@
                 card.className = 'announcement-card';
                 const dateStr = formatDateTimeFullCustom(item.createdAt);
 
+                let fileHTML = '';
+                if (item.fileData) {
+                    fileHTML = `<a href="${item.fileData}" target="_blank" class="announcement-file-link"><i class="fa-solid fa-paperclip"></i> فتح/معاينة المرفق الصوري أو المستند</a>`;
+                }
+
                 card.innerHTML = `
                     <div class="announcement-body-content">
-                        <div class="announcement-body-text">${item.text}</div>
+                        <div class="announcement-body-text">${item.text} ${fileHTML}</div>
                     </div>
-                    <div class="announcement-footer-row">
+                    <div class="announcement-footer-row" style="display:flex; justify-content:space-between; align-items:center; font-size:0.75rem; color:var(--text-muted); margin-top:5px;">
                         <span><i class="fa-regular fa-clock"></i> ${dateStr}</span>
-                        <div class="announcement-actions-group">
-                            <button class="btn-edit-announcement-card" onclick="openEditAnnouncementModal('${item.announcementKey}')"><i class="fa-solid fa-pen"></i> تعديل</button>
-                            <button class="btn-delete-announcement-card" onclick="deleteAnnouncement('${item.announcementKey}')"><i class="fa-solid fa-trash-can"></i> حذف</button>
+                        <div class="announcement-actions-group" style="display:flex; gap:5px;">
+                            <button class="btn-edit-action" onclick="openEditAnnouncementModal('${item.announcementKey}')"><i class="fa-solid fa-pen"></i></button>
+                            <button class="btn-delete-action" onclick="deleteAnnouncement('${item.announcementKey}')"><i class="fa-solid fa-trash-can"></i></button>
                         </div>
                     </div>
                 `;
@@ -2001,7 +2028,7 @@
             document.getElementById('editAnnouncementKey').value = '';
             document.getElementById('announcementText').value = '';
             document.getElementById('announcementFile').value = '';
-            document.getElementById('announcementModalTitle').innerHTML = '<i class="fa-solid fa-bullhorn"></i> إضافة تنبيه أو إشعار للعيادة';
+            document.getElementById('announcementModalTitle').innerHTML = '<i class="fa-solid fa-bullhorn"></i> إضافة تنبيه للعيادة';
             document.getElementById('announcementModal').classList.add('open');
         }
 
@@ -2020,28 +2047,40 @@
             e.preventDefault();
             const key = document.getElementById('editAnnouncementKey').value;
             const textVal = document.getElementById('announcementText').value.trim();
+            const fileInput = document.getElementById('announcementFile');
             if (!textVal) return;
 
-            if (key) {
-                const item = clinicAnnouncements.find(a => a.announcementKey === key);
-                if (item) {
-                    item.text = textVal;
+            const processSave = (fileBase64 = null) => {
+                if (key) {
+                    const item = clinicAnnouncements.find(a => a.announcementKey === key);
+                    if (item) {
+                        item.text = textVal;
+                        if (fileBase64) item.fileData = fileBase64;
+                        saveLocal(); renderAnnouncements(); closeAnnouncementModal();
+                        showToastOnly('✏️ تم تعديل التنبيه بنجاح!');
+                        if (navigator.onLine && !key.startsWith('ann_')) announcementsDbRef.child(key).update(item);
+                    }
+                } else {
+                    const tempKey = 'ann_' + Date.now();
+                    const newAnn = { announcementKey: tempKey, text: textVal, fileData: fileBase64 || '', createdAt: new Date().toISOString() };
+                    clinicAnnouncements.unshift(newAnn);
                     saveLocal(); renderAnnouncements(); closeAnnouncementModal();
-                    showToastOnly('✏️ تم تعديل التنبيه بنجاح!');
-                    if (navigator.onLine && !key.startsWith('ann_')) announcementsDbRef.child(key).update({ text: textVal });
+                    playBeepAndShowToast('📢 تم نشر التنبيه بنجاح!');
+                    if (navigator.onLine) {
+                        announcementsDbRef.push(newAnn).then((pushedRef) => {
+                            const idx = clinicAnnouncements.findIndex(a => a.announcementKey === tempKey);
+                            if (idx !== -1) { clinicAnnouncements[idx].announcementKey = pushedRef.key; saveLocal(); }
+                        });
+                    }
                 }
+            };
+
+            if (fileInput.files && fileInput.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(evt) { processSave(evt.target.result); };
+                reader.readAsDataURL(fileInput.files[0]);
             } else {
-                const tempKey = 'ann_' + Date.now();
-                const newAnn = { announcementKey: tempKey, text: textVal, createdAt: new Date().toISOString() };
-                clinicAnnouncements.unshift(newAnn);
-                saveLocal(); renderAnnouncements(); closeAnnouncementModal();
-                playBeepAndShowToast('📢 تم نشر التنبيه بنجاح!');
-                if (navigator.onLine) {
-                    announcementsDbRef.push({ text: newAnn.text, createdAt: newAnn.createdAt }).then((pushedRef) => {
-                        const idx = clinicAnnouncements.findIndex(a => a.announcementKey === tempKey);
-                        if (idx !== -1) { clinicAnnouncements[idx].announcementKey = pushedRef.key; saveLocal(); }
-                    });
-                }
+                processSave();
             }
         }
 
@@ -2485,11 +2524,13 @@
                     <td>
                         <textarea class="table-input auto-expand-action" id="action_${record.firebaseKey}" oninput="autoExpandTextarea(this)" placeholder="اكتب إجراء الإدارة...">${record.actionTaken || ''}</textarea>
                     </td>
-                    <td style="white-space: nowrap;">
-                        <button class="btn-pin-action ${isPinned ? 'pinned' : ''}" onclick="requestTogglePinRecord('${record.firebaseKey}')" title="${isPinned ? 'إلغاء التثبيت' : 'تثبيت العميل'}"><i class="fa-solid fa-thumbtack"></i></button>
-                        <button class="btn-save-action" onclick="saveAdminUpdate('${record.firebaseKey}')" title="حفظ"><i class="fa-solid fa-floppy-disk"></i></button>
-                        <button class="btn-edit-action" onclick="openEditModal('${record.firebaseKey}')" title="تعديل"><i class="fa-solid fa-pen"></i></button>
-                        <button class="btn-delete-action" onclick="deleteRecord('${record.firebaseKey}')" title="حذف"><i class="fa-solid fa-trash"></i></button>
+                    <td style="white-space: nowrap; text-align: center;">
+                        <div class="action-buttons-column">
+                            <button class="btn-pin-action ${isPinned ? 'pinned' : ''}" onclick="requestTogglePinRecord('${record.firebaseKey}')" title="${isPinned ? 'إلغاء التثبيت' : 'تثبيت العميل'}"><i class="fa-solid fa-thumbtack"></i></button>
+                            <button class="btn-save-action" onclick="saveAdminUpdate('${record.firebaseKey}')" title="حفظ"><i class="fa-solid fa-floppy-disk"></i></button>
+                            <button class="btn-edit-action" onclick="openEditModal('${record.firebaseKey}')" title="تعديل"><i class="fa-solid fa-pen"></i></button>
+                            <button class="btn-delete-action" onclick="deleteRecord('${record.firebaseKey}')" title="حذف"><i class="fa-solid fa-trash"></i></button>
+                        </div>
                     </td>
                 `;
                 tbody.appendChild(tr);
@@ -2834,7 +2875,7 @@
             } catch(e) { return isoString; }
         }
 
-        // دالة تبديل حالة النسخ لتكون محلية لكل جهاز تماماً بدون إزعاج الآخرين
+        // دالة تحويل الحالة إلى "منسوخ" مع إبقاء الكارت في مكانه وتغيير لونه للأخضر
         function toggleCopiedStatusGroup(keysArray) {
             let copiedList = getLocalCopiedMap();
             const firstKey = keysArray[0];
@@ -2852,7 +2893,7 @@
             renderClientReport();
             updatePinnedCountBadge();
             
-            showToastOnly(isCurrentlyCopied ? '✖️ تم إزالة حالة النسخ من جهازك' : '✅ تم تعليم الكارت كـ (منسوخ) على جهازك فقط');
+            showToastOnly(isCurrentlyCopied ? '✖️ تم إزالة تحديد المنسوخ' : '✅ تم تحويل الكارت للون الأخضر (منسوخ)');
         }
 
         function hideClientGroupFromReport(keysArray) {
@@ -3005,10 +3046,7 @@
                 });
             });
 
-            consolidatedList.sort((a, b) => {
-                if (a.isCopied !== b.isCopied) return a.isCopied ? 1 : -1;
-                return new Date(b.latestCreatedAt) - new Date(a.latestCreatedAt);
-            });
+            consolidatedList.sort((a, b) => new Date(b.latestCreatedAt) - new Date(a.latestCreatedAt));
 
             consolidatedList.forEach((item, index) => {
                 const card = document.createElement('div');
@@ -3017,7 +3055,8 @@
                 const isPinned = item.isPinned;
                 const pStatus = item.paymentStatus;
 
-                card.className = `client-card-wrapper ${isCopied && !isPinnedFilterActive ? 'is-copied' : ''}`;
+                // تلوين الكارت بالكامل بالأخضر عند النسخ دون إخفائه من القائمة
+                card.className = `client-card-wrapper ${isCopied ? 'is-copied-style' : ''}`;
                 const fileStr = (rec.fileNumber && rec.fileNumber !== '-') ? ` ${rec.fileNumber}` : '';
                 const idStr = (rec.idNumber && rec.idNumber !== '-') ? rec.idNumber : '';
                 const phoneStr = (rec.patientPhone && rec.patientPhone !== '-') ? rec.patientPhone : '-';
@@ -3032,7 +3071,7 @@
                 else if (pStatus === 'unpaid') { payBtnText = 'لم يتم الدفع ⏳'; payBtnClass = 'unpaid'; }
 
                 const payBtnHTML = `<button class="payment-toggle-btn ${payBtnClass}" onclick="togglePaymentStatusGroup(${keysJsonStr})">${payBtnText}</button>`;
-                const copyBtnHTML = !isPinnedFilterActive ? `<button class="copied-btn ${isCopied ? 'active' : ''}" onclick="toggleCopiedStatusGroup(${keysJsonStr})"><i class="fa-solid ${isCopied ? 'fa-circle-check' : 'fa-check'}"></i> ${isCopied ? 'تم النسخ' : 'تعليم كمنسوخ'}</button>` : '';
+                const copyBtnHTML = `<button class="copied-btn ${isCopied ? 'active-copied' : ''}" onclick="toggleCopiedStatusGroup(${keysJsonStr})"><i class="fa-solid ${isCopied ? 'fa-circle-check' : 'fa-check'}"></i> ${isCopied ? 'منسوخ ✅' : 'تعليم كمنسوخ'}</button>`;
 
                 card.innerHTML = `
                     <div class="client-card-header">
@@ -3074,7 +3113,7 @@
                 groupedMap.get(groupKey).push(record);
             });
 
-            if (groupedMap.size === 0 && !isPinnedFilterActive) return alert('جميع العملاء تم نسخهم سابقاً على جهازك!');
+            if (groupedMap.size === 0 && !isPinnedFilterActive) return alert('جميع العملاء غير المنسوخين تم نسخهم!');
 
             let reportText = ``;
             let idx = 1;
