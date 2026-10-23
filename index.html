@@ -659,8 +659,9 @@
         .action-btn.clear-all { background-color: #dc2626; }
         .action-btn.settings { background-color: #475569; }
         .action-btn.copy-btn { background-color: #16a34a; }
+        .action-btn.reset-copy-btn { background-color: #d97706; }
         .action-btn.select-del-btn { background-color: #dc2626; }
-        .action-btn.trash-view-btn { background-color: #d97706; }
+        .action-btn.trash-view-btn { background-color: #7c3aed; }
 
         .filter-container-box {
             background: var(--bg-base);
@@ -742,7 +743,6 @@
             font-size: 0.78rem;
         }
 
-        /* حصر ارتفاع الصفوف والحدود للتكيف التام والمدمج مع النص بدون أي فراغات هواية */
         table th, table td { 
             padding: 2px 6px !important; 
             text-align: right; 
@@ -762,7 +762,6 @@
             border-right: 4px solid var(--danger-color);
         }
 
-        /* جعل الشارات مضغوطة أفقياً وتمنع انحناء الصف رأسياً */
         .status-badge-container {
             display: flex;
             flex-wrap: wrap;
@@ -823,7 +822,6 @@
             width: 100%; padding: 3px 5px; border: 1px solid var(--border-color); border-radius: var(--radius-md); background: var(--bg-base); color: var(--text-main); font-family: var(--font-family); font-size: 0.78rem;
         }
         
-        /* ضبط صندوق الخدمة بحدود مدمجة ومضغوطة جداً لتتسع لأكبر عدد عملاء */
         .service-cell-box {
             width: 240px;
             min-width: 240px;
@@ -1572,12 +1570,14 @@
                                     <div class="dropdown-content" id="clientViewFilterContent">
                                         <button class="dropdown-item" onclick="setClientViewFilter('normal')">📋 الكشف العادى</button>
                                         <button class="dropdown-item" onclick="setClientViewFilter('pinned')">📌 المميزون</button>
+                                        <button class="dropdown-item" onclick="setClientViewFilter('copied')">✅ المنسوخون</button>
                                         <button class="dropdown-item" onclick="setClientViewFilter('payment_unpaid')">⏳ لم يتم الدفع</button>
                                         <button class="dropdown-item" onclick="setClientViewFilter('payment_paid')">✅ تم الدفع</button>
                                     </div>
                                 </div>
 
                                 <button class="action-btn copy-btn" onclick="copyClientReport()"><i class="fa-solid fa-copy"></i> نسخ الكشف</button>
+                                <button class="action-btn reset-copy-btn" onclick="resetAllCopiedStatus()"><i class="fa-solid fa-rotate-left"></i> إعادة ضبط النسخ</button>
                                 <button class="action-btn select-del-btn" onclick="requestDeleteSelectedAccess()"><i class="fa-solid fa-trash-can"></i> حذف المحددين</button>
                                 <button class="action-btn clear-all" onclick="requestDeleteRangeAccess()"><i class="fa-solid fa-trash"></i> مسح الفترة</button>
                                 <button class="action-btn trash-view-btn" onclick="checkTrashAuthAndOpen()"><i class="fa-solid fa-rotate-left"></i> سلة المحذوفات</button>
@@ -2011,6 +2011,7 @@
             if (!labelEl) return;
             if (clientViewMode === 'normal') labelEl.innerText = 'الكشف العادى';
             else if (clientViewMode === 'pinned') labelEl.innerText = 'المميزون';
+            else if (clientViewMode === 'copied') labelEl.innerText = 'المنسوخون';
             else if (clientViewMode === 'payment_unpaid') labelEl.innerText = 'لم يتم الدفع';
             else if (clientViewMode === 'payment_paid') labelEl.innerText = 'تم الدفع';
         }
@@ -2506,6 +2507,19 @@
             }
         }
 
+        function resetAllCopiedStatus() {
+            if (confirm('هل أنت متأكد من إعادة ضبط حالة النسخ لجميع العملاء؟ سينتقلون جميعاً للوضع الافتراضي (تعليم كمنسوخ).')) {
+                Object.keys(localClientStates).forEach(key => {
+                    if (localClientStates[key]) {
+                        localClientStates[key].isCopied = false;
+                    }
+                });
+                saveLocalClientStates();
+                renderClientReport();
+                showToastOnly('🔄 تم إعادة ضبط حالة النسخ لجميع العملاء بنجاح!');
+            }
+        }
+
         function setDashboardFilter(filterType, btn) {
             dashboardFilter = filterType;
             localStorage.setItem('savedDashboardFilter', filterType);
@@ -2564,7 +2578,6 @@
             document.getElementById('progressBarFill').style.width = `${percentage}%`;
         }
 
-        /* دالة تنسيق الوقت في أفق مدمج وبدون حشو رأسي */
         function formatCompactDateTimeHTML(isoCreated, isoUpdated) {
             if (!isoCreated) return '-';
             try {
@@ -3168,6 +3181,11 @@
                 openRecords = openRecords.filter(r => {
                     const st = localClientStates[r.firebaseKey] || {};
                     return st.isPinned;
+                });
+            } else if (clientViewMode === 'copied') {
+                openRecords = openRecords.filter(r => {
+                    const st = localClientStates[r.firebaseKey] || {};
+                    return st.isCopied;
                 });
             } else if (clientViewMode === 'payment_unpaid') {
                 openRecords = openRecords.filter(r => r.paymentStatus === 'لم يتم الدفع');
