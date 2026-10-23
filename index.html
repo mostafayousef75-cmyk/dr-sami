@@ -42,7 +42,6 @@
             --radius-md: 8px;
         }
 
-        /* سيم: الرمادي الفحم (Dark Slate Gray) */
         body.theme-slate {
             --bg-base: #181a1d;
             --bg-surface: #222428;
@@ -55,7 +54,6 @@
             --primary-hover: #2563eb;
         }
 
-        /* سيم: أسود OLED ذهبي (AMOLED Gold) */
         body.theme-amoled {
             --bg-base: #000000;
             --bg-surface: #0a0a0a;
@@ -68,7 +66,6 @@
             --primary-hover: #d97706;
         }
 
-        /* سيم: الوضع المضيء العصري (Modern Light) */
         body.theme-light {
             --bg-base: #f1f5f9;
             --bg-surface: #ffffff;
@@ -415,74 +412,6 @@
             white-space: pre-wrap;
             flex: 1;
         }
-        .announcement-thumbnail-wrapper {
-            width: 55px;
-            height: 55px;
-            border-radius: 6px;
-            overflow: hidden;
-            border: 1px solid var(--border-color);
-            cursor: pointer;
-            flex-shrink: 0;
-            position: relative;
-            background: #000;
-        }
-        .announcement-thumbnail-wrapper img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        .announcement-file-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: rgba(37, 99, 235, 0.2);
-            border: 1px solid var(--primary-color);
-            padding: 7px 14px;
-            border-radius: 6px;
-            color: #ffffff;
-            font-size: 0.85rem;
-            font-weight: 700;
-            cursor: pointer;
-            font-family: var(--font-family);
-        }
-        .announcement-footer-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            border-top: 1px solid var(--border-color);
-            padding-top: 8px;
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            flex-wrap: wrap;
-            gap: 8px;
-        }
-        .announcement-actions-group {
-            display: flex;
-            gap: 6px;
-            align-items: center;
-        }
-        .btn-edit-announcement-card {
-            background-color: var(--primary-color);
-            color: #fff;
-            border: none;
-            padding: 5px 10px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-family: var(--font-family);
-            font-size: 0.78rem;
-            font-weight: 700;
-        }
-        .btn-delete-announcement-card {
-            background-color: var(--danger-color);
-            color: #fff;
-            border: none;
-            padding: 5px 10px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-family: var(--font-family);
-            font-size: 0.78rem;
-            font-weight: 700;
-        }
 
         .progress-box {
             background: var(--bg-card);
@@ -650,7 +579,7 @@
         .search-field i { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 0.8rem; }
 
         .table-container { 
-            max-height: 520px; 
+            max-height: 580px; 
             overflow-y: auto; 
             overflow-x: auto;
             position: relative;
@@ -721,58 +650,21 @@
             color: var(--text-main);
         }
 
+        /* تعديل مربع "إجراء الإدارة" وضبط أقصى ارتفاع بطلبك */
         textarea.table-input.auto-expand-action { 
             resize: vertical; 
-            min-height: 38px;
+            min-height: 42px;
+            max-height: 140px; /* أقصى ارتفاع يصله المربع لمنع التضخم */
             height: auto;
             min-width: 130px;
             max-width: 200px;
             line-height: 1.4;
             padding: 6px 8px;
             font-size: 0.8rem;
-            overflow-y: hidden;
+            overflow-y: auto;
             background: var(--bg-card);
             border-radius: 6px;
             border: 1px solid var(--border-color);
-        }
-
-        /* شريط التنقل بين الصفحات (Pagination) */
-        .pagination-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 15px;
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-top: none;
-            border-bottom-left-radius: var(--radius-md);
-            border-bottom-right-radius: var(--radius-md);
-            font-size: 0.85rem;
-        }
-        .pagination-btns {
-            display: flex;
-            gap: 6px;
-            align-items: center;
-        }
-        .page-btn {
-            background: var(--bg-surface);
-            color: var(--text-main);
-            border: 1px solid var(--border-color);
-            padding: 5px 12px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-family: var(--font-family);
-            font-weight: 700;
-            font-size: 0.8rem;
-        }
-        .page-btn:hover:not(:disabled) {
-            background: var(--primary-color);
-            color: white;
-            border-color: var(--primary-color);
-        }
-        .page-btn:disabled {
-            opacity: 0.4;
-            cursor: not-allowed;
         }
 
         .btn-save-action { background-color: var(--success-color); color: #fff; border: none; padding: 5px 8px; border-radius: 4px; cursor: pointer; }
@@ -812,23 +704,25 @@
         }
         #notificationToast.show { transform: translateY(0); opacity: 1; }
 
+        /* تعديلات كروت صفحة الكشف والفواصل الاحترافية */
         .client-report-container {
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 16px; /* مسافة أوسع وأوضح بين الكروت */
             width: 100%;
         }
 
         .client-card-wrapper {
             background-color: var(--bg-card);
             border: 1px solid var(--border-color);
+            border-right: 4px solid var(--primary-color); /* بوردر جانبي للتمييز والفصل */
             border-radius: var(--radius-md);
-            padding: 12px 14px;
+            padding: 14px 16px;
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 10px;
             position: relative;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.25); /* ظل لإبراز الكارت عن الخلفية */
             width: 100%;
             overflow: hidden;
         }
@@ -836,7 +730,8 @@
         .client-card-wrapper.is-copied {
             background-color: rgba(16, 185, 129, 0.08);
             border-color: rgba(16, 185, 129, 0.3);
-            opacity: 0.85;
+            border-right-color: var(--success-color);
+            opacity: 0.88;
         }
 
         .client-card-header {
@@ -844,20 +739,28 @@
             align-items: flex-start;
             justify-content: space-between;
             width: 100%;
-            gap: 10px;
+            gap: 12px;
             flex-wrap: wrap;
         }
 
         .client-card-header .client-title {
             display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 0.95rem;
+            align-items: flex-start;
+            gap: 10px;
+            font-size: 1rem;
             font-weight: 700;
             color: var(--text-main);
-            flex-wrap: wrap;
             flex: 1;
-            min-width: 180px;
+            min-width: 220px;
+        }
+
+        /* ترتيب الأزرار فوق بعضها رآسياً لجعل اسم العميل يتفرد براحته */
+        .client-badges-column {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            align-items: flex-start;
+            flex-shrink: 0;
         }
 
         .client-card-header .client-select-chk {
@@ -866,30 +769,28 @@
             cursor: pointer;
             accent-color: var(--primary-color);
             flex-shrink: 0;
+            margin-top: 3px;
         }
 
         .client-datetime-badge {
             font-family: Arial, sans-serif;
-            font-size: 0.72rem;
+            font-size: 0.75rem;
             font-weight: 700;
             color: #ffffff;
             background: rgba(37, 99, 235, 0.25);
-            padding: 3px 6px;
+            padding: 4px 8px;
             border-radius: 4px;
             border: 1px solid rgba(37, 99, 235, 0.4);
             direction: ltr;
-            white-space: normal;
-            word-break: break-word;
             display: inline-flex;
             align-items: center;
             gap: 4px;
-            max-width: 100%;
         }
 
         .client-info-row {
-            font-size: 0.85rem;
+            font-size: 0.88rem;
             color: var(--text-main);
-            line-height: 1.4;
+            line-height: 1.5;
             word-break: break-word;
         }
 
@@ -953,6 +854,8 @@
             justify-content: flex-end;
             width: 100%;
             flex-wrap: wrap;
+            border-top: 1px dashed var(--border-color);
+            padding-top: 8px;
         }
 
         .btn-client-action {
@@ -1027,11 +930,6 @@
             align-items: center;
             justify-content: center;
         }
-        .drag-handle:active {
-            cursor: grabbing;
-            background: var(--primary-color);
-            color: #ffffff;
-        }
 
         .link-card-header {
             display: flex;
@@ -1078,7 +976,6 @@
             cursor: pointer;
             border: none;
         }
-        .btn-open-link:hover { background-color: var(--primary-hover); }
 
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 2000; justify-content: center; align-items: center; padding: 15px; }
         .modal.open { display: flex; }
@@ -1119,12 +1016,6 @@
                 flex-direction: column;
                 align-items: flex-start;
                 gap: 8px;
-            }
-            
-            .client-datetime-badge {
-                width: 100%;
-                justify-content: flex-start;
-                font-size: 0.72rem;
             }
 
             .client-actions-row {
@@ -1308,8 +1199,8 @@
                                     <label>الفرع *</label>
                                     <select id="branch" required>
                                         <option value="">اختر الفرع...</option>
-                                        <option value="معشي">فرع معشي</option>
-                                        <option value="الوسام">فرع الوسام</option>
+                                        <option value="فرع معشي">فرع معشي</option>
+                                        <option value="فرع الوسام">فرع الوسام</option>
                                     </select>
                                 </div>
                                 <div class="input-field">
@@ -1387,7 +1278,7 @@
                             <h2><i class="fa-solid fa-list-check"></i> جدول المواعيد والمتابعة</h2>
                             <div class="search-field">
                                 <i class="fa-solid fa-magnifying-glass"></i>
-                                <input type="text" id="searchInput" oninput="filterTable()" placeholder="بحث باسم العميل، الجوال...">
+                                <input type="text" id="searchInput" oninput="renderTable()" placeholder="بحث باسم العميل، الجوال...">
                             </div>
                         </div>
 
@@ -1401,7 +1292,7 @@
                             </div>
                         </div>
 
-                        <!-- فلاتر الحالات المتقدمة (تشمل فلاتر المنسقين والفرع) -->
+                        <!-- الفلاتر المحدثة مع فلتر اسم المنسق كخانة كتابة بدلاً من قائمة -->
                         <div class="filter-container-box">
                             <div class="filter-row">
                                 <span class="filter-label"><i class="fa-solid fa-filter"></i> فلاتر الحالات:</span>
@@ -1438,20 +1329,18 @@
                                 </div>
                             </div>
 
-                            <!-- فلتر سريع حسب الفرع واسم المنسق للمدير -->
                             <div class="filter-row" style="border-top: 1px dashed var(--border-color); padding-top: 8px; justify-content: space-between;">
                                 <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
                                     <span class="filter-label"><i class="fa-solid fa-building"></i> الفرع:</span>
-                                    <select id="branchFilterSelect" onchange="applyAdvancedFilters()" style="background: var(--bg-surface); color: var(--text-main); border: 1px solid var(--border-color); padding: 4px 8px; border-radius: 6px; font-family: var(--font-family); font-size: 0.8rem;">
+                                    <select id="branchFilterSelect" onchange="renderTable()" style="background: var(--bg-surface); color: var(--text-main); border: 1px solid var(--border-color); padding: 4px 8px; border-radius: 6px; font-family: var(--font-family); font-size: 0.8rem;">
                                         <option value="all">كل الفروع</option>
-                                        <option value="معشي">فرع معشي</option>
-                                        <option value="الوسام">فرع الوسام</option>
+                                        <option value="فرع معشي">فرع معشي</option>
+                                        <option value="فرع الوسام">فرع الوسام</option>
                                     </select>
 
-                                    <span class="filter-label" style="min-width: 70px; margin-right: 10px;"><i class="fa-solid fa-user-tie"></i> المنسق:</span>
-                                    <select id="coordinatorFilterSelect" onchange="applyAdvancedFilters()" style="background: var(--bg-surface); color: var(--text-main); border: 1px solid var(--border-color); padding: 4px 8px; border-radius: 6px; font-family: var(--font-family); font-size: 0.8rem; min-width: 130px;">
-                                        <option value="all">كل المنسقين</option>
-                                    </select>
+                                    <!-- خانة إدخال اسم المنسق مباشرة بدلاً من القائمة -->
+                                    <span class="filter-label" style="min-width: 60px; margin-right: 10px;"><i class="fa-solid fa-user-tie"></i> المنسق:</span>
+                                    <input type="text" id="coordinatorSearchInput" oninput="renderTable()" placeholder="اكتب اسم المنسق..." style="background: var(--bg-surface); color: var(--text-main); border: 1px solid var(--border-color); padding: 4px 8px; border-radius: 6px; font-family: var(--font-family); font-size: 0.8rem; width: 130px;">
                                 </div>
 
                                 <div class="filter-tabs" id="timeFilterTabs">
@@ -1463,7 +1352,7 @@
                             </div>
                         </div>
 
-                        <!-- جدول المواعيد المحسن -->
+                        <!-- جدول المواعيد والمتابعة العادي كاملاً بدون تقسيم صفحات -->
                         <div class="table-container">
                             <table id="requestsTable">
                                 <thead>
@@ -1480,22 +1369,12 @@
                                         <th>الخدمة / التفاصيل</th>
                                         <th>المنسق</th>
                                         <th>تواصل الإدارة</th>
-                                        <th>إجراء الإدارة (تتبع التعديل)</th>
+                                        <th>إجراء الإدارة</th>
                                         <th>إجراءات</th>
                                     </tr>
                                 </thead>
                                 <tbody id="tableBody"></tbody>
                             </table>
-                        </div>
-
-                        <!-- شريط تقسيم الصفحات (Pagination Controls) -->
-                        <div class="pagination-bar" id="paginationBar">
-                            <span id="paginationInfo" style="color: var(--text-muted); font-weight: 600;">عرض 0 من 0 سجل</span>
-                            <div class="pagination-btns">
-                                <button class="page-btn" id="prevPageBtn" onclick="changePage(-1)"><i class="fa-solid fa-chevron-right"></i> السابق</button>
-                                <span id="pageIndicator" style="font-weight: 700; padding: 0 8px;">الصفحة 1</span>
-                                <button class="page-btn" id="nextPageBtn" onclick="changePage(1)">التالي <i class="fa-solid fa-chevron-left"></i></button>
-                            </div>
                         </div>
                     </section>
 
@@ -1589,19 +1468,6 @@
                 </div>
                 <button type="submit" class="submit-btn" style="margin-top: 15px;"><i class="fa-solid fa-floppy-disk"></i> حفظ ونشر التنبيه</button>
             </form>
-        </div>
-    </div>
-
-    <!-- نافذة تكبير الصورة -->
-    <div class="modal" id="imagePreviewModal">
-        <div class="modal-content" style="max-width: 650px; text-align: center; padding: 15px;">
-            <div class="modal-header">
-                <h3><i class="fa-solid fa-image"></i> معاينة الصورة المرفقة</h3>
-                <button class="close-modal-btn" onclick="closeImagePreviewModal()">&times;</button>
-            </div>
-            <div style="width: 100%; max-height: 75vh; overflow: hidden; display: flex; align-items: center; justify-content: center; background: #000; border-radius: 8px;">
-                <img id="previewFullImageTag" src="" alt="صورة مرفقة" style="max-width: 100%; max-height: 70vh; object-fit: contain;">
-            </div>
         </div>
     </div>
 
@@ -1729,8 +1595,8 @@
                     <div class="input-field">
                         <label>الفرع *</label>
                         <select id="editBranch" required>
-                            <option value="معشي">فرع معشي</option>
-                            <option value="الوسام">فرع الوسام</option>
+                            <option value="فرع معشي">فرع معشي</option>
+                            <option value="فرع الوسام">فرع الوسام</option>
                         </select>
                     </div>
                     <div class="input-field">
@@ -1804,10 +1670,6 @@
         let clientHoursFilter = localStorage.getItem('savedClientHoursFilter') || 'all';
         let clientPaymentFilter = localStorage.getItem('savedClientPaymentFilter') || 'all';
         let isPinnedFilterActive = false;
-
-        // متغيرات التقسيم (Pagination)
-        let currentPage = 1;
-        const rowsPerPage = 25;
         
         let originalEditPriorityState = false;
         let originalEditRepeatedState = false;
@@ -1888,12 +1750,12 @@
         }
 
         function saveLocal() { 
-            localStorage.setItem('cachedAppointments_v19', JSON.stringify(records));
+            localStorage.setItem('cachedAppointments_v20', JSON.stringify(records));
             localStorage.setItem('cachedCSLinks_v1', JSON.stringify(csLinks));
             localStorage.setItem('cachedAnnouncements_v3', JSON.stringify(clinicAnnouncements));
         }
 
-        const cached = localStorage.getItem('cachedAppointments_v19') || localStorage.getItem('cachedAppointments_v18');
+        const cached = localStorage.getItem('cachedAppointments_v20') || localStorage.getItem('cachedAppointments_v19');
         if (cached) { try { records = JSON.parse(cached); } catch(e) { records = []; } }
 
         const cachedLinks = localStorage.getItem('cachedCSLinks_v1');
@@ -1901,24 +1763,6 @@
 
         const cachedAnnouncements = localStorage.getItem('cachedAnnouncements_v3');
         if (cachedAnnouncements) { try { clinicAnnouncements = JSON.parse(cachedAnnouncements); } catch(e) { clinicAnnouncements = []; } }
-
-        function populateCoordinatorDropdown() {
-            const select = document.getElementById('coordinatorFilterSelect');
-            if(!select) return;
-            const currentVal = select.value;
-            
-            const coordinators = [...new Set(records.map(r => r.coordinatorName).filter(Boolean))];
-            coordinators.sort();
-
-            select.innerHTML = '<option value="all">كل المنسقين</option>';
-            coordinators.forEach(c => {
-                const opt = document.createElement('option');
-                opt.value = c;
-                opt.textContent = c;
-                if(c === currentVal) opt.selected = true;
-                select.appendChild(opt);
-            });
-        }
 
         function syncFilterTabsUI() {
             const statusContainer = document.getElementById('statusFilterTabs');
@@ -2009,7 +1853,6 @@
                 btn.style.boxShadow = 'none';
             }
 
-            populateCoordinatorDropdown();
             syncFilterTabsUI();
             renderAnnouncements();
             renderClientReport();
@@ -2025,7 +1868,6 @@
                 records = [];
             }
             saveLocal();
-            populateCoordinatorDropdown();
             renderTable();
             updateKPIs();
             updateDailyProgress();
@@ -2129,60 +1971,20 @@
                 card.className = 'announcement-card';
                 const dateStr = formatDateTimeFullCustom(item.createdAt);
 
-                let attachmentHTML = '';
-                if (item.fileUrl) {
-                    if (item.fileType && item.fileType.startsWith('image/')) {
-                        attachmentHTML = `
-                            <div class="announcement-thumbnail-wrapper" onclick="openImagePreview('${item.fileUrl}')" title="معاينة المكبرة">
-                                <img src="${item.fileUrl}" alt="مرفق">
-                            </div>
-                        `;
-                    } else {
-                        const fileName = item.fileName || 'فتح الملف المرفق';
-                        const safeKey = item.announcementKey;
-                        attachmentHTML = `
-                            <button type="button" class="announcement-file-btn" onclick="triggerFileDownload('${safeKey}')">
-                                <i class="fa-solid fa-file-pdf"></i> ${fileName}
-                            </button>
-                        `;
-                    }
-                }
-
                 card.innerHTML = `
                     <div class="announcement-body-content">
-                        <div class="announcement-body-text">${item.text}</div>${attachmentHTML}
+                        <div class="announcement-body-text">${item.text}</div>
                     </div>
                     <div class="announcement-footer-row">
                         <span><i class="fa-regular fa-clock"></i> ${dateStr}</span>
                         <div class="announcement-actions-group">
-                            <button class="btn-edit-announcement-card" onclick="openEditAnnouncementModal('${item.announcementKey}')">
-                                <i class="fa-solid fa-pen"></i> تعديل
-                            </button>
-                            <button class="btn-delete-announcement-card" onclick="deleteAnnouncement('${item.announcementKey}')">
-                                <i class="fa-solid fa-trash-can"></i> حذف
-                            </button>
+                            <button class="btn-edit-announcement-card" onclick="openEditAnnouncementModal('${item.announcementKey}')"><i class="fa-solid fa-pen"></i> تعديل</button>
+                            <button class="btn-delete-announcement-card" onclick="deleteAnnouncement('${item.announcementKey}')"><i class="fa-solid fa-trash-can"></i> حذف</button>
                         </div>
                     </div>
                 `;
                 container.appendChild(card);
             });
-        }
-
-        function triggerFileDownload(key) {
-            const item = clinicAnnouncements.find(a => a.announcementKey === key);
-            if (item && item.fileUrl) {
-                openBase64File(item.fileUrl, item.fileName || 'document.pdf');
-            }
-        }
-
-        function openImagePreview(url) {
-            document.getElementById('previewFullImageTag').src = url;
-            document.getElementById('imagePreviewModal').classList.add('open');
-        }
-
-        function closeImagePreviewModal() {
-            document.getElementById('imagePreviewModal').classList.remove('open');
-            document.getElementById('previewFullImageTag').src = '';
         }
 
         function openAddAnnouncementModal() {
@@ -2198,110 +2000,46 @@
             if (!item) return;
             document.getElementById('editAnnouncementKey').value = item.announcementKey;
             document.getElementById('announcementText').value = item.text || '';
-            document.getElementById('announcementFile').value = '';
             document.getElementById('announcementModalTitle').innerHTML = '<i class="fa-solid fa-pen"></i> تعديل تنبيه العيادة';
             document.getElementById('announcementModal').classList.add('open');
         }
 
-        function closeAnnouncementModal() {
-            document.getElementById('announcementModal').classList.remove('open');
-        }
+        function closeAnnouncementModal() { document.getElementById('announcementModal').classList.remove('open'); }
 
         function saveAnnouncementItem(e) {
             e.preventDefault();
             const key = document.getElementById('editAnnouncementKey').value;
             const textVal = document.getElementById('announcementText').value.trim();
-            const fileInput = document.getElementById('announcementFile');
             if (!textVal) return;
 
-            const processAndSave = (fileUrl, fileType, fileName) => {
-                if (key) {
-                    const item = clinicAnnouncements.find(a => a.announcementKey === key);
-                    if (item) {
-                        item.text = textVal;
-                        if (fileUrl !== undefined) {
-                            item.fileUrl = fileUrl;
-                            item.fileType = fileType;
-                            item.fileName = fileName;
-                        }
-                        saveLocal();
-                        renderAnnouncements();
-                        closeAnnouncementModal();
-                        showToastOnly('✏️ تم تعديل التنبيه بنجاح!');
-
-                        if (navigator.onLine && !key.startsWith('ann_')) {
-                            const updateObj = { text: textVal };
-                            if (fileUrl !== undefined) {
-                                updateObj.fileUrl = fileUrl;
-                                updateObj.fileType = fileType;
-                                updateObj.fileName = fileName;
-                            }
-                            announcementsDbRef.child(key).update(updateObj);
-                        }
-                    }
-                } else {
-                    const tempKey = 'ann_' + Date.now();
-                    const newAnn = {
-                        announcementKey: tempKey,
-                        text: textVal,
-                        fileUrl: fileUrl || '',
-                        fileType: fileType || '',
-                        fileName: fileName || '',
-                        createdAt: new Date().toISOString()
-                    };
-
-                    clinicAnnouncements.unshift(newAnn);
-                    saveLocal();
-                    renderAnnouncements();
-                    closeAnnouncementModal();
-                    
-                    playBeepAndShowToast('📢 تم نشر التنبيه بنجاح للجميع!');
-
-                    if (navigator.onLine) {
-                        const uploadData = { text: newAnn.text, fileUrl: newAnn.fileUrl, fileType: newAnn.fileType, fileName: newAnn.fileName, createdAt: newAnn.createdAt };
-                        announcementsDbRef.push(uploadData).then((pushedRef) => {
-                            const idx = clinicAnnouncements.findIndex(a => a.announcementKey === tempKey);
-                            if (idx !== -1) {
-                                clinicAnnouncements[idx].announcementKey = pushedRef.key;
-                                saveLocal();
-                            }
-                        });
-                    }
+            if (key) {
+                const item = clinicAnnouncements.find(a => a.announcementKey === key);
+                if (item) {
+                    item.text = textVal;
+                    saveLocal(); renderAnnouncements(); closeAnnouncementModal();
+                    showToastOnly('✏️ تم تعديل التنبيه بنجاح!');
+                    if (navigator.onLine && !key.startsWith('ann_')) announcementsDbRef.child(key).update({ text: textVal });
                 }
-            };
-
-            if (fileInput.files && fileInput.files[0]) {
-                const file = fileInput.files[0];
-                const reader = new FileReader();
-                reader.onload = function(evt) {
-                    processAndSave(evt.target.result, file.type, file.name);
-                };
-                reader.readAsDataURL(file);
             } else {
-                let existingFileUrl = '';
-                let existingFileType = '';
-                let existingFileName = '';
-                if (key) {
-                    const existingItem = clinicAnnouncements.find(a => a.announcementKey === key);
-                    if (existingItem) {
-                        existingFileUrl = existingItem.fileUrl || '';
-                        existingFileType = existingItem.fileType || '';
-                        existingFileName = existingItem.fileName || '';
-                    }
+                const tempKey = 'ann_' + Date.now();
+                const newAnn = { announcementKey: tempKey, text: textVal, createdAt: new Date().toISOString() };
+                clinicAnnouncements.unshift(newAnn);
+                saveLocal(); renderAnnouncements(); closeAnnouncementModal();
+                playBeepAndShowToast('📢 تم نشر التنبيه بنجاح!');
+                if (navigator.onLine) {
+                    announcementsDbRef.push({ text: newAnn.text, createdAt: newAnn.createdAt }).then((pushedRef) => {
+                        const idx = clinicAnnouncements.findIndex(a => a.announcementKey === tempKey);
+                        if (idx !== -1) { clinicAnnouncements[idx].announcementKey = pushedRef.key; saveLocal(); }
+                    });
                 }
-                processAndSave(existingFileUrl, existingFileType, existingFileName);
             }
         }
 
         function deleteAnnouncement(key) {
             if (confirm('هل أنت متأكد من حذف هذا التنبيه؟')) {
                 clinicAnnouncements = clinicAnnouncements.filter(a => a.announcementKey !== key);
-                saveLocal();
-                renderAnnouncements();
-
-                if (navigator.onLine && !key.startsWith('ann_')) {
-                    announcementsDbRef.child(key).remove();
-                }
+                saveLocal(); renderAnnouncements();
+                if (navigator.onLine && !key.startsWith('ann_')) announcementsDbRef.child(key).remove();
                 showToastOnly('🗑️ تم حذف التنبيه بنجاح!');
             }
         }
@@ -2352,7 +2090,8 @@
                 procedureTypeValue = customVal !== '' ? customVal : 'أخرى';
             }
 
-            const pStatus = document.getElementById('paymentStatusSelect').value;
+            const branchVal = document.getElementById('branch').value;
+            const fullBranchName = branchVal.includes('فرع') ? branchVal : `فرع ${branchVal}`;
 
             const tempKey = 'local_' + Date.now();
             const newRecord = {
@@ -2361,20 +2100,18 @@
                 patientPhone: patientPhoneVal,
                 fileNumber: document.getElementById('fileNumber').value.trim() || '-',
                 idNumber: document.getElementById('idNumber').value.trim() || '-',
-                branch: document.getElementById('branch').value,
+                branch: fullBranchName,
                 procedureType: procedureTypeValue,
                 contactMethod: document.getElementById('contactMethod').value || 'اتصال',
                 serviceRequired: document.getElementById('serviceRequired').value,
                 coordinatorName: document.getElementById('coordinatorName').value,
-                paymentStatus: pStatus,
+                paymentStatus: document.getElementById('paymentStatusSelect').value,
                 isRecurring: document.getElementById('isRecurring').checked || isRepeated,
                 isRepeatedRequest: isRepeated,
                 createdAt: new Date().toISOString(),
                 actionTaken: '',
                 adminContactMethod: 'قيد الانتظار',
                 adminContactDetail: '',
-                lastModifiedBy: '',
-                lastModifiedAt: '',
                 isCopied: false,
                 isPinned: false,
                 isHiddenFromClients: false,
@@ -2383,8 +2120,6 @@
 
             records.unshift(newRecord);
             saveLocal();
-            populateCoordinatorDropdown();
-            currentPage = 1;
             renderTable();
             updateKPIs();
             updateDailyProgress();
@@ -2528,7 +2263,6 @@
                 }
             }
             document.querySelectorAll('.dropdown-content').forEach(dc => dc.classList.remove('show'));
-            currentPage = 1;
             renderTable();
         }
 
@@ -2537,12 +2271,6 @@
             localStorage.setItem('savedDashboardTimeFilter', timeType);
             btn.closest('.filter-row').querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
             btn.classList.add('active');
-            currentPage = 1;
-            renderTable();
-        }
-
-        function applyAdvancedFilters() {
-            currentPage = 1;
             renderTable();
         }
 
@@ -2582,7 +2310,13 @@
             element.style.height = element.scrollHeight + 'px';
         }
 
-        function getFilteredRecordsList() {
+        function renderTable() {
+            const tbody = document.getElementById('tableBody');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+
+            syncFilterTabsUI();
+
             let filteredList = [...records];
             const now = new Date();
 
@@ -2622,10 +2356,10 @@
                 filteredList = filteredList.filter(r => r.branch === branchVal);
             }
 
-            // فلتر اسم المنسق
-            const coordVal = document.getElementById('coordinatorFilterSelect')?.value || 'all';
-            if (coordVal !== 'all') {
-                filteredList = filteredList.filter(r => r.coordinatorName === coordVal);
+            // فلتر البحث النصي باسم المنسق المباشر
+            const coordinatorSearchVal = (document.getElementById('coordinatorSearchInput')?.value || '').trim().toLowerCase();
+            if (coordinatorSearchVal !== '') {
+                filteredList = filteredList.filter(r => r.coordinatorName && r.coordinatorName.toLowerCase().includes(coordinatorSearchVal));
             }
 
             if (dashboardTimeFilter === 'today') {
@@ -2645,7 +2379,7 @@
                 });
             }
 
-            // فلتر البحث النصي السريع
+            // فلتر البحث السريع العادي
             const searchInputEl = document.getElementById('searchInput');
             if (searchInputEl) {
                 const query = searchInputEl.value.trim().toLowerCase();
@@ -2653,8 +2387,7 @@
                     filteredList = filteredList.filter(r => {
                         return (r.patientName && r.patientName.toLowerCase().includes(query)) ||
                                (r.patientPhone && r.patientPhone.toLowerCase().includes(query)) ||
-                               (r.fileNumber && r.fileNumber.toLowerCase().includes(query)) ||
-                               (r.coordinatorName && r.coordinatorName.toLowerCase().includes(query));
+                               (r.fileNumber && r.fileNumber.toLowerCase().includes(query));
                     });
                 }
             }
@@ -2662,50 +2395,15 @@
             filteredList.sort((a, b) => {
                 if (a.isRecurring && !b.isRecurring) return -1;
                 if (!a.isRecurring && b.isRecurring) return 1;
-                return new Date(b.createdAt) - new Date(b.latestCreatedAt || b.createdAt) * 0;
+                return new Date(b.createdAt) - new Date(a.createdAt);
             });
 
-            return filteredList;
-        }
-
-        function changePage(direction) {
-            const filtered = getFilteredRecordsList();
-            const totalPages = Math.ceil(filtered.length / rowsPerPage) || 1;
-            currentPage += direction;
-            if (currentPage < 1) currentPage = 1;
-            if (currentPage > totalPages) currentPage = totalPages;
-            renderTable();
-        }
-
-        function renderTable() {
-            const tbody = document.getElementById('tableBody');
-            if (!tbody) return;
-            tbody.innerHTML = '';
-
-            syncFilterTabsUI();
-
-            const filteredList = getFilteredRecordsList();
-            const totalRecords = filteredList.length;
-            const totalPages = Math.ceil(totalRecords / rowsPerPage) || 1;
-            if (currentPage > totalPages) currentPage = totalPages;
-
-            const startIndex = (currentPage - 1) * rowsPerPage;
-            const endIndex = startIndex + rowsPerPage;
-            const paginatedList = filteredList.slice(startIndex, endIndex);
-
-            // تحديث معلومات شريط التصفح (Pagination info)
-            document.getElementById('paginationInfo').innerText = `عرض ${totalRecords > 0 ? startIndex + 1 : 0} إلى ${Math.min(endIndex, totalRecords)} من أصل ${totalRecords} سجل`;
-            document.getElementById('pageIndicator').innerText = `الصفحة ${currentPage} من ${totalPages}`;
-            document.getElementById('prevPageBtn').disabled = (currentPage === 1);
-            document.getElementById('nextPageBtn').disabled = (currentPage >= totalPages);
-
-            if (paginatedList.length === 0) {
+            if (filteredList.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="14" style="text-align: center; padding: 25px; color: var(--text-muted);">لا توجد مواعيد مطابقة للفلتر أو البحث الحالي.</td></tr>`;
                 return;
             }
 
-            paginatedList.forEach((record, idxInPage) => {
-                const realIndex = startIndex + idxInPage + 1;
+            filteredList.forEach((record, index) => {
                 const tr = document.createElement('tr');
                 if (record.isRecurring) {
                     tr.classList.add('row-priority-pulse');
@@ -2753,20 +2451,16 @@
                 const contactMethodHTML = `<span class="contact-method-badge"><i class="fa-solid ${cIcon}"></i> ${cMethod}</span>`;
                 const isPinned = record.isPinned;
 
-                // خانة عرض سجل تتبع التعديل (Activity Log Trail)
-                let auditLogHTML = '';
-                if (record.lastModifiedBy && record.lastModifiedAt) {
-                    auditLogHTML = `<div style="font-size: 0.68rem; color: var(--text-muted); margin-top: 3px;" title="تم بواسطة: ${record.lastModifiedBy}">🕒 ${record.lastModifiedBy} (${formatTimeOnly(record.lastModifiedAt)})</div>`;
-                }
+                const branchNameArabic = record.branch || 'فرع معشي';
 
                 tr.innerHTML = `
-                    <td>${realIndex}</td>
+                    <td>${index + 1}</td>
                     <td style="white-space: nowrap;">${formatDateOnly(record.createdAt)}</td>
                     <td>${statusBadgeHTML}</td>
                     <td><strong>${record.patientName}</strong></td>
                     <td style="white-space: nowrap;">${record.patientPhone}</td>
                     <td>${contactMethodHTML}</td>
-                    <td><span style="font-size: 0.78rem; font-weight:700; color:var(--primary-color);">${record.branch || '-'}</span></td>
+                    <td><span style="font-size: 0.78rem; font-weight:700; color:var(--primary-color);">${branchNameArabic}</span></td>
                     <td>${record.fileNumber || '-'}</td>
                     <td><span class="proc-badge ${procClass}">${proc}</span></td>
                     <td><div class="service-cell-box">${record.serviceRequired}</div></td>
@@ -2784,11 +2478,10 @@
                     </td>
                     <td>
                         <textarea class="table-input auto-expand-action" id="action_${record.firebaseKey}" oninput="autoExpandTextarea(this)" placeholder="اكتب إجراء الإدارة...">${record.actionTaken || ''}</textarea>
-                        ${auditLogHTML}
                     </td>
                     <td style="white-space: nowrap;">
                         <button class="btn-pin-action ${isPinned ? 'pinned' : ''}" onclick="requestTogglePinRecord('${record.firebaseKey}')" title="${isPinned ? 'إلغاء التثبيت' : 'تثبيت العميل'}"><i class="fa-solid fa-thumbtack"></i></button>
-                        <button class="btn-save-action" onclick="saveAdminUpdate('${record.firebaseKey}')" title="حفظ وتوثيق"><i class="fa-solid fa-floppy-disk"></i></button>
+                        <button class="btn-save-action" onclick="saveAdminUpdate('${record.firebaseKey}')" title="حفظ"><i class="fa-solid fa-floppy-disk"></i></button>
                         <button class="btn-edit-action" onclick="openEditModal('${record.firebaseKey}')" title="تعديل"><i class="fa-solid fa-pen"></i></button>
                         <button class="btn-delete-action" onclick="deleteRecord('${record.firebaseKey}')" title="حذف"><i class="fa-solid fa-trash"></i></button>
                     </td>
@@ -2821,15 +2514,10 @@
                 adminContactSelect = otherInputVal;
             }
 
-            const modifierName = prompt('أدخل اسمك الكريم لتوثيق التعديل في سجل النشاطات (Audit Trail):', 'مصطفى') || 'مسؤول الإدارة';
-
             let rec = records.find(r => r.firebaseKey === key);
             if (rec) { 
                 rec.actionTaken = actionVal; 
-                rec.adminContactMethod = adminContactSelect;
-                rec.lastModifiedBy = modifierName;
-                rec.lastModifiedAt = new Date().toISOString();
-                
+                rec.adminContactMethod = adminContactSelect; 
                 saveLocal(); 
                 renderTable(); 
                 updateKPIs();
@@ -2838,14 +2526,9 @@
             }
 
             if (navigator.onLine && !key.startsWith('local_')) {
-                dbRef.child(key).update({ 
-                    actionTaken: actionVal, 
-                    adminContactMethod: adminContactSelect,
-                    lastModifiedBy: modifierName,
-                    lastModifiedAt: new Date().toISOString()
-                });
+                dbRef.child(key).update({ actionTaken: actionVal, adminContactMethod: adminContactSelect });
             }
-            alert('تم التحديث وحفظ سجل النشاطات بنجاح!');
+            alert('تم التحديث بنجاح!');
         }
 
         function openEditModal(key) {
@@ -2857,7 +2540,7 @@
             document.getElementById('editPatientPhone').value = rec.patientPhone || '';
             document.getElementById('editFileNumber').value = rec.fileNumber || '';
             document.getElementById('editIdNumber').value = rec.idNumber || '';
-            document.getElementById('editBranch').value = rec.branch || 'معشي';
+            document.getElementById('editBranch').value = rec.branch || 'فرع معشي';
             document.getElementById('editContactMethod').value = rec.contactMethod || 'اتصال';
             document.getElementById('editCoordinatorName').value = rec.coordinatorName || '';
             document.getElementById('editProcedureType').value = rec.procedureType || 'مراجعه';
@@ -2873,9 +2556,7 @@
             document.getElementById('editModal').classList.add('open');
         }
 
-        function closeEditModal() {
-            document.getElementById('editModal').classList.remove('open');
-        }
+        function closeEditModal() { document.getElementById('editModal').classList.remove('open'); }
 
         function executeActualEdit() {
             const key = document.getElementById('editFirebaseKey').value;
@@ -2894,11 +2575,8 @@
             rec.paymentStatus = document.getElementById('editPaymentStatusSelect').value;
             rec.isRecurring = document.getElementById('editIsRecurring').checked;
             rec.isRepeatedRequest = document.getElementById('editIsRepeatedRequest').checked;
-            rec.lastModifiedBy = 'تعديل بيانات';
-            rec.lastModifiedAt = new Date().toISOString();
 
             saveLocal();
-            populateCoordinatorDropdown();
             renderTable();
             updateKPIs();
             updateDailyProgress();
@@ -2918,9 +2596,7 @@
                     serviceRequired: rec.serviceRequired,
                     paymentStatus: rec.paymentStatus,
                     isRecurring: rec.isRecurring,
-                    isRepeatedRequest: rec.isRepeatedRequest,
-                    lastModifiedBy: rec.lastModifiedBy,
-                    lastModifiedAt: rec.lastModifiedAt
+                    isRepeatedRequest: rec.isRepeatedRequest
                 });
             }
             alert('تم تعديل البيانات بنجاح!');
@@ -2945,23 +2621,19 @@
                     if (itemIdx !== -1) {
                         records.splice(itemIdx, 1);
                         saveLocal();
-                        populateCoordinatorDropdown();
                         renderTable();
                         updateKPIs();
                         updateDailyProgress();
                         renderClientReport();
                         updatePinnedCountBadge();
 
-                        if (navigator.onLine && !key.startsWith('local_')) {
-                            dbRef.child(key).remove();
-                        }
+                        if (navigator.onLine && !key.startsWith('local_')) dbRef.child(key).remove();
                     }
                 }
             });
         }
 
         let draggedCardIndex = null;
-        let touchDraggedIndex = null;
 
         function renderCSLinks() {
             const container = document.getElementById('linksGridContainer');
@@ -3037,9 +2709,7 @@
                 }
             });
 
-            saveLocal();
-            renderCSLinks();
-            showToastOnly('🔄 تم ترتيب الكروت بنجاح!');
+            saveLocal(); renderCSLinks(); showToastOnly('🔄 تم ترتيب الكروت بنجاح!');
         }
 
         function openAddLinkModal() {
@@ -3079,9 +2749,7 @@
                 let item = csLinks.find(l => l.linkKey === key);
                 if (item) {
                     item.title = title; item.url = url; item.desc = desc;
-                    if (navigator.onLine && !key.startsWith('link_')) {
-                        linksDbRef.child(key).update({ title, url, desc });
-                    }
+                    if (navigator.onLine && !key.startsWith('link_')) linksDbRef.child(key).update({ title, url, desc });
                 }
             } else {
                 const tempKey = 'link_' + Date.now();
@@ -3097,10 +2765,7 @@
                 }
             }
 
-            saveLocal();
-            renderCSLinks();
-            closeLinkModal();
-            showToastOnly('✅ تم حفظ الرابط بنجاح!');
+            saveLocal(); renderCSLinks(); closeLinkModal(); showToastOnly('✅ تم حفظ الرابط بنجاح!');
         }
 
         function deleteCSLink(key) {
@@ -3109,11 +2774,8 @@
                     const idx = csLinks.findIndex(l => l.linkKey === key);
                     if (idx !== -1) {
                         csLinks.splice(idx, 1);
-                        saveLocal();
-                        renderCSLinks();
-                        if (navigator.onLine && !key.startsWith('link_')) {
-                            linksDbRef.child(key).remove();
-                        }
+                        saveLocal(); renderCSLinks();
+                        if (navigator.onLine && !key.startsWith('link_')) linksDbRef.child(key).remove();
                         showToastOnly('🗑️ تم حذف الرابط بنجاح!');
                     }
                 }
@@ -3166,18 +2828,6 @@
             } catch(e) { return isoString; }
         }
 
-        function formatTimeOnly(isoString) {
-            if (!isoString) return '';
-            try {
-                const d = new Date(isoString);
-                let hours = d.getHours();
-                const minutes = String(d.getMinutes()).padStart(2, '0');
-                const ampm = hours >= 12 ? 'PM' : 'AM';
-                hours = hours % 12 || 12;
-                return `${String(hours).padStart(2, '0')}:${minutes}${ampm}`;
-            } catch(e) { return ''; }
-        }
-
         function toggleCopiedStatusGroup(keysArray) {
             requireAdminAuth(() => {
                 const targetState = !records.find(r => keysArray.includes(r.firebaseKey))?.isCopied;
@@ -3185,13 +2835,10 @@
                     const rec = records.find(r => r.firebaseKey === k);
                     if (rec) {
                         rec.isCopied = targetState;
-                        if (navigator.onLine && !k.startsWith('local_')) {
-                            dbRef.child(k).update({ isCopied: targetState });
-                        }
+                        if (navigator.onLine && !k.startsWith('local_')) dbRef.child(k).update({ isCopied: targetState });
                     }
                 });
-                saveLocal();
-                renderClientReport();
+                saveLocal(); renderClientReport();
             });
         }
 
@@ -3203,14 +2850,10 @@
                     if (rec) {
                         rec.isHiddenFromClients = true;
                         rec.deletedAt = nowIso;
-                        if (navigator.onLine && !k.startsWith('local_')) {
-                            dbRef.child(k).update({ isHiddenFromClients: true, deletedAt: nowIso });
-                        }
+                        if (navigator.onLine && !k.startsWith('local_')) dbRef.child(k).update({ isHiddenFromClients: true, deletedAt: nowIso });
                     }
                 });
-                saveLocal();
-                renderClientReport();
-                renderTrashModalList();
+                saveLocal(); renderClientReport(); renderTrashModalList();
                 showToastOnly('🗑️ تم نقل الطلبات إلى سلة المحذوفات بنجاح!');
             });
         }
@@ -3219,18 +2862,8 @@
             requireAdminAuth(() => {
                 if (confirm('⚠️ تنبيه: هل أنت متأكد من الحذف النهائي للعميل وجميع طلباته؟')) {
                     records = records.filter(r => !keysArray.includes(r.firebaseKey));
-                    saveLocal();
-                    populateCoordinatorDropdown();
-                    renderTable();
-                    updateKPIs();
-                    updateDailyProgress();
-                    renderClientReport();
-                    renderTrashModalList();
-                    updatePinnedCountBadge();
-
-                    keysArray.forEach(k => {
-                        if (navigator.onLine && !k.startsWith('local_')) dbRef.child(k).remove();
-                    });
+                    saveLocal(); renderTable(); updateKPIs(); updateDailyProgress(); renderClientReport(); renderTrashModalList(); updatePinnedCountBadge();
+                    keysArray.forEach(k => { if (navigator.onLine && !k.startsWith('local_')) dbRef.child(k).remove(); });
                     alert('تم الحذف النهائي بنجاح.');
                 }
             });
@@ -3242,12 +2875,8 @@
                 if (rec) {
                     rec.isHiddenFromClients = false;
                     rec.deletedAt = null;
-                    saveLocal();
-                    renderClientReport();
-                    renderTrashModalList();
-                    if (navigator.onLine && !key.startsWith('local_')) {
-                        dbRef.child(key).update({ isHiddenFromClients: false, deletedAt: null });
-                    }
+                    saveLocal(); renderClientReport(); renderTrashModalList();
+                    if (navigator.onLine && !key.startsWith('local_')) dbRef.child(key).update({ isHiddenFromClients: false, deletedAt: null });
                     showToastOnly('↩️ تم استرجاع العميل بنجاح!');
                 }
             });
@@ -3259,15 +2888,7 @@
                     const idx = records.findIndex(r => r.firebaseKey === key);
                     if (idx !== -1) {
                         records.splice(idx, 1);
-                        saveLocal();
-                        populateCoordinatorDropdown();
-                        renderTable();
-                        updateKPIs();
-                        updateDailyProgress();
-                        renderClientReport();
-                        renderTrashModalList();
-                        updatePinnedCountBadge();
-
+                        saveLocal(); renderTable(); updateKPIs(); updateDailyProgress(); renderClientReport(); renderTrashModalList(); updatePinnedCountBadge();
                         if (navigator.onLine && !key.startsWith('local_')) dbRef.child(key).remove();
                         alert('تم الحذف النهائي.');
                     }
@@ -3315,6 +2936,7 @@
             });
         }
 
+        /* رسم كروت صفحة الكشف بالأزرار المرتبة رآسياً لجعل اسم العميل يتفرد براحته */
         function renderClientReport() {
             const container = document.getElementById('clientReportList');
             if (!container) return;
@@ -3403,11 +3025,15 @@
                     <div class="client-card-header">
                         <div class="client-title">
                             <input type="checkbox" class="client-select-chk" data-keys="${keysJsonStr}">
-                            <span>${index + 1}-${rec.patientName}${fileStr}</span>
-                            <div style="display: flex; gap: 6px; align-items: center; flex-wrap: wrap;">${pinBtnHTML}${payBtnHTML}${copyBtnHTML}</div>
+                            <span style="font-size:1.05rem; line-height:1.4; word-break:break-word;">${index + 1}- ${rec.patientName}${fileStr}</span>
                         </div>
-                        ${dateTimeStr ? `<span class="client-datetime-badge"><i class="fa-regular fa-clock"></i> ${dateTimeStr}</span>` : ''}
+                        <div class="client-badges-column">
+                            ${pinBtnHTML}
+                            ${payBtnHTML}
+                            ${copyBtnHTML}
+                        </div>
                     </div>
+                    ${dateTimeStr ? `<div style="font-size:0.75rem;"><span class="client-datetime-badge"><i class="fa-regular fa-clock"></i> ${dateTimeStr}</span></div>` : ''}
                     <div class="client-info-row"><span class="info-label">رقم الجوال:</span> ${phoneStr}</div>
                     ${idStr ? `<div class="client-info-row"><span class="info-label">رقم الهوية:</span> ${idStr}</div>` : ''}
                     <div class="client-info-row">${item.servicesCombined || '-'}</div>
@@ -3472,18 +3098,8 @@
                     });
 
                     records = records.filter(r => !keysToDelete.includes(r.firebaseKey));
-                    saveLocal();
-                    populateCoordinatorDropdown();
-                    renderTable();
-                    updateKPIs();
-                    updateDailyProgress();
-                    renderClientReport();
-                    renderTrashModalList();
-                    updatePinnedCountBadge();
-
-                    keysToDelete.forEach(k => {
-                        if (navigator.onLine && !k.startsWith('local_')) dbRef.child(k).remove();
-                    });
+                    saveLocal(); renderTable(); updateKPIs(); updateDailyProgress(); renderClientReport(); renderTrashModalList(); updatePinnedCountBadge();
+                    keysToDelete.forEach(k => { if (navigator.onLine && !k.startsWith('local_')) dbRef.child(k).remove(); });
                     alert('تم الحذف بنجاح.');
                 }
             });
@@ -3515,15 +3131,7 @@
                 return !shouldDelete;
             });
 
-            saveLocal();
-            populateCoordinatorDropdown();
-            renderTable();
-            updateKPIs();
-            updateDailyProgress();
-            renderClientReport();
-            renderTrashModalList();
-            updatePinnedCountBadge();
-
+            saveLocal(); renderTable(); updateKPIs(); updateDailyProgress(); renderClientReport(); renderTrashModalList(); updatePinnedCountBadge();
             keysToDelete.forEach(k => { if (navigator.onLine) dbRef.child(k).remove(); });
             alert('تم مسح الحالات نهائياً.');
         }
@@ -3552,11 +3160,6 @@
             } catch (e) { return isoString; }
         }
 
-        function filterTable() {
-            currentPage = 1;
-            renderTable();
-        }
-
         function openClearModal() { requireAdminAuth(() => { document.getElementById('clearModal').classList.add('open'); }); }
         function closeClearModal() { document.getElementById('clearModal').classList.remove('open'); }
         function openPasswordModal() { requireAdminAuth(() => { document.getElementById('passwordModal').classList.add('open'); }); }
@@ -3576,14 +3179,7 @@
             const pass = document.getElementById('clearPasswordInput').value;
             if (pass === localStorage.getItem('adminPassword')) {
                 records = [];
-                saveLocal();
-                populateCoordinatorDropdown();
-                renderTable();
-                updateKPIs();
-                updateDailyProgress();
-                renderClientReport();
-                renderTrashModalList();
-                updatePinnedCountBadge();
+                saveLocal(); renderTable(); updateKPIs(); updateDailyProgress(); renderClientReport(); renderTrashModalList(); updatePinnedCountBadge();
                 closeClearModal();
                 if (navigator.onLine) dbRef.set(null);
             } else { alert('كلمة المرور غير صحيحة!'); }
@@ -3617,14 +3213,7 @@
                                 records.unshift(item);
                                 if (navigator.onLine) dbRef.push(item);
                             });
-                            saveLocal(); 
-                            populateCoordinatorDropdown();
-                            renderTable(); 
-                            updateKPIs(); 
-                            updateDailyProgress(); 
-                            renderClientReport();
-                            renderTrashModalList();
-                            updatePinnedCountBadge();
+                            saveLocal(); renderTable(); updateKPIs(); updateDailyProgress(); renderClientReport(); renderTrashModalList(); updatePinnedCountBadge();
                             alert('تم الاستيراد بنجاح!');
                         }
                     } catch(err) { alert('خطأ في ملف JSON'); }
@@ -3646,7 +3235,7 @@
                                     patientPhone: row.patientPhone || row['رقم الجوال'] || '-',
                                     fileNumber: row.fileNumber || row['رقم الملف'] || '-',
                                     idNumber: row.idNumber || row['رقم الهوية / الإقامة'] || '-',
-                                    branch: row.branch || row['الفرع'] || 'معشي',
+                                    branch: row.branch || row['الفرع'] || 'فرع معشي',
                                     procedureType: row.procedureType || row['نوع الإجراء'] || 'أخرى',
                                     contactMethod: row.contactMethod || row['طريقة التواصل'] || 'اتصال',
                                     serviceRequired: row.serviceRequired || row['الخدمة المطلوبة'] || '-',
@@ -3658,8 +3247,6 @@
                                     actionTaken: '',
                                     adminContactMethod: 'قيد الانتظار',
                                     adminContactDetail: '',
-                                    lastModifiedBy: '',
-                                    lastModifiedAt: '',
                                     isCopied: false,
                                     isPinned: false,
                                     isHiddenFromClients: false,
@@ -3669,14 +3256,7 @@
                                 if (navigator.onLine) dbRef.push(formattedRow);
                             });
 
-                            saveLocal();
-                            populateCoordinatorDropdown();
-                            renderTable();
-                            updateKPIs();
-                            updateDailyProgress();
-                            renderClientReport();
-                            renderTrashModalList();
-                            updatePinnedCountBadge();
+                            saveLocal(); renderTable(); updateKPIs(); updateDailyProgress(); renderClientReport(); renderTrashModalList(); updatePinnedCountBadge();
                             alert('تم استيراد Excel بنجاح!');
                         }
                     } catch (err) { alert('خطأ في قراءة ملف Excel.'); }
