@@ -734,12 +734,12 @@
             position: sticky; 
             top: 0; 
             z-index: 10; 
-            padding: 8px 8px;
+            padding: 6px 8px;
         }
 
-        /* تعديل خلايا الجدول ليتغير الارتفاع ديناميكياً مع النص بحسب أطول مربع بحدود محبوكة */
+        /* ضبط خلايا الجدول لتعمل بارتفاع ديناميكي وتتأقلم مع المحتوى بدقة */
         table th, table td { 
-            padding: 5px 8px; 
+            padding: 4px 8px; 
             text-align: right; 
             border-bottom: 1px solid var(--border-color); 
             vertical-align: middle; 
@@ -756,7 +756,7 @@
             border-right: 4px solid var(--danger-color);
         }
 
-        .status-badge { padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; color: #fff; display: inline-block; margin-bottom: 2px; }
+        .status-badge { padding: 3px 8px; border-radius: 20px; font-size: 0.72rem; font-weight: 700; color: #fff; display: inline-block; margin-bottom: 2px; }
         .badge-priority { background-color: #7c3aed; box-shadow: 0 0 8px rgba(124, 58, 237, 0.4); }
         .badge-repeated { background-color: #e11d48; }
         .badge-pending { background-color: #d97706; }
@@ -769,9 +769,9 @@
         .badge-payment-paid {
             background: linear-gradient(135deg, #15803d, #22c55e);
             color: #ffffff;
-            padding: 5px 12px;
+            padding: 4px 10px;
             border-radius: 20px;
-            font-size: 0.78rem;
+            font-size: 0.75rem;
             font-weight: 800;
             box-shadow: 0 0 10px rgba(34, 197, 94, 0.5);
             border: 1px solid #86efac;
@@ -783,9 +783,9 @@
         .badge-payment-unpaid {
             background: linear-gradient(135deg, #b45309, #d97706);
             color: #ffffff;
-            padding: 5px 12px;
+            padding: 4px 10px;
             border-radius: 20px;
-            font-size: 0.78rem;
+            font-size: 0.75rem;
             font-weight: 800;
             box-shadow: 0 0 10px rgba(217, 119, 6, 0.4);
             border: 1px solid #fde68a;
@@ -794,7 +794,7 @@
             gap: 4px;
         }
 
-        .proc-badge { padding: 4px 10px; border-radius: 6px; font-size: 0.8rem; font-weight: 700; display: inline-block; text-align: center; }
+        .proc-badge { padding: 3px 8px; border-radius: 6px; font-size: 0.78rem; font-weight: 700; display: inline-block; text-align: center; }
         .proc-plant { background-color: #0d9488; color: #ffffff; border: 1px solid #14b8a6; box-shadow: 0 0 10px rgba(13, 148, 136, 0.3); } 
         .proc-extraction { background-color: #c2410c; color: #ffffff; } 
         .proc-surgery { background-color: #b91c1c; color: #ffffff; } 
@@ -804,44 +804,44 @@
         .proc-default { background-color: #334155; color: #ffffff; } 
 
         .table-input {
-            width: 100%; padding: 6px; border: 1px solid var(--border-color); border-radius: var(--radius-md); background: var(--bg-base); color: var(--text-main); font-family: var(--font-family); font-size: 0.85rem;
+            width: 100%; padding: 5px 6px; border: 1px solid var(--border-color); border-radius: var(--radius-md); background: var(--bg-base); color: var(--text-main); font-family: var(--font-family); font-size: 0.82rem;
         }
         
-        /* جعل أبعاد مربع الخدمة يتكيف ديناميكياً بدون مسافات فارغة زائده */
+        /* ضبط صندوق الخدمة ليتكيف بدقة تامة مع حجم النص بدون فراغات زائدة */
         .service-cell-box {
-            width: 280px;
-            min-width: 280px;
-            max-width: 280px;
+            width: 260px;
+            min-width: 260px;
+            max-width: 260px;
             height: auto;
             min-height: unset;
             white-space: pre-wrap;
             word-break: break-word;
             overflow-wrap: break-word;
-            padding: 5px 8px;
+            padding: 4px 6px;
             background: var(--bg-base);
             border-radius: 6px;
             border: 1px solid var(--border-color);
-            font-size: 0.83rem;
+            font-size: 0.81rem;
             line-height: 1.35;
             color: var(--text-main);
             box-sizing: border-box;
         }
 
-        /* جعل أبعاد مربع إجراء الإدارة يتكيف ديناميكياً مع المحتوى بدون حشو زائد */
+        /* ضبط صندوق إجراء الإدارة ليتكيف ديناميكياً مع المحتوى */
         textarea.admin-action-textarea {
-            width: 280px;
-            min-width: 280px;
-            max-width: 280px;
+            width: 260px;
+            min-width: 260px;
+            max-width: 260px;
             height: auto;
             min-height: unset;
             white-space: pre-wrap;
             word-break: break-word;
             overflow-wrap: break-word;
-            padding: 5px 8px;
+            padding: 4px 6px;
             background: var(--bg-base);
             border-radius: 6px;
             border: 1px solid var(--border-color);
-            font-size: 0.83rem;
+            font-size: 0.81rem;
             line-height: 1.35;
             color: var(--text-main);
             font-family: var(--font-family);
@@ -850,17 +850,17 @@
         }
 
         .client-name-cell {
-            min-width: 140px;
+            min-width: 130px;
             white-space: normal;
             word-break: break-word;
             overflow-wrap: break-word;
         }
 
-        .btn-save-action { background-color: var(--success-color); color: #fff; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; }
-        .btn-edit-action { background-color: var(--primary-color); color: #fff; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; }
-        .btn-delete-action { background-color: var(--danger-color); color: #fff; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; }
+        .btn-save-action { background-color: var(--success-color); color: #fff; border: none; padding: 5px 8px; border-radius: 4px; cursor: pointer; }
+        .btn-edit-action { background-color: var(--primary-color); color: #fff; border: none; padding: 5px 8px; border-radius: 4px; cursor: pointer; }
+        .btn-delete-action { background-color: var(--danger-color); color: #fff; border: none; padding: 5px 8px; border-radius: 4px; cursor: pointer; }
         
-        .btn-pin-action { background-color: #d97706; color: #fff; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; }
+        .btn-pin-action { background-color: #d97706; color: #fff; border: none; padding: 5px 8px; border-radius: 4px; cursor: pointer; }
         .btn-pin-action.pinned { background-color: #ca8a04; box-shadow: 0 0 6px #f59e0b; }
 
         @keyframes priorityPulse {
@@ -896,7 +896,7 @@
         .client-report-container {
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 6px;
             width: 100%;
         }
 
@@ -908,7 +908,7 @@
             display: flex;
             flex-direction: column;
             justify-content: center;
-            gap: 4px;
+            gap: 3px;
             position: relative;
             box-shadow: 0 1px 3px rgba(0,0,0,0.2);
             width: 100%;
@@ -933,7 +933,7 @@
             display: flex;
             align-items: center;
             gap: 6px;
-            font-size: 0.88rem;
+            font-size: 0.85rem;
             font-weight: 700;
             color: var(--text-main);
             flex: 1;
@@ -942,8 +942,8 @@
         }
 
         .client-card-header .client-select-chk {
-            width: 16px;
-            height: 16px;
+            width: 15px;
+            height: 15px;
             cursor: pointer;
             accent-color: var(--primary-color);
             flex-shrink: 0;
@@ -951,7 +951,7 @@
 
         .client-datetime-badge {
             font-family: Arial, sans-serif;
-            font-size: 0.68rem;
+            font-size: 0.66rem;
             font-weight: 700;
             color: #ffffff;
             background: rgba(245, 158, 11, 0.25);
@@ -966,9 +966,9 @@
         }
 
         .client-info-row {
-            font-size: 0.82rem;
+            font-size: 0.8rem;
             color: var(--text-main);
-            line-height: 1.3;
+            line-height: 1.25;
             word-break: break-word;
         }
 
@@ -979,7 +979,7 @@
 
         .client-card-buttons-row {
             display: flex;
-            gap: 6px;
+            gap: 5px;
             align-items: center;
             width: 100%;
             margin-top: 2px;
@@ -990,10 +990,10 @@
             background: #d97706;
             color: #ffffff;
             border: none;
-            padding: 4px 10px;
-            border-radius: 5px;
+            padding: 3px 8px;
+            border-radius: 4px;
             font-family: var(--font-family);
-            font-size: 0.75rem;
+            font-size: 0.72rem;
             font-weight: 700;
             cursor: pointer;
             display: inline-flex;
@@ -1010,21 +1010,21 @@
 
         .client-actions-row {
             display: flex;
-            gap: 6px;
-            margin-top: 4px;
+            gap: 5px;
+            margin-top: 3px;
             justify-content: flex-end;
             width: 100%;
             border-top: 1px solid var(--border-color);
-            padding-top: 4px;
+            padding-top: 3px;
         }
 
         .btn-client-action {
-            padding: 4px 10px;
-            border-radius: 5px;
+            padding: 3px 8px;
+            border-radius: 4px;
             border: none;
             color: #fff;
             font-family: var(--font-family);
-            font-size: 0.75rem;
+            font-size: 0.72rem;
             font-weight: 700;
             cursor: pointer;
             display: inline-flex;
@@ -1588,7 +1588,7 @@
                                         <th>الخدمة / تفاصيل الطلب</th>
                                         <th>المنسق</th>
                                         <th style="min-width: 170px;">تواصل الإدارة</th>
-                                        <th style="min-width: 290px;">إجراء الإدارة</th>
+                                        <th style="min-width: 270px;">إجراء الإدارة</th>
                                         <th>إجراءات</th>
                                     </tr>
                                 </thead>
@@ -2736,7 +2736,7 @@
                             <option value="اعتذر" ${selectVal === 'اعتذر' ? 'selected' : ''}>اعتذر ❌</option>
                             <option value="أخرى" ${selectVal === 'أخرى' ? 'selected' : ''}>أخرى ✍️</option>
                         </select>
-                        <input type="text" class="table-input" id="adminOther_${record.firebaseKey}" placeholder="التفاصيل..." value="${otherDetail}" style="margin-top: 5px; ${selectVal === 'أخرى' ? '' : 'display:none;'}">
+                        <input type="text" class="table-input" id="adminOther_${record.firebaseKey}" placeholder="التفاصيل..." value="${otherDetail}" style="margin-top: 4px; ${selectVal === 'أخرى' ? '' : 'display:none;'}">
                     </td>
                     <td><textarea class="admin-action-textarea" id="action_${record.firebaseKey}" placeholder="اكتب إجراء الإدارة هنا...">${record.actionTaken || ''}</textarea></td>
                     <td>
