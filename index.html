@@ -21,34 +21,35 @@
     <style>
         :root {
             --font-family: 'Tajawal', sans-serif;
-            --bg-base: #0a0e17;
-            --bg-surface: #111827;
-            --bg-card: #111827;
-            --bg-sidebar: #0f172a;
-            --text-main: #f3f4f6;
+            /* ألوان الرمادي الفحم الداكنة المستوحاة من الواجهة المرفقة */
+            --bg-base: #181a1d;
+            --bg-surface: #222428;
+            --bg-card: #2a2d32;
+            --bg-sidebar: #131517;
+            --text-main: #e5e7eb;
             --text-muted: #9ca3af;
-            --border-color: #1f2937;
+            --border-color: #374151;
             
-            --primary-color: #2563eb;
-            --primary-hover: #1d4ed8;
-            --accent-purple: #7c3aed;
+            --primary-color: #3b82f6;
+            --primary-hover: #2563eb;
+            --accent-purple: #8b5cf6;
             --warning-color: #d97706;
-            --danger-color: #dc2626;
-            --success-color: #16a34a;
+            --danger-color: #ef4444;
+            --success-color: #10b981;
 
-            --shadow-sm: 0 1px 3px rgba(0,0,0,0.5);
-            --radius-lg: 12px;
-            --radius-md: 8px;
+            --shadow-sm: 0 2px 6px rgba(0,0,0,0.4);
+            --radius-lg: 10px;
+            --radius-md: 6px;
         }
 
         body.light-theme {
-            --bg-base: #f4f6fb;
+            --bg-base: #f3f4f6;
             --bg-surface: #ffffff;
             --bg-card: #ffffff;
-            --bg-sidebar: #0f172a;
-            --text-main: #1e293b;
-            --text-muted: #64748b;
-            --border-color: #e2e8f0;
+            --bg-sidebar: #1f2937;
+            --text-main: #111827;
+            --text-muted: #6b7280;
+            --border-color: #d1d5db;
         }
 
         * {
@@ -99,7 +100,7 @@
             align-items: center;
             justify-content: space-between;
             padding-bottom: 20px;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
+            border-bottom: 1px solid var(--border-color);
         }
 
         .brand-info {
@@ -114,12 +115,12 @@
         }
 
         .brand-text h2 { font-size: 1.1rem; font-weight: 700; color: #fff; }
-        .brand-text p { font-size: 0.8rem; opacity: 0.7; color: #94a3b8; }
+        .brand-text p { font-size: 0.8rem; opacity: 0.7; color: #9ca3af; }
 
         .toggle-sidebar-btn {
-            background: rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.08);
             color: white;
-            border: none;
+            border: 1px solid var(--border-color);
             width: 32px;
             height: 32px;
             border-radius: 6px;
@@ -134,7 +135,7 @@
         .sidebar-menu {
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 8px;
             margin-top: 25px;
         }
 
@@ -142,7 +143,7 @@
             display: flex;
             align-items: center;
             gap: 12px;
-            color: #94a3b8;
+            color: #9ca3af;
             text-decoration: none;
             padding: 12px 16px;
             border-radius: var(--radius-md);
@@ -153,19 +154,20 @@
         }
 
         .menu-item:hover {
-            background-color: rgba(255, 255, 255, 0.05);
+            background-color: var(--bg-surface);
             color: #ffffff;
         }
 
         .menu-item.active {
-            background-color: #1e293b;
+            background-color: var(--bg-surface);
             color: #ffffff;
-            border: 1px solid var(--primary-color);
-            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+            border: 1px solid var(--border-color);
+            border-right: 4px solid var(--primary-color);
         }
 
         .cloud-badge {
-            background: rgba(255,255,255,0.05);
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
             padding: 10px 14px;
             border-radius: 20px;
             font-size: 0.85rem;
@@ -176,7 +178,7 @@
             color: #fff;
         }
 
-        .online-dot { width: 10px; height: 10px; background-color: #22c55e; border-radius: 50%; box-shadow: 0 0 8px #22c55e; display: inline-block; }
+        .online-dot { width: 10px; height: 10px; background-color: #10b981; border-radius: 50%; box-shadow: 0 0 8px #10b981; display: inline-block; }
 
         .main-wrapper {
             margin-right: 270px;
@@ -260,7 +262,7 @@
             background-color: var(--bg-surface);
             border: 1px solid var(--border-color);
             border-radius: var(--radius-lg);
-            padding: 16px;
+            padding: 18px;
             box-shadow: var(--shadow-sm);
         }
 
@@ -268,7 +270,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 14px;
+            margin-bottom: 16px;
             flex-wrap: wrap;
             gap: 10px;
         }
@@ -282,14 +284,14 @@
         }
 
         .clinic-announcements-box {
-            background: linear-gradient(135deg, rgba(37, 99, 235, 0.12), rgba(124, 58, 237, 0.12));
-            border: 1px solid var(--primary-color);
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-right: 4px solid var(--primary-color);
             border-radius: var(--radius-lg);
             padding: 15px;
             display: flex;
             flex-direction: column;
             gap: 12px;
-            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.15);
         }
         .announcement-header-row {
             display: flex;
@@ -314,14 +316,14 @@
             overflow-y: auto;
         }
         .announcement-card {
-            background: var(--bg-base);
+            background: var(--bg-card);
             border: 1px solid var(--border-color);
             border-radius: var(--radius-md);
             padding: 12px 14px;
             display: flex;
             flex-direction: column;
             gap: 10px;
-            border-right: 4px solid var(--warning-color);
+            border-right: 3px solid var(--warning-color);
         }
         .announcement-body-content {
             display: flex;
@@ -358,8 +360,8 @@
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            background: rgba(37, 99, 235, 0.18);
-            border: 1px solid rgba(37, 99, 235, 0.5);
+            background: rgba(59, 130, 246, 0.15);
+            border: 1px solid var(--primary-color);
             padding: 7px 14px;
             border-radius: 6px;
             color: #ffffff;
@@ -408,7 +410,7 @@
         }
 
         .progress-box {
-            background: var(--bg-base);
+            background: var(--bg-card);
             border: 1px solid var(--border-color);
             border-radius: var(--radius-md);
             padding: 12px 15px;
@@ -425,9 +427,9 @@
         }
         .progress-bar-container {
             width: 100%;
-            height: 10px;
+            height: 8px;
             background: var(--border-color);
-            border-radius: 5px;
+            border-radius: 4px;
             overflow: hidden;
         }
         .progress-bar-fill {
@@ -440,76 +442,88 @@
         .kpi-cards-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-            gap: 10px;
+            gap: 12px;
         }
 
         .kpi-card {
-            background: var(--bg-surface);
+            background: var(--bg-card);
             border: 1px solid var(--border-color);
             border-radius: var(--radius-md);
-            padding: 12px;
+            padding: 14px;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
             border-right: 4px solid;
         }
 
         .kpi-card.blue { border-color: var(--primary-color); }
         .kpi-card.purple { border-color: var(--accent-purple); }
-        .kpi-card.pink { border-color: #e11d48; }
-        .kpi-card.teal { border-color: #0d9488; }
+        .kpi-card.pink { border-color: #ec4899; }
+        .kpi-card.teal { border-color: #14b8a6; }
         .kpi-card.warning { border-color: var(--warning-color); }
-        .kpi-card.indigo { border-color: #4f46e5; }
+        .kpi-card.indigo { border-color: #6366f1; }
         .kpi-card.success { border-color: var(--success-color); }
 
         .kpi-icon-box {
-            font-size: 1.2rem; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: var(--bg-base); color: var(--text-main); flex-shrink: 0;
+            font-size: 1.2rem; width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: var(--bg-surface); color: var(--text-main); flex-shrink: 0;
         }
 
-        .kpi-info h3 { font-size: 0.75rem; color: var(--text-muted); font-weight: 500; }
-        .kpi-value { font-size: 1.1rem; font-weight: 800; color: var(--text-main); }
+        .kpi-info h3 { font-size: 0.78rem; color: var(--text-muted); font-weight: 500; }
+        .kpi-value { font-size: 1.2rem; font-weight: 800; color: var(--text-main); }
 
         .form-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 12px;
+            gap: 14px;
         }
 
-        .input-field { display: flex; flex-direction: column; gap: 5px; }
+        .input-field { display: flex; flex-direction: column; gap: 6px; }
         .input-field.full-width { grid-column: 1 / -1; }
-        .input-field label { font-size: 0.85rem; font-weight: 600; color: var(--text-main); }
+        .input-field label { font-size: 0.88rem; font-weight: 600; color: var(--text-main); }
+        
+        /* مطابقة مدخلات النموذج بالتنسيق الرمادي المقارب للصورة */
         .input-field input, .input-field select, .input-field textarea {
-            padding: 8px 10px; border: 1px solid var(--border-color); border-radius: var(--radius-md); background-color: var(--bg-base); color: var(--text-main); outline: none; font-family: var(--font-family); font-size: 0.88rem;
+            padding: 10px 12px; 
+            border: 1px solid var(--border-color); 
+            border-radius: var(--radius-md); 
+            background-color: var(--bg-card); 
+            color: var(--text-main); 
+            outline: none; 
+            font-family: var(--font-family); 
+            font-size: 0.9rem;
         }
-        .input-field textarea { resize: vertical; min-height: 65px; }
+        .input-field input:focus, .input-field select:focus, .input-field textarea:focus {
+            border-color: var(--primary-color);
+        }
+        .input-field textarea { resize: vertical; min-height: 75px; }
 
         .priority-checkbox {
-            display: flex; align-items: center; gap: 10px; cursor: pointer; background: rgba(124, 58, 237, 0.1); padding: 8px 12px; border-radius: var(--radius-md); border: 1px dashed var(--accent-purple); width: 100%; color: var(--text-main);
+            display: flex; align-items: center; gap: 10px; cursor: pointer; background: var(--bg-card); padding: 10px 14px; border-radius: var(--radius-md); border: 1px dashed var(--accent-purple); width: 100%; color: var(--text-main);
         }
 
         .submit-btn {
-            margin-top: 15px; background-color: var(--primary-color); color: white; border: none; padding: 10px 18px; border-radius: var(--radius-md); font-family: var(--font-family); font-size: 0.95rem; font-weight: 700; cursor: pointer; width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px;
+            margin-top: 15px; background-color: var(--primary-color); color: white; border: none; padding: 11px 18px; border-radius: var(--radius-md); font-family: var(--font-family); font-size: 0.95rem; font-weight: 700; cursor: pointer; width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px;
         }
         .submit-btn:hover { background-color: var(--primary-hover); }
 
         .actions-toolbar { display: flex; gap: 8px; flex-wrap: wrap; }
         .action-btn {
-            padding: 7px 12px; border-radius: var(--radius-md); border: none; color: white; font-family: var(--font-family); font-size: 0.82rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; text-decoration: none;
+            padding: 8px 14px; border-radius: var(--radius-md); border: none; color: white; font-family: var(--font-family); font-size: 0.82rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; text-decoration: none;
         }
         .action-btn.excel { background-color: #107c41; }
         .action-btn.json { background-color: #6366f1; }
         .action-btn.import { background-color: #0284c7; }
-        .action-btn.clear-all { background-color: #dc2626; }
-        .action-btn.settings { background-color: #475569; }
-        .action-btn.copy-btn { background-color: #16a34a; }
-        .action-btn.select-del-btn { background-color: #dc2626; }
+        .action-btn.clear-all { background-color: #ef4444; }
+        .action-btn.settings { background-color: #4b5563; }
+        .action-btn.copy-btn { background-color: #10b981; }
+        .action-btn.select-del-btn { background-color: #ef4444; }
         .action-btn.trash-view-btn { background-color: #d97706; }
 
         .filter-container-box {
-            background: var(--bg-base);
+            background: var(--bg-card);
             border: 1px solid var(--border-color);
             border-radius: var(--radius-lg);
-            padding: 10px 12px;
+            padding: 12px;
             margin-bottom: 14px;
             display: flex;
             flex-direction: column;
@@ -521,7 +535,7 @@
 
         .filter-tabs { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
         .filter-tab {
-            padding: 5px 10px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-surface); color: var(--text-main); font-family: var(--font-family); font-size: 0.78rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 5px;
+            padding: 6px 12px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-surface); color: var(--text-main); font-family: var(--font-family); font-size: 0.8rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 5px;
         }
         .filter-tab.active { background-color: var(--primary-color); color: white; border-color: var(--primary-color); }
 
@@ -530,7 +544,7 @@
             display: inline-block;
         }
         .dropdown-filter-btn {
-            padding: 5px 12px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-surface); color: var(--text-main); font-family: var(--font-family); font-size: 0.78rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;
+            padding: 6px 12px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-surface); color: var(--text-main); font-family: var(--font-family); font-size: 0.8rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;
         }
         .dropdown-filter-btn.active {
             background-color: var(--primary-color); color: white; border-color: var(--primary-color);
@@ -541,8 +555,8 @@
             right: 0;
             top: 105%;
             background-color: var(--bg-surface);
-            min-width: 210px;
-            box-shadow: 0 8px 16px rgba(0,0,0,0.4);
+            min-width: 190px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.5);
             border: 1px solid var(--border-color);
             border-radius: var(--radius-md);
             z-index: 99;
@@ -550,16 +564,16 @@
         }
         .dropdown-content.show { display: flex; flex-direction: column; gap: 4px; }
         .dropdown-item {
-            padding: 7px 10px; text-align: right; border-radius: 4px; background: transparent; border: none; color: var(--text-main); font-family: var(--font-family); font-size: 0.78rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px;
+            padding: 8px 10px; text-align: right; border-radius: 4px; background: transparent; border: none; color: var(--text-main); font-family: var(--font-family); font-size: 0.8rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px;
         }
         .dropdown-item:hover { background: var(--border-color); }
         .dropdown-item.active { background: var(--primary-color); color: white; }
 
         .search-field { position: relative; width: 100%; max-width: 300px; }
         .search-field input {
-            width: 100%; padding: 7px 34px 7px 10px; border: 1px solid var(--border-color); border-radius: var(--radius-md); background-color: var(--bg-base); color: var(--text-main); font-family: var(--font-family); font-size: 0.85rem;
+            width: 100%; padding: 8px 34px 8px 12px; border: 1px solid var(--border-color); border-radius: var(--radius-md); background-color: var(--bg-card); color: var(--text-main); font-family: var(--font-family); font-size: 0.85rem;
         }
-        .search-field i { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); color: var(--text-muted); }
+        .search-field i { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: var(--text-muted); }
 
         .table-container { 
             max-height: 550px; 
@@ -572,7 +586,7 @@
         table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
         
         table th { 
-            background-color: var(--bg-base); 
+            background-color: var(--bg-card); 
             color: var(--text-muted); 
             font-weight: 700; 
             position: sticky; 
@@ -580,65 +594,64 @@
             z-index: 10; 
         }
 
-        table th, table td { padding: 8px 8px; text-align: right; border-bottom: 1px solid var(--border-color); vertical-align: middle; color: var(--text-main); }
+        table th, table td { padding: 10px 8px; text-align: right; border-bottom: 1px solid var(--border-color); vertical-align: middle; color: var(--text-main); }
 
         tr.row-apologized {
-            background-color: rgba(220, 38, 38, 0.18) !important;
+            background-color: rgba(239, 68, 68, 0.15) !important;
             border-right: 4px solid var(--danger-color);
         }
 
-        /* تنسيق الشارات الهادئ والأنيق */
-        .status-badge { padding: 3px 8px; border-radius: 12px; font-size: 0.72rem; font-weight: 700; color: #fff; display: inline-block; margin-bottom: 3px; }
-        .badge-priority { background-color: #7c3aed; }
-        .badge-paid { background-color: #16a34a; }
-        .badge-unpaid { background-color: #d97706; }
-        .badge-repeated { background-color: #e11d48; }
-        .badge-pending { background-color: #d97706; }
-        .badge-inprogress { background-color: #2563eb; }
-        .badge-completed { background-color: #16a34a; }
+        .status-badge { padding: 4px 10px; border-radius: 12px; font-size: 0.75rem; font-weight: 700; color: #fff; display: inline-block; margin-bottom: 3px; }
+        .badge-priority { background-color: var(--accent-purple); }
+        .badge-paid { background-color: var(--success-color); }
+        .badge-unpaid { background-color: var(--warning-color); }
+        .badge-repeated { background-color: #ec4899; }
+        .badge-pending { background-color: var(--warning-color); }
+        .badge-inprogress { background-color: var(--primary-color); }
+        .badge-completed { background-color: var(--success-color); }
         .badge-suspended { background-color: #ca8a04; }
-        .badge-apologized { background-color: #dc2626; }
-        .badge-other { background-color: #0d9488; }
+        .badge-apologized { background-color: var(--danger-color); }
+        .badge-other { background-color: #14b8a6; }
 
         .proc-badge { padding: 4px 10px; border-radius: 6px; font-size: 0.8rem; font-weight: 700; display: inline-block; text-align: center; }
-        .proc-plant { background-color: #0d9488; color: #ffffff; } 
-        .proc-extraction { background-color: #c2410c; color: #ffffff; } 
-        .proc-surgery { background-color: #b91c1c; color: #ffffff; } 
-        .proc-stitches { background-color: #7e22ce; color: #ffffff; } 
+        .proc-plant { background-color: #14b8a6; color: #ffffff; } 
+        .proc-extraction { background-color: #ea580c; color: #ffffff; } 
+        .proc-surgery { background-color: #dc2626; color: #ffffff; } 
+        .proc-stitches { background-color: #9333ea; color: #ffffff; } 
         .proc-review { background-color: #4f46e5; color: #ffffff; } 
         .proc-inquiry { background-color: #0284c7; color: #ffffff; }
-        .proc-default { background-color: #334155; color: #ffffff; } 
+        .proc-default { background-color: #4b5563; color: #ffffff; } 
 
         .table-input {
-            width: 100%; padding: 5px 6px; border: 1px solid var(--border-color); border-radius: var(--radius-md); background: var(--bg-base); color: var(--text-main); font-family: var(--font-family); font-size: 0.82rem;
+            width: 100%; padding: 6px; border: 1px solid var(--border-color); border-radius: var(--radius-md); background: var(--bg-card); color: var(--text-main); font-family: var(--font-family); font-size: 0.82rem;
         }
         
         .service-cell-box {
             width: 200px;
             white-space: pre-wrap;
             word-break: break-word;
-            padding: 4px 6px;
-            background: var(--bg-base);
+            padding: 6px 8px;
+            background: var(--bg-card);
             border-radius: 4px;
             border: 1px solid var(--border-color);
             font-size: 0.82rem;
-            line-height: 1.3;
+            line-height: 1.4;
             color: var(--text-main);
         }
 
         textarea.table-input { resize: vertical; min-height: 45px; }
 
-        .btn-save-action { background-color: var(--success-color); color: #fff; border: none; padding: 5px 8px; border-radius: 4px; cursor: pointer; }
-        .btn-edit-action { background-color: var(--primary-color); color: #fff; border: none; padding: 5px 8px; border-radius: 4px; cursor: pointer; }
-        .btn-delete-action { background-color: var(--danger-color); color: #fff; border: none; padding: 5px 8px; border-radius: 4px; cursor: pointer; }
+        .btn-save-action { background-color: var(--success-color); color: #fff; border: none; padding: 6px 9px; border-radius: 4px; cursor: pointer; }
+        .btn-edit-action { background-color: var(--primary-color); color: #fff; border: none; padding: 6px 9px; border-radius: 4px; cursor: pointer; }
+        .btn-delete-action { background-color: var(--danger-color); color: #fff; border: none; padding: 6px 9px; border-radius: 4px; cursor: pointer; }
         
-        .btn-pin-action { background-color: #d97706; color: #fff; border: none; padding: 5px 8px; border-radius: 4px; cursor: pointer; }
+        .btn-pin-action { background-color: #d97706; color: #fff; border: none; padding: 6px 9px; border-radius: 4px; cursor: pointer; }
         .btn-pin-action.pinned { background-color: #ca8a04; box-shadow: 0 0 6px #f59e0b; }
 
         @keyframes priorityPulse {
-            0% { background-color: rgba(124, 58, 237, 0.2); }
-            50% { background-color: rgba(124, 58, 237, 0.05); }
-            100% { background-color: rgba(124, 58, 237, 0.2); }
+            0% { background-color: rgba(139, 92, 246, 0.15); }
+            50% { background-color: rgba(139, 92, 246, 0.05); }
+            100% { background-color: rgba(139, 92, 246, 0.15); }
         }
         .row-priority-pulse {
             animation: priorityPulse 2s infinite ease-in-out;
@@ -673,7 +686,7 @@
         }
 
         .client-card-wrapper {
-            background-color: var(--bg-base);
+            background-color: var(--bg-card);
             border: 1px solid var(--border-color);
             border-radius: var(--radius-md);
             padding: 14px 16px;
@@ -687,8 +700,8 @@
         }
 
         .client-card-wrapper.is-copied {
-            background-color: rgba(22, 163, 74, 0.06);
-            border-color: rgba(22, 163, 74, 0.3);
+            background-color: rgba(16, 185, 129, 0.08);
+            border-color: rgba(16, 185, 129, 0.3);
             opacity: 0.85;
         }
 
@@ -726,10 +739,10 @@
             font-size: 0.75rem;
             font-weight: 700;
             color: #ffffff;
-            background: rgba(37, 99, 235, 0.25);
+            background: rgba(59, 130, 246, 0.2);
             padding: 4px 8px;
             border-radius: 4px;
-            border: 1px solid rgba(37, 99, 235, 0.4);
+            border: 1px solid rgba(59, 130, 246, 0.3);
             direction: ltr;
             white-space: normal;
             word-break: break-word;
@@ -772,7 +785,7 @@
         }
 
         .payment-toggle-btn {
-            background: rgba(255,255,255,0.08);
+            background: rgba(255,255,255,0.06);
             border: 1px solid var(--border-color);
             color: var(--text-main);
             padding: 4px 10px;
@@ -788,9 +801,9 @@
         }
 
         .payment-toggle-btn.paid {
-            background: rgba(22, 163, 74, 0.2);
+            background: rgba(16, 185, 129, 0.2);
             border-color: var(--success-color);
-            color: #4ade80;
+            color: #34d399;
         }
 
         .payment-toggle-btn.unpaid {
@@ -837,7 +850,7 @@
             width: 100%;
         }
         .link-card {
-            background: var(--bg-base);
+            background: var(--bg-card);
             border: 1px solid var(--border-color);
             border-radius: var(--radius-md);
             padding: 15px;
@@ -856,7 +869,7 @@
         }
         .link-card.drag-over {
             border: 2px solid var(--accent-purple);
-            box-shadow: 0 0 12px rgba(124, 58, 237, 0.4);
+            box-shadow: 0 0 12px rgba(139, 92, 246, 0.4);
             transform: translateY(-4px);
         }
         .link-card:hover {
@@ -867,8 +880,8 @@
             top: 8px;
             left: 8px;
             color: var(--primary-color);
-            background: rgba(37, 99, 235, 0.1);
-            border: 1px solid rgba(37, 99, 235, 0.3);
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.3);
             border-radius: 6px;
             font-size: 1.1rem;
             cursor: grab;
@@ -930,7 +943,7 @@
 
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 2000; justify-content: center; align-items: center; padding: 15px; }
         .modal.open { display: flex; }
-        .modal-content { background: var(--bg-surface); border-radius: var(--radius-lg); width: 100%; max-width: 520px; max-height: 90vh; overflow-y: auto; padding: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); border: 1px solid var(--border-color); color: var(--text-main); }
+        .modal-content { background: var(--bg-surface); border-radius: var(--radius-lg); width: 100%; max-width: 520px; max-height: 90vh; overflow-y: auto; padding: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.6); border: 1px solid var(--border-color); color: var(--text-main); }
         .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid var(--border-color); padding-bottom: 8px; }
         .modal-header h3 { color: var(--primary-color); font-size: 1.1rem; }
         .close-modal-btn { background: none; border: none; font-size: 1.3rem; color: var(--text-muted); cursor: pointer; }
@@ -1246,15 +1259,15 @@
                                 <div class="filter-tabs" id="statusFilterTabs">
                                     <button class="filter-tab" data-filter="all" onclick="setDashboardFilter('all', this)">الكل</button>
                                     
-                                    <!-- قائمة منسدلة واحدة لحالة الدفع -->
+                                    <!-- القائمة المنسدلة المحدثة لأسماء فلاتر الدفع -->
                                     <div class="dropdown-filter-container" id="paymentDropdownContainer">
                                         <button class="dropdown-filter-btn" id="paymentDropdownBtn" onclick="toggleDropdown('paymentDropdownContent')">
                                             <i class="fa-solid fa-credit-card"></i> حالة الدفع <i class="fa-solid fa-chevron-down" style="font-size:0.7rem;"></i>
                                         </button>
                                         <div class="dropdown-content" id="paymentDropdownContent">
                                             <button class="dropdown-item" data-filter="payment_all" onclick="setDashboardFilter('all', this)">كل الحالات (الدفع)</button>
-                                            <button class="dropdown-item" data-filter="paid" onclick="setDashboardFilter('paid', this)">💳 العملاء تم الدفع</button>
-                                            <button class="dropdown-item" data-filter="unpaid" onclick="setDashboardFilter('unpaid', this)">⏳ العملاء لم يتم الدفع</button>
+                                            <button class="dropdown-item" data-filter="paid" onclick="setDashboardFilter('paid', this)">💳 تم الدفع</button>
+                                            <button class="dropdown-item" data-filter="unpaid" onclick="setDashboardFilter('unpaid', this)">⏳ لم يتم الدفع</button>
                                         </div>
                                     </div>
 
@@ -1326,7 +1339,7 @@
                 <!-- صفحة الكشف -->
                 <div id="page-clients" class="page-view hidden">
                     <section class="dashboard-section">
-                        <div style="display: flex; flex-direction: column; gap: 12px; background: var(--bg-base); padding: 12px 15px; border-radius: 8px; border: 1px solid var(--border-color); margin-bottom: 15px;">
+                        <div style="display: flex; flex-direction: column; gap: 12px; background: var(--bg-card); padding: 12px 15px; border-radius: 8px; border: 1px solid var(--border-color); margin-bottom: 15px;">
                             <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
                                 <h2 style="font-size: 1.1rem; color: var(--primary-color); font-weight: 700;">
                                     <i class="fa-solid fa-file-lines"></i> صفحة الكشف
@@ -1351,7 +1364,7 @@
                                     <option value="720">شهر</option>
                                 </select>
 
-                                <button class="action-btn" id="pinnedFilterBtn" onclick="togglePinnedFilter()" style="background-color: #16a34a;">
+                                <button class="action-btn" id="pinnedFilterBtn" onclick="togglePinnedFilter()" style="background-color: #10b981;">
                                     <i class="fa-solid fa-file-lines"></i> ✅ الكشف العادي (<span id="pinnedCount">0</span>)
                                 </button>
 
@@ -1362,7 +1375,7 @@
                             </div>
                         </div>
 
-                        <div style="margin-bottom: 12px; display: flex; gap: 10px; align-items: center; background: var(--bg-base); padding: 10px 12px; border-radius: 8px; border: 1px solid var(--border-color);">
+                        <div style="margin-bottom: 12px; display: flex; gap: 10px; align-items: center; background: var(--bg-card); padding: 10px 12px; border-radius: 8px; border: 1px solid var(--border-color);">
                             <i class="fa-solid fa-magnifying-glass" style="color: var(--text-muted);"></i>
                             <input type="text" id="clientSearchInput" oninput="renderClientReport()" placeholder="بحث بالاسم، رقم الجوال، رقم الملف، الهوية..." style="width: 100%; background: transparent; border: none; outline: none; color: var(--text-main); font-family: var(--font-family); font-size: 0.88rem;">
                         </div>
@@ -1798,8 +1811,8 @@
             isPinnedFilterActive = false;
             const btn = document.getElementById('pinnedFilterBtn');
             if (btn) {
-                btn.style.backgroundColor = '#16a34a';
-                btn.style.borderColor = '#16a34a';
+                btn.style.backgroundColor = '#10b981';
+                btn.style.borderColor = '#10b981';
                 btn.style.boxShadow = 'none';
             }
 
@@ -2302,8 +2315,8 @@
                     btn.style.boxShadow = '0 0 10px rgba(217, 119, 6, 0.4)';
                     btn.innerHTML = `<i class="fa-solid fa-thumbtack"></i> 📌 المميزون ( <span id="pinnedCount">0</span> )`;
                 } else {
-                    btn.style.backgroundColor = '#16a34a';
-                    btn.style.borderColor = '#16a34a';
+                    btn.style.backgroundColor = '#10b981';
+                    btn.style.borderColor = '#10b981';
                     btn.style.boxShadow = 'none';
                     btn.innerHTML = `<i class="fa-solid fa-file-lines"></i> ✅ الكشف العادي ( <span id="pinnedCount">0</span> )`;
                 }
@@ -2464,7 +2477,6 @@
                     statusBadgeHTML += '<span class="status-badge badge-priority">⭐ أولوية</span><br>';
                 }
 
-                // شرط إظهار الشارة فقط عند اختيار تم أو لم يتم الدفع
                 if (record.paymentStatus === 'paid') {
                     statusBadgeHTML += '<span class="status-badge badge-paid">💳 تم الدفع</span><br>';
                 } else if (record.paymentStatus === 'unpaid') {
@@ -3172,7 +3184,7 @@
                 const keysJsonStr = JSON.stringify(item.allKeys).replace(/"/g, '&quot;');
 
                 const pinBtnHTML = `
-                    <button class="copied-btn" style="background-color: ${isPinned ? '#d97706' : '#475569'}; border-color: ${isPinned ? '#f59e0b' : '#64748b'}; color: #ffffff;" onclick="requestTogglePinRecord('${rec.firebaseKey}')" title="${isPinned ? 'إلغاء التثبيت من المميزين' : 'تثبيت في المميزين'}">
+                    <button class="copied-btn" style="background-color: ${isPinned ? '#d97706' : '#4b5563'}; border-color: ${isPinned ? '#f59e0b' : '#6b7280'}; color: #ffffff;" onclick="requestTogglePinRecord('${rec.firebaseKey}')" title="${isPinned ? 'إلغاء التثبيت من المميزين' : 'تثبيت في المميزين'}">
                         📌 ${isPinned ? 'المميزون' : 'تثبيت'}
                     </button>
                 `;
