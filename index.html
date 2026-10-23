@@ -22,7 +22,7 @@
         :root {
             --font-family: 'Tajawal', sans-serif;
             
-            /* ألوان الأزرق الكحلي الغامق الفخم */
+            /* السيم الافتراضي: الكحلي الفخم (Midnight Navy) */
             --bg-base: #0b1329;
             --bg-surface: #131e3a;
             --bg-card: #1a274c;
@@ -30,7 +30,6 @@
             --text-main: #f1f5f9;
             --text-muted: #94a3b8;
             --border-color: #263863;
-            
             --primary-color: #2563eb;
             --primary-hover: #1d4ed8;
             --accent-purple: #7c3aed;
@@ -43,7 +42,34 @@
             --radius-md: 8px;
         }
 
-        body.light-theme {
+        /* سيم: الرمادي الفحم (Dark Slate Gray) */
+        body.theme-slate {
+            --bg-base: #181a1d;
+            --bg-surface: #222428;
+            --bg-card: #2a2d32;
+            --bg-sidebar: #131517;
+            --text-main: #e5e7eb;
+            --text-muted: #9ca3af;
+            --border-color: #374151;
+            --primary-color: #3b82f6;
+            --primary-hover: #2563eb;
+        }
+
+        /* سيم: أسود OLED ذهبي (AMOLED Gold) */
+        body.theme-amoled {
+            --bg-base: #000000;
+            --bg-surface: #0a0a0a;
+            --bg-card: #121212;
+            --bg-sidebar: #050505;
+            --text-main: #f3f4f6;
+            --text-muted: #a1a1aa;
+            --border-color: #27272a;
+            --primary-color: #f59e0b;
+            --primary-hover: #d97706;
+        }
+
+        /* سيم: الوضع المضيء العصري (Modern Light) */
+        body.theme-light {
             --bg-base: #f1f5f9;
             --bg-surface: #ffffff;
             --bg-card: #ffffff;
@@ -51,6 +77,34 @@
             --text-main: #0f172a;
             --text-muted: #64748b;
             --border-color: #cbd5e1;
+            --primary-color: #2563eb;
+            --primary-hover: #1d4ed8;
+        }
+
+        /* سيم: التيركواز المحيطي (Ocean Teal) */
+        body.theme-teal {
+            --bg-base: #041416;
+            --bg-surface: #0b2226;
+            --bg-card: #113238;
+            --bg-sidebar: #020d0f;
+            --text-main: #e6fffa;
+            --text-muted: #81e6d9;
+            --border-color: #1d4e57;
+            --primary-color: #14b8a6;
+            --primary-hover: #0d9488;
+        }
+
+        /* سيم: أخضر الزمرد (Emerald Night) */
+        body.theme-emerald {
+            --bg-base: #06150b;
+            --bg-surface: #0e2413;
+            --bg-card: #16361d;
+            --bg-sidebar: #030a05;
+            --text-main: #ecfdf5;
+            --text-muted: #a7f3d0;
+            --border-color: #23542e;
+            --primary-color: #10b981;
+            --primary-hover: #059669;
         }
 
         * {
@@ -144,7 +198,7 @@
             display: flex;
             align-items: center;
             gap: 12px;
-            color: #94a3b8;
+            color: var(--text-muted);
             text-decoration: none;
             padding: 12px 16px;
             border-radius: var(--radius-md);
@@ -156,12 +210,12 @@
 
         .menu-item:hover {
             background-color: var(--bg-surface);
-            color: #ffffff;
+            color: var(--text-main);
         }
 
         .menu-item.active {
             background-color: var(--bg-surface);
-            color: #ffffff;
+            color: var(--text-main);
             border: 1px solid var(--primary-color);
             box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
         }
@@ -176,7 +230,7 @@
             align-items: center;
             gap: 8px;
             justify-content: center;
-            color: #fff;
+            color: var(--text-main);
         }
 
         .online-dot { width: 10px; height: 10px; background-color: #10b981; border-radius: 50%; box-shadow: 0 0 8px #10b981; display: inline-block; }
@@ -230,19 +284,66 @@
             font-weight: 600;
         }
 
-        .theme-toggle-btn {
+        .header-actions-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* زر وسيمات المنصة المنسدلة */
+        .theme-selector-dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .theme-selector-btn {
             background: var(--bg-base);
             border: 1px solid var(--border-color);
             color: var(--text-main);
-            width: 38px;
-            height: 38px;
-            border-radius: 50%;
+            padding: 8px 14px;
+            border-radius: var(--radius-md);
             cursor: pointer;
-            font-size: 1rem;
+            font-family: var(--font-family);
+            font-size: 0.85rem;
+            font-weight: 700;
             display: flex;
             align-items: center;
-            justify-content: center;
+            gap: 6px;
         }
+        .theme-selector-btn:hover { border-color: var(--primary-color); }
+
+        .theme-dropdown-menu {
+            display: none;
+            position: absolute;
+            left: 0;
+            top: 110%;
+            background-color: var(--bg-surface);
+            min-width: 210px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            z-index: 999;
+            padding: 6px;
+        }
+        .theme-dropdown-menu.show { display: flex; flex-direction: column; gap: 4px; }
+        
+        .theme-item {
+            padding: 9px 12px;
+            text-align: right;
+            border-radius: 6px;
+            background: transparent;
+            border: none;
+            color: var(--text-main);
+            font-family: var(--font-family);
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .theme-item:hover { background: var(--border-color); }
+        .theme-item.active { background: var(--primary-color); color: #fff; }
 
         .content-body {
             padding: 16px;
@@ -307,7 +408,7 @@
             gap: 8px;
             font-size: 1rem;
             font-weight: 700;
-            color: #60a5fa;
+            color: var(--primary-color);
         }
         .announcements-grid {
             display: flex;
@@ -639,7 +740,7 @@
             color: var(--text-main);
         }
 
-        /* تكبير وتوسيع مربع إجراء الإدارة داخل الجدول */
+        /* مربع إجراء الإدارة الواسع */
         textarea.table-input { 
             resize: vertical; 
             min-height: 100px; 
@@ -884,7 +985,7 @@
             border-color: var(--primary-color);
         }
         
-        /* المقبض الصغير للسحب المباشر على اللمس والموبايل */
+        /* المقبض الصغير للسحب المباشر على اللمس والموبايل والكمبيوتر */
         .drag-handle {
             position: absolute;
             top: 10px;
@@ -959,7 +1060,7 @@
         .modal.open { display: flex; }
         .modal-content { background: var(--bg-surface); border-radius: var(--radius-lg); width: 100%; max-width: 520px; max-height: 90vh; overflow-y: auto; padding: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.6); border: 1px solid var(--border-color); color: var(--text-main); }
         .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid var(--border-color); padding-bottom: 8px; }
-        .modal-header h3 { color: #60a5fa; font-size: 1.1rem; }
+        .modal-header h3 { color: var(--primary-color); font-size: 1.1rem; }
         .close-modal-btn { background: none; border: none; font-size: 1.3rem; color: var(--text-muted); cursor: pointer; }
 
         .client-header-controls {
@@ -1088,10 +1189,22 @@
                     </button>
                     <h1 id="pageTitle">مؤشر الأداء والمواعيد</h1>
                 </div>
-                <div class="header-actions">
-                    <button class="theme-toggle-btn" id="themeToggleBtn" onclick="toggleTheme()" title="تبديل المظهر">
-                        <i class="fa-solid fa-moon" id="themeIcon"></i>
-                    </button>
+                
+                <div class="header-actions-group">
+                    <!-- زر قائمة السيمات -->
+                    <div class="theme-selector-dropdown">
+                        <button class="theme-selector-btn" onclick="toggleThemeDropdown()">
+                            <i class="fa-solid fa-palette"></i> <span id="currentThemeName">اختر السيم</span> <i class="fa-solid fa-chevron-down" style="font-size:0.75rem;"></i>
+                        </button>
+                        <div class="theme-dropdown-menu" id="themeDropdownMenu">
+                            <button class="theme-item" onclick="setAppTheme('navy', '🌊 الكحلي الفخم')">🌊 الكحلي الفخم</button>
+                            <button class="theme-item" onclick="setAppTheme('slate', '⬛ الرمادي الفحم')">⬛ الرمادي الفحم</button>
+                            <button class="theme-item" onclick="setAppTheme('amoled', '👑 أسود OLED ذهبي')">👑 أسود OLED ذهبي</button>
+                            <button class="theme-item" onclick="setAppTheme('light', '☀️ الوضع المضيء')">☀️ الوضع المضيء</button>
+                            <button class="theme-item" onclick="setAppTheme('teal', '💎 التيركواز المحيطي')">💎 التيركواز المحيطي</button>
+                            <button class="theme-item" onclick="setAppTheme('emerald', '🍀 أخضر الزمرد')">🍀 أخضر الزمرد</button>
+                        </div>
+                    </div>
                 </div>
             </header>
 
@@ -1354,7 +1467,7 @@
                     <section class="dashboard-section">
                         <div style="display: flex; flex-direction: column; gap: 12px; background: var(--bg-card); padding: 12px 15px; border-radius: 8px; border: 1px solid var(--border-color); margin-bottom: 15px;">
                             <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
-                                <h2 style="font-size: 1.1rem; color: #60a5fa; font-weight: 700;">
+                                <h2 style="font-size: 1.1rem; color: var(--primary-color); font-weight: 700;">
                                     <i class="fa-solid fa-file-lines"></i> صفحة الكشف
                                 </h2>
                             </div>
@@ -1405,7 +1518,7 @@
                             <button class="action-btn copy-btn" onclick="openAddLinkModal()"><i class="fa-solid fa-plus"></i> إضافة رابط جديد</button>
                         </div>
                         <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 10px;">
-                            💡 **ترتيب الروابط على الموبايل:** اضغط باستمرار مع السحب المباشر على أيقونة المقبض الزرقاء <i class="fa-solid fa-grip-vertical" style="color: var(--primary-color);"></i> لترتيب الكروت بسلاسة.
+                            💡 **ترتيب الروابط:** اضغط باستمرار بالسحب على أيقونة المقبض الزرقاء <i class="fa-solid fa-grip-vertical" style="color: var(--primary-color);"></i> لترتيب الكروت بسلاسة على الموبايل والكمبيوتر.
                         </p>
 
                         <div class="links-grid" id="linksGridContainer"></div>
@@ -1660,17 +1773,42 @@
             localStorage.setItem('adminPassword', '1234');
         }
 
-        const savedTheme = localStorage.getItem('theme');
-        if (savedTheme === 'light') {
-            document.body.classList.add('light-theme');
-            document.getElementById('themeIcon').classList.replace('fa-moon', 'fa-sun');
+        // تطبيق السيم المحفوظ مسبقاً
+        const savedThemeKey = localStorage.getItem('appTheme') || 'navy';
+        const themeNamesMap = {
+            'navy': '🌊 الكحلي الفخم',
+            'slate': '⬛ الرمادي الفحم',
+            'amoled': '👑 أسود OLED',
+            'light': '☀️ الوضع المضيء',
+            'teal': '💎 التيركواز',
+            'emerald': '🍀 أخضر الزمرد'
+        };
+        
+        function applyInitialTheme() {
+            document.body.className = savedThemeKey === 'navy' ? '' : `theme-${savedThemeKey}`;
+            const nameEl = document.getElementById('currentThemeName');
+            if(nameEl) nameEl.innerText = themeNamesMap[savedThemeKey] || '🌊 الكحلي الفخم';
+        }
+        applyInitialTheme();
+
+        function toggleThemeDropdown() {
+            const menu = document.getElementById('themeDropdownMenu');
+            menu.classList.toggle('show');
         }
 
-        function toggleTheme() {
-            document.body.classList.toggle('light-theme');
-            const isLight = document.body.classList.contains('light-theme');
-            localStorage.setItem('theme', isLight ? 'light' : 'dark');
-            document.getElementById('themeIcon').classList.replace(isLight ? 'fa-sun' : 'fa-moon', isLight ? 'fa-moon' : 'fa-sun');
+        window.addEventListener('click', function(e) {
+            if (!e.target.closest('.theme-selector-dropdown')) {
+                const menu = document.getElementById('themeDropdownMenu');
+                if(menu) menu.classList.remove('show');
+            }
+        });
+
+        function setAppTheme(themeKey, themeDisplayName) {
+            localStorage.setItem('appTheme', themeKey);
+            document.body.className = themeKey === 'navy' ? '' : `theme-${themeKey}`;
+            document.getElementById('currentThemeName').innerText = themeDisplayName;
+            document.getElementById('themeDropdownMenu').classList.remove('show');
+            showToastOnly(`🎨 تم تطبيق سيم (${themeDisplayName}) بنجاح!`);
         }
 
         function toggleSidebar() {
@@ -1715,7 +1853,7 @@
             localStorage.setItem('cachedAnnouncements_v3', JSON.stringify(clinicAnnouncements));
         }
 
-        const cached = localStorage.getItem('cachedAppointments_v18') || localStorage.getItem('cachedAppointments_v17') || localStorage.getItem('cachedAppointments_v16');
+        const cached = localStorage.getItem('cachedAppointments_v18') || localStorage.getItem('cachedAppointments_v17');
         if (cached) { try { records = JSON.parse(cached); } catch(e) { records = []; } }
 
         const cachedLinks = localStorage.getItem('cachedCSLinks_v1');
@@ -2723,7 +2861,7 @@
                 card.setAttribute('data-index', index);
 
                 card.innerHTML = `
-                    <div class="drag-handle" title="اضغط باستمرار واسحب للترتيب"><i class="fa-solid fa-grip-vertical"></i></div>
+                    <div class="drag-handle" title="اسحب من هنا للترتيب"><i class="fa-solid fa-grip-vertical"></i></div>
                     <div class="link-card-header">
                         <i class="fa-solid fa-globe"></i>
                         <span>${item.title}</span>
@@ -2738,7 +2876,6 @@
 
                 const handle = card.querySelector('.drag-handle');
 
-                // دمج السحب للماوس المباشر (Desktop Drag & Drop)
                 handle.addEventListener('mousedown', (e) => {
                     e.preventDefault();
                     requireAdminAuth(() => {
@@ -2779,7 +2916,7 @@
                     draggedCardIndex = null;
                 });
 
-                // تفعيل السحب باللمس والموبايل (Touch Support)
+                // دعم السحب باللمس على الموبايل من المقبض فقط
                 handle.addEventListener('touchstart', (e) => {
                     requireAdminAuth(() => {
                         touchDraggedIndex = index;
