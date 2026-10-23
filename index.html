@@ -41,7 +41,44 @@
             --radius-md: 8px;
         }
 
-        body.light-theme {
+        /* السيمات المتاحة */
+        body.theme-darkblue {
+            --bg-base: #0a0e17;
+            --bg-surface: #111827;
+            --bg-card: #050811;
+            --bg-sidebar: #0f172a;
+            --text-main: #ffffff;
+            --text-muted: #94a3b8;
+            --border-color: #1e293b;
+            --primary-color: #2563eb;
+            --primary-hover: #1d4ed8;
+        }
+
+        body.theme-golden {
+            --bg-base: #14120b;
+            --bg-surface: #1f1b12;
+            --bg-card: #0a0805;
+            --bg-sidebar: #1a160e;
+            --text-main: #fef08a;
+            --text-muted: #d4d4d4;
+            --border-color: #42361b;
+            --primary-color: #ca8a04;
+            --primary-hover: #a16207;
+        }
+
+        body.theme-gray {
+            --bg-base: #0f172a;
+            --bg-surface: #1e293b;
+            --bg-card: #0f172a;
+            --bg-sidebar: #090d16;
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --border-color: #334155;
+            --primary-color: #475569;
+            --primary-hover: #334155;
+        }
+
+        body.theme-light {
             --bg-base: #f4f6fb;
             --bg-surface: #ffffff;
             --bg-card: #ffffff;
@@ -49,6 +86,8 @@
             --text-main: #1e293b;
             --text-muted: #64748b;
             --border-color: #e2e8f0;
+            --primary-color: #2563eb;
+            --primary-hover: #1d4ed8;
         }
 
         * {
@@ -163,11 +202,6 @@
             box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
         }
 
-        body.light-theme .menu-item.active {
-            background-color: #e2e8f0;
-            color: #1e293b;
-        }
-
         .cloud-badge {
             background: rgba(255,255,255,0.05);
             padding: 10px 14px;
@@ -231,18 +265,22 @@
             font-weight: 600;
         }
 
-        .theme-toggle-btn {
+        .theme-selector-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .theme-select {
             background: var(--bg-base);
             border: 1px solid var(--border-color);
             color: var(--text-main);
-            width: 38px;
-            height: 38px;
-            border-radius: 50%;
+            padding: 6px 12px;
+            border-radius: var(--radius-md);
+            font-family: var(--font-family);
+            font-size: 0.85rem;
             cursor: pointer;
-            font-size: 1rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            outline: none;
         }
 
         .content-body {
@@ -481,6 +519,7 @@
         .kpi-card.teal { border-color: #0d9488; }
         .kpi-card.warning { border-color: var(--warning-color); }
         .kpi-card.indigo { border-color: #4f46e5; }
+        .kpi-card.success { border-color: var(--success-color); }
 
         .kpi-icon-box {
             font-size: 1.2rem; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: var(--bg-base); color: var(--text-main); flex-shrink: 0;
@@ -620,6 +659,7 @@
         .badge-suspended { background-color: #ca8a04; }
         .badge-apologized { background-color: #dc2626; box-shadow: 0 0 8px rgba(220, 38, 38, 0.4); }
         .badge-other { background-color: #0d9488; }
+        .badge-payment-paid { background-color: #16a34a; box-shadow: 0 0 6px rgba(22, 163, 74, 0.4); }
 
         .proc-badge { padding: 4px 10px; border-radius: 6px; font-size: 0.8rem; font-weight: 700; display: inline-block; text-align: center; }
         .proc-plant { background-color: #0d9488; color: #ffffff; border: 1px solid #14b8a6; box-shadow: 0 0 10px rgba(13, 148, 136, 0.3); } 
@@ -689,7 +729,7 @@
         .client-report-container {
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 6px; /* تقليل المسافات بين العملاء */
             width: 100%;
         }
 
@@ -697,12 +737,12 @@
             background-color: var(--bg-base);
             border: 1px solid var(--border-color);
             border-radius: var(--radius-md);
-            padding: 14px 16px;
+            padding: 10px 12px;
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 6px;
             position: relative;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+            box-shadow: 0 1px 4px rgba(0,0,0,0.2);
             width: 100%;
             overflow: hidden;
         }
@@ -718,7 +758,7 @@
             align-items: flex-start;
             justify-content: space-between;
             width: 100%;
-            gap: 10px;
+            gap: 8px;
             flex-wrap: wrap;
         }
 
@@ -726,7 +766,7 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            font-size: 1rem;
+            font-size: 0.98rem;
             font-weight: 700;
             color: var(--text-main);
             flex-wrap: wrap;
@@ -744,11 +784,11 @@
 
         .client-datetime-badge {
             font-family: Arial, sans-serif;
-            font-size: 0.75rem;
+            font-size: 0.72rem;
             font-weight: 700;
             color: #ffffff;
             background: rgba(37, 99, 235, 0.25);
-            padding: 4px 8px;
+            padding: 3px 6px;
             border-radius: 4px;
             border: 1px solid rgba(37, 99, 235, 0.4);
             direction: ltr;
@@ -761,9 +801,9 @@
         }
 
         .client-info-row {
-            font-size: 0.9rem;
+            font-size: 0.88rem;
             color: var(--text-main);
-            line-height: 1.5;
+            line-height: 1.4;
             word-break: break-word;
         }
 
@@ -776,15 +816,15 @@
             background: #d97706;
             color: #ffffff;
             border: none;
-            padding: 4px 10px;
+            padding: 3px 8px;
             border-radius: 4px;
             font-family: var(--font-family);
-            font-size: 0.78rem;
+            font-size: 0.75rem;
             font-weight: 700;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
-            gap: 5px;
+            gap: 4px;
             white-space: nowrap;
         }
 
@@ -794,30 +834,29 @@
 
         .client-actions-row {
             display: flex;
-            gap: 8px;
-            margin-top: 6px;
+            gap: 6px;
+            margin-top: 2px;
             justify-content: flex-end;
             width: 100%;
             flex-wrap: wrap;
         }
 
         .btn-client-action {
-            padding: 6px 12px;
+            padding: 4px 10px;
             border-radius: 4px;
             border: none;
             color: #fff;
             font-family: var(--font-family);
-            font-size: 0.8rem;
+            font-size: 0.78rem;
             font-weight: 700;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
-            gap: 5px;
+            gap: 4px;
         }
 
         .btn-client-action.delete-to-trash { background-color: var(--danger-color); }
         .btn-client-action.permanent-delete { background-color: var(--danger-color); }
-        .btn-client-action.unpin-item { background-color: var(--warning-color); }
         .btn-client-action.restore { 
             background-color: var(--success-color) !important; 
             color: #ffffff !important; 
@@ -1003,7 +1042,7 @@
         }
     </style>
 </head>
-<body>
+<body class="theme-darkblue">
 
     <div id="notificationToast">
         <i class="fa-solid fa-circle-check" style="font-size: 1.1rem;"></i>
@@ -1057,9 +1096,15 @@
                     <h1 id="pageTitle">مؤشر الأداء والمواعيد</h1>
                 </div>
                 <div class="header-actions">
-                    <button class="theme-toggle-btn" id="themeToggleBtn" onclick="toggleTheme()" title="تبديل المظهر">
-                        <i class="fa-solid fa-moon" id="themeIcon"></i>
-                    </button>
+                    <div class="theme-selector-wrapper">
+                        <label style="font-size: 0.8rem; font-weight: 600; color: var(--text-muted);">السيم:</label>
+                        <select id="themeSelect" class="theme-select" onchange="changeTheme(this.value)">
+                            <option value="theme-darkblue">الأزرق الغامق</option>
+                            <option value="theme-golden">الذهبي</option>
+                            <option value="theme-gray">الرمادي</option>
+                            <option value="theme-light">المضيء (فاتح)</option>
+                        </select>
+                    </div>
                 </div>
             </header>
 
@@ -1097,6 +1142,10 @@
                                 <div class="kpi-icon-box"><i class="fa-solid fa-rotate-right"></i></div>
                                 <div class="kpi-info"><h3>الطلبات المتكررة</h3><span class="kpi-value" id="kpi-repeated">0</span></div>
                             </div>
+                            <div class="kpi-card success">
+                                <div class="kpi-icon-box"><i class="fa-solid fa-money-bill-wave"></i></div>
+                                <div class="kpi-info"><h3>حالات تم الدفع</h3><span class="kpi-value" id="kpi-paid">0</span></div>
+                            </div>
                             <div class="kpi-card teal">
                                 <div class="kpi-icon-box"><i class="fa-solid fa-tooth"></i></div>
                                 <div class="kpi-info"><h3>حالات الزراعة</h3><span class="kpi-value" id="kpi-plants">0</span></div>
@@ -1119,7 +1168,7 @@
                         <form id="appointmentForm">
                             <div class="form-grid">
                                 <div class="input-field">
-                                    <label>اسم العميل *</label>
+                                    <label>اسم العميل بالكامل *</label>
                                     <input type="text" id="patientName" required placeholder="الاسم الكامل للعميل">
                                 </div>
                                 <div class="input-field">
@@ -1167,6 +1216,14 @@
                                         <option value="مراجعه">مراجعه</option>
                                         <option value="استفسارات">استفسارات</option>
                                         <option value="أخرى">أخرى</option>
+                                    </select>
+                                </div>
+                                <div class="input-field">
+                                    <label>حالة الدفع (اختياري)</label>
+                                    <select id="paymentStatus">
+                                        <option value="">بدون تحديد</option>
+                                        <option value="تم الدفع">تم الدفع</option>
+                                        <option value="لم يتم الدفع">لم يتم الدفع</option>
                                     </select>
                                 </div>
                                 <div class="input-field" id="customProcedureWrapper" style="display: none;">
@@ -1230,6 +1287,19 @@
                                     <button class="filter-tab" data-filter="all" onclick="setDashboardFilter('all', this)">الكل</button>
                                     <button class="filter-tab" data-filter="priority" onclick="setDashboardFilter('priority', this)">حالات ذات أولوية ⭐</button>
                                     <button class="filter-tab" data-filter="repeated" onclick="setDashboardFilter('repeated', this)">طلبات متكررة 🔄</button>
+                                    
+                                    <!-- قائمة مستقلة لفلاتر حالات الدفع -->
+                                    <div class="dropdown-filter-container" id="paymentFilterDropdownContainer">
+                                        <button class="dropdown-filter-btn" id="paymentFilterDropdownBtn" onclick="toggleDropdown('paymentFilterDropdownContent')">
+                                            <i class="fa-solid fa-money-bill-wave"></i> حالات الدفع <i class="fa-solid fa-chevron-down" style="font-size:0.7rem;"></i>
+                                        </button>
+                                        <div class="dropdown-content" id="paymentFilterDropdownContent">
+                                            <button class="dropdown-item" data-filter="payment_all" onclick="setDashboardFilter('payment_all', this)">💵 كل حالات الدفع</button>
+                                            <button class="dropdown-item" data-filter="payment_paid" onclick="setDashboardFilter('payment_paid', this)">✅ تم الدفع</button>
+                                            <button class="dropdown-item" data-filter="payment_unpaid" onclick="setDashboardFilter('payment_unpaid', this)">⏳ لم يتم الدفع</button>
+                                        </div>
+                                    </div>
+
                                     <button class="filter-tab" data-filter="plants" onclick="setDashboardFilter('plants', this)">حالات الزراعة 🦷</button>
                                     <button class="filter-tab" data-filter="extraction" onclick="setDashboardFilter('extraction', this)">حالات الخلع 🩺</button>
                                     <button class="filter-tab" data-filter="review" onclick="setDashboardFilter('review', this)">حالات المراجعة 📋</button>
@@ -1279,6 +1349,8 @@
                                         <th>رقم الجوال</th>
                                         <th>رقم الملف</th>
                                         <th>نوع الإجراء</th>
+                                        <th>حالة الدفع</th>
+                                        <th>طريقة التواصل</th>
                                         <th>الخدمة / تفاصيل الطلب</th>
                                         <th>المنسق</th>
                                         <th style="min-width: 170px;">تواصل الإدارة</th>
@@ -1299,7 +1371,7 @@
                         <div style="display: flex; flex-direction: column; gap: 12px; background: var(--bg-base); padding: 12px 15px; border-radius: 8px; border: 1px solid var(--border-color); margin-bottom: 15px;">
                             <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
                                 <h2 style="font-size: 1.1rem; color: var(--primary-color); font-weight: 700;">
-                                    <i class="fa-solid fa-file-lines"></i> صفحة الكشف
+                                    <i class="fa-solid fa-file-lines"></i> صفحة الكشف (محلية)
                                 </h2>
                             </div>
                             
@@ -1315,9 +1387,18 @@
                                     <option value="720">شهر</option>
                                 </select>
 
-                                <button class="action-btn" id="pinnedFilterBtn" onclick="togglePinnedFilter()" style="background-color: #16a34a;">
-                                    <i class="fa-solid fa-file-lines"></i> ✅ الكشف العادي (<span id="pinnedCount">0</span>)
-                                </button>
+                                <!-- القائمة المنسدلة المطلوبة لصفحة الكشف -->
+                                <div class="dropdown-filter-container" id="clientViewFilterContainer">
+                                    <button class="dropdown-filter-btn" id="clientViewFilterBtn" onclick="toggleDropdown('clientViewFilterContent')" style="background-color: var(--primary-color); color: #fff;">
+                                        <i class="fa-solid fa-filter"></i> <span id="clientViewFilterLabel">الكشف العادي</span> <i class="fa-solid fa-chevron-down" style="font-size:0.7rem;"></i>
+                                    </button>
+                                    <div class="dropdown-content" id="clientViewFilterContent">
+                                        <button class="dropdown-item" onclick="setClientViewFilter('normal')">📋 الكشف العادى</button>
+                                        <button class="dropdown-item" onclick="setClientViewFilter('pinned')">📌 المميزون</button>
+                                        <button class="dropdown-item" onclick="setClientViewFilter('payment_unpaid')">⏳ لم يتم الدفع</button>
+                                        <button class="dropdown-item" onclick="setClientViewFilter('payment_paid')">✅ تم الدفع</button>
+                                    </div>
+                                </div>
 
                                 <button class="action-btn copy-btn" onclick="copyClientReport()"><i class="fa-solid fa-copy"></i> نسخ الكشف</button>
                                 <button class="action-btn select-del-btn" onclick="requestDeleteSelectedAccess()"><i class="fa-solid fa-trash-can"></i> حذف المحددين</button>
@@ -1497,7 +1578,7 @@
                 <input type="hidden" id="editFirebaseKey">
                 <div class="form-grid">
                     <div class="input-field">
-                        <label>اسم العميل *</label>
+                        <label>اسم العميل بالكامل *</label>
                         <input type="text" id="editPatientName" required>
                     </div>
                     <div class="input-field">
@@ -1544,6 +1625,14 @@
                             <option value="أخرى">أخرى</option>
                         </select>
                     </div>
+                    <div class="input-field">
+                        <label>حالة الدفع (اختياري)</label>
+                        <select id="editPaymentStatus">
+                            <option value="">بدون تحديد</option>
+                            <option value="تم الدفع">تم الدفع</option>
+                            <option value="لم يتم الدفع">لم يتم الدفع</option>
+                        </select>
+                    </div>
                     <div class="input-field full-width">
                         <label>الخدمة المطلوبة / تفاصيل المشكلة والطلب *</label>
                         <textarea id="editServiceRequired" required></textarea>
@@ -1580,7 +1669,7 @@
         let dashboardFilter = localStorage.getItem('savedDashboardFilter') || 'all';
         let dashboardTimeFilter = localStorage.getItem('savedDashboardTimeFilter') || 'all';
         let clientHoursFilter = localStorage.getItem('savedClientHoursFilter') || 'all';
-        let isPinnedFilterActive = false;
+        let clientViewMode = localStorage.getItem('savedClientViewMode') || 'normal'; // 'normal', 'pinned', 'payment_unpaid', 'payment_paid'
         
         let originalEditPriorityState = false;
         let originalEditRepeatedState = false;
@@ -1589,17 +1678,14 @@
             localStorage.setItem('adminPassword', '1234');
         }
 
-        const savedTheme = localStorage.getItem('theme');
-        if (savedTheme === 'light') {
-            document.body.classList.add('light-theme');
-            document.getElementById('themeIcon').classList.replace('fa-moon', 'fa-sun');
-        }
+        const savedTheme = localStorage.getItem('theme') || 'theme-darkblue';
+        document.body.className = savedTheme;
+        const themeSelectEl = document.getElementById('themeSelect');
+        if (themeSelectEl) themeSelectEl.value = savedTheme;
 
-        function toggleTheme() {
-            document.body.classList.toggle('light-theme');
-            const isLight = document.body.classList.contains('light-theme');
-            localStorage.setItem('theme', isLight ? 'light' : 'dark');
-            document.getElementById('themeIcon').classList.replace(isLight ? 'fa-sun' : 'fa-moon', isLight ? 'fa-moon' : 'fa-sun');
+        function changeTheme(themeName) {
+            document.body.className = themeName;
+            localStorage.setItem('theme', themeName);
         }
 
         function toggleSidebar() {
@@ -1639,12 +1725,12 @@
         }
 
         function saveLocal() { 
-            localStorage.setItem('cachedAppointments_v16', JSON.stringify(records));
+            localStorage.setItem('cachedAppointments_v17', JSON.stringify(records));
             localStorage.setItem('cachedCSLinks_v1', JSON.stringify(csLinks));
             localStorage.setItem('cachedAnnouncements_v3', JSON.stringify(clinicAnnouncements));
         }
 
-        const cached = localStorage.getItem('cachedAppointments_v16');
+        const cached = localStorage.getItem('cachedAppointments_v17') || localStorage.getItem('cachedAppointments_v16');
         if (cached) { try { records = JSON.parse(cached); } catch(e) { records = []; } }
 
         const cachedLinks = localStorage.getItem('cachedCSLinks_v1');
@@ -1663,6 +1749,22 @@
                         btn.classList.remove('active');
                     }
                 });
+
+                const paymentDropdownBtn = document.getElementById('paymentFilterDropdownBtn');
+                const isPaymentActive = dashboardFilter.startsWith('payment_');
+                if (isPaymentActive) {
+                    paymentDropdownBtn.classList.add('active');
+                    statusContainer.querySelectorAll('#paymentFilterDropdownContent .dropdown-item').forEach(item => {
+                        if (item.getAttribute('data-filter') === dashboardFilter) {
+                            item.classList.add('active');
+                        } else {
+                            item.classList.remove('active');
+                        }
+                    });
+                } else {
+                    paymentDropdownBtn.classList.remove('active');
+                    statusContainer.querySelectorAll('#paymentFilterDropdownContent .dropdown-item').forEach(item => item.classList.remove('active'));
+                }
 
                 const inquiriesBtn = document.getElementById('inquiriesDropdownBtn');
                 const isInquiriesActive = dashboardFilter.startsWith('inquiries_');
@@ -1707,7 +1809,16 @@
                     }
                 });
             }
-            updatePinnedCountBadge();
+            updateClientViewLabelUI();
+        }
+
+        function updateClientViewLabelUI() {
+            const labelEl = document.getElementById('clientViewFilterLabel');
+            if (!labelEl) return;
+            if (clientViewMode === 'normal') labelEl.innerText = 'الكشف العادى';
+            else if (clientViewMode === 'pinned') labelEl.innerText = 'المميزون';
+            else if (clientViewMode === 'payment_unpaid') labelEl.innerText = 'لم يتم الدفع';
+            else if (clientViewMode === 'payment_paid') labelEl.innerText = 'تم الدفع';
         }
 
         function toggleDropdown(contentId) {
@@ -1731,14 +1842,6 @@
             const hoursSelect = document.getElementById('clientHoursSelect');
             if (hoursSelect) {
                 hoursSelect.value = clientHoursFilter;
-            }
-
-            isPinnedFilterActive = false;
-            const btn = document.getElementById('pinnedFilterBtn');
-            if (btn) {
-                btn.style.backgroundColor = '#16a34a';
-                btn.style.borderColor = '#22c55e';
-                btn.style.boxShadow = 'none';
             }
 
             syncFilterTabsUI();
@@ -2129,6 +2232,7 @@
                 branch: document.getElementById('branch').value,
                 procedureType: procedureTypeValue,
                 contactMethod: document.getElementById('contactMethod').value,
+                paymentStatus: document.getElementById('paymentStatus').value || '', // اختياري
                 serviceRequired: document.getElementById('serviceRequired').value,
                 coordinatorName: document.getElementById('coordinatorName').value,
                 isRecurring: document.getElementById('isRecurring').checked || isRepeated,
@@ -2172,7 +2276,6 @@
                     rec.isPinned = !rec.isPinned;
                     saveLocal();
                     renderTable();
-                    updatePinnedCountBadge();
                     renderClientReport();
 
                     if (navigator.onLine && !key.startsWith('local_')) {
@@ -2182,70 +2285,6 @@
                     showToastOnly(rec.isPinned ? '📌 تم التثبيت في المميزين' : '✖️ تم إزالتها من المميزين');
                 }
             });
-        }
-
-        function updatePinnedCountBadge() {
-            let openRecords = records.filter(r => !r.isHiddenFromClients);
-            
-            if (clientHoursFilter !== 'all' && !isPinnedFilterActive) {
-                const now = new Date();
-                openRecords = openRecords.filter(r => {
-                    const diffHours = (now - new Date(r.createdAt)) / (1000 * 60 * 60);
-                    return diffHours <= parseFloat(clientHoursFilter);
-                });
-            }
-            
-            const groupedMap = new Map();
-            openRecords.forEach(record => {
-                const cleanPhone = (record.patientPhone && record.patientPhone !== '-') ? record.patientPhone.replace(/\D/g, '') : '';
-                const groupKey = (cleanPhone.length >= 8) ? cleanPhone : (record.patientName || '').trim().toLowerCase();
-                
-                if (!groupedMap.has(groupKey)) {
-                    groupedMap.set(groupKey, []);
-                }
-                groupedMap.get(groupKey).push(record);
-            });
-
-            let displayCount = 0;
-
-            if (isPinnedFilterActive) {
-                // إذا كنا في صفحة المميزين: يحسب عدد المجموعات التي بها عميل مثبت فقط
-                groupedMap.forEach((groupRecords) => {
-                    if (groupRecords.some(r => r.isPinned)) {
-                        displayCount++;
-                    }
-                });
-            } else {
-                // إذا كنا في الكشف العادي: يحسب عدد العملاء المتبقين (غير المنسوخين)
-                groupedMap.forEach((groupRecords) => {
-                    const isGroupCopied = groupRecords.every(r => r.isCopied);
-                    if (!isGroupCopied) {
-                        displayCount++;
-                    }
-                });
-            }
-
-            const badgeEl = document.getElementById('pinnedCount');
-            if (badgeEl) badgeEl.innerText = displayCount;
-        }
-
-        function togglePinnedFilter() {
-            isPinnedFilterActive = !isPinnedFilterActive;
-            const btn = document.getElementById('pinnedFilterBtn');
-            if (btn) {
-                if (isPinnedFilterActive) {
-                    btn.style.backgroundColor = '#d97706';
-                    btn.style.borderColor = '#f59e0b';
-                    btn.style.boxShadow = '0 0 12px rgba(217, 119, 6, 0.5)';
-                    btn.innerHTML = `<i class="fa-solid fa-thumbtack"></i> 📌 المميزون ( <span id="pinnedCount">0</span> )`;
-                } else {
-                    btn.style.backgroundColor = '#16a34a';
-                    btn.style.borderColor = '#22c55e';
-                    btn.style.boxShadow = 'none';
-                    btn.innerHTML = `<i class="fa-solid fa-file-lines"></i> ✅ الكشف العادي ( <span id="pinnedCount">0</span> )`;
-                }
-            }
-            renderClientReport();
         }
 
         function setDashboardFilter(filterType, btn) {
@@ -2271,6 +2310,14 @@
             btn.closest('.filter-row').querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
             btn.classList.add('active');
             renderTable();
+        }
+
+        function setClientViewFilter(mode) {
+            clientViewMode = mode;
+            localStorage.setItem('savedClientViewMode', mode);
+            updateClientViewLabelUI();
+            document.querySelectorAll('.dropdown-content').forEach(dc => dc.classList.remove('show'));
+            renderClientReport();
         }
 
         function updateDailyProgress() {
@@ -2312,6 +2359,10 @@
                 filteredList = filteredList.filter(r => r.isRecurring);
             } else if (dashboardFilter === 'repeated') {
                 filteredList = filteredList.filter(r => r.isRepeatedRequest);
+            } else if (dashboardFilter === 'payment_paid') {
+                filteredList = filteredList.filter(r => r.paymentStatus === 'تم الدفع');
+            } else if (dashboardFilter === 'payment_unpaid') {
+                filteredList = filteredList.filter(r => r.paymentStatus === 'لم يتم الدفع');
             } else if (dashboardFilter === 'plants') {
                 filteredList = filteredList.filter(r => r.procedureType && r.procedureType.includes('زراعة'));
             } else if (dashboardFilter === 'extraction') {
@@ -2394,6 +2445,11 @@
                     statusBadgeHTML += '<span class="status-badge badge-repeated">🔄 متكررة</span><br>';
                 }
 
+                // عرض شارة "تم الدفع" فقط إذا تم الدفع
+                if (record.paymentStatus === 'تم الدفع') {
+                    statusBadgeHTML += '<span class="status-badge badge-payment-paid">تم الدفع ✅</span><br>';
+                }
+
                 let sClass = 'badge-other';
                 if (selectVal === 'قيد الانتظار') sClass = 'badge-pending';
                 else if (selectVal === 'قيد الإجراء') sClass = 'badge-inprogress';
@@ -2413,6 +2469,8 @@
                 else if (proc.includes('استفسارات')) procClass = 'proc-inquiry';
 
                 const isPinned = record.isPinned;
+                const paymentLabel = record.paymentStatus || '-';
+                const contactMethodVal = record.contactMethod || '-';
 
                 tr.innerHTML = `
                     <td>${index + 1}</td>
@@ -2422,6 +2480,8 @@
                     <td>${record.patientPhone}</td>
                     <td>${record.fileNumber || '-'}</td>
                     <td><span class="proc-badge ${procClass}">${proc}</span></td>
+                    <td><span style="font-weight:700; color: ${record.paymentStatus === 'تم الدفع' ? 'var(--success-color)' : 'var(--text-muted)'};">${paymentLabel}</span></td>
+                    <td><span style="font-weight: 600; color: var(--primary-color);">${contactMethodVal}</span></td>
                     <td><div class="service-cell-box">${record.serviceRequired}</div></td>
                     <td>${record.coordinatorName}</td>
                     <td>
@@ -2499,6 +2559,7 @@
             document.getElementById('editContactMethod').value = rec.contactMethod || 'اتصال';
             document.getElementById('editCoordinatorName').value = rec.coordinatorName || '';
             document.getElementById('editProcedureType').value = rec.procedureType || 'مراجعه';
+            document.getElementById('editPaymentStatus').value = rec.paymentStatus || '';
             document.getElementById('editServiceRequired').value = rec.serviceRequired || '';
             
             originalEditPriorityState = !!rec.isRecurring;
@@ -2527,6 +2588,7 @@
             rec.contactMethod = document.getElementById('editContactMethod').value;
             rec.coordinatorName = document.getElementById('editCoordinatorName').value.trim();
             rec.procedureType = document.getElementById('editProcedureType').value;
+            rec.paymentStatus = document.getElementById('editPaymentStatus').value;
             rec.serviceRequired = document.getElementById('editServiceRequired').value.trim();
             rec.isRecurring = document.getElementById('editIsRecurring').checked;
             rec.isRepeatedRequest = document.getElementById('editIsRepeatedRequest').checked;
@@ -2548,6 +2610,7 @@
                     contactMethod: rec.contactMethod,
                     coordinatorName: rec.coordinatorName,
                     procedureType: rec.procedureType,
+                    paymentStatus: rec.paymentStatus,
                     serviceRequired: rec.serviceRequired,
                     isRecurring: rec.isRecurring,
                     isRepeatedRequest: rec.isRepeatedRequest
@@ -2581,7 +2644,6 @@
                         updateKPIs();
                         updateDailyProgress();
                         renderClientReport();
-                        updatePinnedCountBadge();
 
                         if (navigator.onLine && !key.startsWith('local_')) {
                             dbRef.child(key).remove();
@@ -2832,13 +2894,17 @@
         }
 
         function getOpenFilteredRecords() {
-            let openRecords = records.filter(r => {
-                if (r.isHiddenFromClients) return false;
-                if (isPinnedFilterActive && !r.isPinned) return false;
-                return true;
-            });
+            let openRecords = records.filter(r => !r.isHiddenFromClients);
 
-            if (clientHoursFilter !== 'all' && !isPinnedFilterActive) {
+            if (clientViewMode === 'pinned') {
+                openRecords = openRecords.filter(r => r.isPinned);
+            } else if (clientViewMode === 'payment_unpaid') {
+                openRecords = openRecords.filter(r => r.paymentStatus === 'لم يتم الدفع');
+            } else if (clientViewMode === 'payment_paid') {
+                openRecords = openRecords.filter(r => r.paymentStatus === 'تم الدفع');
+            }
+
+            if (clientHoursFilter !== 'all' && clientViewMode === 'normal') {
                 const now = new Date();
                 openRecords = openRecords.filter(r => {
                     const diffHours = (now - new Date(r.createdAt)) / (1000 * 60 * 60);
@@ -2915,7 +2981,6 @@
                     updateDailyProgress();
                     renderClientReport();
                     renderTrashModalList();
-                    updatePinnedCountBadge();
 
                     keysArray.forEach(k => {
                         if (navigator.onLine && !k.startsWith('local_')) {
@@ -2956,7 +3021,6 @@
                         updateDailyProgress();
                         renderClientReport();
                         renderTrashModalList();
-                        updatePinnedCountBadge();
 
                         if (navigator.onLine && !key.startsWith('local_')) {
                             dbRef.child(key).remove();
@@ -3032,8 +3096,6 @@
             if (!container) return;
             container.innerHTML = '';
 
-            updatePinnedCountBadge();
-
             let openRecords = getOpenFilteredRecords();
 
             const searchInputEl = document.getElementById('clientSearchInput');
@@ -3075,7 +3137,6 @@
 
                 const mainRecord = groupRecords[0];
                 const allKeys = groupRecords.map(r => r.firebaseKey);
-                const isRepeatedGroup = groupRecords.length > 1 || groupRecords.some(r => r.isRepeatedRequest);
                 const isCopiedGroup = groupRecords.every(r => r.isCopied);
                 const isPinnedGroup = groupRecords.some(r => r.isPinned);
 
@@ -3093,13 +3154,13 @@
                     mainRecord: mainRecord,
                     allKeys: allKeys,
                     servicesCombined: combinedServicesStr,
-                    isRepeated: isRepeatedGroup,
                     isCopied: isCopiedGroup,
                     isPinned: isPinnedGroup,
                     latestCreatedAt: mainRecord.createdAt
                 });
             });
 
+            // المطلوب: "اللى عليه علامه منسوخ ينزل تحت"
             consolidatedList.sort((a, b) => {
                 if (a.isCopied !== b.isCopied) {
                     return a.isCopied ? 1 : -1;
@@ -3113,11 +3174,12 @@
                 const isCopied = item.isCopied;
                 const isPinned = item.isPinned;
 
-                card.className = `client-card-wrapper ${isCopied && !isPinnedFilterActive ? 'is-copied' : ''}`;
+                card.className = `client-card-wrapper ${isCopied ? 'is-copied' : ''}`;
 
                 const fileStr = (rec.fileNumber && rec.fileNumber !== '-') ? ` ${rec.fileNumber}` : '';
                 const idStr = (rec.idNumber && rec.idNumber !== '-') ? rec.idNumber : '';
                 const phoneStr = (rec.patientPhone && rec.patientPhone !== '-') ? rec.patientPhone : '-';
+                const contactMethodStr = rec.contactMethod || '-';
                 const serviceStr = item.servicesCombined || '-';
                 const dateTimeStr = formatDateTimeFullCustom(item.latestCreatedAt);
                 const keysJsonStr = JSON.stringify(item.allKeys).replace(/"/g, '&quot;');
@@ -3128,17 +3190,17 @@
                     </button>
                 `;
 
-                const copyBtnHTML = !isPinnedFilterActive ? `
+                const copyBtnHTML = `
                     <button class="copied-btn ${isCopied ? 'active' : ''}" onclick="toggleCopiedStatusGroup(${keysJsonStr})">
                         <i class="fa-solid ${isCopied ? 'fa-circle-check' : 'fa-check'}"></i> ${isCopied ? 'تم النسخ' : 'تعليم كمنسوخ'}
                     </button>
-                ` : '';
+                `;
 
                 card.innerHTML = `
                     <div class="client-card-header">
                         <div class="client-title">
                             <input type="checkbox" class="client-select-chk" data-keys="${keysJsonStr}">
-                            <span>${index + 1}-${rec.patientName}${fileStr}</span>
+                            <span>${index + 1}- ${rec.patientName}${fileStr}</span>
                             <div style="display: flex; gap: 6px; align-items: center; flex-wrap: wrap;">
                                 ${pinBtnHTML}${copyBtnHTML}
                             </div>
@@ -3146,7 +3208,7 @@
                         ${dateTimeStr ? `<span class="client-datetime-badge"><i class="fa-regular fa-clock"></i> ${dateTimeStr}</span>` : ''}
                     </div>
                     <div class="client-info-row">
-                        <span class="info-label">رقم الجوال:</span> ${phoneStr}
+                        <span class="info-label">رقم الجوال:</span> ${phoneStr} &nbsp;|&nbsp; <span class="info-label">طريقة التواصل:</span> <span style="font-weight: 600; color: var(--primary-color);">${contactMethodStr}</span>
                     </div>
                     ${idStr ? `<div class="client-info-row"><span class="info-label">رقم الهوية:</span> ${idStr}</div>` : ''}
                     <div class="client-info-row">
@@ -3172,7 +3234,7 @@
             }
 
             const groupedMap = new Map();
-            const recordsToCopy = isPinnedFilterActive ? openRecords : openRecords.filter(r => !r.isCopied);
+            const recordsToCopy = openRecords.filter(r => !r.isCopied);
 
             recordsToCopy.forEach(record => {
                 const cleanPhone = (record.patientPhone && record.patientPhone !== '-') ? record.patientPhone.replace(/\D/g, '') : '';
@@ -3184,7 +3246,7 @@
                 groupedMap.get(groupKey).push(record);
             });
 
-            if (groupedMap.size === 0 && !isPinnedFilterActive) {
+            if (groupedMap.size === 0) {
                 return alert('جميع العملاء الموجودين تم وضع علامة "تم النسخ" عليهم سابقاً!');
             }
 
@@ -3198,6 +3260,7 @@
                 const fileStr = (item.fileNumber && item.fileNumber !== '-') ? ` ${item.fileNumber}` : '';
                 const idStr = (item.idNumber && item.idNumber !== '-') ? `رقم الهوية: ${item.idNumber}\n` : '';
                 const phoneStr = (item.patientPhone && item.patientPhone !== '-') ? item.patientPhone : '-';
+                const contactMethodStr = item.contactMethod || '-';
 
                 const uniqueServices = [];
                 groupRecords.forEach(r => {
@@ -3206,7 +3269,7 @@
                 });
                 const serviceStr = uniqueServices.join(' / ') || '-';
 
-                reportText += `${idx}- ${item.patientName}${fileStr}\nرقم الجوال: ${phoneStr}\n${idStr}${serviceStr}\n\n`;
+                reportText += `${idx}- ${item.patientName}${fileStr}\nرقم الجوال: ${phoneStr} (طريقة التواصل: ${contactMethodStr})\n${idStr}${serviceStr}\n\n`;
                 idx++;
             });
 
@@ -3238,7 +3301,6 @@
                     updateDailyProgress();
                     renderClientReport();
                     renderTrashModalList();
-                    updatePinnedCountBadge();
 
                     keysToDelete.forEach(k => {
                         if (navigator.onLine && !k.startsWith('local_')) {
@@ -3286,7 +3348,6 @@
             updateDailyProgress();
             renderClientReport();
             renderTrashModalList();
-            updatePinnedCountBadge();
 
             keysToDelete.forEach(k => {
                 if (navigator.onLine) {
@@ -3300,6 +3361,7 @@
             document.getElementById('kpi-total').innerText = records.length;
             document.getElementById('kpi-recurring').innerText = records.filter(r => r.isRecurring).length;
             document.getElementById('kpi-repeated').innerText = records.filter(r => r.isRepeatedRequest).length;
+            document.getElementById('kpi-paid').innerText = records.filter(r => r.paymentStatus === 'تم الدفع').length;
             document.getElementById('kpi-plants').innerText = records.filter(r => (r.procedureType && r.procedureType.includes('زراعة'))).length;
             
             const extractionsCount = records.filter(r => r.procedureType && r.procedureType.includes('خلع')).length;
@@ -3363,7 +3425,6 @@
                 updateDailyProgress();
                 renderClientReport();
                 renderTrashModalList();
-                updatePinnedCountBadge();
                 closeClearModal();
                 if (navigator.onLine) dbRef.set(null);
             } else { alert('كلمة المرور غير صحيحة!'); }
@@ -3405,7 +3466,6 @@
                             updateDailyProgress(); 
                             renderClientReport();
                             renderTrashModalList();
-                            updatePinnedCountBadge();
                             alert('تم استيراد وحفظ ملف JSON وسحابة Firebase بنجاح!');
                         }
                     } catch(err) { alert('خطأ في تحليل ملف الـ JSON'); }
@@ -3431,6 +3491,7 @@
                                     branch: row.branch || row['الفرع'] || 'معشي',
                                     procedureType: row.procedureType || row['نوع الإجراء'] || 'أخرى',
                                     contactMethod: row.contactMethod || row['طريقة التواصل'] || 'اتصال',
+                                    paymentStatus: row.paymentStatus || row['حالة الدفع'] || '',
                                     serviceRequired: row.serviceRequired || row['الخدمة المطلوبة / تفاصيل المشكلة والطلب'] || '-',
                                     coordinatorName: row.coordinatorName || row['اسم المنسق'] || 'مسؤول',
                                     isRecurring: !!row.isRecurring,
@@ -3457,7 +3518,6 @@
                             updateDailyProgress();
                             renderClientReport();
                             renderTrashModalList();
-                            updatePinnedCountBadge();
                             alert('تم استيراد وحفظ ملف الـ Excel وسحابة Firebase بنجاح!');
                         } else {
                             alert('ملف الـ Excel فارغ أو لا يحتوي على بيانات مطابقة.');
