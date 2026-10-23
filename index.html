@@ -595,12 +595,47 @@
         }
         .input-field textarea { resize: vertical; min-height: 65px; }
 
+        /* تعديل التنسيق ليكون النص ومربع التحديد متجاورين بوضوح */
         .priority-checkbox {
-            display: flex; align-items: center; gap: 10px; cursor: pointer; background: rgba(124, 58, 237, 0.1); padding: 8px 12px; border-radius: var(--radius-md); border: 1px dashed var(--accent-purple); width: 100%; color: var(--text-main);
+            display: flex; 
+            align-items: center; 
+            justify-content: flex-start; 
+            gap: 10px; 
+            cursor: pointer; 
+            background: rgba(124, 58, 237, 0.1); 
+            padding: 10px 14px; 
+            border-radius: var(--radius-md); 
+            border: 1px dashed var(--accent-purple); 
+            width: 100%; 
+            color: var(--text-main);
+        }
+        .priority-checkbox input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: var(--accent-purple);
+            flex-shrink: 0;
         }
 
         .repeated-checkbox {
-            display: flex; align-items: center; gap: 10px; cursor: pointer; background: rgba(225, 29, 72, 0.1); padding: 8px 12px; border-radius: var(--radius-md); border: 1px dashed #e11d48; width: 100%; color: var(--text-main);
+            display: flex; 
+            align-items: center; 
+            justify-content: flex-start; 
+            gap: 10px; 
+            cursor: pointer; 
+            background: rgba(225, 29, 72, 0.1); 
+            padding: 10px 14px; 
+            border-radius: var(--radius-md); 
+            border: 1px dashed #e11d48; 
+            width: 100%; 
+            color: var(--text-main);
+        }
+        .repeated-checkbox input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: #e11d48;
+            flex-shrink: 0;
         }
 
         .submit-btn {
