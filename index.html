@@ -384,7 +384,7 @@
             display: flex;
             flex-direction: column;
             gap: 10px;
-            max-height: 280px;
+            max-height: 320px;
             overflow-y: auto;
         }
         .announcement-card {
@@ -399,32 +399,37 @@
         }
         .announcement-body-content {
             display: flex;
-            align-items: flex-start;
-            justify-content: space-between;
-            gap: 12px;
-            flex-wrap: wrap;
+            flex-direction: column;
+            gap: 10px;
         }
         .announcement-body-text {
-            font-size: 0.9rem;
+            font-size: 0.92rem;
             color: var(--text-main);
             line-height: 1.6;
             word-break: break-word;
             white-space: pre-wrap;
-            flex: 1;
+        }
+        .announcement-img-preview {
+            max-width: 100%;
+            max-height: 200px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            object-fit: contain;
+            margin-top: 5px;
         }
         .announcement-file-link {
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            padding: 5px 10px;
-            background: rgba(37, 99, 235, 0.2);
+            padding: 6px 12px;
+            background: rgba(37, 99, 235, 0.25);
             border: 1px solid var(--primary-color);
             color: #60a5fa;
             border-radius: 6px;
-            font-size: 0.82rem;
+            font-size: 0.85rem;
             text-decoration: none;
             font-weight: 700;
-            margin-top: 6px;
+            width: fit-content;
         }
         .announcement-file-link:hover { background: var(--primary-color); color: #fff; }
 
@@ -557,28 +562,13 @@
         }
         .filter-tab.active { background-color: var(--primary-color); color: white; border-color: var(--primary-color); }
 
-        .dropdown-filter-container {
-            position: relative;
-            display: inline-block;
-        }
+        .dropdown-filter-container { position: relative; display: inline-block; }
         .dropdown-filter-btn {
             padding: 5px 10px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-surface); color: var(--text-main); font-family: var(--font-family); font-size: 0.78rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 5px;
         }
-        .dropdown-filter-btn.active {
-            background-color: var(--primary-color); color: white; border-color: var(--primary-color);
-        }
+        .dropdown-filter-btn.active { background-color: var(--primary-color); color: white; border-color: var(--primary-color); }
         .dropdown-content {
-            display: none;
-            position: absolute;
-            right: 0;
-            top: 105%;
-            background-color: var(--bg-surface);
-            min-width: 180px;
-            box-shadow: 0 8px 16px rgba(0,0,0,0.5);
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius-md);
-            z-index: 99;
-            padding: 4px;
+            display: none; position: absolute; right: 0; top: 105%; background-color: var(--bg-surface); min-width: 180px; box-shadow: 0 8px 16px rgba(0,0,0,0.5); border: 1px solid var(--border-color); border-radius: var(--radius-md); z-index: 99; padding: 4px;
         }
         .dropdown-content.show { display: flex; flex-direction: column; gap: 3px; }
         .dropdown-item {
@@ -593,6 +583,7 @@
         }
         .search-field i { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 0.8rem; }
 
+        /* الجدول تلقائي الابعاد لعدم انكماش الخانات */
         .table-container { 
             max-height: 600px; 
             overflow-y: auto; 
@@ -602,7 +593,7 @@
             border-radius: var(--radius-md);
         }
 
-        table { width: 100%; border-collapse: collapse; font-size: 0.82rem; table-layout: fixed; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.85rem; table-layout: auto; }
         
         table th { 
             background-color: var(--bg-card); 
@@ -611,37 +602,18 @@
             position: sticky; 
             top: 0; 
             z-index: 10; 
-            padding: 8px 6px;
+            padding: 10px 8px;
             white-space: nowrap;
         }
 
-        table th, table td { padding: 6px 5px; text-align: right; border-bottom: 1px solid var(--border-color); vertical-align: middle; color: var(--text-main); }
-
-        /* ضبط وتوسيع الخانات المهمة وتضييق الخانات الصغيرة */
-        .col-mini { width: 35px; }
-        .col-date { width: 85px; }
-        .col-status { width: 110px; }
-        .col-name { width: 130px; }
-        .col-phone { width: 105px; }
-        .col-contact { width: 95px; }
-        .col-branch { width: 85px; }
-        .col-file { width: 75px; }
-        .col-proc { width: 90px; }
-        .col-coord { width: 90px; }
-        .col-admin-contact { width: 120px; }
-
-        /* خانة (الخدمة/التفاصيل) وخانة (إجراء الإدارة) أخذت أقصى مساحة مطاطية واسعة */
-        .col-expand-wide {
-            min-width: 250px;
-            width: auto;
-        }
+        table th, table td { padding: 8px; text-align: right; border-bottom: 1px solid var(--border-color); vertical-align: middle; color: var(--text-main); }
 
         tr.row-apologized {
             background-color: rgba(239, 68, 68, 0.15) !important;
             border-right: 4px solid var(--danger-color);
         }
 
-        .status-badge { padding: 3px 8px; border-radius: 10px; font-size: 0.72rem; font-weight: 700; color: #fff; display: inline-block; margin-bottom: 2px; }
+        .status-badge { padding: 4px 8px; border-radius: 10px; font-size: 0.75rem; font-weight: 700; color: #fff; display: inline-block; margin-bottom: 2px; }
         .badge-priority { background-color: var(--accent-purple); }
         .badge-paid { background-color: var(--success-color); }
         .badge-unpaid { background-color: var(--warning-color); }
@@ -653,7 +625,7 @@
         .badge-apologized { background-color: var(--danger-color); }
         .badge-other { background-color: #14b8a6; }
 
-        .proc-badge { padding: 3px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: 700; display: inline-block; text-align: center; white-space: nowrap; }
+        .proc-badge { padding: 4px 8px; border-radius: 6px; font-size: 0.78rem; font-weight: 700; display: inline-block; text-align: center; white-space: nowrap; }
         .proc-plant { background-color: #14b8a6; color: #ffffff; } 
         .proc-extraction { background-color: #ea580c; color: #ffffff; } 
         .proc-surgery { background-color: #dc2626; color: #ffffff; } 
@@ -663,17 +635,18 @@
         .proc-default { background-color: #475569; color: #ffffff; } 
 
         .contact-method-badge {
-            display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: 700; background: var(--bg-card); border: 1px solid var(--border-color); color: var(--text-main); white-space: nowrap;
+            display: inline-flex; align-items: center; gap: 4px; padding: 4px 8px; border-radius: 6px; font-size: 0.78rem; font-weight: 700; background: var(--bg-card); border: 1px solid var(--border-color); color: var(--text-main); white-space: nowrap;
         }
 
         .table-input {
-            width: 100%; padding: 6px 8px; border: 1px solid var(--border-color); border-radius: var(--radius-md); background: var(--bg-card); color: var(--text-main); font-family: var(--font-family); font-size: 0.8rem;
+            width: 100%; padding: 6px 8px; border: 1px solid var(--border-color); border-radius: var(--radius-md); background: var(--bg-card); color: var(--text-main); font-family: var(--font-family); font-size: 0.82rem;
         }
         
-        /* مربع الخدمة/التفاصيل أصبح ممتداً ومريحاً جداً */
+        /* تكبير خانة الخدمة/التفاصيل ومربع إجراء الإدارة */
         .service-cell-box {
-            width: 100%;
-            max-height: 140px;
+            min-width: 280px;
+            max-width: 450px;
+            max-height: 160px;
             overflow-y: auto;
             white-space: pre-wrap;
             word-break: break-word;
@@ -681,21 +654,20 @@
             background: var(--bg-card);
             border-radius: 6px;
             border: 1px solid var(--border-color);
-            font-size: 0.85rem;
+            font-size: 0.88rem;
             line-height: 1.5;
             color: var(--text-main);
         }
 
-        /* مربع إجراء الإدارة موسع ومريح */
         textarea.table-input.auto-expand-action { 
             resize: vertical; 
-            min-height: 50px;
-            max-height: 140px;
-            height: auto;
-            width: 100%;
+            min-height: 55px;
+            max-height: 160px;
+            min-width: 280px;
+            max-width: 450px;
             line-height: 1.5;
             padding: 8px 10px;
-            font-size: 0.85rem;
+            font-size: 0.88rem;
             overflow-y: auto;
             background: var(--bg-card);
             border-radius: 6px;
@@ -706,7 +678,7 @@
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 4px;
-            width: 65px;
+            width: 70px;
         }
 
         .btn-save-action { background-color: var(--success-color); color: #fff; border: none; padding: 6px; border-radius: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
@@ -745,11 +717,11 @@
         }
         #notificationToast.show { transform: translateY(0); opacity: 1; }
 
-        /* كروت صفحة الكشف المضغوطة والأنيقة مع نزول المنسوخ لأسفل */
+        /* صفحة الكشف والتنسيق المرتب */
         .client-report-container {
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 12px;
             width: 100%;
         }
 
@@ -758,12 +730,12 @@
             border: 1px solid var(--border-color);
             border-right: 4px solid var(--primary-color);
             border-radius: var(--radius-md);
-            padding: 10px 12px;
+            padding: 12px 14px;
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 8px;
             position: relative;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.25);
             width: 100%;
             overflow: hidden;
             transition: all 0.3s ease;
@@ -773,7 +745,7 @@
             background-color: rgba(16, 185, 129, 0.12) !important;
             border-color: var(--success-color) !important;
             border-right: 4px solid var(--success-color) !important;
-            order: 9999; /* ينزل لأسفل الكشف اتوماتيكياً */
+            order: 9999; /* المنسوخ ينزل تلقائياً لأسفل الكشف */
         }
 
         .client-card-header {
@@ -781,7 +753,7 @@
             align-items: center;
             justify-content: space-between;
             width: 100%;
-            gap: 8px;
+            gap: 10px;
             flex-wrap: wrap;
         }
 
@@ -789,7 +761,7 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            font-size: 0.95rem;
+            font-size: 1rem;
             font-weight: 700;
             color: var(--text-main);
             flex: 1;
@@ -805,8 +777,8 @@
         }
 
         .client-card-header .client-select-chk {
-            width: 16px;
-            height: 16px;
+            width: 18px;
+            height: 18px;
             cursor: pointer;
             accent-color: var(--primary-color);
             flex-shrink: 0;
@@ -814,11 +786,11 @@
 
         .client-datetime-badge {
             font-family: Arial, sans-serif;
-            font-size: 0.72rem;
+            font-size: 0.75rem;
             font-weight: 700;
             color: #ffffff;
             background: rgba(37, 99, 235, 0.25);
-            padding: 3px 6px;
+            padding: 3px 8px;
             border-radius: 4px;
             border: 1px solid rgba(37, 99, 235, 0.4);
             direction: ltr;
@@ -828,9 +800,9 @@
         }
 
         .client-info-row {
-            font-size: 0.83rem;
+            font-size: 0.88rem;
             color: var(--text-main);
-            line-height: 1.4;
+            line-height: 1.5;
             word-break: break-word;
         }
 
@@ -843,15 +815,15 @@
             background: #d97706;
             color: #ffffff;
             border: none;
-            padding: 3px 8px;
+            padding: 4px 10px;
             border-radius: 4px;
             font-family: var(--font-family);
-            font-size: 0.75rem;
+            font-size: 0.78rem;
             font-weight: 700;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
-            gap: 4px;
+            gap: 5px;
             white-space: nowrap;
         }
 
@@ -864,15 +836,15 @@
             background: rgba(255,255,255,0.06);
             border: 1px solid var(--border-color);
             color: var(--text-main);
-            padding: 3px 8px;
+            padding: 4px 10px;
             border-radius: 4px;
             font-family: var(--font-family);
-            font-size: 0.75rem;
+            font-size: 0.78rem;
             font-weight: 700;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
-            gap: 4px;
+            gap: 5px;
             white-space: nowrap;
         }
 
@@ -891,7 +863,7 @@
         .client-actions-row {
             display: flex;
             gap: 6px;
-            margin-top: 2px;
+            margin-top: 4px;
             justify-content: flex-end;
             width: 100%;
             border-top: 1px dashed var(--border-color);
@@ -899,12 +871,12 @@
         }
 
         .btn-client-action {
-            padding: 4px 8px;
+            padding: 4px 10px;
             border-radius: 4px;
             border: none;
             color: #fff;
             font-family: var(--font-family);
-            font-size: 0.75rem;
+            font-size: 0.78rem;
             font-weight: 700;
             cursor: pointer;
             display: inline-flex;
@@ -996,10 +968,9 @@
         .client-header-controls {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
             flex-wrap: wrap;
             width: 100%;
-            justify-content: flex-end;
         }
 
         @media (max-width: 768px) {
@@ -1333,19 +1304,19 @@
                             <table id="requestsTable">
                                 <thead>
                                     <tr>
-                                        <th class="col-mini">م</th>
-                                        <th class="col-date">التاريخ</th>
-                                        <th class="col-status">الحالة والدفع</th>
-                                        <th class="col-name">العميل</th>
-                                        <th class="col-phone">الجوال</th>
-                                        <th class="col-contact">التواصل</th>
-                                        <th class="col-branch">الفرع</th>
-                                        <th class="col-file">الملف</th>
-                                        <th class="col-proc">الإجراء</th>
-                                        <th class="col-expand-wide">الخدمة / التفاصيل</th>
-                                        <th class="col-coord">المنسق</th>
-                                        <th class="col-admin-contact">تواصل الإدارة</th>
-                                        <th class="col-expand-wide">إجراء الإدارة</th>
+                                        <th>م</th>
+                                        <th>التاريخ</th>
+                                        <th>الحالة والدفع</th>
+                                        <th>العميل</th>
+                                        <th>الجوال</th>
+                                        <th>التواصل</th>
+                                        <th>الفرع</th>
+                                        <th>الملف</th>
+                                        <th>الإجراء</th>
+                                        <th style="min-width: 280px;">الخدمة / التفاصيل</th>
+                                        <th>المنسق</th>
+                                        <th>تواصل الإدارة</th>
+                                        <th style="min-width: 280px;">إجراء الإدارة</th>
                                         <th style="text-align: center; width: 70px;">إجراءات</th>
                                     </tr>
                                 </thead>
@@ -1359,7 +1330,7 @@
                 <!-- صفحة الكشف -->
                 <div id="page-clients" class="page-view hidden">
                     <section class="dashboard-section">
-                        <div style="display: flex; flex-direction: column; gap: 12px; background: var(--bg-card); padding: 12px 15px; border-radius: 8px; border: 1px solid var(--border-color); margin-bottom: 15px;">
+                        <div style="display: flex; flex-direction: column; gap: 12px; background: var(--bg-card); padding: 14px; border-radius: 8px; border: 1px solid var(--border-color); margin-bottom: 15px;">
                             <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
                                 <h2 style="font-size: 1.1rem; color: var(--primary-color); font-weight: 700;">
                                     <i class="fa-solid fa-file-lines"></i> صفحة الكشف
@@ -1367,14 +1338,18 @@
                             </div>
                             
                             <div class="client-header-controls">
-                                <select id="clientPaymentFilterSelect" onchange="setClientPaymentFilterSelect(this.value)" style="background: var(--bg-surface); color: var(--text-main); border: 1px solid var(--border-color); padding: 8px 10px; border-radius: 6px; font-family: var(--font-family); font-size: 0.85rem; cursor: pointer; font-weight:700;">
-                                    <option value="all">كل الحالات (الدفع)</option>
-                                    <option value="paid">تم الدفع 💳 فقط</option>
-                                    <option value="unpaid">لم يتم الدفع ⏳ فقط</option>
+                                <span style="font-size:0.85rem; font-weight:700; color:var(--text-muted);"><i class="fa-solid fa-filter"></i> فلتر العرض:</span>
+                                
+                                <select id="clientMainFilterSelect" onchange="setClientMainFilter(this.value)" style="background: var(--bg-surface); color: var(--text-main); border: 1px solid var(--border-color); padding: 8px 12px; border-radius: 6px; font-family: var(--font-family); font-size: 0.88rem; cursor: pointer; font-weight:700;">
+                                    <option value="normal">📄 الكشف العادي (غير المنسوخ)</option>
+                                    <option value="pinned">📌 المميزون / المثبتون</option>
+                                    <option value="payment_all">💳 كل حالات الدفع</option>
+                                    <option value="paid">🟢 تم الدفع فقط</option>
+                                    <option value="unpaid">⏳ لم يتم الدفع فقط</option>
                                 </select>
 
-                                <select id="clientHoursSelect" onchange="setClientTimeFilterSelect(this.value)" style="background: var(--bg-surface); color: var(--text-main); border: 1px solid var(--border-color); padding: 8px 10px; border-radius: 6px; font-family: var(--font-family); font-size: 0.85rem; cursor: pointer; font-weight:700;">
-                                    <option value="all">كل الأوقات</option>
+                                <select id="clientHoursSelect" onchange="setClientTimeFilterSelect(this.value)" style="background: var(--bg-surface); color: var(--text-main); border: 1px solid var(--border-color); padding: 8px 12px; border-radius: 6px; font-family: var(--font-family); font-size: 0.88rem; cursor: pointer; font-weight:700;">
+                                    <option value="all">🕒 كل الأوقات</option>
                                     <option value="6">آخر 6 ساعات</option>
                                     <option value="8">آخر 8 ساعات</option>
                                     <option value="12">آخر 12 ساعة</option>
@@ -1383,10 +1358,6 @@
                                     <option value="168">أسبوع</option>
                                     <option value="720">شهر</option>
                                 </select>
-
-                                <button class="action-btn" id="pinnedFilterBtn" onclick="togglePinnedFilter()" style="background-color: #10b981;">
-                                    <i class="fa-solid fa-file-lines"></i> ✅ الكشف العادي (<span id="pinnedCount">0</span>)
-                                </button>
 
                                 <button class="action-btn copy-btn" onclick="copyClientReport()"><i class="fa-solid fa-copy"></i> نسخ الكشف</button>
                                 <button class="action-btn select-del-btn" onclick="requestDeleteSelectedAccess()"><i class="fa-solid fa-trash-can"></i> حذف المحددين</button>
@@ -1644,8 +1615,7 @@
         let dashboardFilter = localStorage.getItem('savedDashboardFilter') || 'all';
         let dashboardTimeFilter = localStorage.getItem('savedDashboardTimeFilter') || 'all';
         let clientHoursFilter = localStorage.getItem('savedClientHoursFilter') || 'all';
-        let clientPaymentFilter = localStorage.getItem('savedClientPaymentFilter') || 'all';
-        let isPinnedFilterActive = false;
+        let clientMainFilter = localStorage.getItem('savedClientMainFilter') || 'normal';
 
         if (!localStorage.getItem('adminPassword')) {
             localStorage.setItem('adminPassword', '1234');
@@ -1723,82 +1693,25 @@
         }
 
         function saveLocal() { 
-            localStorage.setItem('cachedAppointments_v21', JSON.stringify(records));
+            localStorage.setItem('cachedAppointments_v22', JSON.stringify(records));
             localStorage.setItem('cachedCSLinks_v1', JSON.stringify(csLinks));
-            localStorage.setItem('cachedAnnouncements_v4', JSON.stringify(clinicAnnouncements));
+            localStorage.setItem('cachedAnnouncements_v5', JSON.stringify(clinicAnnouncements));
         }
 
-        const cached = localStorage.getItem('cachedAppointments_v21') || localStorage.getItem('cachedAppointments_v20');
+        const cached = localStorage.getItem('cachedAppointments_v22') || localStorage.getItem('cachedAppointments_v21');
         if (cached) { try { records = JSON.parse(cached); } catch(e) { records = []; } }
 
         const cachedLinks = localStorage.getItem('cachedCSLinks_v1');
         if (cachedLinks) { try { csLinks = JSON.parse(cachedLinks); } catch(e) { csLinks = []; } }
 
-        const cachedAnnouncements = localStorage.getItem('cachedAnnouncements_v4') || localStorage.getItem('cachedAnnouncements_v3');
+        const cachedAnnouncements = localStorage.getItem('cachedAnnouncements_v5') || localStorage.getItem('cachedAnnouncements_v4');
         if (cachedAnnouncements) { try { clinicAnnouncements = JSON.parse(cachedAnnouncements); } catch(e) { clinicAnnouncements = []; } }
 
         function getLocalCopiedMap() {
-            try { return JSON.parse(localStorage.getItem('localCopiedRecords_v4')) || []; } catch(e) { return []; }
+            try { return JSON.parse(localStorage.getItem('localCopiedRecords_v5')) || []; } catch(e) { return []; }
         }
         function setLocalCopiedMap(arr) {
-            localStorage.setItem('localCopiedRecords_v4', JSON.stringify(arr));
-        }
-
-        function syncFilterTabsUI() {
-            const statusContainer = document.getElementById('statusFilterTabs');
-            if (statusContainer) {
-                statusContainer.querySelectorAll('.filter-tab').forEach(btn => {
-                    if (btn.getAttribute('data-filter') === dashboardFilter) {
-                        btn.classList.add('active');
-                    } else {
-                        btn.classList.remove('active');
-                    }
-                });
-
-                const paymentBtn = document.getElementById('paymentDropdownBtn');
-                const isPaymentActive = ['paid', 'unpaid'].includes(dashboardFilter);
-                if (isPaymentActive) {
-                    paymentBtn.classList.add('active');
-                    statusContainer.querySelectorAll('#paymentDropdownContent .dropdown-item').forEach(item => {
-                        if (item.getAttribute('data-filter') === dashboardFilter) {
-                            item.classList.add('active');
-                        } else {
-                            item.classList.remove('active');
-                        }
-                    });
-                } else {
-                    paymentBtn.classList.remove('active');
-                    statusContainer.querySelectorAll('#paymentDropdownContent .dropdown-item').forEach(item => item.classList.remove('active'));
-                }
-
-                const inquiriesBtn = document.getElementById('inquiriesDropdownBtn');
-                const isInquiriesActive = dashboardFilter.startsWith('inquiries_');
-                if (isInquiriesActive) {
-                    inquiriesBtn.classList.add('active');
-                    statusContainer.querySelectorAll('#inquiriesDropdownContent .dropdown-item').forEach(item => {
-                        if (item.getAttribute('data-filter') === dashboardFilter) {
-                            item.classList.add('active');
-                        } else {
-                            item.classList.remove('active');
-                        }
-                    });
-                } else {
-                    inquiriesBtn.classList.remove('active');
-                    statusContainer.querySelectorAll('#inquiriesDropdownContent .dropdown-item').forEach(item => item.classList.remove('active'));
-                }
-            }
-
-            const timeContainer = document.getElementById('timeFilterTabs');
-            if (timeContainer) {
-                timeContainer.querySelectorAll('.filter-tab').forEach(btn => {
-                    if (btn.getAttribute('data-time') === dashboardTimeFilter) {
-                        btn.classList.add('active');
-                    } else {
-                        btn.classList.remove('active');
-                    }
-                });
-            }
-            updatePinnedCountBadge();
+            localStorage.setItem('localCopiedRecords_v5', JSON.stringify(arr));
         }
 
         function toggleDropdown(contentId) {
@@ -1822,18 +1735,9 @@
             const hoursSelect = document.getElementById('clientHoursSelect');
             if (hoursSelect) hoursSelect.value = clientHoursFilter;
 
-            const paymentSelect = document.getElementById('clientPaymentFilterSelect');
-            if (paymentSelect) paymentSelect.value = clientPaymentFilter;
+            const mainFilterSelect = document.getElementById('clientMainFilterSelect');
+            if (mainFilterSelect) mainFilterSelect.value = clientMainFilter;
 
-            isPinnedFilterActive = false;
-            const btn = document.getElementById('pinnedFilterBtn');
-            if (btn) {
-                btn.style.backgroundColor = '#10b981';
-                btn.style.borderColor = '#10b981';
-                btn.style.boxShadow = 'none';
-            }
-
-            syncFilterTabsUI();
             renderAnnouncements();
             renderClientReport();
         });
@@ -1844,9 +1748,7 @@
                 const cloudRecords = [];
                 for (let key in data) { cloudRecords.push({ firebaseKey: key, ...data[key] }); }
                 records = cloudRecords;
-            } else {
-                records = [];
-            }
+            } else { records = []; }
             saveLocal();
             renderTable();
             updateKPIs();
@@ -1862,9 +1764,7 @@
                 for (let key in data) { cloudLinks.push({ linkKey: key, ...data[key] }); }
                 cloudLinks.sort((a, b) => (a.orderIndex || 0) - (b.orderIndex || 0));
                 csLinks = cloudLinks;
-            } else {
-                csLinks = [];
-            }
+            } else { csLinks = []; }
             saveLocal();
             renderCSLinks();
         });
@@ -1876,9 +1776,7 @@
                 for (let key in data) { cloudAnnouncements.push({ announcementKey: key, ...data[key] }); }
                 cloudAnnouncements.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
                 clinicAnnouncements = cloudAnnouncements;
-            } else {
-                clinicAnnouncements = [];
-            }
+            } else { clinicAnnouncements = []; }
             saveLocal();
             renderAnnouncements();
         });
@@ -1926,9 +1824,7 @@
                     universalAuthCallback();
                     universalAuthCallback = null;
                 }
-            } else {
-                alert('كلمة المرور غير صحيحة!');
-            }
+            } else { alert('كلمة المرور غير صحيحة!'); }
         }
 
         function cancelUniversalAuth() {
@@ -1936,6 +1832,7 @@
             universalAuthCallback = null;
         }
 
+        // إظهار التنبيهات مع المعاينة المباشرة للصور والمرفقات
         function renderAnnouncements() {
             const container = document.getElementById('announcementsListContainer');
             if (!container) return;
@@ -1951,14 +1848,19 @@
                 card.className = 'announcement-card';
                 const dateStr = formatDateTimeFullCustom(item.createdAt);
 
-                let fileHTML = '';
+                let attachmentHTML = '';
                 if (item.fileData) {
-                    fileHTML = `<br><a href="${item.fileData}" target="_blank" class="announcement-file-link"><i class="fa-solid fa-paperclip"></i> فتح / معاينة المرفق الصوري أو المستند</a>`;
+                    if (item.fileData.startsWith('data:image/')) {
+                        attachmentHTML = `<img src="${item.fileData}" class="announcement-img-preview" alt="مرفق تنبيه"><br><a href="${item.fileData}" download="image.png" class="announcement-file-link"><i class="fa-solid fa-download"></i> تحميل الصورة</a>`;
+                    } else {
+                        attachmentHTML = `<a href="${item.fileData}" target="_blank" class="announcement-file-link"><i class="fa-solid fa-file-arrow-down"></i> فتح / تحميل الملف المرفق</a>`;
+                    }
                 }
 
                 card.innerHTML = `
                     <div class="announcement-body-content">
-                        <div class="announcement-body-text">${item.text} ${fileHTML}</div>
+                        <div class="announcement-body-text">${item.text}</div>
+                        ${attachmentHTML}
                     </div>
                     <div class="announcement-footer-row" style="display:flex; justify-content:space-between; align-items:center; font-size:0.75rem; color:var(--text-muted); margin-top:5px;">
                         <span><i class="fa-regular fa-clock"></i> ${dateStr}</span>
@@ -2068,6 +1970,7 @@
             }
         }
 
+        // إضافة عميل جديد
         document.getElementById('appointmentForm').addEventListener('submit', function(e) {
             e.preventDefault();
             const patientNameVal = document.getElementById('patientName').value.trim();
@@ -2135,22 +2038,20 @@
             playBeepAndShowToast('⚠️ تم إضافة العميل والموعد بنجاح!');
         });
 
+        // التثبيت وتغيير حالة الدفع المباشرة
         function requestTogglePinRecord(key) {
-            requireAdminAuth(() => {
-                let rec = records.find(r => r.firebaseKey === key);
-                if (rec) {
-                    rec.isPinned = !rec.isPinned;
-                    saveLocal();
-                    renderTable();
-                    updatePinnedCountBadge();
-                    renderClientReport();
+            let rec = records.find(r => r.firebaseKey === key);
+            if (rec) {
+                rec.isPinned = !rec.isPinned;
+                saveLocal();
+                renderTable();
+                renderClientReport();
 
-                    if (navigator.onLine && !key.startsWith('local_')) {
-                        dbRef.child(key).update({ isPinned: rec.isPinned });
-                    }
-                    showToastOnly(rec.isPinned ? '📌 تم التثبيت في المميزين' : '✖️ تم إزالتها من المميزين');
+                if (navigator.onLine && !key.startsWith('local_')) {
+                    dbRef.child(key).update({ isPinned: rec.isPinned });
                 }
-            });
+                showToastOnly(rec.isPinned ? '📌 تم تثبيت الحالة' : '✖️ تم إلغاء التثبيت');
+            }
         }
 
         function togglePaymentStatusGroup(keysArray) {
@@ -2182,98 +2083,27 @@
             showToastOnly(toastMsg);
         }
 
-        function updatePinnedCountBadge() {
-            let openRecords = records.filter(r => !r.isHiddenFromClients);
-            const localCopiedList = getLocalCopiedMap();
-            
-            if (clientHoursFilter !== 'all' && !isPinnedFilterActive) {
-                const now = new Date();
-                openRecords = openRecords.filter(r => {
-                    const diffHours = (now - new Date(r.createdAt)) / (1000 * 60 * 60);
-                    return diffHours <= parseFloat(clientHoursFilter);
-                });
-            }
-
-            if (clientPaymentFilter === 'paid') {
-                openRecords = openRecords.filter(r => r.paymentStatus === 'paid');
-            } else if (clientPaymentFilter === 'unpaid') {
-                openRecords = openRecords.filter(r => r.paymentStatus === 'unpaid');
-            }
-            
-            const groupedMap = new Map();
-            openRecords.forEach(record => {
-                const cleanPhone = (record.patientPhone && record.patientPhone !== '-') ? record.patientPhone.replace(/\D/g, '') : '';
-                const groupKey = (cleanPhone.length >= 8) ? cleanPhone : (record.patientName || '').trim().toLowerCase();
-                
-                if (!groupedMap.has(groupKey)) {
-                    groupedMap.set(groupKey, []);
-                }
-                groupedMap.get(groupKey).push(record);
-            });
-
-            let displayCount = 0;
-            if (isPinnedFilterActive) {
-                groupedMap.forEach((groupRecords) => {
-                    if (groupRecords.some(r => r.isPinned)) displayCount++;
-                });
-            } else {
-                groupedMap.forEach((groupRecords) => {
-                    const isGroupCopied = groupRecords.every(r => localCopiedList.includes(r.firebaseKey));
-                    if (!isGroupCopied) displayCount++;
-                });
-            }
-
-            const badgeEl = document.getElementById('pinnedCount');
-            if (badgeEl) badgeEl.innerText = displayCount;
-        }
-
-        function togglePinnedFilter() {
-            isPinnedFilterActive = !isPinnedFilterActive;
-            const btn = document.getElementById('pinnedFilterBtn');
-            if (btn) {
-                if (isPinnedFilterActive) {
-                    btn.style.backgroundColor = '#d97706';
-                    btn.style.borderColor = '#f59e0b';
-                    btn.style.boxShadow = '0 0 10px rgba(217, 119, 6, 0.4)';
-                    btn.innerHTML = `<i class="fa-solid fa-thumbtack"></i> 📌 المميزون ( <span id="pinnedCount">0</span> )`;
-                } else {
-                    btn.style.backgroundColor = '#10b981';
-                    btn.style.borderColor = '#10b981';
-                    btn.style.boxShadow = 'none';
-                    btn.innerHTML = `<i class="fa-solid fa-file-lines"></i> ✅ الكشف العادي ( <span id="pinnedCount">0</span> )`;
-                }
-            }
-            renderClientReport();
-        }
-
         function setDashboardFilter(filterType, btn) {
             dashboardFilter = filterType;
             localStorage.setItem('savedDashboardFilter', filterType);
-            
-            document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.dropdown-item').forEach(i => i.classList.remove('active'));
-            
-            if (btn) {
-                btn.classList.add('active');
-                if (btn.classList.contains('dropdown-item')) {
-                    btn.closest('.dropdown-filter-container').querySelector('.dropdown-filter-btn').classList.add('active');
-                }
-            }
-            document.querySelectorAll('.dropdown-content').forEach(dc => dc.classList.remove('show'));
             renderTable();
         }
 
         function setDashboardTimeFilter(timeType, btn) {
             dashboardTimeFilter = timeType;
             localStorage.setItem('savedDashboardTimeFilter', timeType);
-            btn.closest('.filter-row').querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
-            btn.classList.add('active');
             renderTable();
         }
 
-        function setClientPaymentFilterSelect(val) {
-            clientPaymentFilter = val;
-            localStorage.setItem('savedClientPaymentFilter', val);
+        function setClientMainFilter(val) {
+            clientMainFilter = val;
+            localStorage.setItem('savedClientMainFilter', val);
+            renderClientReport();
+        }
+
+        function setClientTimeFilterSelect(hours) {
+            clientHoursFilter = hours;
+            localStorage.setItem('savedClientHoursFilter', hours);
             renderClientReport();
         }
 
@@ -2307,12 +2137,11 @@
             element.style.height = element.scrollHeight + 'px';
         }
 
+        // رسم جدول المواعيد بمرونة لعرض المحتوى كاملاً
         function renderTable() {
             const tbody = document.getElementById('tableBody');
             if (!tbody) return;
             tbody.innerHTML = '';
-
-            syncFilterTabsUI();
 
             let filteredList = [...records];
             const now = new Date();
@@ -2333,28 +2162,6 @@
                 filteredList = filteredList.filter(r => r.procedureType && r.procedureType.includes('مراجعه'));
             } else if (dashboardFilter === 'inquiries_all') {
                 filteredList = filteredList.filter(r => r.procedureType && r.procedureType.includes('استفسارات'));
-            } else if (dashboardFilter === 'inquiries_done') {
-                filteredList = filteredList.filter(r => {
-                    const isQ = (r.procedureType && r.procedureType.includes('استفسارات'));
-                    const hasChange = (r.adminContactMethod && r.adminContactMethod !== 'قيد الانتظار') || (r.actionTaken && r.actionTaken.trim() !== '');
-                    return isQ && hasChange;
-                });
-            } else if (dashboardFilter === 'inquiries_pending') {
-                filteredList = filteredList.filter(r => {
-                    const isQ = (r.procedureType && r.procedureType.includes('استفسارات'));
-                    const isPending = (!r.adminContactMethod || r.adminContactMethod === 'قيد الانتظار') && (!r.actionTaken || r.actionTaken.trim() === '');
-                    return isQ && isPending;
-                });
-            }
-
-            const branchVal = document.getElementById('branchFilterSelect')?.value || 'all';
-            if (branchVal !== 'all') {
-                filteredList = filteredList.filter(r => r.branch === branchVal);
-            }
-
-            const coordinatorSearchVal = (document.getElementById('coordinatorSearchInput')?.value || '').trim().toLowerCase();
-            if (coordinatorSearchVal !== '') {
-                filteredList = filteredList.filter(r => r.coordinatorName && r.coordinatorName.toLowerCase().includes(coordinatorSearchVal));
             }
 
             if (dashboardTimeFilter === 'today') {
@@ -2386,43 +2193,32 @@
                 }
             }
 
-            filteredList.sort((a, b) => {
-                if (a.isRecurring && !b.isRecurring) return -1;
-                if (!a.isRecurring && b.isRecurring) return 1;
-                return new Date(b.createdAt) - new Date(a.createdAt);
-            });
+            filteredList.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
             if (filteredList.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="14" style="text-align: center; padding: 25px; color: var(--text-muted);">لا توجد مواعيد مطابقة للفلتر أو البحث الحالي.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="14" style="text-align: center; padding: 25px; color: var(--text-muted);">لا توجد مواعيد مطابقة.</td></tr>`;
                 return;
             }
 
             filteredList.forEach((record, index) => {
                 const tr = document.createElement('tr');
-                if (record.isRecurring) {
-                    tr.classList.add('row-priority-pulse');
-                }
+                if (record.isRecurring) tr.classList.add('row-priority-pulse');
 
                 const currentContact = record.adminContactMethod || 'قيد الانتظار';
                 const isOther = !['قيد الانتظار', 'قيد الإجراء', 'تم التواصل', 'معلق', 'اعتذر'].includes(currentContact);
                 const selectVal = isOther ? 'أخرى' : currentContact;
                 const otherDetail = isOther ? currentContact : (record.adminContactDetail || '');
 
-                if (selectVal === 'اعتذر') {
-                    tr.classList.add('row-apologized');
-                }
+                if (selectVal === 'اعتذر') tr.classList.add('row-apologized');
 
                 let statusBadgeHTML = '';
                 if (record.isRecurring) statusBadgeHTML += '<span class="status-badge badge-priority">⭐ أولوية</span><br>';
                 if (record.paymentStatus === 'paid') statusBadgeHTML += '<span class="status-badge badge-paid">💳 تم الدفع</span><br>';
                 else if (record.paymentStatus === 'unpaid') statusBadgeHTML += '<span class="status-badge badge-unpaid">⏳ لم يتم الدفع</span><br>';
-                if (record.isRepeatedRequest) statusBadgeHTML += '<span class="status-badge badge-repeated">🔄 متكررة</span><br>';
 
                 let sClass = 'badge-other';
                 if (selectVal === 'قيد الانتظار') sClass = 'badge-pending';
-                else if (selectVal === 'قيد الإجراء') sClass = 'badge-inprogress';
                 else if (selectVal === 'تم التواصل') sClass = 'badge-completed';
-                else if (selectVal === 'معلق') sClass = 'badge-suspended';
                 else if (selectVal === 'اعتذر') sClass = 'badge-apologized';
 
                 statusBadgeHTML += `<span class="status-badge ${sClass}">${selectVal}</span>`;
@@ -2431,34 +2227,23 @@
                 let procClass = 'proc-default';
                 if (proc.includes('زراعة')) procClass = 'proc-plant';
                 else if (proc.includes('خلع')) procClass = 'proc-extraction';
-                else if (proc.includes('جراحه')) procClass = 'proc-surgery';
-                else if (proc.includes('فك خياطه')) procClass = 'proc-stitches';
-                else if (proc.includes('مراجعه')) procClass = 'proc-review';
-                else if (proc.includes('استفسارات')) procClass = 'proc-inquiry';
 
                 const cMethod = record.contactMethod || 'اتصال';
-                let cIcon = 'fa-phone';
-                if (cMethod === 'شات') cIcon = 'fa-comments';
-                else if (cMethod === 'بالاستقبال') cIcon = 'fa-hospital-user';
-                else if (cMethod === 'أخرى') cIcon = 'fa-pen';
-
-                const contactMethodHTML = `<span class="contact-method-badge"><i class="fa-solid ${cIcon}"></i> ${cMethod}</span>`;
                 const isPinned = record.isPinned;
-                const branchNameArabic = record.branch || 'فرع معشي';
 
                 tr.innerHTML = `
-                    <td class="col-mini">${index + 1}</td>
-                    <td class="col-date" style="white-space: nowrap;">${formatDateOnly(record.createdAt)}</td>
-                    <td class="col-status">${statusBadgeHTML}</td>
-                    <td class="col-name"><strong>${record.patientName}</strong></td>
-                    <td class="col-phone" style="white-space: nowrap;">${record.patientPhone}</td>
-                    <td class="col-contact">${contactMethodHTML}</td>
-                    <td class="col-branch"><span style="font-size: 0.78rem; font-weight:700; color:var(--primary-color);">${branchNameArabic}</span></td>
-                    <td class="col-file">${record.fileNumber || '-'}</td>
-                    <td class="col-proc"><span class="proc-badge ${procClass}">${proc}</span></td>
-                    <td class="col-expand-wide"><div class="service-cell-box">${record.serviceRequired}</div></td>
-                    <td class="col-coord">${record.coordinatorName}</td>
-                    <td class="col-admin-contact">
+                    <td>${index + 1}</td>
+                    <td style="white-space: nowrap;">${formatDateOnly(record.createdAt)}</td>
+                    <td>${statusBadgeHTML}</td>
+                    <td><strong>${record.patientName}</strong></td>
+                    <td style="white-space: nowrap;">${record.patientPhone}</td>
+                    <td><span class="contact-method-badge">${cMethod}</span></td>
+                    <td>${record.branch || 'فرع معشي'}</td>
+                    <td>${record.fileNumber || '-'}</td>
+                    <td><span class="proc-badge ${procClass}">${proc}</span></td>
+                    <td><div class="service-cell-box">${record.serviceRequired}</div></td>
+                    <td>${record.coordinatorName}</td>
+                    <td style="min-width: 120px;">
                         <select class="table-input" id="adminContact_${record.firebaseKey}" onchange="handleContactChange('${record.firebaseKey}')">
                             <option value="قيد الانتظار" ${selectVal === 'قيد الانتظار' ? 'selected' : ''}>قيد الانتظار</option>
                             <option value="قيد الإجراء" ${selectVal === 'قيد الإجراء' ? 'selected' : ''}>قيد الإجراء 🔄</option>
@@ -2467,14 +2252,13 @@
                             <option value="اعتذر" ${selectVal === 'اعتذر' ? 'selected' : ''}>اعتذر ❌</option>
                             <option value="أخرى" ${selectVal === 'أخرى' ? 'selected' : ''}>أخرى ✍️</option>
                         </select>
-                        <input type="text" class="table-input" id="adminOther_${record.firebaseKey}" placeholder="التفاصيل..." value="${otherDetail}" style="margin-top: 4px; ${selectVal === 'أخرى' ? '' : 'display:none;'}">
                     </td>
-                    <td class="col-expand-wide">
+                    <td>
                         <textarea class="table-input auto-expand-action" id="action_${record.firebaseKey}" oninput="autoExpandTextarea(this)" placeholder="اكتب إجراء الإدارة...">${record.actionTaken || ''}</textarea>
                     </td>
-                    <td style="white-space: nowrap; text-align: center; width: 70px;">
+                    <td style="white-space: nowrap; text-align: center;">
                         <div class="action-buttons-column">
-                            <button class="btn-pin-action ${isPinned ? 'pinned' : ''}" onclick="requestTogglePinRecord('${record.firebaseKey}')" title="${isPinned ? 'إلغاء التثبيت' : 'تثبيت العميل'}"><i class="fa-solid fa-thumbtack"></i></button>
+                            <button class="btn-pin-action ${isPinned ? 'pinned' : ''}" onclick="requestTogglePinRecord('${record.firebaseKey}')" title="تثبيت"><i class="fa-solid fa-thumbtack"></i></button>
                             <button class="btn-save-action" onclick="saveAdminUpdate('${record.firebaseKey}')" title="حفظ"><i class="fa-solid fa-floppy-disk"></i></button>
                             <button class="btn-edit-action" onclick="openEditModal('${record.firebaseKey}')" title="تعديل"><i class="fa-solid fa-pen"></i></button>
                             <button class="btn-delete-action" onclick="deleteRecord('${record.firebaseKey}')" title="حذف"><i class="fa-solid fa-trash"></i></button>
@@ -2490,40 +2274,28 @@
 
         function handleContactChange(key) {
             const selectVal = document.getElementById(`adminContact_${key}`).value;
-            const otherInput = document.getElementById(`adminOther_${key}`);
-            if (selectVal === 'أخرى') {
-                otherInput.style.display = 'block';
-                otherInput.focus();
-            } else {
-                otherInput.style.display = 'none';
-                otherInput.value = '';
+            let rec = records.find(r => r.firebaseKey === key);
+            if (rec) {
+                rec.adminContactMethod = selectVal;
+                saveLocal();
+                if (navigator.onLine && !key.startsWith('local_')) dbRef.child(key).update({ adminContactMethod: selectVal });
             }
         }
 
         function saveAdminUpdate(key) {
             const actionVal = document.getElementById(`action_${key}`).value;
-            let adminContactSelect = document.getElementById(`adminContact_${key}`).value;
-            const otherInputVal = document.getElementById(`adminOther_${key}`).value.trim();
-
-            if (adminContactSelect === 'أخرى' && otherInputVal !== '') {
-                adminContactSelect = otherInputVal;
-            }
-
             let rec = records.find(r => r.firebaseKey === key);
             if (rec) { 
                 rec.actionTaken = actionVal; 
-                rec.adminContactMethod = adminContactSelect; 
                 saveLocal(); 
                 renderTable(); 
-                updateKPIs();
-                updateDailyProgress();
                 renderClientReport();
             }
 
             if (navigator.onLine && !key.startsWith('local_')) {
-                dbRef.child(key).update({ actionTaken: actionVal, adminContactMethod: adminContactSelect });
+                dbRef.child(key).update({ actionTaken: actionVal });
             }
-            alert('تم التحديث بنجاح!');
+            showToastOnly('✅ تم حفظ الإجراء بنجاح!');
         }
 
         function openEditModal(key) {
@@ -2550,7 +2322,7 @@
 
         function closeEditModal() { document.getElementById('editModal').classList.remove('open'); }
 
-        // إصلاح دالة الحفظ المباشر للتعديلات بدون مشاكل
+        // حفظ تعديل العميل المباشر
         function saveEditedRecord(e) {
             e.preventDefault();
             const key = document.getElementById('editFirebaseKey').value;
@@ -2607,7 +2379,6 @@
                         updateKPIs();
                         updateDailyProgress();
                         renderClientReport();
-                        updatePinnedCountBadge();
 
                         if (navigator.onLine && !key.startsWith('local_')) dbRef.child(key).remove();
                     }
@@ -2615,183 +2386,29 @@
             });
         }
 
-        let draggedCardIndex = null;
-
         function renderCSLinks() {
             const container = document.getElementById('linksGridContainer');
             if (!container) return;
             container.innerHTML = '';
 
             if (csLinks.length === 0) {
-                container.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 30px; color: var(--text-muted);">لا توجد روابط مضافة حالياً. انقر على "إضافة رابط جديد".</div>`;
+                container.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 30px; color: var(--text-muted);">لا توجد روابط مضافة حالياً.</div>`;
                 return;
             }
 
             csLinks.forEach((item, index) => {
                 const card = document.createElement('div');
                 card.className = 'link-card';
-                card.setAttribute('data-index', index);
 
                 card.innerHTML = `
-                    <div class="drag-handle" title="اسحب من هنا للترتيب"><i class="fa-solid fa-grip-vertical"></i></div>
-                    <div class="link-card-header">
-                        <i class="fa-solid fa-globe"></i>
-                        <span>${item.title}</span>
-                    </div>
-                    <div class="link-card-desc">${item.desc || 'لا يوجد وصف مُضاف.'}</div>
+                    <div class="link-card-header"><i class="fa-solid fa-globe"></i> <span>${item.title}</span></div>
+                    <div class="link-card-desc">${item.desc || 'لا يوجد وصف.'}</div>
                     <div class="link-card-actions">
-                        <button type="button" class="btn-open-link" onclick="secureOpenLink('${item.url}')"><i class="fa-solid fa-arrow-up-right-from-square"></i> فتح الموقع</button>
-                        <button class="btn-edit-action" onclick="openEditLinkModal('${item.linkKey}')" title="تعديل"><i class="fa-solid fa-pen"></i></button>
-                        <button class="btn-delete-action" onclick="deleteCSLink('${item.linkKey}')" title="حذف"><i class="fa-solid fa-trash"></i></button>
+                        <button class="btn-open-link" onclick="window.open('${item.url}', '_blank')"><i class="fa-solid fa-arrow-up-right-from-square"></i> فتح الرابط</button>
                     </div>
                 `;
-
-                const handle = card.querySelector('.drag-handle');
-                handle.addEventListener('mousedown', (e) => {
-                    e.preventDefault();
-                    requireAdminAuth(() => {
-                        card.setAttribute('draggable', 'true');
-                        draggedCardIndex = index;
-                        card.classList.add('dragging');
-                    });
-                });
-
-                card.addEventListener('dragstart', (e) => { if (!card.classList.contains('dragging')) e.preventDefault(); });
-                card.addEventListener('dragover', (e) => { e.preventDefault(); card.classList.add('drag-over'); });
-                card.addEventListener('dragleave', () => { card.classList.remove('drag-over'); });
-                card.addEventListener('drop', (e) => {
-                    e.preventDefault();
-                    card.classList.remove('drag-over');
-                    const targetIdx = parseInt(card.getAttribute('data-index'));
-                    if (draggedCardIndex !== null && draggedCardIndex !== targetIdx) {
-                        reorderCSLinks(draggedCardIndex, targetIdx);
-                    }
-                });
-                card.addEventListener('dragend', () => {
-                    card.removeAttribute('draggable');
-                    card.classList.remove('dragging');
-                    document.querySelectorAll('.link-card').forEach(c => c.classList.remove('drag-over'));
-                    draggedCardIndex = null;
-                });
-
                 container.appendChild(card);
             });
-        }
-
-        function secureOpenLink(url) { window.open(url, '_blank'); }
-
-        function reorderCSLinks(fromIdx, toIdx) {
-            const movedItem = csLinks.splice(fromIdx, 1)[0];
-            csLinks.splice(toIdx, 0, movedItem);
-
-            csLinks.forEach((link, idx) => {
-                link.orderIndex = idx;
-                if (navigator.onLine && !link.linkKey.startsWith('link_')) {
-                    linksDbRef.child(link.linkKey).update({ orderIndex: idx });
-                }
-            });
-
-            saveLocal(); renderCSLinks(); showToastOnly('🔄 تم ترتيب الكروت بنجاح!');
-        }
-
-        function openAddLinkModal() {
-            requireAdminAuth(() => {
-                document.getElementById('linkKey').value = '';
-                document.getElementById('linkTitle').value = '';
-                document.getElementById('linkUrl').value = '';
-                document.getElementById('linkDesc').value = '';
-                document.getElementById('linkModalTitle').innerHTML = '<i class="fa-solid fa-link"></i> إضافة رابط جديد';
-                document.getElementById('linkModal').classList.add('open');
-            });
-        }
-
-        function openEditLinkModal(key) {
-            requireAdminAuth(() => {
-                const item = csLinks.find(l => l.linkKey === key);
-                if (!item) return;
-                document.getElementById('linkKey').value = item.linkKey;
-                document.getElementById('linkTitle').value = item.title || '';
-                document.getElementById('linkUrl').value = item.url || '';
-                document.getElementById('linkDesc').value = item.desc || '';
-                document.getElementById('linkModalTitle').innerHTML = '<i class="fa-solid fa-pen"></i> تعديل بيانات الرابط';
-                document.getElementById('linkModal').classList.add('open');
-            });
-        }
-
-        function closeLinkModal() { document.getElementById('linkModal').classList.remove('open'); }
-
-        function saveLinkItem(e) {
-            e.preventDefault();
-            const key = document.getElementById('linkKey').value;
-            const title = document.getElementById('linkTitle').value.trim();
-            const url = document.getElementById('linkUrl').value.trim();
-            const desc = document.getElementById('linkDesc').value.trim();
-
-            if (key) {
-                let item = csLinks.find(l => l.linkKey === key);
-                if (item) {
-                    item.title = title; item.url = url; item.desc = desc;
-                    if (navigator.onLine && !key.startsWith('link_')) linksDbRef.child(key).update({ title, url, desc });
-                }
-            } else {
-                const tempKey = 'link_' + Date.now();
-                const newOrderIndex = csLinks.length;
-                const newLink = { linkKey: tempKey, title, url, desc, orderIndex: newOrderIndex };
-                csLinks.push(newLink);
-
-                if (navigator.onLine) {
-                    linksDbRef.push({ title, url, desc, orderIndex: newOrderIndex }).then((pushedRef) => {
-                        const idx = csLinks.findIndex(l => l.linkKey === tempKey);
-                        if (idx !== -1) { csLinks[idx].linkKey = pushedRef.key; saveLocal(); }
-                    });
-                }
-            }
-
-            saveLocal(); renderCSLinks(); closeLinkModal(); showToastOnly('✅ تم حفظ الرابط بنجاح!');
-        }
-
-        function deleteCSLink(key) {
-            requireAdminAuth(() => {
-                if (confirm('هل أنت متأكد من حذف هذا الرابط؟')) {
-                    const idx = csLinks.findIndex(l => l.linkKey === key);
-                    if (idx !== -1) {
-                        csLinks.splice(idx, 1);
-                        saveLocal(); renderCSLinks();
-                        if (navigator.onLine && !key.startsWith('link_')) linksDbRef.child(key).remove();
-                        showToastOnly('🗑️ تم حذف الرابط بنجاح!');
-                    }
-                }
-            });
-        }
-
-        function setClientTimeFilterSelect(hours) {
-            clientHoursFilter = hours;
-            localStorage.setItem('savedClientHoursFilter', hours);
-            renderClientReport();
-        }
-
-        function getOpenFilteredRecords() {
-            let openRecords = records.filter(r => {
-                if (r.isHiddenFromClients) return false;
-                if (isPinnedFilterActive && !r.isPinned) return false;
-                return true;
-            });
-
-            if (clientHoursFilter !== 'all' && !isPinnedFilterActive) {
-                const now = new Date();
-                openRecords = openRecords.filter(r => {
-                    const diffHours = (now - new Date(r.createdAt)) / (1000 * 60 * 60);
-                    return diffHours <= parseFloat(clientHoursFilter);
-                });
-            }
-
-            if (clientPaymentFilter === 'paid') {
-                openRecords = openRecords.filter(r => r.paymentStatus === 'paid');
-            } else if (clientPaymentFilter === 'unpaid') {
-                openRecords = openRecords.filter(r => r.paymentStatus === 'unpaid');
-            }
-
-            return openRecords;
         }
 
         function formatDateTimeFullCustom(isoString) {
@@ -2803,10 +2420,9 @@
                 const year = d.getFullYear();
                 let hours = d.getHours();
                 const minutes = String(d.getMinutes()).padStart(2, '0');
-                const seconds = String(d.getSeconds()).padStart(2, '0');
                 const ampm = hours >= 12 ? 'PM' : 'AM';
                 hours = hours % 12 || 12;
-                return `${day}/${month}/${year} , ${String(hours).padStart(2, '0')}:${minutes}:${seconds}${ampm}`;
+                return `${day}/${month}/${year} , ${String(hours).padStart(2, '0')}:${minutes} ${ampm}`;
             } catch(e) { return isoString; }
         }
 
@@ -2825,113 +2441,40 @@
             
             setLocalCopiedMap(copiedList);
             renderClientReport();
-            updatePinnedCountBadge();
             
-            showToastOnly(isCurrentlyCopied ? '✖️ تم إزالة تحديد المنسوخ' : '✅ تم تحويل الكارت للون الأخضر ونزوله لأسفل الكشف');
+            showToastOnly(isCurrentlyCopied ? '✖️ تم إلغاء تحديد المنسوخ' : '✅ تم تحويل الكارت للأخضر ونزوله لأسفل الكشف');
         }
 
-        function hideClientGroupFromReport(keysArray) {
-            requireAdminAuth(() => {
-                const nowIso = new Date().toISOString();
-                keysArray.forEach(k => {
-                    let rec = records.find(r => r.firebaseKey === k);
-                    if (rec) {
-                        rec.isHiddenFromClients = true;
-                        rec.deletedAt = nowIso;
-                        if (navigator.onLine && !k.startsWith('local_')) dbRef.child(k).update({ isHiddenFromClients: true, deletedAt: nowIso });
-                    }
-                });
-                saveLocal(); renderClientReport(); renderTrashModalList();
-                showToastOnly('🗑️ تم نقل الطلبات إلى سلة المحذوفات بنجاح!');
-            });
-        }
-
-        function permanentDeleteGroupFromReport(keysArray) {
-            requireAdminAuth(() => {
-                if (confirm('⚠️ تنبيه: هل أنت متأكد من الحذف النهائي للعميل وجميع طلباته؟')) {
-                    records = records.filter(r => !keysArray.includes(r.firebaseKey));
-                    saveLocal(); renderTable(); updateKPIs(); updateDailyProgress(); renderClientReport(); renderTrashModalList(); updatePinnedCountBadge();
-                    keysArray.forEach(k => { if (navigator.onLine && !k.startsWith('local_')) dbRef.child(k).remove(); });
-                    alert('تم الحذف النهائي بنجاح.');
-                }
-            });
-        }
-
-        function restoreClientToReport(key) {
-            requireAdminAuth(() => {
-                let rec = records.find(r => r.firebaseKey === key);
-                if (rec) {
-                    rec.isHiddenFromClients = false;
-                    rec.deletedAt = null;
-                    saveLocal(); renderClientReport(); renderTrashModalList();
-                    if (navigator.onLine && !key.startsWith('local_')) dbRef.child(key).update({ isHiddenFromClients: false, deletedAt: null });
-                    showToastOnly('↩️ تم استرجاع العميل بنجاح!');
-                }
-            });
-        }
-
-        function permanentDeleteClientFromReport(key) {
-            requireAdminAuth(() => {
-                if (confirm('⚠️ تنبيه: هل أنت متأكد من الحذف النهائي لهذا العميل؟')) {
-                    const idx = records.findIndex(r => r.firebaseKey === key);
-                    if (idx !== -1) {
-                        records.splice(idx, 1);
-                        saveLocal(); renderTable(); updateKPIs(); updateDailyProgress(); renderClientReport(); renderTrashModalList(); updatePinnedCountBadge();
-                        if (navigator.onLine && !key.startsWith('local_')) dbRef.child(key).remove();
-                        alert('تم الحذف النهائي.');
-                    }
-                }
-            });
-        }
-
-        function checkTrashAuthAndOpen() { requireAdminAuth(() => { openTrashModal(); }); }
-        function openTrashModal() { renderTrashModalList(); document.getElementById('trashModal').classList.add('open'); }
-        function closeTrashModal() { document.getElementById('trashModal').classList.remove('open'); }
-
-        function renderTrashModalList() {
-            const trashContainer = document.getElementById('trashModalList');
-            if (!trashContainer) return;
-            trashContainer.innerHTML = '';
-
-            let hiddenRecords = records.filter(r => r.isHiddenFromClients);
-            if (hiddenRecords.length === 0) {
-                trashContainer.innerHTML = '<div style="text-align:center; padding:20px; color:var(--text-muted); font-size:0.9rem;">سلة المحذوفات فارغة تماماً</div>';
-                return;
-            }
-
-            hiddenRecords.sort((a, b) => new Date(b.deletedAt || b.createdAt) - new Date(a.deletedAt || a.createdAt));
-
-            hiddenRecords.forEach((item, index) => {
-                const card = document.createElement('div');
-                card.className = 'client-card-wrapper';
-                const fileStr = (item.fileNumber && item.fileNumber !== '-') ? ` ${item.fileNumber}` : '';
-                const phoneStr = (item.patientPhone && item.patientPhone !== '-') ? item.patientPhone : '-';
-                const dateTimeStr = formatDateTimeFullCustom(item.createdAt);
-
-                card.innerHTML = `
-                    <div class="client-card-header">
-                        <div class="client-title"><span>${index + 1}- ${item.patientName}${fileStr}</span></div>
-                        ${dateTimeStr ? `<span class="client-datetime-badge"><i class="fa-regular fa-clock"></i> ${dateTimeStr}</span>` : ''}
-                    </div>
-                    <div class="client-info-row"><span class="info-label">رقم الجوال:</span> ${phoneStr}</div>
-                    <div class="client-info-row">${item.serviceRequired || '-'}</div>
-                    <div class="client-actions-row">
-                        <button class="btn-client-action restore" onclick="restoreClientToReport('${item.firebaseKey}')"><i class="fa-solid fa-rotate-left"></i> استرجاع</button>
-                        <button class="btn-client-action permanent-delete" onclick="permanentDeleteClientFromReport('${item.firebaseKey}')"><i class="fa-solid fa-trash-can"></i> حذف نهائي</button>
-                    </div>
-                `;
-                trashContainer.appendChild(card);
-            });
-        }
-
+        // عرض كروت الكشف طبقاً للفلتر الموحد
         function renderClientReport() {
             const container = document.getElementById('clientReportList');
             if (!container) return;
             container.innerHTML = '';
 
-            updatePinnedCountBadge();
-            let openRecords = getOpenFilteredRecords();
+            let openRecords = records.filter(r => !r.isHiddenFromClients);
             const localCopiedList = getLocalCopiedMap();
+
+            // تطبيق الساعات
+            if (clientHoursFilter !== 'all') {
+                const now = new Date();
+                openRecords = openRecords.filter(r => {
+                    const diffHours = (now - new Date(r.createdAt)) / (1000 * 60 * 60);
+                    return diffHours <= parseFloat(clientHoursFilter);
+                });
+            }
+
+            // تطبيق الفلتر الموحد الرئيسي
+            if (clientMainFilter === 'normal') {
+                openRecords = openRecords.filter(r => !localCopiedList.includes(r.firebaseKey));
+            } else if (clientMainFilter === 'pinned') {
+                openRecords = openRecords.filter(r => r.isPinned);
+            } else if (clientMainFilter === 'paid') {
+                openRecords = openRecords.filter(r => r.paymentStatus === 'paid');
+            } else if (clientMainFilter === 'unpaid') {
+                openRecords = openRecords.filter(r => r.paymentStatus === 'unpaid');
+            } else if (clientMainFilter === 'payment_all') {
+                openRecords = openRecords.filter(r => r.paymentStatus && r.paymentStatus !== 'none');
+            }
 
             const searchInputEl = document.getElementById('clientSearchInput');
             if (searchInputEl) {
@@ -2946,7 +2489,7 @@
             }
 
             if (openRecords.length === 0) {
-                container.innerHTML = '<div style="text-align:center; padding:30px; color:var(--text-muted); font-size:1rem;">لا توجد نتائج أو حالات طابقت البحث 🎉</div>';
+                container.innerHTML = '<div style="text-align:center; padding:30px; color:var(--text-muted); font-size:1rem;">لا توجد حالات مطابقة للفلتر 🎉</div>';
                 return;
             }
 
@@ -2980,7 +2523,7 @@
                 });
             });
 
-            // ترتيب القائمة: غير المنسوخ أولاً، والمنسق باللون الأخضر ينزل لأسفل اتوماتيكياً
+            // الترتيب: المنسوخ ينزل لأسفل الكشف
             consolidatedList.sort((a, b) => {
                 if (a.isCopied !== b.isCopied) return a.isCopied ? 1 : -1;
                 return new Date(b.latestCreatedAt) - new Date(a.latestCreatedAt);
@@ -2995,12 +2538,11 @@
 
                 card.className = `client-card-wrapper ${isCopied ? 'is-copied-style' : ''}`;
                 const fileStr = (rec.fileNumber && rec.fileNumber !== '-') ? ` ${rec.fileNumber}` : '';
-                const idStr = (rec.idNumber && rec.idNumber !== '-') ? rec.idNumber : '';
                 const phoneStr = (rec.patientPhone && rec.patientPhone !== '-') ? rec.patientPhone : '-';
                 const dateTimeStr = formatDateTimeFullCustom(item.latestCreatedAt);
                 const keysJsonStr = JSON.stringify(item.allKeys).replace(/"/g, '&quot;');
 
-                const pinBtnHTML = `<button class="copied-btn" style="background-color: ${isPinned ? '#d97706' : '#475569'}; border-color: ${isPinned ? '#f59e0b' : '#64748b'}; color: #ffffff;" onclick="requestTogglePinRecord('${rec.firebaseKey}')">📌 ${isPinned ? 'المميزون' : 'تثبيت'}</button>`;
+                const pinBtnHTML = `<button class="copied-btn" style="background-color: ${isPinned ? '#d97706' : '#475569'};" onclick="requestTogglePinRecord('${rec.firebaseKey}')">📌 ${isPinned ? 'مثبت' : 'تثبيت'}</button>`;
                 
                 let payBtnText = 'حالة الدفع';
                 let payBtnClass = '';
@@ -3014,7 +2556,7 @@
                     <div class="client-card-header">
                         <div class="client-title">
                             <input type="checkbox" class="client-select-chk" data-keys="${keysJsonStr}">
-                            <span style="font-size:0.95rem; line-height:1.3; word-break:break-word;">${index + 1}- ${rec.patientName}${fileStr}</span>
+                            <span>${index + 1}- ${rec.patientName}${fileStr}</span>
                         </div>
                         <div class="client-badges-column">
                             ${pinBtnHTML}
@@ -3022,25 +2564,20 @@
                             ${copyBtnHTML}
                         </div>
                     </div>
-                    ${dateTimeStr ? `<div style="font-size:0.72rem;"><span class="client-datetime-badge"><i class="fa-regular fa-clock"></i> ${dateTimeStr}</span></div>` : ''}
-                    <div class="client-info-row"><span class="info-label">رقم الجوال:</span> ${phoneStr} ${idStr ? ` | <span class="info-label">الهوية:</span> ${idStr}` : ''}</div>
+                    ${dateTimeStr ? `<div><span class="client-datetime-badge"><i class="fa-regular fa-clock"></i> ${dateTimeStr}</span></div>` : ''}
+                    <div class="client-info-row"><span class="info-label">الجوال:</span> ${phoneStr}</div>
                     <div class="client-info-row">${item.servicesCombined || '-'}</div>
-                    <div class="client-actions-row">
-                        <button class="btn-client-action delete-to-trash" onclick="hideClientGroupFromReport(${keysJsonStr})">حذف</button>
-                        <button class="btn-client-action permanent-delete" onclick="permanentDeleteGroupFromReport(${keysJsonStr})">حذف نهائي</button>
-                    </div>
                 `;
                 container.appendChild(card);
             });
         }
 
         function copyClientReport() {
-            let openRecords = getOpenFilteredRecords();
-            if (openRecords.length === 0) return alert('لا يوجد عملاء حالياً للنسخ!');
-
+            let openRecords = records.filter(r => !r.isHiddenFromClients);
             const localCopiedList = getLocalCopiedMap();
             const groupedMap = new Map();
-            const recordsToCopy = isPinnedFilterActive ? openRecords : openRecords.filter(r => !localCopiedList.includes(r.firebaseKey));
+
+            let recordsToCopy = openRecords.filter(r => !localCopiedList.includes(r.firebaseKey));
 
             recordsToCopy.forEach(record => {
                 const cleanPhone = (record.patientPhone && record.patientPhone !== '-') ? record.patientPhone.replace(/\D/g, '') : '';
@@ -3049,7 +2586,7 @@
                 groupedMap.get(groupKey).push(record);
             });
 
-            if (groupedMap.size === 0 && !isPinnedFilterActive) return alert('جميع العملاء غير المنسوخين تم نسخهم!');
+            if (groupedMap.size === 0) return alert('جميع الحالات المتاحة تم نسخها مسبقاً!');
 
             let reportText = ``;
             let idx = 1;
@@ -3057,7 +2594,6 @@
                 groupRecords.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
                 const item = groupRecords[0];
                 const fileStr = (item.fileNumber && item.fileNumber !== '-') ? ` ${item.fileNumber}` : '';
-                const idStr = (item.idNumber && item.idNumber !== '-') ? `رقم الهوية: ${item.idNumber}\n` : '';
                 const phoneStr = (item.patientPhone && item.patientPhone !== '-') ? item.patientPhone : '-';
 
                 const uniqueServices = [];
@@ -3066,63 +2602,11 @@
                     if (txt && !uniqueServices.includes(txt)) uniqueServices.push(txt);
                 });
 
-                reportText += `${idx}- ${item.patientName}${fileStr}\nرقم الجوال: ${phoneStr}\n${idStr}${uniqueServices.join(' / ') || '-'}\n\n`;
+                reportText += `${idx}- ${item.patientName}${fileStr}\nرقم الجوال: ${phoneStr}\n${uniqueServices.join(' / ') || '-'}\n\n`;
                 idx++;
             });
 
             navigator.clipboard.writeText(reportText.trim()).then(() => alert(`تم نسخ (${groupedMap.size}) عميل بنجاح!`));
-        }
-
-        function requestDeleteSelectedAccess() {
-            const checkboxes = document.querySelectorAll('.client-select-chk:checked');
-            if (checkboxes.length === 0) return alert('يرجى اختيار عميل واحد على الأقل!');
-            requireAdminAuth(() => {
-                if (confirm('هل أنت متأكد من الحذف النهائي؟')) {
-                    let keysToDelete = [];
-                    checkboxes.forEach(cb => {
-                        const attr = cb.getAttribute('data-keys');
-                        if (attr) {
-                            try { keysToDelete = keysToDelete.concat(JSON.parse(attr)); } catch(e) {}
-                        }
-                    });
-
-                    records = records.filter(r => !keysToDelete.includes(r.firebaseKey));
-                    saveLocal(); renderTable(); updateKPIs(); updateDailyProgress(); renderClientReport(); renderTrashModalList(); updatePinnedCountBadge();
-                    keysToDelete.forEach(k => { if (navigator.onLine && !k.startsWith('local_')) dbRef.child(k).remove(); });
-                    alert('تم الحذف بنجاح.');
-                }
-            });
-        }
-
-        function requestDeleteRangeAccess() {
-            requireAdminAuth(() => {
-                const filterDesc = clientHoursFilter === 'all' ? 'جميع الأوقات' : `آخر ${clientHoursFilter} ساعة`;
-                if (confirm(`⚠️ تحذير: مسح الفترة (${filterDesc}) نهائياً؟`)) {
-                    executeDeleteClientsTimeRange();
-                }
-            });
-        }
-
-        function executeDeleteClientsTimeRange() {
-            const now = new Date();
-            let keysToDelete = [];
-
-            records = records.filter(r => {
-                let shouldDelete = false;
-                if (!r.isHiddenFromClients) {
-                    if (clientHoursFilter === 'all') shouldDelete = true;
-                    else {
-                        const diffHours = (now - new Date(r.createdAt)) / (1000 * 60 * 60);
-                        if (diffHours <= parseFloat(clientHoursFilter)) shouldDelete = true;
-                    }
-                }
-                if (shouldDelete && !r.firebaseKey.startsWith('local_')) keysToDelete.push(r.firebaseKey);
-                return !shouldDelete;
-            });
-
-            saveLocal(); renderTable(); updateKPIs(); updateDailyProgress(); renderClientReport(); renderTrashModalList(); updatePinnedCountBadge();
-            keysToDelete.forEach(k => { if (navigator.onLine) dbRef.child(k).remove(); });
-            alert('تم مسح الحالات نهائياً.');
         }
 
         function updateKPIs() {
@@ -3131,14 +2615,6 @@
             document.getElementById('kpi-paid').innerText = records.filter(r => r.paymentStatus === 'paid').length;
             document.getElementById('kpi-repeated').innerText = records.filter(r => r.isRepeatedRequest).length;
             document.getElementById('kpi-plants').innerText = records.filter(r => (r.procedureType && r.procedureType.includes('زراعة'))).length;
-            
-            const extractionsCount = records.filter(r => r.procedureType && r.procedureType.includes('خلع')).length;
-            const reviewsCount = records.filter(r => r.procedureType && r.procedureType.includes('مراجعه')).length;
-
-            const kExt = document.getElementById('kpi-extractions');
-            const kRev = document.getElementById('kpi-reviews');
-            if (kExt) kExt.innerText = extractionsCount;
-            if (kRev) kRev.innerText = reviewsCount;
         }
 
         function formatDateOnly(isoString) {
@@ -3168,7 +2644,7 @@
             const pass = document.getElementById('clearPasswordInput').value;
             if (pass === localStorage.getItem('adminPassword')) {
                 records = [];
-                saveLocal(); renderTable(); updateKPIs(); updateDailyProgress(); renderClientReport(); renderTrashModalList(); updatePinnedCountBadge();
+                saveLocal(); renderTable(); updateKPIs(); updateDailyProgress(); renderClientReport();
                 closeClearModal();
                 if (navigator.onLine) dbRef.set(null);
             } else { alert('كلمة المرور غير صحيحة!'); }
@@ -3189,71 +2665,22 @@
         function importData(e) {
             const file = e.target.files[0];
             if (!file) return;
-            const fileName = file.name.toLowerCase();
-
-            if (fileName.endsWith('.json')) {
-                const reader = new FileReader();
-                reader.onload = function(evt) {
-                    try {
-                        const imported = JSON.parse(evt.target.result);
-                        if (Array.isArray(imported)) {
-                            imported.forEach(item => {
-                                delete item.firebaseKey;
-                                records.unshift(item);
-                                if (navigator.onLine) dbRef.push(item);
-                            });
-                            saveLocal(); renderTable(); updateKPIs(); updateDailyProgress(); renderClientReport(); renderTrashModalList(); updatePinnedCountBadge();
-                            alert('تم الاستيراد بنجاح!');
-                        }
-                    } catch(err) { alert('خطأ في ملف JSON'); }
-                };
-                reader.readAsText(file);
-            } else if (fileName.endsWith('.xlsx') || fileName.endsWith('.xls')) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    try {
-                        const data = new Uint8Array(e.target.result);
-                        const workbook = XLSX.read(data, { type: 'array' });
-                        const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-                        const jsonSheetData = XLSX.utils.sheet_to_json(worksheet);
-
-                        if (Array.isArray(jsonSheetData) && jsonSheetData.length > 0) {
-                            jsonSheetData.forEach(row => {
-                                const formattedRow = {
-                                    patientName: row.patientName || row['اسم العميل'] || 'بدون اسم',
-                                    patientPhone: row.patientPhone || row['رقم الجوال'] || '-',
-                                    fileNumber: row.fileNumber || row['رقم الملف'] || '-',
-                                    idNumber: row.idNumber || row['رقم الهوية / الإقامة'] || '-',
-                                    branch: row.branch || row['الفرع'] || 'فرع معشي',
-                                    procedureType: row.procedureType || row['نوع الإجراء'] || 'أخرى',
-                                    contactMethod: row.contactMethod || row['طريقة التواصل'] || 'اتصال',
-                                    serviceRequired: row.serviceRequired || row['الخدمة المطلوبة'] || '-',
-                                    coordinatorName: row.coordinatorName || row['اسم المنسق'] || 'مسؤول',
-                                    paymentStatus: row.paymentStatus || 'none',
-                                    isRecurring: !!row.isRecurring,
-                                    isRepeatedRequest: !!row.isRepeatedRequest,
-                                    createdAt: row.createdAt || new Date().toISOString(),
-                                    actionTaken: '',
-                                    adminContactMethod: 'قيد الانتظار',
-                                    adminContactDetail: '',
-                                    isPinned: false,
-                                    isHiddenFromClients: false,
-                                    deletedAt: null
-                                };
-                                records.unshift(formattedRow);
-                                if (navigator.onLine) dbRef.push(formattedRow);
-                            });
-
-                            saveLocal(); renderTable(); updateKPIs(); updateDailyProgress(); renderClientReport(); renderTrashModalList(); updatePinnedCountBadge();
-                            alert('تم استيراد Excel بنجاح!');
-                        }
-                    } catch (err) { alert('خطأ في قراءة ملف Excel.'); }
-                };
-                reader.readAsArrayBuffer(e.target.result);
-            } else {
-                alert('نوع الملف غير مدعوم.');
-            }
-            e.target.value = false;
+            const reader = new FileReader();
+            reader.onload = function(evt) {
+                try {
+                    const imported = JSON.parse(evt.target.result);
+                    if (Array.isArray(imported)) {
+                        imported.forEach(item => {
+                            delete item.firebaseKey;
+                            records.unshift(item);
+                            if (navigator.onLine) dbRef.push(item);
+                        });
+                        saveLocal(); renderTable(); updateKPIs(); updateDailyProgress(); renderClientReport();
+                        alert('تم الاستيراد بنجاح!');
+                    }
+                } catch(err) { alert('خطأ في استيراد الملف'); }
+            };
+            reader.readAsText(file);
         }
     </script>
 </body>
