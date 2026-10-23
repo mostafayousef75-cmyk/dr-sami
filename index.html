@@ -2359,21 +2359,20 @@
             playBeepAndShowToast('⚠️ تم إضافة العميل والموعد بنجاح!');
         });
 
+        // تم إلغاء الباسورد هنا بالكامل لتصبح ميزة التثبيت محلية وسريعة بدون قيود
         function requestTogglePinRecord(key) {
-            requireAdminAuth(() => {
-                let rec = records.find(r => r.firebaseKey === key);
-                if (rec) {
-                    let st = localClientStates[key] || {};
-                    st.isPinned = !st.isPinned;
-                    localClientStates[key] = st;
-                    saveLocalClientStates();
+            let rec = records.find(r => r.firebaseKey === key);
+            if (rec) {
+                let st = localClientStates[key] || {};
+                st.isPinned = !st.isPinned;
+                localClientStates[key] = st;
+                saveLocalClientStates();
 
-                    renderTable();
-                    renderClientReport();
+                renderTable();
+                renderClientReport();
 
-                    showToastOnly(st.isPinned ? '📌 تم التثبيت في المميزين (على هذا الجهاز)' : '✖️ تم إزالتها من المميزين');
-                }
-            });
+                showToastOnly(st.isPinned ? '📌 تم التثبيت في المميزين (على هذا الجهاز)' : '✖️ تم إزالتها من المميزين');
+            }
         }
 
         function setDashboardFilter(filterType, btn) {
