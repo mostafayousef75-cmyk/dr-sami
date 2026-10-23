@@ -109,7 +109,6 @@
             overflow-x: hidden;
         }
 
-        /* تصميم أشرطة التمرير (Scrollbars) لتكون واضحة وسهلة الاستخدام */
         ::-webkit-scrollbar {
             width: 8px;
             height: 12px;
@@ -829,7 +828,6 @@
         }
         #notificationToast.show { transform: translateY(0); opacity: 1; }
 
-        /* تعديل صفحة الكشف لتكون الكروت تحت بعضها عمودياً وبحجم مرتب وصغير */
         .client-report-container {
             display: flex;
             flex-direction: column;
@@ -841,11 +839,11 @@
             background-color: var(--bg-base);
             border: 1px solid var(--border-color);
             border-radius: var(--radius-md);
-            padding: 8px 12px;
+            padding: 10px 12px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            gap: 4px;
+            gap: 6px;
             position: relative;
             box-shadow: 0 1px 3px rgba(0,0,0,0.2);
             width: 100%;
@@ -877,8 +875,8 @@
         }
 
         .client-card-header .client-select-chk {
-            width: 15px;
-            height: 15px;
+            width: 16px;
+            height: 16px;
             cursor: pointer;
             accent-color: var(--primary-color);
             flex-shrink: 0;
@@ -916,16 +914,18 @@
             background: #d97706;
             color: #ffffff;
             border: none;
-            padding: 3px 8px;
-            border-radius: 4px;
+            padding: 6px 12px;
+            border-radius: 6px;
             font-family: var(--font-family);
-            font-size: 0.7rem;
+            font-size: 0.78rem;
             font-weight: 700;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
-            gap: 3px;
+            justify-content: center;
+            gap: 4px;
             white-space: nowrap;
+            flex: 1;
         }
 
         .copied-btn.active {
@@ -934,26 +934,26 @@
 
         .client-actions-row {
             display: flex;
-            gap: 5px;
-            margin-top: 2px;
+            gap: 6px;
+            margin-top: 4px;
             justify-content: flex-end;
             width: 100%;
             border-top: 1px solid var(--border-color);
-            padding-top: 4px;
+            padding-top: 6px;
         }
 
         .btn-client-action {
-            padding: 3px 8px;
-            border-radius: 4px;
+            padding: 5px 10px;
+            border-radius: 6px;
             border: none;
             color: #fff;
             font-family: var(--font-family);
-            font-size: 0.72rem;
+            font-size: 0.75rem;
             font-weight: 700;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
-            gap: 3px;
+            gap: 4px;
         }
 
         .btn-client-action.delete-to-trash { background-color: var(--danger-color); }
@@ -1071,12 +1071,19 @@
         .close-modal-btn { background: none; border: none; font-size: 1.3rem; color: var(--text-muted); cursor: pointer; }
 
         .client-header-controls {
-            display: flex;
-            align-items: center;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
             gap: 8px;
-            flex-wrap: wrap;
             width: 100%;
-            justify-content: flex-end;
+        }
+        .client-header-controls select,
+        .client-header-controls .dropdown-filter-container,
+        .client-header-controls .action-btn {
+            width: 100%;
+        }
+        .client-header-controls .dropdown-filter-btn {
+            width: 100%;
+            justify-content: space-between;
         }
 
         @media (max-width: 768px) {
@@ -1161,7 +1168,7 @@
             }
             .client-header-controls {
                 display: grid;
-                grid-template-columns: 1fr;
+                grid-template-columns: repeat(2, 1fr);
                 gap: 6px;
                 width: 100%;
             }
@@ -1537,8 +1544,8 @@
                                 </select>
 
                                 <div class="dropdown-filter-container" id="clientViewFilterContainer">
-                                    <button class="dropdown-filter-btn" id="clientViewFilterBtn" onclick="toggleDropdown('clientViewFilterContent')" style="background-color: var(--primary-color); color: #fff;">
-                                        <i class="fa-solid fa-filter"></i> <span id="clientViewFilterLabel">الكشف العادي</span> <i class="fa-solid fa-chevron-down" style="font-size:0.7rem;"></i>
+                                    <button class="dropdown-filter-btn" id="clientViewFilterBtn" onclick="toggleDropdown('clientViewFilterContent')" style="background-color: var(--primary-color); color: #fff; width: 100%; padding: 8px 10px; border-radius: 6px; border: none; font-family: var(--font-family); font-size: 0.85rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: space-between;">
+                                        <span><i class="fa-solid fa-filter"></i> <span id="clientViewFilterLabel">الكشف العادي</span></span> <i class="fa-solid fa-chevron-down" style="font-size:0.7rem;"></i>
                                     </button>
                                     <div class="dropdown-content" id="clientViewFilterContent">
                                         <button class="dropdown-item" onclick="setClientViewFilter('normal')">📋 الكشف العادى</button>
@@ -3362,7 +3369,7 @@
 
                 const copyBtnHTML = `
                     <button class="copied-btn ${isCopied ? 'active' : ''}" onclick="toggleCopiedStatusGroup(${keysJsonStr})">
-                        <i class="fa-solid ${isCopied ? 'fa-circle-check' : 'fa-check'}"></i> ${isCopied ? 'تم النسخ' : 'تعليم'}
+                        <i class="fa-solid ${isCopied ? 'fa-circle-check' : 'fa-check'}"></i> ${isCopied ? 'تم النسخ' : 'كمنسوخ'}
                     </button>
                 `;
 
@@ -3380,7 +3387,7 @@
                     <div class="client-info-row" style="display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;">
                         ${serviceStr}
                     </div>
-                    <div style="display: flex; gap: 4px; align-items: center; justify-content: flex-start; flex-wrap: wrap;">
+                    <div style="display: flex; gap: 6px; align-items: center; justify-content: space-between; width: 100%;">
                         ${pinBtnHTML}${copyBtnHTML}
                     </div>
                     <div class="client-actions-row">
