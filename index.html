@@ -8,7 +8,7 @@
     <!-- خط Tajawal -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
     <!-- FontAwesome الأيقونات -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -21,32 +21,33 @@
     <style>
         :root {
             --font-family: 'Tajawal', sans-serif;
-            --bg-base: #0a0e17;
-            --bg-surface: #111827;
-            --bg-card: #050811;
+            --bg-base: #0f172a;
+            --bg-surface: #1e293b;
+            --bg-card: #1e293b;
             --bg-sidebar: #0f172a;
-            --text-main: #ffffff;
+            --text-main: #f8fafc;
             --text-muted: #94a3b8;
-            --border-color: #1e293b;
+            --border-color: #334155;
             
-            --primary-color: #2563eb;
-            --primary-hover: #1d4ed8;
-            --accent-purple: #7c3aed;
-            --warning-color: #d97706;
-            --danger-color: #dc2626;
-            --success-color: #16a34a;
+            --primary-color: #3b82f6;
+            --primary-hover: #2563eb;
+            --accent-purple: #8b5cf6;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --success-color: #10b981;
 
-            --shadow-sm: 0 1px 3px rgba(0,0,0,0.5);
-            --radius-lg: 12px;
-            --radius-md: 8px;
+            --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+            --shadow-lg: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
+            --radius-lg: 16px;
+            --radius-md: 10px;
         }
 
         body.light-theme {
-            --bg-base: #f4f6fb;
+            --bg-base: #f1f5f9;
             --bg-surface: #ffffff;
             --bg-card: #ffffff;
-            --bg-sidebar: #0f172a;
-            --text-main: #1e293b;
+            --bg-sidebar: #1e293b;
+            --text-main: #0f172a;
             --text-muted: #64748b;
             --border-color: #e2e8f0;
         }
@@ -55,7 +56,7 @@
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+            transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease, box-shadow 0.25s ease;
         }
 
         body {
@@ -86,7 +87,8 @@
             bottom: 0;
             right: 0;
             z-index: 1000;
-            transition: transform 0.3s ease;
+            border-left: 1px solid var(--border-color);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .app-layout.sidebar-collapsed .sidebar {
@@ -98,30 +100,37 @@
             align-items: center;
             justify-content: space-between;
             padding-bottom: 20px;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
+            border-bottom: 1px solid var(--border-color);
         }
 
         .brand-info {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
         }
 
         .brand-icon {
             font-size: 1.8rem;
             color: var(--primary-color);
+            background: rgba(59, 130, 246, 0.15);
+            width: 45px;
+            height: 45px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        .brand-text h2 { font-size: 1.1rem; font-weight: 700; color: #fff; }
+        .brand-text h2 { font-size: 1.15rem; font-weight: 800; color: #fff; }
         .brand-text p { font-size: 0.8rem; opacity: 0.7; color: #94a3b8; }
 
         .toggle-sidebar-btn {
-            background: rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.05);
             color: white;
-            border: none;
-            width: 32px;
-            height: 32px;
-            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            width: 34px;
+            height: 34px;
+            border-radius: 8px;
             cursor: pointer;
             display: flex;
             align-items: center;
@@ -143,7 +152,7 @@
             gap: 12px;
             color: #94a3b8;
             text-decoration: none;
-            padding: 14px 16px;
+            padding: 12px 16px;
             border-radius: var(--radius-md);
             font-size: 0.95rem;
             font-weight: 600;
@@ -157,15 +166,9 @@
         }
 
         .menu-item.active {
-            background-color: #1e293b;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
             color: #ffffff;
-            border: 1px solid var(--primary-color);
-            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
-        }
-
-        body.light-theme .menu-item.active {
-            background-color: #e2e8f0;
-            color: #1e293b;
+            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.35);
         }
 
         .cloud-badge {
@@ -178,9 +181,10 @@
             gap: 8px;
             justify-content: center;
             color: #fff;
+            border: 1px solid var(--border-color);
         }
 
-        .online-dot { width: 10px; height: 10px; background-color: #22c55e; border-radius: 50%; box-shadow: 0 0 8px #22c55e; display: inline-block; }
+        .online-dot { width: 10px; height: 10px; background-color: #10b981; border-radius: 50%; box-shadow: 0 0 8px #10b981; display: inline-block; }
 
         .main-wrapper {
             margin-right: 270px;
@@ -199,13 +203,14 @@
         .top-header {
             background-color: var(--bg-surface);
             border-bottom: 1px solid var(--border-color);
-            padding: 15px 20px;
+            padding: 15px 25px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             position: sticky;
             top: 0;
             z-index: 90;
+            box-shadow: var(--shadow-sm);
         }
 
         .header-title {
@@ -214,13 +219,13 @@
             gap: 12px;
         }
 
-        .header-title h1 { font-size: 1.2rem; font-weight: 700; color: var(--text-main); }
+        .header-title h1 { font-size: 1.25rem; font-weight: 800; color: var(--text-main); }
 
         .open-sidebar-btn {
             background: var(--primary-color);
             color: white;
             border: none;
-            padding: 8px 12px;
+            padding: 8px 14px;
             border-radius: var(--radius-md);
             cursor: pointer;
             display: inline-flex;
@@ -235,8 +240,8 @@
             background: var(--bg-base);
             border: 1px solid var(--border-color);
             color: var(--text-main);
-            width: 38px;
-            height: 38px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
             cursor: pointer;
             font-size: 1rem;
@@ -246,16 +251,16 @@
         }
 
         .content-body {
-            padding: 15px;
+            padding: 20px;
             display: flex;
             flex-direction: column;
-            gap: 18px;
+            gap: 20px;
         }
 
         .page-view {
             display: flex;
             flex-direction: column;
-            gap: 18px;
+            gap: 20px;
         }
 
         .hidden { display: none !important; }
@@ -264,7 +269,7 @@
             background-color: var(--bg-surface);
             border: 1px solid var(--border-color);
             border-radius: var(--radius-lg);
-            padding: 15px;
+            padding: 20px;
             box-shadow: var(--shadow-sm);
         }
 
@@ -272,28 +277,29 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 14px;
+            margin-bottom: 16px;
             flex-wrap: wrap;
             gap: 10px;
         }
 
         .section-header h2 {
-            font-size: 1.1rem;
+            font-size: 1.15rem;
             color: var(--text-main);
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
+            font-weight: 700;
         }
 
         .clinic-announcements-box {
-            background: linear-gradient(135deg, rgba(37, 99, 235, 0.12), rgba(124, 58, 237, 0.12));
-            border: 1px solid var(--primary-color);
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.1));
+            border: 1px solid rgba(59, 130, 246, 0.3);
             border-radius: var(--radius-lg);
-            padding: 15px;
+            padding: 18px;
             display: flex;
             flex-direction: column;
-            gap: 12px;
-            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.15);
+            gap: 14px;
+            box-shadow: var(--shadow-sm);
         }
         .announcement-header-row {
             display: flex;
@@ -306,14 +312,14 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            font-size: 1rem;
-            font-weight: 700;
+            font-size: 1.05rem;
+            font-weight: 800;
             color: var(--primary-color);
         }
         .announcements-grid {
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 12px;
             max-height: 280px;
             overflow-y: auto;
         }
@@ -321,12 +327,12 @@
             background: var(--bg-base);
             border: 1px solid var(--border-color);
             border-radius: var(--radius-md);
-            padding: 12px 14px;
+            padding: 14px 16px;
             display: flex;
             flex-direction: column;
             gap: 10px;
             border-right: 4px solid var(--warning-color);
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            box-shadow: var(--shadow-sm);
         }
         .announcement-body-content {
             display: flex;
@@ -336,7 +342,7 @@
             flex-wrap: wrap;
         }
         .announcement-body-text {
-            font-size: 0.9rem;
+            font-size: 0.92rem;
             color: var(--text-main);
             line-height: 1.6;
             word-break: break-word;
@@ -344,9 +350,9 @@
             flex: 1;
         }
         .announcement-thumbnail-wrapper {
-            width: 55px;
-            height: 55px;
-            border-radius: 6px;
+            width: 60px;
+            height: 60px;
+            border-radius: 8px;
             overflow: hidden;
             border: 1px solid var(--border-color);
             cursor: pointer;
@@ -367,10 +373,10 @@
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            background: rgba(37, 99, 235, 0.18);
-            border: 1px solid rgba(37, 99, 235, 0.5);
-            padding: 7px 14px;
-            border-radius: 6px;
+            background: rgba(59, 130, 246, 0.15);
+            border: 1px solid rgba(59, 130, 246, 0.4);
+            padding: 8px 14px;
+            border-radius: 8px;
             color: #ffffff;
             font-size: 0.85rem;
             font-weight: 700;
@@ -381,15 +387,14 @@
         }
         .announcement-file-btn:hover {
             background: var(--primary-color);
-            box-shadow: 0 0 10px rgba(37, 99, 235, 0.4);
         }
         .announcement-footer-row {
             display: flex;
             align-items: center;
             justify-content: space-between;
             border-top: 1px solid var(--border-color);
-            padding-top: 8px;
-            font-size: 0.75rem;
+            padding-top: 10px;
+            font-size: 0.78rem;
             color: var(--text-muted);
             flex-wrap: wrap;
             gap: 8px;
@@ -403,8 +408,8 @@
             background-color: var(--primary-color);
             color: #fff;
             border: none;
-            padding: 5px 10px;
-            border-radius: 4px;
+            padding: 5px 12px;
+            border-radius: 6px;
             cursor: pointer;
             font-family: var(--font-family);
             font-size: 0.78rem;
@@ -417,8 +422,8 @@
             background-color: var(--danger-color);
             color: #fff;
             border: none;
-            padding: 5px 10px;
-            border-radius: 4px;
+            padding: 5px 12px;
+            border-radius: 6px;
             cursor: pointer;
             font-family: var(--font-family);
             font-size: 0.78rem;
@@ -432,16 +437,16 @@
             background: var(--bg-base);
             border: 1px solid var(--border-color);
             border-radius: var(--radius-md);
-            padding: 12px 15px;
-            margin-bottom: 14px;
+            padding: 14px 18px;
+            margin-bottom: 16px;
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 8px;
         }
         .progress-info-row {
             display: flex;
             justify-content: space-between;
-            font-size: 0.85rem;
+            font-size: 0.88rem;
             font-weight: 700;
         }
         .progress-bar-container {
@@ -460,101 +465,111 @@
 
         .kpi-cards-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-            gap: 10px;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 12px;
         }
 
         .kpi-card {
-            background: var(--bg-surface);
+            background: var(--bg-base);
             border: 1px solid var(--border-color);
             border-radius: var(--radius-md);
-            padding: 12px;
+            padding: 14px;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
             border-right: 4px solid;
+            box-shadow: var(--shadow-sm);
         }
 
         .kpi-card.blue { border-color: var(--primary-color); }
         .kpi-card.purple { border-color: var(--accent-purple); }
-        .kpi-card.pink { border-color: #e11d48; }
-        .kpi-card.teal { border-color: #0d9488; }
+        .kpi-card.pink { border-color: #ec4899; }
+        .kpi-card.teal { border-color: #14b8a6; }
         .kpi-card.warning { border-color: var(--warning-color); }
-        .kpi-card.indigo { border-color: #4f46e5; }
+        .kpi-card.indigo { border-color: #6366f1; }
+        .kpi-card.success { border-color: var(--success-color); }
 
         .kpi-icon-box {
-            font-size: 1.2rem; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: var(--bg-base); color: var(--text-main); flex-shrink: 0;
+            font-size: 1.25rem; width: 42px; height: 42px; border-radius: 10px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.05); color: var(--text-main); flex-shrink: 0;
         }
 
-        .kpi-info h3 { font-size: 0.75rem; color: var(--text-muted); font-weight: 500; }
-        .kpi-value { font-size: 1.1rem; font-weight: 800; color: var(--text-main); }
+        .kpi-info h3 { font-size: 0.78rem; color: var(--text-muted); font-weight: 600; }
+        .kpi-value { font-size: 1.2rem; font-weight: 800; color: var(--text-main); margin-top: 2px; }
 
         .form-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 12px;
+            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+            gap: 14px;
         }
 
-        .input-field { display: flex; flex-direction: column; gap: 5px; }
+        .input-field { display: flex; flex-direction: column; gap: 6px; }
         .input-field.full-width { grid-column: 1 / -1; }
-        .input-field label { font-size: 0.85rem; font-weight: 600; color: var(--text-main); }
+        .input-field label { font-size: 0.88rem; font-weight: 700; color: var(--text-main); }
         .input-field input, .input-field select, .input-field textarea {
-            padding: 8px 10px; border: 1px solid var(--border-color); border-radius: var(--radius-md); background-color: var(--bg-base); color: var(--text-main); outline: none; font-family: var(--font-family); font-size: 0.88rem;
+            padding: 10px 12px; border: 1px solid var(--border-color); border-radius: var(--radius-md); background-color: var(--bg-base); color: var(--text-main); outline: none; font-family: var(--font-family); font-size: 0.9rem;
         }
-        .input-field textarea { resize: vertical; min-height: 65px; }
+        .input-field input:focus, .input-field select:focus, .input-field textarea:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+        }
+        .input-field textarea { resize: vertical; min-height: 70px; }
 
         .priority-checkbox {
-            display: flex; align-items: center; gap: 10px; cursor: pointer; background: rgba(124, 58, 237, 0.1); padding: 8px 12px; border-radius: var(--radius-md); border: 1px dashed var(--accent-purple); width: 100%; color: var(--text-main);
+            display: flex; align-items: center; gap: 10px; cursor: pointer; background: rgba(139, 92, 246, 0.1); padding: 10px 14px; border-radius: var(--radius-md); border: 1px dashed var(--accent-purple); width: 100%; color: var(--text-main); font-weight: 600;
+        }
+
+        .payment-checkbox {
+            display: flex; align-items: center; gap: 10px; cursor: pointer; background: rgba(16, 185, 129, 0.1); padding: 10px 14px; border-radius: var(--radius-md); border: 1px dashed var(--success-color); width: 100%; color: var(--text-main); font-weight: 600;
         }
 
         .repeated-checkbox {
-            display: flex; align-items: center; gap: 10px; cursor: pointer; background: rgba(225, 29, 72, 0.1); padding: 8px 12px; border-radius: var(--radius-md); border: 1px dashed #e11d48; width: 100%; color: var(--text-main);
+            display: flex; align-items: center; gap: 10px; cursor: pointer; background: rgba(239, 68, 68, 0.1); padding: 10px 14px; border-radius: var(--radius-md); border: 1px dashed var(--danger-color); width: 100%; color: var(--text-main); font-weight: 600;
         }
 
         .submit-btn {
-            margin-top: 15px; background-color: var(--primary-color); color: white; border: none; padding: 10px 18px; border-radius: var(--radius-md); font-family: var(--font-family); font-size: 0.95rem; font-weight: 700; cursor: pointer; width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px;
+            margin-top: 18px; background: linear-gradient(135deg, var(--primary-color), var(--primary-hover)); color: white; border: none; padding: 12px 20px; border-radius: var(--radius-md); font-family: var(--font-family); font-size: 1rem; font-weight: 800; cursor: pointer; width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
         }
-        .submit-btn:hover { background-color: var(--primary-hover); }
+        .submit-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 15px rgba(37, 99, 235, 0.4); }
 
-        .actions-toolbar { display: flex; gap: 8px; flex-wrap: wrap; }
+        .actions-toolbar { display: flex; gap: 10px; flex-wrap: wrap; }
         .action-btn {
-            padding: 7px 12px; border-radius: var(--radius-md); border: none; color: white; font-family: var(--font-family); font-size: 0.82rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; text-decoration: none;
+            padding: 8px 14px; border-radius: var(--radius-md); border: none; color: white; font-family: var(--font-family); font-size: 0.85rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 6px; text-decoration: none; box-shadow: var(--shadow-sm);
         }
         .action-btn.excel { background-color: #107c41; }
         .action-btn.json { background-color: #6366f1; }
         .action-btn.import { background-color: #0284c7; }
-        .action-btn.clear-all { background-color: #dc2626; }
+        .action-btn.clear-all { background-color: #ef4444; }
         .action-btn.settings { background-color: #475569; }
-        .action-btn.copy-btn { background-color: #16a34a; }
-        .action-btn.select-del-btn { background-color: #dc2626; }
-        .action-btn.trash-view-btn { background-color: #d97706; }
+        .action-btn.copy-btn { background-color: #10b981; }
+        .action-btn.select-del-btn { background-color: #ef4444; }
+        .action-btn.trash-view-btn { background-color: #f59e0b; }
 
         .filter-container-box {
             background: var(--bg-base);
             border: 1px solid var(--border-color);
             border-radius: var(--radius-lg);
-            padding: 10px 12px;
-            margin-bottom: 14px;
+            padding: 12px 16px;
+            margin-bottom: 16px;
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 12px;
         }
 
-        .filter-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-        .filter-label { font-size: 0.82rem; font-weight: 700; color: var(--text-muted); min-width: 90px; display: flex; align-items: center; gap: 6px; }
+        .filter-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+        .filter-label { font-size: 0.85rem; font-weight: 700; color: var(--text-muted); min-width: 95px; display: flex; align-items: center; gap: 6px; }
 
-        .filter-tabs { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+        .filter-tabs { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
         .filter-tab {
-            padding: 5px 10px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-surface); color: var(--text-main); font-family: var(--font-family); font-size: 0.78rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 5px;
+            padding: 6px 12px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-surface); color: var(--text-main); font-family: var(--font-family); font-size: 0.82rem; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;
         }
-        .filter-tab.active { background-color: var(--primary-color); color: white; border-color: var(--primary-color); }
+        .filter-tab.active { background-color: var(--primary-color); color: white; border-color: var(--primary-color); box-shadow: 0 2px 8px rgba(59, 130, 246, 0.4); }
 
         .dropdown-filter-container {
             position: relative;
             display: inline-block;
         }
         .dropdown-filter-btn {
-            padding: 5px 12px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-surface); color: var(--text-main); font-family: var(--font-family); font-size: 0.78rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;
+            padding: 6px 12px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-surface); color: var(--text-main); font-family: var(--font-family); font-size: 0.82rem; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;
         }
         .dropdown-filter-btn.active {
             background-color: var(--primary-color); color: white; border-color: var(--primary-color);
@@ -566,24 +581,24 @@
             top: 105%;
             background-color: var(--bg-surface);
             min-width: 210px;
-            box-shadow: 0 8px 16px rgba(0,0,0,0.4);
+            box-shadow: var(--shadow-lg);
             border: 1px solid var(--border-color);
             border-radius: var(--radius-md);
             z-index: 99;
-            padding: 5px;
+            padding: 6px;
         }
         .dropdown-content.show { display: flex; flex-direction: column; gap: 4px; }
         .dropdown-item {
-            padding: 7px 10px; text-align: right; border-radius: 4px; background: transparent; border: none; color: var(--text-main); font-family: var(--font-family); font-size: 0.78rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px;
+            padding: 8px 12px; text-align: right; border-radius: 6px; background: transparent; border: none; color: var(--text-main); font-family: var(--font-family); font-size: 0.82rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 6px;
         }
         .dropdown-item:hover { background: var(--border-color); }
         .dropdown-item.active { background: var(--primary-color); color: white; }
 
-        .search-field { position: relative; width: 100%; max-width: 300px; }
+        .search-field { position: relative; width: 100%; max-width: 320px; }
         .search-field input {
-            width: 100%; padding: 7px 34px 7px 10px; border: 1px solid var(--border-color); border-radius: var(--radius-md); background-color: var(--bg-base); color: var(--text-main); font-family: var(--font-family); font-size: 0.85rem;
+            width: 100%; padding: 8px 36px 8px 12px; border: 1px solid var(--border-color); border-radius: var(--radius-md); background-color: var(--bg-base); color: var(--text-main); font-family: var(--font-family); font-size: 0.88rem;
         }
-        .search-field i { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); color: var(--text-muted); }
+        .search-field i { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: var(--text-muted); }
 
         .table-container { 
             max-height: 550px; 
@@ -593,76 +608,78 @@
             border-radius: var(--radius-md);
         }
 
-        table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
         
         table th { 
             background-color: var(--bg-base); 
             color: var(--text-muted); 
-            font-weight: 700; 
+            font-weight: 800; 
             position: sticky; 
             top: 0; 
             z-index: 10; 
         }
 
-        table th, table td { padding: 8px 8px; text-align: right; border-bottom: 1px solid var(--border-color); vertical-align: middle; color: var(--text-main); }
+        table th, table td { padding: 10px 10px; text-align: right; border-bottom: 1px solid var(--border-color); vertical-align: middle; color: var(--text-main); }
 
         tr.row-apologized {
-            background-color: rgba(220, 38, 38, 0.18) !important;
+            background-color: rgba(239, 68, 68, 0.15) !important;
             border-right: 4px solid var(--danger-color);
         }
 
-        .status-badge { padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; color: #fff; display: inline-block; margin-bottom: 2px; }
-        .badge-priority { background-color: #7c3aed; box-shadow: 0 0 8px rgba(124, 58, 237, 0.4); }
-        .badge-repeated { background-color: #e11d48; }
-        .badge-pending { background-color: #d97706; }
-        .badge-inprogress { background-color: #2563eb; }
-        .badge-completed { background-color: #16a34a; }
-        .badge-suspended { background-color: #ca8a04; }
-        .badge-apologized { background-color: #dc2626; box-shadow: 0 0 8px rgba(220, 38, 38, 0.4); }
-        .badge-other { background-color: #0d9488; }
+        .status-badge { padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 800; color: #fff; display: inline-block; margin-bottom: 2px; }
+        .badge-priority { background-color: #8b5cf6; box-shadow: 0 0 8px rgba(139, 92, 246, 0.4); }
+        .badge-paid { background-color: #10b981; box-shadow: 0 0 8px rgba(16, 185, 129, 0.4); }
+        .badge-unpaid { background-color: #f59e0b; }
+        .badge-repeated { background-color: #ec4899; }
+        .badge-pending { background-color: #f59e0b; }
+        .badge-inprogress { background-color: #3b82f6; }
+        .badge-completed { background-color: #10b981; }
+        .badge-suspended { background-color: #d97706; }
+        .badge-apologized { background-color: #ef4444; box-shadow: 0 0 8px rgba(239, 68, 68, 0.4); }
+        .badge-other { background-color: #14b8a6; }
 
         .proc-badge { padding: 4px 10px; border-radius: 6px; font-size: 0.8rem; font-weight: 700; display: inline-block; text-align: center; }
-        .proc-plant { background-color: #0d9488; color: #ffffff; border: 1px solid #14b8a6; box-shadow: 0 0 10px rgba(13, 148, 136, 0.3); } 
+        .proc-plant { background-color: #14b8a6; color: #ffffff; border: 1px solid #0d9488; } 
         .proc-extraction { background-color: #c2410c; color: #ffffff; } 
         .proc-surgery { background-color: #b91c1c; color: #ffffff; } 
         .proc-stitches { background-color: #7e22ce; color: #ffffff; } 
-        .proc-review { background-color: #4f46e5; color: #ffffff; } 
+        .proc-review { background-color: #4338ca; color: #ffffff; } 
         .proc-inquiry { background-color: #0284c7; color: #ffffff; }
         .proc-default { background-color: #334155; color: #ffffff; } 
 
         .table-input {
-            width: 100%; padding: 6px; border: 1px solid var(--border-color); border-radius: var(--radius-md); background: var(--bg-base); color: var(--text-main); font-family: var(--font-family); font-size: 0.85rem;
+            width: 100%; padding: 6px 8px; border: 1px solid var(--border-color); border-radius: var(--radius-md); background: var(--bg-base); color: var(--text-main); font-family: var(--font-family); font-size: 0.85rem;
         }
         
         .service-cell-box {
             width: 200px;
             white-space: pre-wrap;
             word-break: break-word;
-            padding: 3px 6px;
+            padding: 5px 8px;
             background: var(--bg-base);
-            border-radius: 4px;
+            border-radius: 6px;
             border: 1px solid var(--border-color);
-            font-size: 0.82rem;
-            line-height: 1.3;
+            font-size: 0.84rem;
+            line-height: 1.4;
             color: var(--text-main);
         }
 
         textarea.table-input { resize: vertical; min-height: 45px; }
 
-        .btn-save-action { background-color: var(--success-color); color: #fff; border: none; padding: 5px 8px; border-radius: 4px; cursor: pointer; }
-        .btn-edit-action { background-color: var(--primary-color); color: #fff; border: none; padding: 5px 8px; border-radius: 4px; cursor: pointer; }
-        .btn-delete-action { background-color: var(--danger-color); color: #fff; border: none; padding: 5px 8px; border-radius: 4px; cursor: pointer; }
+        .btn-save-action { background-color: var(--success-color); color: #fff; border: none; padding: 6px 10px; border-radius: 6px; cursor: pointer; }
+        .btn-edit-action { background-color: var(--primary-color); color: #fff; border: none; padding: 6px 10px; border-radius: 6px; cursor: pointer; }
+        .btn-delete-action { background-color: var(--danger-color); color: #fff; border: none; padding: 6px 10px; border-radius: 6px; cursor: pointer; }
         
-        .btn-pin-action { background-color: #d97706; color: #fff; border: none; padding: 5px 8px; border-radius: 4px; cursor: pointer; }
-        .btn-pin-action.pinned { background-color: #ca8a04; box-shadow: 0 0 6px #f59e0b; }
+        .btn-pin-action { background-color: #d97706; color: #fff; border: none; padding: 6px 10px; border-radius: 6px; cursor: pointer; }
+        .btn-pin-action.pinned { background-color: #f59e0b; box-shadow: 0 0 8px #f59e0b; }
 
         @keyframes priorityPulse {
-            0% { background-color: rgba(124, 58, 237, 0.25); }
-            50% { background-color: rgba(124, 58, 237, 0.05); }
-            100% { background-color: rgba(124, 58, 237, 0.25); }
+            0% { background-color: rgba(139, 92, 246, 0.2); }
+            50% { background-color: rgba(139, 92, 246, 0.05); }
+            100% { background-color: rgba(139, 92, 246, 0.2); }
         }
         .row-priority-pulse {
-            animation: priorityPulse 1.8s infinite ease-in-out;
+            animation: priorityPulse 2s infinite ease-in-out;
             border-right: 4px solid var(--accent-purple);
         }
 
@@ -672,9 +689,9 @@
             left: 20px;
             background-color: var(--success-color);
             color: #fff;
-            padding: 12px 18px;
+            padding: 12px 20px;
             border-radius: var(--radius-md);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+            box-shadow: var(--shadow-lg);
             z-index: 9999;
             font-weight: 700;
             display: flex;
@@ -689,27 +706,27 @@
         .client-report-container {
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 14px;
             width: 100%;
         }
 
         .client-card-wrapper {
-            background-color: var(--bg-base);
+            background-color: var(--bg-surface);
             border: 1px solid var(--border-color);
-            border-radius: var(--radius-md);
-            padding: 14px 16px;
+            border-radius: var(--radius-lg);
+            padding: 16px 18px;
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 12px;
             position: relative;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+            box-shadow: var(--shadow-sm);
             width: 100%;
             overflow: hidden;
         }
 
         .client-card-wrapper.is-copied {
-            background-color: rgba(22, 163, 74, 0.06);
-            border-color: rgba(22, 163, 74, 0.3);
+            background-color: rgba(16, 185, 129, 0.05);
+            border-color: rgba(16, 185, 129, 0.3);
             opacity: 0.85;
         }
 
@@ -726,8 +743,8 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            font-size: 1rem;
-            font-weight: 700;
+            font-size: 1.05rem;
+            font-weight: 800;
             color: var(--text-main);
             flex-wrap: wrap;
             flex: 1;
@@ -744,52 +761,74 @@
 
         .client-datetime-badge {
             font-family: Arial, sans-serif;
-            font-size: 0.75rem;
+            font-size: 0.78rem;
             font-weight: 700;
             color: #ffffff;
-            background: rgba(37, 99, 235, 0.25);
-            padding: 4px 8px;
-            border-radius: 4px;
-            border: 1px solid rgba(37, 99, 235, 0.4);
+            background: rgba(59, 130, 246, 0.2);
+            padding: 5px 10px;
+            border-radius: 6px;
+            border: 1px solid rgba(59, 130, 246, 0.4);
             direction: ltr;
             white-space: normal;
             word-break: break-word;
             display: inline-flex;
             align-items: center;
-            gap: 4px;
+            gap: 6px;
             max-width: 100%;
         }
 
         .client-info-row {
-            font-size: 0.9rem;
+            font-size: 0.92rem;
             color: var(--text-main);
-            line-height: 1.5;
+            line-height: 1.6;
             word-break: break-word;
         }
 
         .client-info-row .info-label {
             color: var(--text-muted);
-            font-weight: 600;
+            font-weight: 700;
         }
 
         .copied-btn {
             background: #d97706;
             color: #ffffff;
             border: none;
-            padding: 4px 10px;
-            border-radius: 4px;
+            padding: 5px 12px;
+            border-radius: 6px;
             font-family: var(--font-family);
-            font-size: 0.78rem;
-            font-weight: 700;
+            font-size: 0.8rem;
+            font-weight: 800;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
-            gap: 5px;
+            gap: 6px;
             white-space: nowrap;
         }
 
         .copied-btn.active {
             background: var(--success-color);
+        }
+
+        .payment-toggle-btn {
+            background: rgba(245, 158, 11, 0.15);
+            border: 1px dashed var(--warning-color);
+            color: var(--warning-color);
+            padding: 5px 12px;
+            border-radius: 6px;
+            font-family: var(--font-family);
+            font-size: 0.8rem;
+            font-weight: 800;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
+        }
+
+        .payment-toggle-btn.paid {
+            background: rgba(16, 185, 129, 0.15);
+            border: 1px dashed var(--success-color);
+            color: var(--success-color);
         }
 
         .client-actions-row {
@@ -802,17 +841,17 @@
         }
 
         .btn-client-action {
-            padding: 6px 12px;
-            border-radius: 4px;
+            padding: 6px 14px;
+            border-radius: 6px;
             border: none;
             color: #fff;
             font-family: var(--font-family);
-            font-size: 0.8rem;
+            font-size: 0.82rem;
             font-weight: 700;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
-            gap: 5px;
+            gap: 6px;
         }
 
         .btn-client-action.delete-to-trash { background-color: var(--danger-color); }
@@ -826,23 +865,23 @@
         .links-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 15px;
+            gap: 16px;
             margin-top: 15px;
             width: 100%;
         }
         .link-card {
-            background: var(--bg-base);
+            background: var(--bg-surface);
             border: 1px solid var(--border-color);
-            border-radius: var(--radius-md);
-            padding: 15px;
+            border-radius: var(--radius-lg);
+            padding: 18px;
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 12px;
             position: relative;
             transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
             user-select: none;
-            -webkit-user-select: none;
             width: 100%;
+            box-shadow: var(--shadow-sm);
         }
         .link-card.dragging {
             opacity: 0.4;
@@ -851,7 +890,7 @@
         }
         .link-card.drag-over {
             border: 2px solid var(--accent-purple);
-            box-shadow: 0 0 12px rgba(124, 58, 237, 0.4);
+            box-shadow: 0 0 15px rgba(139, 92, 246, 0.4);
             transform: translateY(-4px);
         }
         .link-card:hover {
@@ -859,11 +898,11 @@
         }
         .drag-handle {
             position: absolute;
-            top: 8px;
-            left: 8px;
+            top: 10px;
+            left: 10px;
             color: var(--primary-color);
-            background: rgba(37, 99, 235, 0.1);
-            border: 1px solid rgba(37, 99, 235, 0.3);
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.3);
             border-radius: 6px;
             font-size: 1.1rem;
             cursor: grab;
@@ -880,8 +919,8 @@
             display: flex;
             align-items: center;
             gap: 10px;
-            font-weight: 700;
-            font-size: 1rem;
+            font-weight: 800;
+            font-size: 1.05rem;
             color: var(--text-main);
             padding-left: 35px;
             word-break: break-word;
@@ -892,9 +931,9 @@
             flex-shrink: 0;
         }
         .link-card-desc {
-            font-size: 0.82rem;
+            font-size: 0.85rem;
             color: var(--text-muted);
-            line-height: 1.4;
+            line-height: 1.5;
             min-height: 35px;
             word-break: break-word;
         }
@@ -911,7 +950,7 @@
             text-decoration: none;
             padding: 8px 12px;
             border-radius: var(--radius-md);
-            font-size: 0.85rem;
+            font-size: 0.88rem;
             font-weight: 700;
             display: flex;
             align-items: center;
@@ -923,25 +962,25 @@
         }
         .btn-open-link:hover { background-color: var(--primary-hover); }
 
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 2000; justify-content: center; align-items: center; padding: 15px; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(4px); z-index: 2000; justify-content: center; align-items: center; padding: 15px; }
         .modal.open { display: flex; }
-        .modal-content { background: var(--bg-surface); border-radius: var(--radius-lg); width: 100%; max-width: 520px; max-height: 90vh; overflow-y: auto; padding: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); border: 1px solid var(--border-color); color: var(--text-main); }
-        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid var(--border-color); padding-bottom: 8px; }
-        .modal-header h3 { color: var(--primary-color); font-size: 1.1rem; }
-        .close-modal-btn { background: none; border: none; font-size: 1.3rem; color: var(--text-muted); cursor: pointer; }
+        .modal-content { background: var(--bg-surface); border-radius: var(--radius-lg); width: 100%; max-width: 540px; max-height: 90vh; overflow-y: auto; padding: 22px; box-shadow: var(--shadow-lg); border: 1px solid var(--border-color); color: var(--text-main); }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; }
+        .modal-header h3 { color: var(--primary-color); font-size: 1.15rem; font-weight: 800; }
+        .close-modal-btn { background: none; border: none; font-size: 1.4rem; color: var(--text-muted); cursor: pointer; }
 
         .client-header-controls {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
             flex-wrap: wrap;
             width: 100%;
             justify-content: flex-end;
         }
 
         @media (max-width: 768px) {
-            .content-body { padding: 10px; gap: 12px; }
-            .dashboard-section { padding: 12px; }
+            .content-body { padding: 12px; gap: 14px; }
+            .dashboard-section { padding: 14px; }
             
             .client-header-controls {
                 display: grid;
@@ -1093,6 +1132,10 @@
                                 <div class="kpi-icon-box"><i class="fa-solid fa-star"></i></div>
                                 <div class="kpi-info"><h3>حالات ذات أولوية</h3><span class="kpi-value" id="kpi-recurring">0</span></div>
                             </div>
+                            <div class="kpi-card success">
+                                <div class="kpi-icon-box"><i class="fa-solid fa-credit-card"></i></div>
+                                <div class="kpi-info"><h3>تم الدفع</h3><span class="kpi-value" id="kpi-paid">0</span></div>
+                            </div>
                             <div class="kpi-card pink">
                                 <div class="kpi-icon-box"><i class="fa-solid fa-rotate-right"></i></div>
                                 <div class="kpi-info"><h3>الطلبات المتكررة</h3><span class="kpi-value" id="kpi-repeated">0</span></div>
@@ -1177,10 +1220,16 @@
                                     <label>الخدمة المطلوبة / تفاصيل المشكلة والطلب *</label>
                                     <textarea id="serviceRequired" required placeholder="اكتب تفاصيل طلب العميل المشكلة أو الموعد المطلوب..."></textarea>
                                 </div>
-                                <div class="input-field full-width">
+                                <div class="input-field">
+                                    <label class="payment-checkbox">
+                                        <input type="checkbox" id="isPaid">
+                                        <span>حالة الدفع: تم الدفع 💳</span>
+                                    </label>
+                                </div>
+                                <div class="input-field">
                                     <label class="priority-checkbox">
                                         <input type="checkbox" id="isRecurring" onchange="checkPriorityAuth(this)">
-                                        <span>إعطاء أولوية ⭐ (يتطلب باسورد الإدارة)</span>
+                                        <span>إعطاء أولوية ⭐ (يتطلب باسورد)</span>
                                     </label>
                                 </div>
                             </div>
@@ -1228,6 +1277,8 @@
                                 <span class="filter-label"><i class="fa-solid fa-filter"></i> فلاتر الحالات:</span>
                                 <div class="filter-tabs" id="statusFilterTabs">
                                     <button class="filter-tab" data-filter="all" onclick="setDashboardFilter('all', this)">الكل</button>
+                                    <button class="filter-tab" data-filter="paid" onclick="setDashboardFilter('paid', this)">تم الدفع 💳</button>
+                                    <button class="filter-tab" data-filter="unpaid" onclick="setDashboardFilter('unpaid', this)">لم يتم الدفع ⏳</button>
                                     <button class="filter-tab" data-filter="priority" onclick="setDashboardFilter('priority', this)">حالات ذات أولوية ⭐</button>
                                     <button class="filter-tab" data-filter="repeated" onclick="setDashboardFilter('repeated', this)">طلبات متكررة 🔄</button>
                                     <button class="filter-tab" data-filter="plants" onclick="setDashboardFilter('plants', this)">حالات الزراعة 🦷</button>
@@ -1274,7 +1325,7 @@
                                     <tr>
                                         <th>م</th>
                                         <th>تاريخ الإضافة</th>
-                                        <th>الحالة والأولوية</th>
+                                        <th>الحالة والدفع</th>
                                         <th>العميل</th>
                                         <th>رقم الجوال</th>
                                         <th>رقم الملف</th>
@@ -1296,15 +1347,21 @@
                 <!-- صفحة الكشف -->
                 <div id="page-clients" class="page-view hidden">
                     <section class="dashboard-section">
-                        <div style="display: flex; flex-direction: column; gap: 12px; background: var(--bg-base); padding: 12px 15px; border-radius: 8px; border: 1px solid var(--border-color); margin-bottom: 15px;">
+                        <div style="display: flex; flex-direction: column; gap: 12px; background: var(--bg-base); padding: 14px 18px; border-radius: var(--radius-md); border: 1px solid var(--border-color); margin-bottom: 15px;">
                             <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
-                                <h2 style="font-size: 1.1rem; color: var(--primary-color); font-weight: 700;">
+                                <h2 style="font-size: 1.1rem; color: var(--primary-color); font-weight: 800;">
                                     <i class="fa-solid fa-file-lines"></i> صفحة الكشف
                                 </h2>
                             </div>
                             
                             <div class="client-header-controls">
-                                <select id="clientHoursSelect" onchange="setClientTimeFilterSelect(this.value)" style="background: var(--bg-surface); color: var(--text-main); border: 1px solid var(--border-color); padding: 8px 10px; border-radius: 6px; font-family: var(--font-family); font-size: 0.85rem; cursor: pointer;">
+                                <select id="clientPaymentFilterSelect" onchange="setClientPaymentFilterSelect(this.value)" style="background: var(--bg-surface); color: var(--text-main); border: 1px solid var(--border-color); padding: 8px 12px; border-radius: 8px; font-family: var(--font-family); font-size: 0.85rem; cursor: pointer; font-weight:700;">
+                                    <option value="all">كل الحالات (الكل)</option>
+                                    <option value="paid">تم الدفع 💳 فقط</option>
+                                    <option value="unpaid">لم يتم الدفع ⏳ فقط</option>
+                                </select>
+
+                                <select id="clientHoursSelect" onchange="setClientTimeFilterSelect(this.value)" style="background: var(--bg-surface); color: var(--text-main); border: 1px solid var(--border-color); padding: 8px 12px; border-radius: 8px; font-family: var(--font-family); font-size: 0.85rem; cursor: pointer; font-weight:700;">
                                     <option value="all">كل الأوقات</option>
                                     <option value="6">آخر 6 ساعات</option>
                                     <option value="8">آخر 8 ساعات</option>
@@ -1315,7 +1372,7 @@
                                     <option value="720">شهر</option>
                                 </select>
 
-                                <button class="action-btn" id="pinnedFilterBtn" onclick="togglePinnedFilter()" style="background-color: #16a34a;">
+                                <button class="action-btn" id="pinnedFilterBtn" onclick="togglePinnedFilter()" style="background-color: #10b981;">
                                     <i class="fa-solid fa-file-lines"></i> ✅ الكشف العادي (<span id="pinnedCount">0</span>)
                                 </button>
 
@@ -1326,9 +1383,9 @@
                             </div>
                         </div>
 
-                        <div style="margin-bottom: 12px; display: flex; gap: 10px; align-items: center; background: var(--bg-base); padding: 10px 12px; border-radius: 8px; border: 1px solid var(--border-color);">
+                        <div style="margin-bottom: 14px; display: flex; gap: 12px; align-items: center; background: var(--bg-base); padding: 12px 16px; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
                             <i class="fa-solid fa-magnifying-glass" style="color: var(--text-muted);"></i>
-                            <input type="text" id="clientSearchInput" oninput="renderClientReport()" placeholder="بحث بالاسم، رقم الجوال، رقم الملف، الهوية..." style="width: 100%; background: transparent; border: none; outline: none; color: var(--text-main); font-family: var(--font-family); font-size: 0.88rem;">
+                            <input type="text" id="clientSearchInput" oninput="renderClientReport()" placeholder="بحث بالاسم، رقم الجوال، رقم الملف، الهوية..." style="width: 100%; background: transparent; border: none; outline: none; color: var(--text-main); font-family: var(--font-family); font-size: 0.9rem;">
                         </div>
 
                         <div id="clientReportList" class="client-report-container"></div>
@@ -1342,7 +1399,7 @@
                             <h2><i class="fa-solid fa-book-bookmark"></i> الدليل الشامل لـ (خدمة العملاء)</h2>
                             <button class="action-btn copy-btn" onclick="openAddLinkModal()"><i class="fa-solid fa-plus"></i> إضافة رابط جديد</button>
                         </div>
-                        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 10px;">
+                        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 12px;">
                             💡 **ترتيب الروابط:** اضغط باستمرار مع السحب المباشر على أيقونة المقبض الزرقاء <i class="fa-solid fa-grip-vertical" style="color: var(--primary-color);"></i> لترتيب الكروت بسلاسة.
                         </p>
 
@@ -1354,7 +1411,7 @@
         </main>
     </div>
 
-    <!-- نافذة إضافة / تعديل تنبيه / إشعار عام جديد مع رفع ملفات أو صور -->
+    <!-- نافذة إضافة / تعديل تنبيه -->
     <div class="modal" id="announcementModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -1371,7 +1428,6 @@
                     <div class="input-field full-width">
                         <label><i class="fa-solid fa-paperclip"></i> إرفاق ملف (PDF, مستندات, صور...) (اختياري)</label>
                         <input type="file" id="announcementFile" accept=".pdf,.doc,.docx,.xls,.xlsx,.txt,image/*" style="padding: 6px; cursor: pointer;">
-                        <span style="font-size: 0.75rem; color: var(--text-muted); margin-top: 3px;">يمكنك رفع ملفات PDF أو مستندات أو صور ليراها فريق العمل مباشرة.</span>
                     </div>
                 </div>
                 <button type="submit" class="submit-btn" style="margin-top: 15px;"><i class="fa-solid fa-floppy-disk"></i> حفظ ونشر التنبيه</button>
@@ -1379,7 +1435,7 @@
         </div>
     </div>
 
-    <!-- نافذة تكبير وعرض الصورة المرفقة بحجم كامل -->
+    <!-- نافذة معاينة الصورة -->
     <div class="modal" id="imagePreviewModal">
         <div class="modal-content" style="max-width: 650px; text-align: center; padding: 15px;">
             <div class="modal-header">
@@ -1392,7 +1448,7 @@
         </div>
     </div>
 
-    <!-- نافذة إضافة / تعديل رابط جديد في الدليل الشامل -->
+    <!-- نافذة إضافة / تعديل رابط -->
     <div class="modal" id="linkModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -1420,7 +1476,7 @@
         </div>
     </div>
 
-    <!-- نافذة سلة المحذوفات والاسترجاع -->
+    <!-- نافذة سلة المحذوفات -->
     <div class="modal" id="trashModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -1431,7 +1487,7 @@
         </div>
     </div>
 
-    <!-- نافذة إدخال كلمة المرور الموحدة -->
+    <!-- نافذة تأكيد كلمة المرور -->
     <div class="modal" id="passAuthModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -1487,6 +1543,7 @@
         </div>
     </div>
 
+    <!-- نافذة التعديل -->
     <div class="modal" id="editModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -1549,6 +1606,12 @@
                         <textarea id="editServiceRequired" required></textarea>
                     </div>
                     <div class="input-field full-width">
+                        <label class="payment-checkbox">
+                            <input type="checkbox" id="editIsPaid">
+                            <span>حالة الدفع: تم الدفع 💳</span>
+                        </label>
+                    </div>
+                    <div class="input-field full-width">
                         <label class="priority-checkbox">
                             <input type="checkbox" id="editIsRecurring">
                             <span>تعيين كحالة ذات أولوية ⭐ (يتطلب باسورد)</span>
@@ -1557,11 +1620,11 @@
                     <div class="input-field full-width">
                         <label class="repeated-checkbox">
                             <input type="checkbox" id="editIsRepeatedRequest">
-                            <span>حالة طلب متكرر 🔄 (الغِ التحديد لإزالة الشارة)</span>
+                            <span>حالة طلب متكرر 🔄</span>
                         </label>
                     </div>
                 </div>
-                <button type="submit" class="submit-btn" style="margin-top: 12px;"><i class="fa-solid fa-floppy-disk"></i> حفظ التعديلات</button>
+                <button type="submit" class="submit-btn" style="margin-top: 14px;"><i class="fa-solid fa-floppy-disk"></i> حفظ التعديلات</button>
             </form>
         </div>
     </div>
@@ -1580,6 +1643,7 @@
         let dashboardFilter = localStorage.getItem('savedDashboardFilter') || 'all';
         let dashboardTimeFilter = localStorage.getItem('savedDashboardTimeFilter') || 'all';
         let clientHoursFilter = localStorage.getItem('savedClientHoursFilter') || 'all';
+        let clientPaymentFilter = localStorage.getItem('savedClientPaymentFilter') || 'all';
         let isPinnedFilterActive = false;
         
         let originalEditPriorityState = false;
@@ -1639,18 +1703,18 @@
         }
 
         function saveLocal() { 
-            localStorage.setItem('cachedAppointments_v16', JSON.stringify(records));
+            localStorage.setItem('cachedAppointments_v17', JSON.stringify(records));
             localStorage.setItem('cachedCSLinks_v1', JSON.stringify(csLinks));
             localStorage.setItem('cachedAnnouncements_v3', JSON.stringify(clinicAnnouncements));
         }
 
-        const cached = localStorage.getItem('cachedAppointments_v16');
+        const cached = localStorage.getItem('cachedAppointments_v17') || localStorage.getItem('cachedAppointments_v16');
         if (cached) { try { records = JSON.parse(cached); } catch(e) { records = []; } }
 
         const cachedLinks = localStorage.getItem('cachedCSLinks_v1');
         if (cachedLinks) { try { csLinks = JSON.parse(cachedLinks); } catch(e) { csLinks = []; } }
 
-        const cachedAnnouncements = localStorage.getItem('cachedAnnouncements_v3') || localStorage.getItem('cachedAnnouncements_v2');
+        const cachedAnnouncements = localStorage.getItem('cachedAnnouncements_v3');
         if (cachedAnnouncements) { try { clinicAnnouncements = JSON.parse(cachedAnnouncements); } catch(e) { clinicAnnouncements = []; } }
 
         function syncFilterTabsUI() {
@@ -1729,15 +1793,16 @@
             switchPage(activePage);
 
             const hoursSelect = document.getElementById('clientHoursSelect');
-            if (hoursSelect) {
-                hoursSelect.value = clientHoursFilter;
-            }
+            if (hoursSelect) hoursSelect.value = clientHoursFilter;
+
+            const paymentSelect = document.getElementById('clientPaymentFilterSelect');
+            if (paymentSelect) paymentSelect.value = clientPaymentFilter;
 
             isPinnedFilterActive = false;
             const btn = document.getElementById('pinnedFilterBtn');
             if (btn) {
-                btn.style.backgroundColor = '#16a34a';
-                btn.style.borderColor = '#22c55e';
+                btn.style.backgroundColor = '#10b981';
+                btn.style.borderColor = '#10b981';
                 btn.style.boxShadow = 'none';
             }
 
@@ -1803,7 +1868,7 @@
                 gain.connect(audioCtx.destination);
                 osc.start();
                 osc.stop(audioCtx.currentTime + 0.25);
-            } catch(e) { console.log('Audio Context blocked'); }
+            } catch(e) {}
 
             showToastOnly(msg);
         }
@@ -1846,41 +1911,6 @@
             universalAuthCallback = null;
         }
 
-        function openBase64File(dataUrl, fileName = 'file.pdf') {
-            try {
-                if (!dataUrl) return;
-                
-                if (dataUrl.startsWith('http://') || dataUrl.startsWith('https://')) {
-                    window.open(dataUrl, '_blank');
-                    return;
-                }
-
-                const arr = dataUrl.split(',');
-                const mimeMatch = arr[0].match(/:(.*?);/);
-                const mime = mimeMatch ? mimeMatch[1] : 'application/pdf';
-                const bstr = atob(arr[1]);
-                let n = bstr.length;
-                const u8arr = new Uint8Array(n);
-                while (n--) {
-                    u8arr[n] = bstr.charCodeAt(n);
-                }
-                const blob = new Blob([u8arr], { type: mime });
-                const blobUrl = URL.createObjectURL(blob);
-
-                const newWin = window.open(blobUrl, '_blank');
-                if (!newWin || newWin.closed || typeof newWin.closed === 'undefined') {
-                    const a = document.createElement('a');
-                    a.href = blobUrl;
-                    a.download = fileName;
-                    document.body.appendChild(a);
-                    a.click();
-                    document.body.removeChild(a);
-                }
-            } catch(e) {
-                alert('عذراً، لم نتمكن من فتح الملف. حاول تنزيله.');
-            }
-        }
-
         function renderAnnouncements() {
             const container = document.getElementById('announcementsListContainer');
             if (!container) return;
@@ -1900,7 +1930,7 @@
                 if (item.fileUrl) {
                     if (item.fileType && item.fileType.startsWith('image/')) {
                         attachmentHTML = `
-                            <div class="announcement-thumbnail-wrapper" onclick="openImagePreview('${item.fileUrl}')" title="اضغط لمعاينة الصورة المكبرة">
+                            <div class="announcement-thumbnail-wrapper" onclick="openImagePreview('${item.fileUrl}')" title="معاينة المكبرة">
                                 <img src="${item.fileUrl}" alt="مرفق">
                             </div>
                         `;
@@ -1908,7 +1938,7 @@
                         const fileName = item.fileName || 'فتح الملف المرفق';
                         const safeKey = item.announcementKey;
                         attachmentHTML = `
-                            <button type="button" class="announcement-file-btn" onclick="triggerFileDownload('${safeKey}')" title="اضغط لفتح/تحميل الملف">
+                            <button type="button" class="announcement-file-btn" onclick="triggerFileDownload('${safeKey}')">
                                 <i class="fa-solid fa-file-pdf"></i> ${fileName}
                             </button>
                         `;
@@ -1922,10 +1952,10 @@
                     <div class="announcement-footer-row">
                         <span><i class="fa-regular fa-clock"></i> ${dateStr}</span>
                         <div class="announcement-actions-group">
-                            <button class="btn-edit-announcement-card" onclick="openEditAnnouncementModal('${item.announcementKey}')" title="تعديل التنبيه">
+                            <button class="btn-edit-announcement-card" onclick="openEditAnnouncementModal('${item.announcementKey}')">
                                 <i class="fa-solid fa-pen"></i> تعديل
                             </button>
-                            <button class="btn-delete-announcement-card" onclick="deleteAnnouncement('${item.announcementKey}')" title="حذف التنبيه">
+                            <button class="btn-delete-announcement-card" onclick="deleteAnnouncement('${item.announcementKey}')">
                                 <i class="fa-solid fa-trash-can"></i> حذف
                             </button>
                         </div>
@@ -2131,6 +2161,7 @@
                 contactMethod: document.getElementById('contactMethod').value,
                 serviceRequired: document.getElementById('serviceRequired').value,
                 coordinatorName: document.getElementById('coordinatorName').value,
+                isPaid: document.getElementById('isPaid').checked,
                 isRecurring: document.getElementById('isRecurring').checked || isRepeated,
                 isRepeatedRequest: isRepeated,
                 createdAt: new Date().toISOString(),
@@ -2184,6 +2215,24 @@
             });
         }
 
+        function togglePaymentStatusGroup(keysArray) {
+            const targetState = !records.find(r => keysArray.includes(r.firebaseKey))?.isPaid;
+            keysArray.forEach(k => {
+                const rec = records.find(r => r.firebaseKey === k);
+                if (rec) {
+                    rec.isPaid = targetState;
+                    if (navigator.onLine && !k.startsWith('local_')) {
+                        dbRef.child(k).update({ isPaid: targetState });
+                    }
+                }
+            });
+            saveLocal();
+            renderTable();
+            updateKPIs();
+            renderClientReport();
+            showToastOnly(targetState ? '💳 تم تحويل الحالة إلى (تم الدفع)' : '⏳ تم تحويل الحالة إلى (لم يتم الدفع)');
+        }
+
         function updatePinnedCountBadge() {
             let openRecords = records.filter(r => !r.isHiddenFromClients);
             
@@ -2193,6 +2242,12 @@
                     const diffHours = (now - new Date(r.createdAt)) / (1000 * 60 * 60);
                     return diffHours <= parseFloat(clientHoursFilter);
                 });
+            }
+
+            if (clientPaymentFilter === 'paid') {
+                openRecords = openRecords.filter(r => r.isPaid);
+            } else if (clientPaymentFilter === 'unpaid') {
+                openRecords = openRecords.filter(r => !r.isPaid);
             }
             
             const groupedMap = new Map();
@@ -2209,14 +2264,12 @@
             let displayCount = 0;
 
             if (isPinnedFilterActive) {
-                // إذا كنا في صفحة المميزين: يحسب عدد المجموعات التي بها عميل مثبت فقط
                 groupedMap.forEach((groupRecords) => {
                     if (groupRecords.some(r => r.isPinned)) {
                         displayCount++;
                     }
                 });
             } else {
-                // إذا كنا في الكشف العادي: يحسب عدد العملاء المتبقين (غير المنسوخين)
                 groupedMap.forEach((groupRecords) => {
                     const isGroupCopied = groupRecords.every(r => r.isCopied);
                     if (!isGroupCopied) {
@@ -2236,11 +2289,11 @@
                 if (isPinnedFilterActive) {
                     btn.style.backgroundColor = '#d97706';
                     btn.style.borderColor = '#f59e0b';
-                    btn.style.boxShadow = '0 0 12px rgba(217, 119, 6, 0.5)';
+                    btn.style.boxShadow = '0 0 12px rgba(217, 119, 6, 0.4)';
                     btn.innerHTML = `<i class="fa-solid fa-thumbtack"></i> 📌 المميزون ( <span id="pinnedCount">0</span> )`;
                 } else {
-                    btn.style.backgroundColor = '#16a34a';
-                    btn.style.borderColor = '#22c55e';
+                    btn.style.backgroundColor = '#10b981';
+                    btn.style.borderColor = '#10b981';
                     btn.style.boxShadow = 'none';
                     btn.innerHTML = `<i class="fa-solid fa-file-lines"></i> ✅ الكشف العادي ( <span id="pinnedCount">0</span> )`;
                 }
@@ -2271,6 +2324,12 @@
             btn.closest('.filter-row').querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
             btn.classList.add('active');
             renderTable();
+        }
+
+        function setClientPaymentFilterSelect(val) {
+            clientPaymentFilter = val;
+            localStorage.setItem('savedClientPaymentFilter', val);
+            renderClientReport();
         }
 
         function updateDailyProgress() {
@@ -2308,7 +2367,11 @@
             let filteredList = [...records];
             const now = new Date();
 
-            if (dashboardFilter === 'priority') {
+            if (dashboardFilter === 'paid') {
+                filteredList = filteredList.filter(r => r.isPaid);
+            } else if (dashboardFilter === 'unpaid') {
+                filteredList = filteredList.filter(r => !r.isPaid);
+            } else if (dashboardFilter === 'priority') {
                 filteredList = filteredList.filter(r => r.isRecurring);
             } else if (dashboardFilter === 'repeated') {
                 filteredList = filteredList.filter(r => r.isRepeatedRequest);
@@ -2390,6 +2453,11 @@
                 if (record.isRecurring) {
                     statusBadgeHTML += '<span class="status-badge badge-priority">⭐ أولوية</span><br>';
                 }
+                if (record.isPaid) {
+                    statusBadgeHTML += '<span class="status-badge badge-paid">💳 تم الدفع</span><br>';
+                } else {
+                    statusBadgeHTML += '<span class="status-badge badge-unpaid">⏳ لم يتم الدفع</span><br>';
+                }
                 if (record.isRepeatedRequest) {
                     statusBadgeHTML += '<span class="status-badge badge-repeated">🔄 متكررة</span><br>';
                 }
@@ -2437,7 +2505,7 @@
                     </td>
                     <td><textarea class="table-input" id="action_${record.firebaseKey}">${record.actionTaken || ''}</textarea></td>
                     <td>
-                        <button class="btn-pin-action ${isPinned ? 'pinned' : ''}" onclick="requestTogglePinRecord('${record.firebaseKey}')" title="${isPinned ? 'إلغاء التثبيت' : 'تثبيت العميل (يتطلب باسورد)'}"><i class="fa-solid fa-thumbtack"></i></button>
+                        <button class="btn-pin-action ${isPinned ? 'pinned' : ''}" onclick="requestTogglePinRecord('${record.firebaseKey}')" title="${isPinned ? 'إلغاء التثبيت' : 'تثبيت العميل'}"><i class="fa-solid fa-thumbtack"></i></button>
                         <button class="btn-save-action" onclick="saveAdminUpdate('${record.firebaseKey}')" title="حفظ"><i class="fa-solid fa-floppy-disk"></i></button>
                         <button class="btn-edit-action" onclick="openEditModal('${record.firebaseKey}')" title="تعديل"><i class="fa-solid fa-pen"></i></button>
                         <button class="btn-delete-action" onclick="deleteRecord('${record.firebaseKey}')" title="حذف"><i class="fa-solid fa-trash"></i></button>
@@ -2500,7 +2568,8 @@
             document.getElementById('editCoordinatorName').value = rec.coordinatorName || '';
             document.getElementById('editProcedureType').value = rec.procedureType || 'مراجعه';
             document.getElementById('editServiceRequired').value = rec.serviceRequired || '';
-            
+            document.getElementById('editIsPaid').checked = !!rec.isPaid;
+
             originalEditPriorityState = !!rec.isRecurring;
             originalEditRepeatedState = !!rec.isRepeatedRequest;
 
@@ -2528,6 +2597,7 @@
             rec.coordinatorName = document.getElementById('editCoordinatorName').value.trim();
             rec.procedureType = document.getElementById('editProcedureType').value;
             rec.serviceRequired = document.getElementById('editServiceRequired').value.trim();
+            rec.isPaid = document.getElementById('editIsPaid').checked;
             rec.isRecurring = document.getElementById('editIsRecurring').checked;
             rec.isRepeatedRequest = document.getElementById('editIsRepeatedRequest').checked;
 
@@ -2549,6 +2619,7 @@
                     coordinatorName: rec.coordinatorName,
                     procedureType: rec.procedureType,
                     serviceRequired: rec.serviceRequired,
+                    isPaid: rec.isPaid,
                     isRecurring: rec.isRecurring,
                     isRepeatedRequest: rec.isRepeatedRequest
                 });
@@ -2614,7 +2685,7 @@
                 card.setAttribute('data-index', index);
 
                 card.innerHTML = `
-                    <div class="drag-handle" title="اضغط باستمرار واسحب من هنا للترتيب"><i class="fa-solid fa-grip-vertical"></i></div>
+                    <div class="drag-handle" title="اضغط باستمرار واسحب للترتيب"><i class="fa-solid fa-grip-vertical"></i></div>
                     <div class="link-card-header">
                         <i class="fa-solid fa-globe"></i>
                         <span>${item.title}</span>
@@ -2622,8 +2693,8 @@
                     <div class="link-card-desc">${item.desc || 'لا يوجد وصف مُضاف.'}</div>
                     <div class="link-card-actions">
                         <button type="button" class="btn-open-link" onclick="secureOpenLink('${item.url}')"><i class="fa-solid fa-arrow-up-right-from-square"></i> فتح الموقع</button>
-                        <button class="btn-edit-action" onclick="openEditLinkModal('${item.linkKey}')" title="تعديل الرابط"><i class="fa-solid fa-pen"></i></button>
-                        <button class="btn-delete-action" onclick="deleteCSLink('${item.linkKey}')" title="حذف الرابط"><i class="fa-solid fa-trash"></i></button>
+                        <button class="btn-edit-action" onclick="openEditLinkModal('${item.linkKey}')" title="تعديل"><i class="fa-solid fa-pen"></i></button>
+                        <button class="btn-delete-action" onclick="deleteCSLink('${item.linkKey}')" title="حذف"><i class="fa-solid fa-trash"></i></button>
                     </div>
                 `;
 
@@ -2669,51 +2740,6 @@
                     card.removeAttribute('draggable');
                     card.classList.remove('dragging');
                     document.querySelectorAll('.link-card').forEach(c => c.classList.remove('drag-over'));
-                    draggedCardIndex = null;
-                });
-
-                handle.addEventListener('touchstart', (e) => {
-                    requireAdminAuth(() => {
-                        activeTouchHandle = card;
-                        draggedCardIndex = index;
-                        card.classList.add('dragging');
-                    });
-                }, { passive: true });
-
-                handle.addEventListener('touchmove', (e) => {
-                    if (!activeTouchHandle) return;
-                    const touchLoc = e.touches[0];
-                    const targetEl = document.elementFromPoint(touchLoc.clientX, touchLoc.clientY);
-
-                    document.querySelectorAll('.link-card').forEach(c => c.classList.remove('drag-over'));
-                    if (targetEl) {
-                        const targetCard = targetEl.closest('.link-card');
-                        if (targetCard && targetCard !== activeTouchHandle) {
-                            targetCard.classList.add('drag-over');
-                        }
-                    }
-                }, { passive: true });
-
-                handle.addEventListener('touchend', (e) => {
-                    if (!activeTouchHandle) return;
-
-                    const touchLoc = e.changedTouches[0];
-                    const targetEl = document.elementFromPoint(touchLoc.clientX, touchLoc.clientY);
-
-                    activeTouchHandle.classList.remove('dragging');
-                    document.querySelectorAll('.link-card').forEach(c => c.classList.remove('drag-over'));
-
-                    if (targetEl) {
-                        const targetCard = targetEl.closest('.link-card');
-                        if (targetCard) {
-                            const targetIdx = parseInt(targetCard.getAttribute('data-index'));
-                            if (draggedCardIndex !== null && draggedCardIndex !== targetIdx) {
-                                reorderCSLinks(draggedCardIndex, targetIdx);
-                            }
-                        }
-                    }
-
-                    activeTouchHandle = null;
                     draggedCardIndex = null;
                 });
 
@@ -2845,6 +2871,13 @@
                     return diffHours <= parseFloat(clientHoursFilter);
                 });
             }
+
+            if (clientPaymentFilter === 'paid') {
+                openRecords = openRecords.filter(r => r.isPaid);
+            } else if (clientPaymentFilter === 'unpaid') {
+                openRecords = openRecords.filter(r => !r.isPaid);
+            }
+
             return openRecords;
         }
 
@@ -3078,6 +3111,7 @@
                 const isRepeatedGroup = groupRecords.length > 1 || groupRecords.some(r => r.isRepeatedRequest);
                 const isCopiedGroup = groupRecords.every(r => r.isCopied);
                 const isPinnedGroup = groupRecords.some(r => r.isPinned);
+                const isPaidGroup = groupRecords.some(r => r.isPaid);
 
                 const uniqueServices = [];
                 groupRecords.forEach(r => {
@@ -3096,6 +3130,7 @@
                     isRepeated: isRepeatedGroup,
                     isCopied: isCopiedGroup,
                     isPinned: isPinnedGroup,
+                    isPaid: isPaidGroup,
                     latestCreatedAt: mainRecord.createdAt
                 });
             });
@@ -3112,6 +3147,7 @@
                 const rec = item.mainRecord;
                 const isCopied = item.isCopied;
                 const isPinned = item.isPinned;
+                const isPaid = item.isPaid;
 
                 card.className = `client-card-wrapper ${isCopied && !isPinnedFilterActive ? 'is-copied' : ''}`;
 
@@ -3128,6 +3164,12 @@
                     </button>
                 `;
 
+                const payBtnHTML = `
+                    <button class="payment-toggle-btn ${isPaid ? 'paid' : ''}" onclick="togglePaymentStatusGroup(${keysJsonStr})" title="تغيير حالة الدفع">
+                        <i class="fa-solid ${isPaid ? 'fa-credit-card' : 'fa-clock'}"></i> ${isPaid ? 'تم الدفع 💳' : 'لم يتم الدفع ⏳'}
+                    </button>
+                `;
+
                 const copyBtnHTML = !isPinnedFilterActive ? `
                     <button class="copied-btn ${isCopied ? 'active' : ''}" onclick="toggleCopiedStatusGroup(${keysJsonStr})">
                         <i class="fa-solid ${isCopied ? 'fa-circle-check' : 'fa-check'}"></i> ${isCopied ? 'تم النسخ' : 'تعليم كمنسوخ'}
@@ -3140,7 +3182,7 @@
                             <input type="checkbox" class="client-select-chk" data-keys="${keysJsonStr}">
                             <span>${index + 1}-${rec.patientName}${fileStr}</span>
                             <div style="display: flex; gap: 6px; align-items: center; flex-wrap: wrap;">
-                                ${pinBtnHTML}${copyBtnHTML}
+                                ${pinBtnHTML}${payBtnHTML}${copyBtnHTML}
                             </div>
                         </div>
                         ${dateTimeStr ? `<span class="client-datetime-badge"><i class="fa-regular fa-clock"></i> ${dateTimeStr}</span>` : ''}
@@ -3299,6 +3341,7 @@
         function updateKPIs() {
             document.getElementById('kpi-total').innerText = records.length;
             document.getElementById('kpi-recurring').innerText = records.filter(r => r.isRecurring).length;
+            document.getElementById('kpi-paid').innerText = records.filter(r => r.isPaid).length;
             document.getElementById('kpi-repeated').innerText = records.filter(r => r.isRepeatedRequest).length;
             document.getElementById('kpi-plants').innerText = records.filter(r => (r.procedureType && r.procedureType.includes('زراعة'))).length;
             
@@ -3433,6 +3476,7 @@
                                     contactMethod: row.contactMethod || row['طريقة التواصل'] || 'اتصال',
                                     serviceRequired: row.serviceRequired || row['الخدمة المطلوبة / تفاصيل المشكلة والطلب'] || '-',
                                     coordinatorName: row.coordinatorName || row['اسم المنسق'] || 'مسؤول',
+                                    isPaid: !!row.isPaid,
                                     isRecurring: !!row.isRecurring,
                                     isRepeatedRequest: !!row.isRepeatedRequest,
                                     createdAt: row.createdAt || new Date().toISOString(),
