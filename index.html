@@ -2185,9 +2185,9 @@
         }
 
         function updatePinnedCountBadge() {
-            // حساب عدد العملاء الجدد/الذين عليهم زر "تعليم كمنسوخ" (غير المنسوخين) فقط
             let openRecords = records.filter(r => !r.isHiddenFromClients);
-            if (clientHoursFilter !== 'all') {
+            
+            if (clientHoursFilter !== 'all' && !isPinnedFilterActive) {
                 const now = new Date();
                 openRecords = openRecords.filter(r => {
                     const diffHours = (now - new Date(r.createdAt)) / (1000 * 60 * 60);
@@ -2206,17 +2206,27 @@
                 groupedMap.get(groupKey).push(record);
             });
 
-            let uncopiedGroupCount = 0;
-            groupedMap.forEach((groupRecords) => {
-                // العميل يعتبر "غير منسوخ" إذا كان به على الأقل طلب واحد لم يُنسخ بعد
-                const isGroupCopied = groupRecords.every(r => r.isCopied);
-                if (!isGroupCopied) {
-                    uncopiedGroupCount++;
-                }
-            });
+            let displayCount = 0;
+
+            if (isPinnedFilterActive) {
+                // إذا كنا في صفحة المميزين: يحسب عدد المجموعات التي بها عميل مثبت فقط
+                groupedMap.forEach((groupRecords) => {
+                    if (groupRecords.some(r => r.isPinned)) {
+                        displayCount++;
+                    }
+                });
+            } else {
+                // إذا كنا في الكشف العادي: يحسب عدد العملاء المتبقين (غير المنسوخين)
+                groupedMap.forEach((groupRecords) => {
+                    const isGroupCopied = groupRecords.every(r => r.isCopied);
+                    if (!isGroupCopied) {
+                        displayCount++;
+                    }
+                });
+            }
 
             const badgeEl = document.getElementById('pinnedCount');
-            if (badgeEl) badgeEl.innerText = uncopiedGroupCount;
+            if (badgeEl) badgeEl.innerText = displayCount;
         }
 
         function togglePinnedFilter() {
@@ -3090,7 +3100,6 @@
                 });
             });
 
-            // ترتيب الكروت بحيث ينزل المنسوخ لأسفل، وغير المنسوخ لأعلى
             consolidatedList.sort((a, b) => {
                 if (a.isCopied !== b.isCopied) {
                     return a.isCopied ? 1 : -1;
