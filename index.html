@@ -287,7 +287,7 @@
         }
 
         .header-title h1 { 
-            font-size: 1.2rem; 
+            font-size: 1.1rem; 
             font-weight: 700; 
             color: var(--text-main); 
             white-space: nowrap;
@@ -369,7 +369,7 @@
         }
 
         .section-header h2 {
-            font-size: 1.1rem;
+            font-size: 1.05rem;
             color: var(--text-main);
             display: flex;
             align-items: center;
@@ -1090,7 +1090,6 @@
         .modal-header h3 { color: var(--primary-color); font-size: 1.1rem; }
         .close-modal-btn { background: none; border: none; font-size: 1.3rem; color: var(--text-muted); cursor: pointer; }
 
-        /* تعديل شريط التحكم في صفحة الكشف ليعود لوضعه الطبيعي (أزرار بحجمها العادي وليست عريضة) */
         .client-header-controls {
             display: flex;
             flex-wrap: wrap;
@@ -1115,7 +1114,7 @@
             }
             .app-layout { flex-direction: column; width: 100%; }
             .sidebar {
-                width: 280px;
+                width: 270px;
                 max-width: 85vw;
                 height: 100vh;
                 position: fixed;
@@ -1233,7 +1232,7 @@
         <span id="toastMessage">تمت العملية بنجاح!</span>
     </div>
 
-    <div class="app-layout" id="appLayout">
+    <div class="app-layout sidebar-collapsed" id="appLayout">
         
         <div class="sidebar-backdrop" onclick="toggleSidebar()"></div>
 
@@ -1555,7 +1554,7 @@
                     <section class="dashboard-section">
                         <div style="display: flex; flex-direction: column; gap: 12px; background: var(--bg-base); padding: 12px 15px; border-radius: 8px; border: 1px solid var(--border-color); margin-bottom: 15px;">
                             <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
-                                <h2 style="font-size: 1.1rem; color: var(--primary-color); font-weight: 700;">
+                                <h2 style="font-size: 1.05rem; color: var(--primary-color); font-weight: 700;">
                                     <i class="fa-solid fa-file-lines"></i> صفحة الكشف (محلية لكل جهاز)
                                 </h2>
                             </div>
