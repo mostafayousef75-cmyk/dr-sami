@@ -21,16 +21,16 @@
     <style>
         :root {
             --font-family: 'Tajawal', sans-serif;
-            --bg-base: #080c14;
-            --bg-surface: #0f172a;
-            --bg-card: #050914;
-            --bg-sidebar: #0b1329;
-            --text-main: #ffffff;
-            --text-muted: #94a3b8;
-            --border-color: #1e293b;
+            --bg-base: #000000;
+            --bg-surface: #0a0a0a;
+            --bg-card: #121212;
+            --bg-sidebar: #050505;
+            --text-main: #f3f4f6;
+            --text-muted: #a1a1aa;
+            --border-color: #27272a;
             
-            --primary-color: #2563eb;
-            --primary-hover: #1d4ed8;
+            --primary-color: #f59e0b;
+            --primary-hover: #d97706;
             --accent-purple: #7c3aed;
             --warning-color: #d97706;
             --danger-color: #dc2626;
@@ -54,17 +54,17 @@
             --primary-hover: #1d4ed8;
         }
 
-        /* 2. سيم OLED الأسود والذهبي (OLED Pure Black & Gold) */
-        body.theme-golden {
+        /* 2. سيم OLED الأسود (Amoled Black & Amber) */
+        body.theme-amoled {
             --bg-base: #000000;
             --bg-surface: #0a0a0a;
-            --bg-card: #000000;
+            --bg-card: #121212;
             --bg-sidebar: #050505;
-            --text-main: #fde047;
-            --text-muted: #a3a3a3;
-            --border-color: #262626;
-            --primary-color: #eab308;
-            --primary-hover: #ca8a04;
+            --text-main: #f3f4f6;
+            --text-muted: #a1a1aa;
+            --border-color: #27272a;
+            --primary-color: #f59e0b;
+            --primary-hover: #d97706;
         }
 
         /* 3. الرصاصي الفحمي الاحترافي (Charcoal Dark Gray) */
@@ -327,14 +327,14 @@
         }
 
         .clinic-announcements-box {
-            background: linear-gradient(135deg, rgba(37, 99, 235, 0.12), rgba(124, 58, 237, 0.12));
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.12), rgba(124, 58, 237, 0.12));
             border: 1px solid var(--primary-color);
             border-radius: var(--radius-lg);
             padding: 15px;
             display: flex;
             flex-direction: column;
             gap: 12px;
-            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.15);
+            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.15);
         }
         .announcement-header-row {
             display: flex;
@@ -408,8 +408,8 @@
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            background: rgba(37, 99, 235, 0.18);
-            border: 1px solid rgba(37, 99, 235, 0.5);
+            background: rgba(245, 158, 11, 0.18);
+            border: 1px solid rgba(245, 158, 11, 0.5);
             padding: 7px 14px;
             border-radius: 6px;
             color: #ffffff;
@@ -422,7 +422,7 @@
         }
         .announcement-file-btn:hover {
             background: var(--primary-color);
-            box-shadow: 0 0 10px rgba(37, 99, 235, 0.4);
+            box-shadow: 0 0 10px rgba(245, 158, 11, 0.4);
         }
         .announcement-footer-row {
             display: flex;
@@ -657,7 +657,7 @@
         .badge-priority { background-color: #7c3aed; box-shadow: 0 0 8px rgba(124, 58, 237, 0.4); }
         .badge-repeated { background-color: #e11d48; }
         .badge-pending { background-color: #d97706; }
-        .badge-inprogress { background-color: #2563eb; }
+        .badge-inprogress { background-color: #f59e0b; }
         .badge-completed { background-color: #16a34a; }
         .badge-suspended { background-color: #ca8a04; }
         .badge-apologized { background-color: #dc2626; box-shadow: 0 0 8px rgba(220, 38, 38, 0.4); }
@@ -721,7 +721,7 @@
             color: var(--text-main);
         }
 
-        /* ضبط صندوق إجراء الإدارة ليكون متطابقاً تماماً مع صندوق الخدمة وبدون بكرة عرض أفقية */
+        /* ضبط صندوق إجراء الإدارة ليكون مطابقاً تماماً في الأبعاد والخصائص لصندوق الخدمة */
         textarea.admin-action-textarea {
             width: 210px;
             min-width: 210px;
@@ -847,10 +847,10 @@
             font-size: 0.72rem;
             font-weight: 700;
             color: #ffffff;
-            background: rgba(37, 99, 235, 0.25);
+            background: rgba(245, 158, 11, 0.25);
             padding: 3px 6px;
             border-radius: 4px;
-            border: 1px solid rgba(37, 99, 235, 0.4);
+            border: 1px solid rgba(245, 158, 11, 0.4);
             direction: ltr;
             white-space: normal;
             word-break: break-word;
@@ -961,8 +961,8 @@
             top: 8px;
             left: 8px;
             color: var(--primary-color);
-            background: rgba(37, 99, 235, 0.1);
-            border: 1px solid rgba(37, 99, 235, 0.3);
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid rgba(245, 158, 11, 0.3);
             border-radius: 6px;
             font-size: 1.1rem;
             cursor: grab;
@@ -1102,7 +1102,7 @@
         }
     </style>
 </head>
-<body class="theme-darkblue">
+<body class="theme-amoled">
 
     <div id="notificationToast">
         <i class="fa-solid fa-circle-check" style="font-size: 1.1rem;"></i>
@@ -1160,7 +1160,7 @@
                         <label style="font-size: 0.8rem; font-weight: 600; color: var(--text-muted);">السيم:</label>
                         <select id="themeSelect" class="theme-select" onchange="changeTheme(this.value)">
                             <option value="theme-darkblue">الأزرق الغامق</option>
-                            <option value="theme-golden">OLED الأسود والذهبي</option>
+                            <option value="theme-amoled">OLED الأسود (Amoled)</option>
                             <option value="theme-gray">الرصاصي الفحمي</option>
                             <option value="theme-light">المضيء الفاتح</option>
                         </select>
@@ -1745,7 +1745,7 @@
             localStorage.setItem('adminPassword', '1234');
         }
 
-        const savedTheme = localStorage.getItem('theme') || 'theme-darkblue';
+        const savedTheme = localStorage.getItem('theme') || 'theme-amoled';
         document.body.className = savedTheme;
         const themeSelectEl = document.getElementById('themeSelect');
         if (themeSelectEl) themeSelectEl.value = savedTheme;
@@ -2538,7 +2538,6 @@
                 const isPinned = !!stLocal.isPinned;
                 const contactMethodVal = record.contactMethod || '-';
 
-                // وقت الإضافة ووقت التعديل
                 let timeCellHTML = `<div>📅 ${formatDateTimeFullCustom(record.createdAt)}</div>`;
                 if (record.updatedAt) {
                     timeCellHTML += `<div style="font-size: 0.73rem; color: var(--primary-color); margin-top: 3px; font-weight:700;">✏️ تعديل: ${formatDateTimeFullCustom(record.updatedAt)}</div>`;
@@ -3356,7 +3355,6 @@
                 });
                 const serviceStr = uniqueServices.join(' / ') || '-';
 
-                // تم استبعاد طريقة التواصل بناءً على طلبك
                 reportText += `${idx}- ${item.patientName}${fileStr}\nرقم الجوال: ${phoneStr}\n${idStr}${serviceStr}\n\n`;
                 idx++;
             });
