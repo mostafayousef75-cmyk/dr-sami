@@ -127,12 +127,26 @@
             top: 0;
             bottom: 0;
             right: 0;
-            z-index: 1000;
+            z-index: 2500;
             transition: transform 0.3s ease;
         }
 
         .app-layout.sidebar-collapsed .sidebar {
             transform: translateX(100%);
+        }
+
+        .sidebar-backdrop {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.65);
+            z-index: 2400;
+        }
+        .app-layout.sidebar-open .sidebar-backdrop {
+            display: block;
         }
 
         .sidebar-header {
@@ -786,10 +800,11 @@
         }
         #notificationToast.show { transform: translateY(0); opacity: 1; }
 
+        /* تعديل شبكة كروت العملاء لتكون متساوية الحجم وصغيرة (Compact Grid) لقراءة أكبر عدد ممكن */
         .client-report-container {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 10px;
             width: 100%;
         }
 
@@ -797,13 +812,15 @@
             background-color: var(--bg-base);
             border: 1px solid var(--border-color);
             border-radius: var(--radius-md);
-            padding: 12px 14px;
+            padding: 10px 12px;
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            justify-content: space-between;
+            gap: 6px;
             position: relative;
             box-shadow: 0 1px 4px rgba(0,0,0,0.2);
             width: 100%;
+            min-height: 145px;
             overflow: hidden;
         }
 
@@ -818,25 +835,23 @@
             align-items: flex-start;
             justify-content: space-between;
             width: 100%;
-            gap: 8px;
-            flex-wrap: wrap;
+            gap: 6px;
         }
 
         .client-card-header .client-title {
             display: flex;
             align-items: center;
-            gap: 8px;
-            font-size: 0.98rem;
+            gap: 6px;
+            font-size: 0.9rem;
             font-weight: 700;
             color: var(--text-main);
-            flex-wrap: wrap;
             flex: 1;
-            min-width: 180px;
+            word-break: break-word;
         }
 
         .client-card-header .client-select-chk {
-            width: 18px;
-            height: 18px;
+            width: 16px;
+            height: 16px;
             cursor: pointer;
             accent-color: var(--primary-color);
             flex-shrink: 0;
@@ -844,26 +859,24 @@
 
         .client-datetime-badge {
             font-family: Arial, sans-serif;
-            font-size: 0.72rem;
+            font-size: 0.68rem;
             font-weight: 700;
             color: #ffffff;
             background: rgba(245, 158, 11, 0.25);
-            padding: 3px 6px;
+            padding: 2px 5px;
             border-radius: 4px;
             border: 1px solid rgba(245, 158, 11, 0.4);
             direction: ltr;
-            white-space: normal;
-            word-break: break-word;
+            white-space: nowrap;
             display: inline-flex;
             align-items: center;
-            gap: 4px;
-            max-width: 100%;
+            gap: 3px;
         }
 
         .client-info-row {
-            font-size: 0.88rem;
+            font-size: 0.82rem;
             color: var(--text-main);
-            line-height: 1.4;
+            line-height: 1.3;
             word-break: break-word;
         }
 
@@ -876,15 +889,15 @@
             background: #d97706;
             color: #ffffff;
             border: none;
-            padding: 4px 10px;
+            padding: 3px 8px;
             border-radius: 4px;
             font-family: var(--font-family);
-            font-size: 0.75rem;
+            font-size: 0.72rem;
             font-weight: 700;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
-            gap: 4px;
+            gap: 3px;
             white-space: nowrap;
         }
 
@@ -894,25 +907,26 @@
 
         .client-actions-row {
             display: flex;
-            gap: 6px;
+            gap: 5px;
             margin-top: 4px;
             justify-content: flex-end;
             width: 100%;
-            flex-wrap: wrap;
+            border-top: 1px solid var(--border-color);
+            padding-top: 6px;
         }
 
         .btn-client-action {
-            padding: 6px 12px;
+            padding: 4px 10px;
             border-radius: 4px;
             border: none;
             color: #fff;
             font-family: var(--font-family);
-            font-size: 0.78rem;
+            font-size: 0.75rem;
             font-weight: 700;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
-            gap: 4px;
+            gap: 3px;
         }
 
         .btn-client-action.delete-to-trash { background-color: var(--danger-color); }
@@ -1022,7 +1036,7 @@
         }
         .btn-open-link:hover { background-color: var(--primary-hover); }
 
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 2000; justify-content: center; align-items: center; padding: 15px; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 3000; justify-content: center; align-items: center; padding: 15px; }
         .modal.open { display: flex; }
         .modal-content { background: var(--bg-surface); border-radius: var(--radius-lg); width: 100%; max-width: 520px; max-height: 90vh; overflow-y: auto; padding: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); border: 1px solid var(--border-color); color: var(--text-main); }
         .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid var(--border-color); padding-bottom: 8px; }
@@ -1039,9 +1053,8 @@
         }
 
         @media (max-width: 768px) {
-            .app-layout { flex-direction: column; }
             .sidebar {
-                width: 100%;
+                width: 275px;
                 height: 100vh;
                 position: fixed;
                 top: 0;
@@ -1094,22 +1107,8 @@
                 width: 100%;
                 justify-content: center;
             }
-            .client-card-header {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 8px;
-            }
-            .client-datetime-badge {
-                width: 100%;
-                justify-content: flex-start;
-            }
-            .client-actions-row {
-                justify-content: stretch;
-            }
-            .btn-client-action {
-                flex: 1;
-                justify-content: center;
-                padding: 8px;
+            .client-report-container {
+                grid-template-columns: 1fr;
             }
             .links-grid {
                 grid-template-columns: 1fr;
@@ -1138,6 +1137,8 @@
 
     <div class="app-layout" id="appLayout">
         
+        <div class="sidebar-backdrop" onclick="toggleSidebar()"></div>
+
         <aside class="sidebar">
             <div class="sidebar-header">
                 <div class="brand-info">
@@ -3216,7 +3217,7 @@
             }
 
             if (openRecords.length === 0) {
-                container.innerHTML = '<div style="text-align:center; padding:30px; color:var(--text-muted); font-size:1rem;">لا توجد نتائج أو حالات طابقت البحث 🎉</div>';
+                container.innerHTML = '<div style="grid-column: 1/-1; text-align:center; padding:30px; color:var(--text-muted); font-size:1rem;">لا توجد نتائج أو حالات طابقت البحث 🎉</div>';
                 return;
             }
 
@@ -3299,7 +3300,7 @@
 
                 const copyBtnHTML = `
                     <button class="copied-btn ${isCopied ? 'active' : ''}" onclick="toggleCopiedStatusGroup(${keysJsonStr})">
-                        <i class="fa-solid ${isCopied ? 'fa-circle-check' : 'fa-check'}"></i> ${isCopied ? 'تم النسخ' : 'تعليم كمنسوخ'}
+                        <i class="fa-solid ${isCopied ? 'fa-circle-check' : 'fa-check'}"></i> ${isCopied ? 'تم النسخ' : 'تعليم'}
                     </button>
                 `;
 
@@ -3307,19 +3308,18 @@
                     <div class="client-card-header">
                         <div class="client-title">
                             <input type="checkbox" class="client-select-chk" data-keys="${keysJsonStr}">
-                            <span>${index + 1}- ${rec.patientName}${fileStr}</span>
-                            <div style="display: flex; gap: 6px; align-items: center; flex-wrap: wrap;">
-                                ${pinBtnHTML}${copyBtnHTML}
-                            </div>
+                            <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${index + 1}- ${rec.patientName}${fileStr}</span>
                         </div>
                         ${dateTimeStr ? `<span class="client-datetime-badge"><i class="fa-regular fa-clock"></i> ${dateTimeStr}</span>` : ''}
                     </div>
                     <div class="client-info-row">
-                        <span class="info-label">رقم الجوال:</span> ${phoneStr}
+                        <span class="info-label">الجوال:</span> ${phoneStr} ${idStr ? `<span style="margin-right:8px;"><span class="info-label">الهوية:</span> ${idStr}</span>` : ''}
                     </div>
-                    ${idStr ? `<div class="client-info-row"><span class="info-label">رقم الهوية:</span> ${idStr}</div>` : ''}
-                    <div class="client-info-row">
+                    <div class="client-info-row" style="display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;">
                         ${serviceStr}
+                    </div>
+                    <div style="display: flex; gap: 4px; align-items: center; justify-content: flex-start; flex-wrap: wrap;">
+                        ${pinBtnHTML}${copyBtnHTML}
                     </div>
                     <div class="client-actions-row">
                         <button class="btn-client-action delete-to-trash" onclick="hideClientGroupFromReport(${keysJsonStr})">
