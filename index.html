@@ -1112,25 +1112,19 @@
             body {
                 overflow-x: hidden;
             }
-            .app-layout { 
-                display: block;
-                width: 100%; 
-                position: relative;
-            }
+            .app-layout { flex-direction: column; width: 100%; }
             .sidebar {
-                width: 260px;
-                max-width: 80vw;
+                width: 270px;
+                max-width: 85vw;
                 height: 100vh;
                 position: fixed;
                 top: 0;
-                right: -260px;
-                left: auto;
-                transform: none !important;
+                right: 0;
+                transform: translateX(100%);
                 z-index: 3000;
-                transition: right 0.3s ease;
             }
             .app-layout.sidebar-open .sidebar {
-                right: 0 !important;
+                transform: translateX(0) !important;
             }
             .sidebar-backdrop {
                 z-index: 2900;
@@ -1139,7 +1133,6 @@
                 margin-right: 0 !important;
                 width: 100% !important;
                 min-width: 0;
-                max-width: 100vw;
             }
             .top-header {
                 padding: 10px;
@@ -1429,7 +1422,7 @@
                                 <div class="input-field full-width">
                                     <label class="priority-checkbox">
                                         <input type="checkbox" id="isRecurring" onchange="checkPriorityAuth(this)">
-                                        <span>إعطاء أولوية ⭐ (تفعيلها يتطلب باسورد الإدارة)</span>
+                                        <span>إعطاء أولوية ⭐ (يتطلب باسورد الإدارة)</span>
                                     </label>
                                 </div>
                             </div>
@@ -1831,7 +1824,7 @@
                     <div class="input-field full-width">
                         <label class="priority-checkbox">
                             <input type="checkbox" id="editIsRecurring">
-                            <span>تعيين كحالة ذات أولوية ⭐ (تفعيلها يتطلب باسورد)</span>
+                            <span>تعيين كحالة ذات أولوية ⭐ (يتطلب باسورد)</span>
                         </label>
                     </div>
                     <div class="input-field full-width">
@@ -1890,7 +1883,11 @@
 
         function toggleSidebar() {
             const appLayout = document.getElementById('appLayout');
-            appLayout.classList.toggle('sidebar-open');
+            if (window.innerWidth <= 768) {
+                appLayout.classList.toggle('sidebar-open');
+            } else {
+                appLayout.classList.toggle('sidebar-collapsed');
+            }
         }
 
         function switchPage(page) {
@@ -2373,7 +2370,6 @@
         let pendingPriorityCheckbox = null;
         function checkPriorityAuth(checkbox) {
             if (checkbox.checked) {
-                // تفعيل الأولوية يتطلب كلمة المرور
                 pendingPriorityCheckbox = checkbox;
                 checkbox.checked = false;
                 requireAdminAuth(() => {
@@ -2382,9 +2378,6 @@
                         pendingPriorityCheckbox = null;
                     }
                 });
-            } else {
-                // إلغاء الأولوية (إرجاعها للوضع الطبيعي) يتم فوراً وبكل سهولة بدون باسورد
-                pendingPriorityCheckbox = null;
             }
         }
 
