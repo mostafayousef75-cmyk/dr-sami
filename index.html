@@ -21,35 +21,36 @@
     <style>
         :root {
             --font-family: 'Tajawal', sans-serif;
-            /* ألوان الرمادي الفحم الداكنة المستوحاة من الواجهة المرفقة */
-            --bg-base: #181a1d;
-            --bg-surface: #222428;
-            --bg-card: #2a2d32;
-            --bg-sidebar: #131517;
-            --text-main: #e5e7eb;
-            --text-muted: #9ca3af;
-            --border-color: #374151;
             
-            --primary-color: #3b82f6;
-            --primary-hover: #2563eb;
-            --accent-purple: #8b5cf6;
+            /* ألوان الأزرق الكحلي الغامق الفخم */
+            --bg-base: #0b1329;
+            --bg-surface: #131e3a;
+            --bg-card: #1a274c;
+            --bg-sidebar: #090f20;
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --border-color: #263863;
+            
+            --primary-color: #2563eb;
+            --primary-hover: #1d4ed8;
+            --accent-purple: #7c3aed;
             --warning-color: #d97706;
             --danger-color: #ef4444;
             --success-color: #10b981;
 
-            --shadow-sm: 0 2px 6px rgba(0,0,0,0.4);
-            --radius-lg: 10px;
-            --radius-md: 6px;
+            --shadow-sm: 0 4px 12px rgba(0,0,0,0.35);
+            --radius-lg: 12px;
+            --radius-md: 8px;
         }
 
         body.light-theme {
-            --bg-base: #f3f4f6;
+            --bg-base: #f1f5f9;
             --bg-surface: #ffffff;
             --bg-card: #ffffff;
-            --bg-sidebar: #1f2937;
-            --text-main: #111827;
-            --text-muted: #6b7280;
-            --border-color: #d1d5db;
+            --bg-sidebar: #0f172a;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border-color: #cbd5e1;
         }
 
         * {
@@ -115,7 +116,7 @@
         }
 
         .brand-text h2 { font-size: 1.1rem; font-weight: 700; color: #fff; }
-        .brand-text p { font-size: 0.8rem; opacity: 0.7; color: #9ca3af; }
+        .brand-text p { font-size: 0.8rem; opacity: 0.7; color: var(--text-muted); }
 
         .toggle-sidebar-btn {
             background: rgba(255,255,255,0.08);
@@ -143,7 +144,7 @@
             display: flex;
             align-items: center;
             gap: 12px;
-            color: #9ca3af;
+            color: #94a3b8;
             text-decoration: none;
             padding: 12px 16px;
             border-radius: var(--radius-md);
@@ -161,8 +162,8 @@
         .menu-item.active {
             background-color: var(--bg-surface);
             color: #ffffff;
-            border: 1px solid var(--border-color);
-            border-right: 4px solid var(--primary-color);
+            border: 1px solid var(--primary-color);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
         }
 
         .cloud-badge {
@@ -306,7 +307,7 @@
             gap: 8px;
             font-size: 1rem;
             font-weight: 700;
-            color: var(--primary-color);
+            color: #60a5fa;
         }
         .announcements-grid {
             display: flex;
@@ -360,7 +361,7 @@
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            background: rgba(59, 130, 246, 0.15);
+            background: rgba(37, 99, 235, 0.2);
             border: 1px solid var(--primary-color);
             padding: 7px 14px;
             border-radius: 6px;
@@ -481,7 +482,6 @@
         .input-field.full-width { grid-column: 1 / -1; }
         .input-field label { font-size: 0.88rem; font-weight: 600; color: var(--text-main); }
         
-        /* مطابقة مدخلات النموذج بالتنسيق الرمادي المقارب للصورة */
         .input-field input, .input-field select, .input-field textarea {
             padding: 10px 12px; 
             border: 1px solid var(--border-color); 
@@ -495,7 +495,7 @@
         .input-field input:focus, .input-field select:focus, .input-field textarea:focus {
             border-color: var(--primary-color);
         }
-        .input-field textarea { resize: vertical; min-height: 75px; }
+        .input-field textarea { resize: vertical; min-height: 80px; }
 
         .priority-checkbox {
             display: flex; align-items: center; gap: 10px; cursor: pointer; background: var(--bg-card); padding: 10px 14px; border-radius: var(--radius-md); border: 1px dashed var(--accent-purple); width: 100%; color: var(--text-main);
@@ -514,7 +514,7 @@
         .action-btn.json { background-color: #6366f1; }
         .action-btn.import { background-color: #0284c7; }
         .action-btn.clear-all { background-color: #ef4444; }
-        .action-btn.settings { background-color: #4b5563; }
+        .action-btn.settings { background-color: #475569; }
         .action-btn.copy-btn { background-color: #10b981; }
         .action-btn.select-del-btn { background-color: #ef4444; }
         .action-btn.trash-view-btn { background-color: #d97706; }
@@ -620,26 +620,34 @@
         .proc-stitches { background-color: #9333ea; color: #ffffff; } 
         .proc-review { background-color: #4f46e5; color: #ffffff; } 
         .proc-inquiry { background-color: #0284c7; color: #ffffff; }
-        .proc-default { background-color: #4b5563; color: #ffffff; } 
+        .proc-default { background-color: #475569; color: #ffffff; } 
 
         .table-input {
-            width: 100%; padding: 6px; border: 1px solid var(--border-color); border-radius: var(--radius-md); background: var(--bg-card); color: var(--text-main); font-family: var(--font-family); font-size: 0.82rem;
+            width: 100%; padding: 8px; border: 1px solid var(--border-color); border-radius: var(--radius-md); background: var(--bg-card); color: var(--text-main); font-family: var(--font-family); font-size: 0.85rem;
         }
         
         .service-cell-box {
-            width: 200px;
+            width: 220px;
             white-space: pre-wrap;
             word-break: break-word;
-            padding: 6px 8px;
+            padding: 8px 10px;
             background: var(--bg-card);
-            border-radius: 4px;
+            border-radius: 6px;
             border: 1px solid var(--border-color);
-            font-size: 0.82rem;
-            line-height: 1.4;
+            font-size: 0.85rem;
+            line-height: 1.5;
             color: var(--text-main);
         }
 
-        textarea.table-input { resize: vertical; min-height: 45px; }
+        /* تكبير وتوسيع مربع إجراء الإدارة داخل الجدول */
+        textarea.table-input { 
+            resize: vertical; 
+            min-height: 100px; 
+            width: 220px;
+            line-height: 1.5;
+            padding: 8px 10px;
+            font-size: 0.85rem;
+        }
 
         .btn-save-action { background-color: var(--success-color); color: #fff; border: none; padding: 6px 9px; border-radius: 4px; cursor: pointer; }
         .btn-edit-action { background-color: var(--primary-color); color: #fff; border: none; padding: 6px 9px; border-radius: 4px; cursor: pointer; }
@@ -649,9 +657,9 @@
         .btn-pin-action.pinned { background-color: #ca8a04; box-shadow: 0 0 6px #f59e0b; }
 
         @keyframes priorityPulse {
-            0% { background-color: rgba(139, 92, 246, 0.15); }
-            50% { background-color: rgba(139, 92, 246, 0.05); }
-            100% { background-color: rgba(139, 92, 246, 0.15); }
+            0% { background-color: rgba(124, 58, 237, 0.18); }
+            50% { background-color: rgba(124, 58, 237, 0.05); }
+            100% { background-color: rgba(124, 58, 237, 0.18); }
         }
         .row-priority-pulse {
             animation: priorityPulse 2s infinite ease-in-out;
@@ -739,10 +747,10 @@
             font-size: 0.75rem;
             font-weight: 700;
             color: #ffffff;
-            background: rgba(59, 130, 246, 0.2);
+            background: rgba(37, 99, 235, 0.25);
             padding: 4px 8px;
             border-radius: 4px;
-            border: 1px solid rgba(59, 130, 246, 0.3);
+            border: 1px solid rgba(37, 99, 235, 0.4);
             direction: ltr;
             white-space: normal;
             word-break: break-word;
@@ -869,31 +877,37 @@
         }
         .link-card.drag-over {
             border: 2px solid var(--accent-purple);
-            box-shadow: 0 0 12px rgba(139, 92, 246, 0.4);
+            box-shadow: 0 0 12px rgba(124, 58, 237, 0.4);
             transform: translateY(-4px);
         }
         .link-card:hover {
             border-color: var(--primary-color);
         }
+        
+        /* المقبض الصغير للسحب المباشر على اللمس والموبايل */
         .drag-handle {
             position: absolute;
-            top: 8px;
-            left: 8px;
+            top: 10px;
+            left: 10px;
             color: var(--primary-color);
-            background: rgba(59, 130, 246, 0.1);
-            border: 1px solid rgba(59, 130, 246, 0.3);
+            background: rgba(37, 99, 235, 0.15);
+            border: 1px solid rgba(37, 99, 235, 0.4);
             border-radius: 6px;
-            font-size: 1.1rem;
+            font-size: 1.2rem;
             cursor: grab;
-            padding: 8px 10px;
+            padding: 10px 12px;
             touch-action: none;
-            z-index: 5;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         .drag-handle:active {
             cursor: grabbing;
             background: var(--primary-color);
             color: #ffffff;
         }
+
         .link-card-header {
             display: flex;
             align-items: center;
@@ -901,7 +915,7 @@
             font-weight: 700;
             font-size: 1rem;
             color: var(--text-main);
-            padding-left: 35px;
+            padding-left: 45px;
             word-break: break-word;
         }
         .link-card-header i {
@@ -945,7 +959,7 @@
         .modal.open { display: flex; }
         .modal-content { background: var(--bg-surface); border-radius: var(--radius-lg); width: 100%; max-width: 520px; max-height: 90vh; overflow-y: auto; padding: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.6); border: 1px solid var(--border-color); color: var(--text-main); }
         .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid var(--border-color); padding-bottom: 8px; }
-        .modal-header h3 { color: var(--primary-color); font-size: 1.1rem; }
+        .modal-header h3 { color: #60a5fa; font-size: 1.1rem; }
         .close-modal-btn { background: none; border: none; font-size: 1.3rem; color: var(--text-muted); cursor: pointer; }
 
         .client-header-controls {
@@ -1259,7 +1273,6 @@
                                 <div class="filter-tabs" id="statusFilterTabs">
                                     <button class="filter-tab" data-filter="all" onclick="setDashboardFilter('all', this)">الكل</button>
                                     
-                                    <!-- القائمة المنسدلة المحدثة لأسماء فلاتر الدفع -->
                                     <div class="dropdown-filter-container" id="paymentDropdownContainer">
                                         <button class="dropdown-filter-btn" id="paymentDropdownBtn" onclick="toggleDropdown('paymentDropdownContent')">
                                             <i class="fa-solid fa-credit-card"></i> حالة الدفع <i class="fa-solid fa-chevron-down" style="font-size:0.7rem;"></i>
@@ -1325,7 +1338,7 @@
                                         <th>الخدمة / تفاصيل الطلب</th>
                                         <th>المنسق</th>
                                         <th style="min-width: 170px;">تواصل الإدارة</th>
-                                        <th style="min-width: 190px;">إجراء الإدارة</th>
+                                        <th style="min-width: 230px;">إجراء الإدارة</th>
                                         <th>إجراءات</th>
                                     </tr>
                                 </thead>
@@ -1341,7 +1354,7 @@
                     <section class="dashboard-section">
                         <div style="display: flex; flex-direction: column; gap: 12px; background: var(--bg-card); padding: 12px 15px; border-radius: 8px; border: 1px solid var(--border-color); margin-bottom: 15px;">
                             <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
-                                <h2 style="font-size: 1.1rem; color: var(--primary-color); font-weight: 700;">
+                                <h2 style="font-size: 1.1rem; color: #60a5fa; font-weight: 700;">
                                     <i class="fa-solid fa-file-lines"></i> صفحة الكشف
                                 </h2>
                             </div>
@@ -1392,7 +1405,7 @@
                             <button class="action-btn copy-btn" onclick="openAddLinkModal()"><i class="fa-solid fa-plus"></i> إضافة رابط جديد</button>
                         </div>
                         <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 10px;">
-                            💡 **ترتيب الروابط:** اضغط باستمرار مع السحب المباشر على أيقونة المقبض الزرقاء <i class="fa-solid fa-grip-vertical" style="color: var(--primary-color);"></i> لترتيب الكروت بسلاسة.
+                            💡 **ترتيب الروابط على الموبايل:** اضغط باستمرار مع السحب المباشر على أيقونة المقبض الزرقاء <i class="fa-solid fa-grip-vertical" style="color: var(--primary-color);"></i> لترتيب الكروت بسلاسة.
                         </p>
 
                         <div class="links-grid" id="linksGridContainer"></div>
@@ -2528,7 +2541,7 @@
                         </select>
                         <input type="text" class="table-input" id="adminOther_${record.firebaseKey}" placeholder="التفاصيل..." value="${otherDetail}" style="margin-top: 5px; ${selectVal === 'أخرى' ? '' : 'display:none;'}">
                     </td>
-                    <td><textarea class="table-input" id="action_${record.firebaseKey}">${record.actionTaken || ''}</textarea></td>
+                    <td><textarea class="table-input" id="action_${record.firebaseKey}" placeholder="اكتب إجراء الإدارة هنا...">${record.actionTaken || ''}</textarea></td>
                     <td>
                         <button class="btn-pin-action ${isPinned ? 'pinned' : ''}" onclick="requestTogglePinRecord('${record.firebaseKey}')" title="${isPinned ? 'إلغاء التثبيت' : 'تثبيت العميل'}"><i class="fa-solid fa-thumbtack"></i></button>
                         <button class="btn-save-action" onclick="saveAdminUpdate('${record.firebaseKey}')" title="حفظ"><i class="fa-solid fa-floppy-disk"></i></button>
@@ -2688,7 +2701,7 @@
         }
 
         let draggedCardIndex = null;
-        let activeTouchHandle = null;
+        let touchDraggedIndex = null;
 
         function renderCSLinks() {
             const container = document.getElementById('linksGridContainer');
@@ -2725,15 +2738,13 @@
 
                 const handle = card.querySelector('.drag-handle');
 
+                // دمج السحب للماوس المباشر (Desktop Drag & Drop)
                 handle.addEventListener('mousedown', (e) => {
                     e.preventDefault();
                     requireAdminAuth(() => {
                         card.setAttribute('draggable', 'true');
                         draggedCardIndex = index;
                         card.classList.add('dragging');
-                        
-                        const dragEvent = new DragEvent('dragstart', { bubbles: true, cancelable: true });
-                        card.dispatchEvent(dragEvent);
                     });
                 });
 
@@ -2766,6 +2777,44 @@
                     card.classList.remove('dragging');
                     document.querySelectorAll('.link-card').forEach(c => c.classList.remove('drag-over'));
                     draggedCardIndex = null;
+                });
+
+                // تفعيل السحب باللمس والموبايل (Touch Support)
+                handle.addEventListener('touchstart', (e) => {
+                    requireAdminAuth(() => {
+                        touchDraggedIndex = index;
+                        card.classList.add('dragging');
+                    });
+                }, { passive: true });
+
+                handle.addEventListener('touchmove', (e) => {
+                    if (touchDraggedIndex === null) return;
+                    const touch = e.touches[0];
+                    const targetEl = document.elementFromPoint(touch.clientX, touch.clientY);
+                    const targetCard = targetEl ? targetEl.closest('.link-card') : null;
+
+                    document.querySelectorAll('.link-card').forEach(c => c.classList.remove('drag-over'));
+                    if (targetCard && targetCard !== card) {
+                        targetCard.classList.add('drag-over');
+                    }
+                }, { passive: true });
+
+                handle.addEventListener('touchend', (e) => {
+                    if (touchDraggedIndex === null) return;
+                    card.classList.remove('dragging');
+                    const touch = e.changedTouches[0];
+                    const targetEl = document.elementFromPoint(touch.clientX, touch.clientY);
+                    const targetCard = targetEl ? targetEl.closest('.link-card') : null;
+
+                    if (targetCard) {
+                        const targetIdx = parseInt(targetCard.getAttribute('data-index'));
+                        if (!isNaN(targetIdx) && touchDraggedIndex !== targetIdx) {
+                            reorderCSLinks(touchDraggedIndex, targetIdx);
+                        }
+                    }
+
+                    document.querySelectorAll('.link-card').forEach(c => c.classList.remove('drag-over'));
+                    touchDraggedIndex = null;
                 });
 
                 container.appendChild(card);
@@ -3184,7 +3233,7 @@
                 const keysJsonStr = JSON.stringify(item.allKeys).replace(/"/g, '&quot;');
 
                 const pinBtnHTML = `
-                    <button class="copied-btn" style="background-color: ${isPinned ? '#d97706' : '#4b5563'}; border-color: ${isPinned ? '#f59e0b' : '#6b7280'}; color: #ffffff;" onclick="requestTogglePinRecord('${rec.firebaseKey}')" title="${isPinned ? 'إلغاء التثبيت من المميزين' : 'تثبيت في المميزين'}">
+                    <button class="copied-btn" style="background-color: ${isPinned ? '#d97706' : '#475569'}; border-color: ${isPinned ? '#f59e0b' : '#64748b'}; color: #ffffff;" onclick="requestTogglePinRecord('${rec.firebaseKey}')" title="${isPinned ? 'إلغاء التثبيت من المميزين' : 'تثبيت في المميزين'}">
                         📌 ${isPinned ? 'المميزون' : 'تثبيت'}
                     </button>
                 `;
