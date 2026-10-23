@@ -734,9 +734,22 @@
             position: sticky; 
             top: 0; 
             z-index: 10; 
+            padding: 8px 8px;
         }
 
-        table th, table td { padding: 8px 8px; text-align: right; border-bottom: 1px solid var(--border-color); vertical-align: middle; color: var(--text-main); }
+        /* تعديل خلايا الجدول ليتغير الارتفاع ديناميكياً مع النص بحسب أطول مربع بحدود محبوكة */
+        table th, table td { 
+            padding: 5px 8px; 
+            text-align: right; 
+            border-bottom: 1px solid var(--border-color); 
+            vertical-align: middle; 
+            color: var(--text-main); 
+            height: auto;
+        }
+
+        table tbody tr {
+            height: auto;
+        }
 
         tr.row-apologized {
             background-color: rgba(220, 38, 38, 0.18) !important;
@@ -794,40 +807,46 @@
             width: 100%; padding: 6px; border: 1px solid var(--border-color); border-radius: var(--radius-md); background: var(--bg-base); color: var(--text-main); font-family: var(--font-family); font-size: 0.85rem;
         }
         
+        /* جعل أبعاد مربع الخدمة يتكيف ديناميكياً بدون مسافات فارغة زائده */
         .service-cell-box {
             width: 280px;
             min-width: 280px;
             max-width: 280px;
-            min-height: 45px;
+            height: auto;
+            min-height: unset;
             white-space: pre-wrap;
             word-break: break-word;
             overflow-wrap: break-word;
-            padding: 6px 8px;
+            padding: 5px 8px;
             background: var(--bg-base);
             border-radius: 6px;
             border: 1px solid var(--border-color);
-            font-size: 0.85rem;
-            line-height: 1.4;
+            font-size: 0.83rem;
+            line-height: 1.35;
             color: var(--text-main);
+            box-sizing: border-box;
         }
 
+        /* جعل أبعاد مربع إجراء الإدارة يتكيف ديناميكياً مع المحتوى بدون حشو زائد */
         textarea.admin-action-textarea {
             width: 280px;
             min-width: 280px;
             max-width: 280px;
-            min-height: 45px;
+            height: auto;
+            min-height: unset;
             white-space: pre-wrap;
             word-break: break-word;
             overflow-wrap: break-word;
-            padding: 6px 8px;
+            padding: 5px 8px;
             background: var(--bg-base);
             border-radius: 6px;
             border: 1px solid var(--border-color);
-            font-size: 0.85rem;
-            line-height: 1.4;
+            font-size: 0.83rem;
+            line-height: 1.35;
             color: var(--text-main);
             font-family: var(--font-family);
             resize: vertical;
+            box-sizing: border-box;
         }
 
         .client-name-cell {
@@ -881,7 +900,6 @@
             width: 100%;
         }
 
-        /* تم تقليل حشو كارت العميل وإلغاء الارتفاع الزائد ليكون ملموماً ومحبوكاً مع الحدود بالضبط */
         .client-card-wrapper {
             background-color: var(--bg-base);
             border: 1px solid var(--border-color);
