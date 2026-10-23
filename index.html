@@ -910,13 +910,14 @@
             font-weight: 600;
         }
 
-        /* تنسيق الأزرار الصغيرة وبجوار بعضها داخل الكارت */
+        /* تنسيق الأزرار الصغيرة وبجوار بعضها دون تمدد */
         .client-card-buttons-row {
             display: flex;
             gap: 8px;
             align-items: center;
             width: 100%;
             margin-top: 4px;
+            flex-wrap: wrap;
         }
 
         .copied-btn {
@@ -934,7 +935,7 @@
             justify-content: center;
             gap: 5px;
             white-space: nowrap;
-            flex: 1;
+            flex: unset; /* حجم طبيعي غير متمدد */
         }
 
         .copied-btn.active {
@@ -3371,14 +3372,13 @@
                 const keysJsonStr = JSON.stringify(item.allKeys).replace(/"/g, '&quot;');
 
                 const pinBtnHTML = `
-                    <button class="copied-btn" style="background-color: ${isPinned ? '#d97706' : '#475569'}; border-color: ${isPinned ? '#f59e0b' : '#64748b'}; color: #ffffff;" onclick="requestTogglePinRecord('${rec.firebaseKey}')" title="${isPinned ? 'إلغاء التثبيت من المميزين' : 'تثبيت في المميزين'}">
+                    <button class="copied-btn" style="background-color: ${isPinned ? '#d97706' : '#475569'}; border-color: ${isPinned ? '#f59e0b' : '#64748b'}; color: #ffffff; flex: unset;" onclick="requestTogglePinRecord('${rec.firebaseKey}')" title="${isPinned ? 'إلغاء التثبيت من المميزين' : 'تثبيت في المميزين'}">
                         📌 ${isPinned ? 'المميزون' : 'تثبيت'}
                     </button>
                 `;
 
-                /* الزر بالتسمية الجديدة "تعليم كمنسوخ" وبحجمه المضغوط الصغير */
                 const copyBtnHTML = `
-                    <button class="copied-btn ${isCopied ? 'active' : ''}" onclick="toggleCopiedStatusGroup(${keysJsonStr})">
+                    <button class="copied-btn ${isCopied ? 'active' : ''}" style="flex: unset;" onclick="toggleCopiedStatusGroup(${keysJsonStr})">
                         <i class="fa-solid ${isCopied ? 'fa-circle-check' : 'fa-check'}"></i> ${isCopied ? 'تم النسخ' : 'تعليم كمنسوخ'}
                     </button>
                 `;
