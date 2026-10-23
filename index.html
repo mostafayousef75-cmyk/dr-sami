@@ -407,39 +407,43 @@
         .announcements-grid {
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 8px;
             max-height: 280px;
             overflow-y: auto;
         }
+        
+        /* تعديل كارت التنبيه للتكيف الدقيق التام مع المحتوى */
         .announcement-card {
             background: var(--bg-base);
             border: 1px solid var(--border-color);
             border-radius: var(--radius-md);
-            padding: 12px 14px;
+            padding: 8px 12px;
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 6px;
             border-right: 4px solid var(--warning-color);
             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            height: auto;
+            min-height: unset;
         }
         .announcement-body-content {
             display: flex;
             align-items: flex-start;
             justify-content: space-between;
-            gap: 12px;
+            gap: 10px;
             flex-wrap: wrap;
         }
         .announcement-body-text {
-            font-size: 0.9rem;
+            font-size: 0.88rem;
             color: var(--text-main);
-            line-height: 1.6;
+            line-height: 1.4;
             word-break: break-word;
             white-space: pre-wrap;
             flex: 1;
         }
         .announcement-thumbnail-wrapper {
-            width: 55px;
-            height: 55px;
+            width: 48px;
+            height: 48px;
             border-radius: 6px;
             overflow: hidden;
             border: 1px solid var(--border-color);
@@ -460,17 +464,16 @@
         .announcement-file-btn {
             display: inline-flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
             background: rgba(245, 158, 11, 0.18);
             border: 1px solid rgba(245, 158, 11, 0.5);
-            padding: 7px 14px;
+            padding: 5px 10px;
             border-radius: 6px;
             color: #ffffff;
-            font-size: 0.85rem;
+            font-size: 0.82rem;
             font-weight: 700;
             cursor: pointer;
             font-family: var(--font-family);
-            margin-top: 5px;
             transition: all 0.2s ease;
         }
         .announcement-file-btn:hover {
@@ -482,11 +485,11 @@
             align-items: center;
             justify-content: space-between;
             border-top: 1px solid var(--border-color);
-            padding-top: 8px;
-            font-size: 0.75rem;
+            padding-top: 5px;
+            font-size: 0.72rem;
             color: var(--text-muted);
             flex-wrap: wrap;
-            gap: 8px;
+            gap: 6px;
         }
         .announcement-actions-group {
             display: flex;
@@ -497,29 +500,29 @@
             background-color: var(--primary-color);
             color: #fff;
             border: none;
-            padding: 5px 10px;
+            padding: 4px 8px;
             border-radius: 4px;
             cursor: pointer;
             font-family: var(--font-family);
-            font-size: 0.78rem;
+            font-size: 0.75rem;
             font-weight: 700;
             display: inline-flex;
             align-items: center;
-            gap: 5px;
+            gap: 4px;
         }
         .btn-delete-announcement-card {
             background-color: var(--danger-color);
             color: #fff;
             border: none;
-            padding: 5px 10px;
+            padding: 4px 8px;
             border-radius: 4px;
             cursor: pointer;
             font-family: var(--font-family);
-            font-size: 0.78rem;
+            font-size: 0.75rem;
             font-weight: 700;
             display: inline-flex;
             align-items: center;
-            gap: 5px;
+            gap: 4px;
         }
 
         .progress-box {
@@ -737,7 +740,7 @@
             padding: 6px 8px;
         }
 
-        /* ضبط خلايا الجدول لتعمل بارتفاع ديناميكي وتتأقلم مع المحتوى بدقة */
+        /* ضبط خلايا الصفوف لتعمل بارتفاع ديناميكي وتتأقلم مع النص بدون فراغات زائدة */
         table th, table td { 
             padding: 4px 8px; 
             text-align: right; 
@@ -1678,15 +1681,27 @@
             </div>
             <form id="announcementForm" onsubmit="saveAnnouncementItem(event)">
                 <input type="hidden" id="editAnnouncementKey">
+                <!-- متغير للتحكم في حالة مسح الملف الحالي -->
+                <input type="hidden" id="removeFileFlag" value="false">
                 <div class="form-grid">
                     <div class="input-field full-width">
                         <label>نص التنبيه أو الملاحظة *</label>
                         <textarea id="announcementText" required placeholder="اكتب التنبيه أو التحديث الجديد للعيادة هنا..."></textarea>
                     </div>
+                    
                     <div class="input-field full-width">
                         <label><i class="fa-solid fa-paperclip"></i> إرفاق ملف (PDF, مستندات, صور...) (اختياري)</label>
+                        
+                        <!-- إظهار اسم الملف المرفق حالياً وزر لحذفه -->
+                        <div id="currentFileStatusWrapper" style="display: none; align-items: center; justify-content: space-between; background: rgba(245,158,11,0.1); border: 1px solid var(--primary-color); padding: 8px 12px; border-radius: 6px; margin-bottom: 8px;">
+                            <span id="currentFileNameLabel" style="font-size: 0.85rem; font-weight: 700; color: var(--text-main); word-break: break-all;"></span>
+                            <button type="button" onclick="removeAttachedFileInModal()" style="background: var(--danger-color); color: #fff; border: none; padding: 4px 10px; border-radius: 4px; font-size: 0.78rem; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 5px;">
+                                <i class="fa-solid fa-trash-can"></i> حذف الملف المرفق
+                            </button>
+                        </div>
+
                         <input type="file" id="announcementFile" accept=".pdf,.doc,.docx,.xls,.xlsx,.txt,image/*" style="padding: 6px; cursor: pointer;">
-                        <span style="font-size: 0.75rem; color: var(--text-muted); margin-top: 3px;">يمكنك رفع ملفات PDF أو مستندات أو صور ليراها فريق العمل مباشرة.</span>
+                        <span style="font-size: 0.75rem; color: var(--text-muted); margin-top: 3px;">يمكنك رفع ملف جديد أو استبدال الملف الحالي.</span>
                     </div>
                 </div>
                 <button type="submit" class="submit-btn" style="margin-top: 15px;"><i class="fa-solid fa-floppy-disk"></i> حفظ ونشر التنبيه</button>
@@ -1884,7 +1899,7 @@
                         </label>
                     </div>
                 </div>
-                <button type="submit" class="submit-btn" style="margin-top: 12px;"><i class="fa-solid fa-floppy-disk"></i> حفظ التعديلات</button>
+                <button type="submit" class="submit-btn" style="margin-top: 12px;"><i class="fa-solid fa-floppy-disk"></i> حفظ والتحديث</button>
             </form>
         </div>
     </div>
@@ -2300,6 +2315,8 @@
             document.getElementById('editAnnouncementKey').value = '';
             document.getElementById('announcementText').value = '';
             document.getElementById('announcementFile').value = '';
+            document.getElementById('removeFileFlag').value = 'false';
+            document.getElementById('currentFileStatusWrapper').style.display = 'none';
             document.getElementById('announcementModalTitle').innerHTML = '<i class="fa-solid fa-bullhorn"></i> إضافة تنبيه أو إشعار للعيادة';
             document.getElementById('announcementModal').classList.add('open');
         }
@@ -2310,8 +2327,25 @@
             document.getElementById('editAnnouncementKey').value = item.announcementKey;
             document.getElementById('announcementText').value = item.text || '';
             document.getElementById('announcementFile').value = '';
+            document.getElementById('removeFileFlag').value = 'false';
+
+            const statusWrapper = document.getElementById('currentFileStatusWrapper');
+            const nameLabel = document.getElementById('currentFileNameLabel');
+            if (item.fileUrl) {
+                nameLabel.innerText = `📄 الملف المرفق الحالي: ${item.fileName || 'ملف مرفق'}`;
+                statusWrapper.style.display = 'flex';
+            } else {
+                statusWrapper.style.display = 'none';
+            }
+
             document.getElementById('announcementModalTitle').innerHTML = '<i class="fa-solid fa-pen"></i> تعديل تنبيه العيادة';
             document.getElementById('announcementModal').classList.add('open');
+        }
+
+        function removeAttachedFileInModal() {
+            document.getElementById('removeFileFlag').value = 'true';
+            document.getElementById('currentFileStatusWrapper').style.display = 'none';
+            showToastOnly('🗑️ تم تحديد الملف للحذف. اضغط "حفظ ونشر التنبيه" لتأكيد الحذف.');
         }
 
         function closeAnnouncementModal() {
@@ -2323,6 +2357,7 @@
             const key = document.getElementById('editAnnouncementKey').value;
             const textVal = document.getElementById('announcementText').value.trim();
             const fileInput = document.getElementById('announcementFile');
+            const shouldRemoveFile = document.getElementById('removeFileFlag').value === 'true';
             if (!textVal) return;
 
             const processAndSave = (fileUrl, fileType, fileName) => {
@@ -2330,11 +2365,17 @@
                     const item = clinicAnnouncements.find(a => a.announcementKey === key);
                     if (item) {
                         item.text = textVal;
-                        if (fileUrl !== undefined) {
+                        
+                        if (shouldRemoveFile) {
+                            item.fileUrl = '';
+                            item.fileType = '';
+                            item.fileName = '';
+                        } else if (fileUrl !== undefined) {
                             item.fileUrl = fileUrl;
                             item.fileType = fileType;
                             item.fileName = fileName;
                         }
+
                         saveLocal();
                         renderAnnouncements();
                         closeAnnouncementModal();
@@ -2342,7 +2383,11 @@
 
                         if (navigator.onLine && !key.startsWith('ann_')) {
                             const updateObj = { text: textVal };
-                            if (fileUrl !== undefined) {
+                            if (shouldRemoveFile) {
+                                updateObj.fileUrl = '';
+                                updateObj.fileType = '';
+                                updateObj.fileName = '';
+                            } else if (fileUrl !== undefined) {
                                 updateObj.fileUrl = fileUrl;
                                 updateObj.fileType = fileType;
                                 updateObj.fileName = fileName;
@@ -2355,9 +2400,9 @@
                     const newAnn = {
                         announcementKey: tempKey,
                         text: textVal,
-                        fileUrl: fileUrl || '',
-                        fileType: fileType || '',
-                        fileName: fileName || '',
+                        fileUrl: shouldRemoveFile ? '' : (fileUrl || ''),
+                        fileType: shouldRemoveFile ? '' : (fileType || ''),
+                        fileName: shouldRemoveFile ? '' : (fileName || ''),
                         createdAt: new Date().toISOString()
                     };
 
@@ -2405,7 +2450,7 @@
         }
 
         function deleteAnnouncement(key) {
-            if (confirm('هل أنت متأكد من حذف هذا التنبيه؟')) {
+            if (confirm('هل أنت متأكد من حذف هذا التنبيه بالكامل؟')) {
                 clinicAnnouncements = clinicAnnouncements.filter(a => a.announcementKey !== key);
                 saveLocal();
                 renderAnnouncements();
