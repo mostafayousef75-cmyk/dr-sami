@@ -272,7 +272,7 @@
         .top-header {
             background-color: var(--bg-surface);
             border-bottom: 1px solid var(--border-color);
-            padding: 15px 20px;
+            padding: 12px 18px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -334,10 +334,10 @@
         }
 
         .content-body {
-            padding: 15px;
+            padding: 10px;
             display: flex;
             flex-direction: column;
-            gap: 18px;
+            gap: 12px;
             width: 100%;
             min-width: 0;
         }
@@ -345,7 +345,7 @@
         .page-view {
             display: flex;
             flex-direction: column;
-            gap: 18px;
+            gap: 12px;
             width: 100%;
             min-width: 0;
         }
@@ -356,7 +356,7 @@
             background-color: var(--bg-surface);
             border: 1px solid var(--border-color);
             border-radius: var(--radius-lg);
-            padding: 15px;
+            padding: 10px 12px;
             box-shadow: var(--shadow-sm);
             width: 100%;
             min-width: 0;
@@ -366,13 +366,13 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 14px;
+            margin-bottom: 10px;
             flex-wrap: wrap;
-            gap: 10px;
+            gap: 8px;
         }
 
         .section-header h2 {
-            font-size: 1.05rem;
+            font-size: 1rem;
             color: var(--text-main);
             display: flex;
             align-items: center;
@@ -383,10 +383,10 @@
             background: linear-gradient(135deg, rgba(245, 158, 11, 0.12), rgba(124, 58, 237, 0.12));
             border: 1px solid var(--primary-color);
             border-radius: var(--radius-lg);
-            padding: 15px;
+            padding: 10px 12px;
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 8px;
             box-shadow: 0 4px 15px rgba(245, 158, 11, 0.15);
         }
         .announcement-header-row {
@@ -394,33 +394,32 @@
             align-items: center;
             justify-content: space-between;
             flex-wrap: wrap;
-            gap: 10px;
+            gap: 8px;
         }
         .announcement-title {
             display: flex;
             align-items: center;
             gap: 8px;
-            font-size: 1rem;
+            font-size: 0.95rem;
             font-weight: 700;
             color: var(--primary-color);
         }
         .announcements-grid {
             display: flex;
             flex-direction: column;
-            gap: 8px;
-            max-height: 280px;
+            gap: 6px;
+            max-height: 250px;
             overflow-y: auto;
         }
         
-        /* تعديل كارت التنبيه للتكيف الدقيق التام مع المحتوى */
         .announcement-card {
             background: var(--bg-base);
             border: 1px solid var(--border-color);
             border-radius: var(--radius-md);
-            padding: 8px 12px;
+            padding: 6px 10px;
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 4px;
             border-right: 4px solid var(--warning-color);
             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
             height: auto;
@@ -430,20 +429,20 @@
             display: flex;
             align-items: flex-start;
             justify-content: space-between;
-            gap: 10px;
+            gap: 8px;
             flex-wrap: wrap;
         }
         .announcement-body-text {
-            font-size: 0.88rem;
+            font-size: 0.85rem;
             color: var(--text-main);
-            line-height: 1.4;
+            line-height: 1.35;
             word-break: break-word;
             white-space: pre-wrap;
             flex: 1;
         }
         .announcement-thumbnail-wrapper {
-            width: 48px;
-            height: 48px;
+            width: 42px;
+            height: 42px;
             border-radius: 6px;
             overflow: hidden;
             border: 1px solid var(--border-color);
@@ -464,13 +463,13 @@
         .announcement-file-btn {
             display: inline-flex;
             align-items: center;
-            gap: 6px;
+            gap: 5px;
             background: rgba(245, 158, 11, 0.18);
             border: 1px solid rgba(245, 158, 11, 0.5);
-            padding: 5px 10px;
-            border-radius: 6px;
+            padding: 4px 8px;
+            border-radius: 5px;
             color: #ffffff;
-            font-size: 0.82rem;
+            font-size: 0.78rem;
             font-weight: 700;
             cursor: pointer;
             font-family: var(--font-family);
@@ -485,67 +484,67 @@
             align-items: center;
             justify-content: space-between;
             border-top: 1px solid var(--border-color);
-            padding-top: 5px;
-            font-size: 0.72rem;
+            padding-top: 4px;
+            font-size: 0.7rem;
             color: var(--text-muted);
             flex-wrap: wrap;
-            gap: 6px;
+            gap: 4px;
         }
         .announcement-actions-group {
             display: flex;
-            gap: 6px;
+            gap: 5px;
             align-items: center;
         }
         .btn-edit-announcement-card {
             background-color: var(--primary-color);
             color: #fff;
             border: none;
-            padding: 4px 8px;
+            padding: 3px 6px;
             border-radius: 4px;
             cursor: pointer;
             font-family: var(--font-family);
-            font-size: 0.75rem;
+            font-size: 0.72rem;
             font-weight: 700;
             display: inline-flex;
             align-items: center;
-            gap: 4px;
+            gap: 3px;
         }
         .btn-delete-announcement-card {
             background-color: var(--danger-color);
             color: #fff;
             border: none;
-            padding: 4px 8px;
+            padding: 3px 6px;
             border-radius: 4px;
             cursor: pointer;
             font-family: var(--font-family);
-            font-size: 0.75rem;
+            font-size: 0.72rem;
             font-weight: 700;
             display: inline-flex;
             align-items: center;
-            gap: 4px;
+            gap: 3px;
         }
 
         .progress-box {
             background: var(--bg-base);
             border: 1px solid var(--border-color);
             border-radius: var(--radius-md);
-            padding: 12px 15px;
-            margin-bottom: 14px;
+            padding: 8px 12px;
+            margin-bottom: 10px;
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 4px;
         }
         .progress-info-row {
             display: flex;
             justify-content: space-between;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             font-weight: 700;
         }
         .progress-bar-container {
             width: 100%;
-            height: 10px;
+            height: 8px;
             background: var(--border-color);
-            border-radius: 5px;
+            border-radius: 4px;
             overflow: hidden;
         }
         .progress-bar-fill {
@@ -557,18 +556,18 @@
 
         .kpi-cards-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-            gap: 10px;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 8px;
         }
 
         .kpi-card {
             background: var(--bg-surface);
             border: 1px solid var(--border-color);
             border-radius: var(--radius-md);
-            padding: 12px;
+            padding: 8px 10px;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
             border-right: 4px solid;
         }
 
@@ -581,42 +580,43 @@
         .kpi-card.success { border-color: var(--success-color); }
 
         .kpi-icon-box {
-            font-size: 1.2rem; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: var(--bg-base); color: var(--text-main); flex-shrink: 0;
+            font-size: 1.1rem; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: var(--bg-base); color: var(--text-main); flex-shrink: 0;
         }
 
-        .kpi-info h3 { font-size: 0.75rem; color: var(--text-muted); font-weight: 500; }
-        .kpi-value { font-size: 1.1rem; font-weight: 800; color: var(--text-main); }
+        .kpi-info h3 { font-size: 0.72rem; color: var(--text-muted); font-weight: 500; }
+        .kpi-value { font-size: 1rem; font-weight: 800; color: var(--text-main); }
 
         .form-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 12px;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 10px;
         }
 
-        .input-field { display: flex; flex-direction: column; gap: 5px; }
+        .input-field { display: flex; flex-direction: column; gap: 4px; }
         .input-field.full-width { grid-column: 1 / -1; }
-        .input-field label { font-size: 0.85rem; font-weight: 600; color: var(--text-main); }
+        .input-field label { font-size: 0.82rem; font-weight: 600; color: var(--text-main); }
         .input-field input, .input-field select, .input-field textarea {
-            padding: 8px 10px; border: 1px solid var(--border-color); border-radius: var(--radius-md); background-color: var(--bg-base); color: var(--text-main); outline: none; font-family: var(--font-family); font-size: 0.88rem; width: 100%;
+            padding: 6px 8px; border: 1px solid var(--border-color); border-radius: var(--radius-md); background-color: var(--bg-base); color: var(--text-main); outline: none; font-family: var(--font-family); font-size: 0.85rem; width: 100%;
         }
-        .input-field textarea { resize: vertical; min-height: 65px; }
+        .input-field textarea { resize: vertical; min-height: 55px; }
 
         .priority-checkbox {
             display: flex; 
             align-items: center; 
             justify-content: flex-start; 
-            gap: 10px; 
+            gap: 8px; 
             cursor: pointer; 
             background: rgba(124, 58, 237, 0.1); 
-            padding: 10px 14px; 
+            padding: 8px 12px; 
             border-radius: var(--radius-md); 
             border: 1px dashed var(--accent-purple); 
             width: 100%; 
             color: var(--text-main);
+            font-size: 0.82rem;
         }
         .priority-checkbox input[type="checkbox"] {
-            width: 18px;
-            height: 18px;
+            width: 16px;
+            height: 16px;
             cursor: pointer;
             accent-color: var(--accent-purple);
             flex-shrink: 0;
@@ -626,31 +626,32 @@
             display: flex; 
             align-items: center; 
             justify-content: flex-start; 
-            gap: 10px; 
+            gap: 8px; 
             cursor: pointer; 
             background: rgba(225, 29, 72, 0.1); 
-            padding: 10px 14px; 
+            padding: 8px 12px; 
             border-radius: var(--radius-md); 
             border: 1px dashed #e11d48; 
             width: 100%; 
             color: var(--text-main);
+            font-size: 0.82rem;
         }
         .repeated-checkbox input[type="checkbox"] {
-            width: 18px;
-            height: 18px;
+            width: 16px;
+            height: 16px;
             cursor: pointer;
             accent-color: #e11d48;
             flex-shrink: 0;
         }
 
         .submit-btn {
-            margin-top: 15px; background-color: var(--primary-color); color: white; border: none; padding: 10px 18px; border-radius: var(--radius-md); font-family: var(--font-family); font-size: 0.95rem; font-weight: 700; cursor: pointer; width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px;
+            margin-top: 10px; background-color: var(--primary-color); color: white; border: none; padding: 8px 14px; border-radius: var(--radius-md); font-family: var(--font-family); font-size: 0.9rem; font-weight: 700; cursor: pointer; width: 100%; display: flex; align-items: center; justify-content: center; gap: 6px;
         }
         .submit-btn:hover { background-color: var(--primary-hover); }
 
-        .actions-toolbar { display: flex; gap: 8px; flex-wrap: wrap; }
+        .actions-toolbar { display: flex; gap: 6px; flex-wrap: wrap; }
         .action-btn {
-            padding: 7px 12px; border-radius: var(--radius-md); border: none; color: white; font-family: var(--font-family); font-size: 0.82rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; text-decoration: none;
+            padding: 6px 10px; border-radius: var(--radius-md); border: none; color: white; font-family: var(--font-family); font-size: 0.78rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; text-decoration: none;
         }
         .action-btn.excel { background-color: #107c41; }
         .action-btn.json { background-color: #6366f1; }
@@ -665,19 +666,19 @@
             background: var(--bg-base);
             border: 1px solid var(--border-color);
             border-radius: var(--radius-lg);
-            padding: 10px 12px;
-            margin-bottom: 14px;
+            padding: 8px 10px;
+            margin-bottom: 10px;
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 8px;
         }
 
-        .filter-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-        .filter-label { font-size: 0.82rem; font-weight: 700; color: var(--text-muted); min-width: 90px; display: flex; align-items: center; gap: 6px; }
+        .filter-row { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+        .filter-label { font-size: 0.78rem; font-weight: 700; color: var(--text-muted); min-width: 80px; display: flex; align-items: center; gap: 5px; }
 
-        .filter-tabs { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+        .filter-tabs { display: flex; gap: 5px; flex-wrap: wrap; align-items: center; }
         .filter-tab {
-            padding: 5px 10px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-surface); color: var(--text-main); font-family: var(--font-family); font-size: 0.78rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 5px;
+            padding: 4px 8px; border-radius: 5px; border: 1px solid var(--border-color); background: var(--bg-surface); color: var(--text-main); font-family: var(--font-family); font-size: 0.75rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 4px;
         }
         .filter-tab.active { background-color: var(--primary-color); color: white; border-color: var(--primary-color); }
 
@@ -686,7 +687,7 @@
             display: inline-block;
         }
         .dropdown-filter-btn {
-            padding: 5px 12px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-surface); color: var(--text-main); font-family: var(--font-family); font-size: 0.78rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;
+            padding: 4px 10px; border-radius: 5px; border: 1px solid var(--border-color); background: var(--bg-surface); color: var(--text-main); font-family: var(--font-family); font-size: 0.75rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 5px;
         }
         .dropdown-filter-btn.active {
             background-color: var(--primary-color); color: white; border-color: var(--primary-color);
@@ -697,28 +698,28 @@
             right: 0;
             top: 105%;
             background-color: var(--bg-surface);
-            min-width: 210px;
+            min-width: 190px;
             box-shadow: 0 8px 16px rgba(0,0,0,0.4);
             border: 1px solid var(--border-color);
             border-radius: var(--radius-md);
             z-index: 99;
-            padding: 5px;
+            padding: 4px;
         }
-        .dropdown-content.show { display: flex; flex-direction: column; gap: 4px; }
+        .dropdown-content.show { display: flex; flex-direction: column; gap: 3px; }
         .dropdown-item {
-            padding: 7px 10px; text-align: right; border-radius: 4px; background: transparent; border: none; color: var(--text-main); font-family: var(--font-family); font-size: 0.78rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px;
+            padding: 5px 8px; text-align: right; border-radius: 4px; background: transparent; border: none; color: var(--text-main); font-family: var(--font-family); font-size: 0.75rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 5px;
         }
         .dropdown-item:hover { background: var(--border-color); }
         .dropdown-item.active { background: var(--primary-color); color: white; }
 
-        .search-field { position: relative; width: 100%; max-width: 300px; }
+        .search-field { position: relative; width: 100%; max-width: 260px; }
         .search-field input {
-            width: 100%; padding: 7px 34px 7px 10px; border: 1px solid var(--border-color); border-radius: var(--radius-md); background-color: var(--bg-base); color: var(--text-main); font-family: var(--font-family); font-size: 0.85rem;
+            width: 100%; padding: 5px 30px 5px 8px; border: 1px solid var(--border-color); border-radius: var(--radius-md); background-color: var(--bg-base); color: var(--text-main); font-family: var(--font-family); font-size: 0.82rem;
         }
-        .search-field i { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); color: var(--text-muted); }
+        .search-field i { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 0.8rem; }
 
         .table-container { 
-            max-height: 550px; 
+            max-height: 620px; 
             overflow-y: auto; 
             overflow-x: auto;
             position: relative;
@@ -728,7 +729,7 @@
             width: 100%;
         }
 
-        table { width: 100%; border-collapse: collapse; font-size: 0.85rem; min-width: 1100px; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.82rem; min-width: 1050px; }
         
         table th { 
             background-color: var(--bg-base); 
@@ -737,21 +738,23 @@
             position: sticky; 
             top: 0; 
             z-index: 10; 
-            padding: 6px 8px;
+            padding: 5px 6px;
+            font-size: 0.78rem;
         }
 
-        /* ضبط خلايا الصفوف لتعمل بارتفاع ديناميكي وتتأقلم مع النص بدون فراغات زائدة */
+        /* حصر ارتفاع الصفوف والحدود للتكيف التام والمدمج مع النص بدون أي فراغات هواية */
         table th, table td { 
-            padding: 4px 8px; 
+            padding: 2px 6px !important; 
             text-align: right; 
             border-bottom: 1px solid var(--border-color); 
             vertical-align: middle; 
             color: var(--text-main); 
-            height: auto;
+            height: auto !important;
+            line-height: 1.25;
         }
 
         table tbody tr {
-            height: auto;
+            height: auto !important;
         }
 
         tr.row-apologized {
@@ -759,46 +762,56 @@
             border-right: 4px solid var(--danger-color);
         }
 
-        .status-badge { padding: 3px 8px; border-radius: 20px; font-size: 0.72rem; font-weight: 700; color: #fff; display: inline-block; margin-bottom: 2px; }
-        .badge-priority { background-color: #7c3aed; box-shadow: 0 0 8px rgba(124, 58, 237, 0.4); }
+        /* جعل الشارات مضغوطة أفقياً وتمنع انحناء الصف رأسياً */
+        .status-badge-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 3px;
+            align-items: center;
+        }
+
+        .status-badge { padding: 2px 6px; border-radius: 12px; font-size: 0.68rem; font-weight: 700; color: #fff; display: inline-flex; align-items: center; white-space: nowrap; }
+        .badge-priority { background-color: #7c3aed; box-shadow: 0 0 6px rgba(124, 58, 237, 0.4); }
         .badge-repeated { background-color: #e11d48; }
         .badge-pending { background-color: #d97706; }
         .badge-inprogress { background-color: #f59e0b; }
         .badge-completed { background-color: #16a34a; }
         .badge-suspended { background-color: #ca8a04; }
-        .badge-apologized { background-color: #dc2626; box-shadow: 0 0 8px rgba(220, 38, 38, 0.4); }
+        .badge-apologized { background-color: #dc2626; box-shadow: 0 0 6px rgba(220, 38, 38, 0.4); }
         .badge-other { background-color: #0d9488; }
         
         .badge-payment-paid {
             background: linear-gradient(135deg, #15803d, #22c55e);
             color: #ffffff;
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 0.75rem;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.7rem;
             font-weight: 800;
-            box-shadow: 0 0 10px rgba(34, 197, 94, 0.5);
+            box-shadow: 0 0 6px rgba(34, 197, 94, 0.4);
             border: 1px solid #86efac;
             display: inline-flex;
             align-items: center;
-            gap: 4px;
+            gap: 3px;
+            white-space: nowrap;
         }
 
         .badge-payment-unpaid {
             background: linear-gradient(135deg, #b45309, #d97706);
             color: #ffffff;
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 0.75rem;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.7rem;
             font-weight: 800;
-            box-shadow: 0 0 10px rgba(217, 119, 6, 0.4);
+            box-shadow: 0 0 6px rgba(217, 119, 6, 0.3);
             border: 1px solid #fde68a;
             display: inline-flex;
             align-items: center;
-            gap: 4px;
+            gap: 3px;
+            white-space: nowrap;
         }
 
-        .proc-badge { padding: 3px 8px; border-radius: 6px; font-size: 0.78rem; font-weight: 700; display: inline-block; text-align: center; }
-        .proc-plant { background-color: #0d9488; color: #ffffff; border: 1px solid #14b8a6; box-shadow: 0 0 10px rgba(13, 148, 136, 0.3); } 
+        .proc-badge { padding: 2px 6px; border-radius: 5px; font-size: 0.72rem; font-weight: 700; display: inline-block; text-align: center; white-space: nowrap; }
+        .proc-plant { background-color: #0d9488; color: #ffffff; border: 1px solid #14b8a6; } 
         .proc-extraction { background-color: #c2410c; color: #ffffff; } 
         .proc-surgery { background-color: #b91c1c; color: #ffffff; } 
         .proc-stitches { background-color: #7e22ce; color: #ffffff; } 
@@ -807,45 +820,44 @@
         .proc-default { background-color: #334155; color: #ffffff; } 
 
         .table-input {
-            width: 100%; padding: 5px 6px; border: 1px solid var(--border-color); border-radius: var(--radius-md); background: var(--bg-base); color: var(--text-main); font-family: var(--font-family); font-size: 0.82rem;
+            width: 100%; padding: 3px 5px; border: 1px solid var(--border-color); border-radius: var(--radius-md); background: var(--bg-base); color: var(--text-main); font-family: var(--font-family); font-size: 0.78rem;
         }
         
-        /* ضبط صندوق الخدمة ليتكيف بدقة تامة مع حجم النص بدون فراغات زائدة */
+        /* ضبط صندوق الخدمة بحدود مدمجة ومضغوطة جداً لتتسع لأكبر عدد عملاء */
         .service-cell-box {
-            width: 260px;
-            min-width: 260px;
-            max-width: 260px;
-            height: auto;
-            min-height: unset;
+            width: 240px;
+            min-width: 240px;
+            max-width: 240px;
+            height: auto !important;
+            min-height: unset !important;
             white-space: pre-wrap;
             word-break: break-word;
             overflow-wrap: break-word;
-            padding: 4px 6px;
+            padding: 2px 5px;
             background: var(--bg-base);
-            border-radius: 6px;
+            border-radius: 5px;
             border: 1px solid var(--border-color);
-            font-size: 0.81rem;
-            line-height: 1.35;
+            font-size: 0.78rem;
+            line-height: 1.25;
             color: var(--text-main);
             box-sizing: border-box;
         }
 
-        /* ضبط صندوق إجراء الإدارة ليتكيف ديناميكياً مع المحتوى */
         textarea.admin-action-textarea {
-            width: 260px;
-            min-width: 260px;
-            max-width: 260px;
-            height: auto;
-            min-height: unset;
+            width: 240px;
+            min-width: 240px;
+            max-width: 240px;
+            height: auto !important;
+            min-height: 32px !important;
             white-space: pre-wrap;
             word-break: break-word;
             overflow-wrap: break-word;
-            padding: 4px 6px;
+            padding: 2px 5px;
             background: var(--bg-base);
-            border-radius: 6px;
+            border-radius: 5px;
             border: 1px solid var(--border-color);
-            font-size: 0.81rem;
-            line-height: 1.35;
+            font-size: 0.78rem;
+            line-height: 1.25;
             color: var(--text-main);
             font-family: var(--font-family);
             resize: vertical;
@@ -853,17 +865,18 @@
         }
 
         .client-name-cell {
-            min-width: 130px;
+            min-width: 120px;
             white-space: normal;
             word-break: break-word;
             overflow-wrap: break-word;
+            font-size: 0.82rem;
         }
 
-        .btn-save-action { background-color: var(--success-color); color: #fff; border: none; padding: 5px 8px; border-radius: 4px; cursor: pointer; }
-        .btn-edit-action { background-color: var(--primary-color); color: #fff; border: none; padding: 5px 8px; border-radius: 4px; cursor: pointer; }
-        .btn-delete-action { background-color: var(--danger-color); color: #fff; border: none; padding: 5px 8px; border-radius: 4px; cursor: pointer; }
+        .btn-save-action { background-color: var(--success-color); color: #fff; border: none; padding: 3px 6px; border-radius: 4px; cursor: pointer; font-size: 0.75rem; }
+        .btn-edit-action { background-color: var(--primary-color); color: #fff; border: none; padding: 3px 6px; border-radius: 4px; cursor: pointer; font-size: 0.75rem; }
+        .btn-delete-action { background-color: var(--danger-color); color: #fff; border: none; padding: 3px 6px; border-radius: 4px; cursor: pointer; font-size: 0.75rem; }
         
-        .btn-pin-action { background-color: #d97706; color: #fff; border: none; padding: 5px 8px; border-radius: 4px; cursor: pointer; }
+        .btn-pin-action { background-color: #d97706; color: #fff; border: none; padding: 3px 6px; border-radius: 4px; cursor: pointer; font-size: 0.75rem; }
         .btn-pin-action.pinned { background-color: #ca8a04; box-shadow: 0 0 6px #f59e0b; }
 
         @keyframes priorityPulse {
@@ -882,24 +895,25 @@
             left: 20px;
             background-color: var(--success-color);
             color: #fff;
-            padding: 12px 18px;
+            padding: 10px 15px;
             border-radius: var(--radius-md);
             box-shadow: 0 5px 15px rgba(0,0,0,0.5);
             z-index: 9999;
             font-weight: 700;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
             transform: translateY(100px);
             opacity: 0;
             transition: transform 0.3s ease, opacity 0.3s ease;
+            font-size: 0.85rem;
         }
         #notificationToast.show { transform: translateY(0); opacity: 1; }
 
         .client-report-container {
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 4px;
             width: 100%;
         }
 
@@ -907,14 +921,16 @@
             background-color: var(--bg-base);
             border: 1px solid var(--border-color);
             border-radius: var(--radius-md);
-            padding: 6px 10px;
+            padding: 4px 8px;
             display: flex;
             flex-direction: column;
             justify-content: center;
-            gap: 3px;
+            gap: 2px;
             position: relative;
             box-shadow: 0 1px 3px rgba(0,0,0,0.2);
             width: 100%;
+            height: auto !important;
+            min-height: unset !important;
         }
 
         .client-card-wrapper.is-copied {
@@ -936,7 +952,7 @@
             display: flex;
             align-items: center;
             gap: 6px;
-            font-size: 0.85rem;
+            font-size: 0.82rem;
             font-weight: 700;
             color: var(--text-main);
             flex: 1;
@@ -945,8 +961,8 @@
         }
 
         .client-card-header .client-select-chk {
-            width: 15px;
-            height: 15px;
+            width: 14px;
+            height: 14px;
             cursor: pointer;
             accent-color: var(--primary-color);
             flex-shrink: 0;
@@ -954,11 +970,11 @@
 
         .client-datetime-badge {
             font-family: Arial, sans-serif;
-            font-size: 0.66rem;
+            font-size: 0.65rem;
             font-weight: 700;
             color: #ffffff;
             background: rgba(245, 158, 11, 0.25);
-            padding: 2px 5px;
+            padding: 1px 4px;
             border-radius: 4px;
             border: 1px solid rgba(245, 158, 11, 0.4);
             direction: ltr;
@@ -969,9 +985,9 @@
         }
 
         .client-info-row {
-            font-size: 0.8rem;
+            font-size: 0.78rem;
             color: var(--text-main);
-            line-height: 1.25;
+            line-height: 1.2;
             word-break: break-word;
         }
 
@@ -982,7 +998,7 @@
 
         .client-card-buttons-row {
             display: flex;
-            gap: 5px;
+            gap: 4px;
             align-items: center;
             width: 100%;
             margin-top: 2px;
@@ -993,16 +1009,16 @@
             background: #d97706;
             color: #ffffff;
             border: none;
-            padding: 3px 8px;
+            padding: 2px 6px;
             border-radius: 4px;
             font-family: var(--font-family);
-            font-size: 0.72rem;
+            font-size: 0.7rem;
             font-weight: 700;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 4px;
+            gap: 3px;
             white-space: nowrap;
             width: auto;
         }
@@ -1013,27 +1029,27 @@
 
         .client-actions-row {
             display: flex;
-            gap: 5px;
-            margin-top: 3px;
+            gap: 4px;
+            margin-top: 2px;
             justify-content: flex-end;
             width: 100%;
             border-top: 1px solid var(--border-color);
-            padding-top: 3px;
+            padding-top: 2px;
         }
 
         .btn-client-action {
-            padding: 3px 8px;
+            padding: 2px 6px;
             border-radius: 4px;
             border: none;
             color: #fff;
             font-family: var(--font-family);
-            font-size: 0.72rem;
+            font-size: 0.7rem;
             font-weight: 700;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 4px;
+            gap: 3px;
             width: auto;
         }
 
@@ -1046,19 +1062,19 @@
 
         .links-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 15px;
-            margin-top: 15px;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 12px;
+            margin-top: 10px;
             width: 100%;
         }
         .link-card {
             background: var(--bg-base);
             border: 1px solid var(--border-color);
             border-radius: var(--radius-md);
-            padding: 15px;
+            padding: 12px;
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 8px;
             position: relative;
             transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
             user-select: none;
@@ -1080,15 +1096,15 @@
         }
         .drag-handle {
             position: absolute;
-            top: 8px;
-            left: 8px;
+            top: 6px;
+            left: 6px;
             color: var(--primary-color);
             background: rgba(245, 158, 11, 0.1);
             border: 1px solid rgba(245, 158, 11, 0.3);
-            border-radius: 6px;
-            font-size: 1.1rem;
+            border-radius: 5px;
+            font-size: 1rem;
             cursor: grab;
-            padding: 8px 10px;
+            padding: 6px 8px;
             touch-action: none;
             z-index: 5;
         }
@@ -1100,29 +1116,29 @@
         .link-card-header {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
             font-weight: 700;
-            font-size: 1rem;
+            font-size: 0.95rem;
             color: var(--text-main);
-            padding-left: 35px;
+            padding-left: 30px;
             word-break: break-word;
         }
         .link-card-header i {
             color: var(--primary-color);
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             flex-shrink: 0;
         }
         .link-card-desc {
-            font-size: 0.82rem;
+            font-size: 0.78rem;
             color: var(--text-muted);
-            line-height: 1.4;
-            min-height: 35px;
+            line-height: 1.35;
+            min-height: 30px;
             word-break: break-word;
         }
         .link-card-actions {
             display: flex;
-            gap: 8px;
-            margin-top: 5px;
+            gap: 6px;
+            margin-top: 4px;
             flex-wrap: wrap;
         }
         .btn-open-link {
@@ -1130,14 +1146,14 @@
             background-color: var(--primary-color);
             color: #fff;
             text-decoration: none;
-            padding: 8px 12px;
+            padding: 6px 10px;
             border-radius: var(--radius-md);
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             font-weight: 700;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 6px;
+            gap: 5px;
             white-space: nowrap;
             cursor: pointer;
             border: none;
@@ -1146,15 +1162,15 @@
 
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 3000; justify-content: center; align-items: center; padding: 15px; }
         .modal.open { display: flex; }
-        .modal-content { background: var(--bg-surface); border-radius: var(--radius-lg); width: 100%; max-width: 520px; max-height: 90vh; overflow-y: auto; padding: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); border: 1px solid var(--border-color); color: var(--text-main); }
-        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid var(--border-color); padding-bottom: 8px; }
-        .modal-header h3 { color: var(--primary-color); font-size: 1.1rem; }
-        .close-modal-btn { background: none; border: none; font-size: 1.3rem; color: var(--text-muted); cursor: pointer; }
+        .modal-content { background: var(--bg-surface); border-radius: var(--radius-lg); width: 100%; max-width: 500px; max-height: 90vh; overflow-y: auto; padding: 18px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); border: 1px solid var(--border-color); color: var(--text-main); }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid var(--border-color); padding-bottom: 6px; }
+        .modal-header h3 { color: var(--primary-color); font-size: 1rem; }
+        .close-modal-btn { background: none; border: none; font-size: 1.2rem; color: var(--text-muted); cursor: pointer; }
 
         .client-header-controls {
             display: flex;
             flex-wrap: wrap;
-            gap: 8px;
+            gap: 6px;
             width: 100%;
             align-items: center;
         }
@@ -1165,70 +1181,22 @@
             flex: 0 0 auto;
         }
 
-        /* إصلاحات حاسمة ومخصصة للشاشات والهواتف المحمولة */
         @media (max-width: 768px) {
-            body {
-                overflow-x: hidden;
-            }
-            .app-layout { 
-                flex-direction: column; 
-                width: 100%; 
-            }
-            
-            .sidebar {
-                width: 280px;
-                max-width: 85vw;
-                height: 100vh;
-                position: fixed;
-                top: 0;
-                right: 0;
-                transform: translateX(100%);
-                z-index: 3000;
-            }
-            .app-layout.sidebar-open .sidebar {
-                transform: translateX(0) !important;
-            }
-            
-            .main-wrapper {
-                margin-right: 0 !important;
-                width: 100% !important;
-                min-width: 0;
-            }
-            
-            .top-header {
-                padding: 10px 12px;
-                flex-wrap: nowrap;
-                gap: 8px;
-            }
-            
-            .header-title {
-                gap: 8px;
-                min-width: 0;
-                flex: 1;
-            }
-            
-            .header-title h1 {
-                font-size: 0.95rem;
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
-            }
-            
-            .content-body {
-                padding: 10px 8px;
-                gap: 12px;
-                width: 100%;
-            }
-            
-            .dashboard-section {
-                padding: 12px 10px;
-                width: 100%;
-            }
+            body { overflow-x: hidden; }
+            .app-layout { flex-direction: column; width: 100%; }
+            .sidebar { width: 280px; max-width: 85vw; height: 100vh; position: fixed; top: 0; right: 0; transform: translateX(100%); z-index: 3000; }
+            .app-layout.sidebar-open .sidebar { transform: translateX(0) !important; }
+            .main-wrapper { margin-right: 0 !important; width: 100% !important; min-width: 0; }
+            .top-header { padding: 10px 12px; flex-wrap: nowrap; gap: 8px; }
+            .header-title { gap: 8px; min-width: 0; flex: 1; }
+            .header-title h1 { font-size: 0.95rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+            .content-body { padding: 8px 6px; gap: 10px; width: 100%; }
+            .dashboard-section { padding: 10px 8px; width: 100%; }
             
             .client-header-controls {
                 display: grid;
                 grid-template-columns: repeat(2, 1fr);
-                gap: 6px;
+                gap: 5px;
                 width: 100%;
             }
             
@@ -1237,44 +1205,17 @@
             .client-header-controls .action-btn {
                 width: 100%;
                 justify-content: center;
-                font-size: 0.78rem;
-                padding: 8px 6px;
+                font-size: 0.75rem;
+                padding: 6px 5px;
             }
 
-            .client-card-header {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 4px;
-            }
-
-            .client-datetime-badge {
-                align-self: flex-start;
-            }
-
-            .kpi-cards-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 8px;
-            }
-            
-            .form-grid {
-                grid-template-columns: 100%;
-            }
-
-            .filter-row {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 6px;
-            }
-            
-            .filter-tabs {
-                width: 100%;
-                overflow-x: auto;
-                padding-bottom: 4px;
-            }
-            
-            .search-field {
-                max-width: 100%;
-            }
+            .client-card-header { flex-direction: column; align-items: flex-start; gap: 4px; }
+            .client-datetime-badge { align-self: flex-start; }
+            .kpi-cards-grid { grid-template-columns: repeat(2, 1fr); gap: 6px; }
+            .form-grid { grid-template-columns: 100%; }
+            .filter-row { flex-direction: column; align-items: flex-start; gap: 5px; }
+            .filter-tabs { width: 100%; overflow-x: auto; padding-bottom: 4px; }
+            .search-field { max-width: 100%; }
         }
     </style>
 </head>
@@ -1356,7 +1297,7 @@
                             <div class="announcement-title">
                                 <i class="fa-solid fa-bullhorn"></i> تنبيهات وإشعارات العيادة العامة
                             </div>
-                            <button class="action-btn copy-btn" onclick="openAddAnnouncementModal()" style="padding: 6px 12px; font-size: 0.8rem;">
+                            <button class="action-btn copy-btn" onclick="openAddAnnouncementModal()" style="padding: 5px 10px; font-size: 0.78rem;">
                                 <i class="fa-solid fa-plus"></i> إضافة تنبيه جديد
                             </button>
                         </div>
@@ -1528,7 +1469,7 @@
                                     
                                     <div class="dropdown-filter-container" id="paymentFilterDropdownContainer">
                                         <button class="dropdown-filter-btn" id="paymentFilterDropdownBtn" onclick="toggleDropdown('paymentFilterDropdownContent')">
-                                            <i class="fa-solid fa-money-bill-wave"></i> حالات الدفع <i class="fa-solid fa-chevron-down" style="font-size:0.7rem;"></i>
+                                            <i class="fa-solid fa-money-bill-wave"></i> حالات الدفع <i class="fa-solid fa-chevron-down" style="font-size:0.65rem;"></i>
                                         </button>
                                         <div class="dropdown-content" id="paymentFilterDropdownContent">
                                             <button class="dropdown-item" data-filter="payment_all" onclick="setDashboardFilter('payment_all', this)">💵 كل حالات الدفع</button>
@@ -1543,7 +1484,7 @@
                                     
                                     <div class="dropdown-filter-container" id="inquiriesDropdownContainer">
                                         <button class="dropdown-filter-btn" id="inquiriesDropdownBtn" onclick="toggleDropdown('inquiriesDropdownContent')">
-                                            <i class="fa-solid fa-comments"></i> الاستفسارات <i class="fa-solid fa-chevron-down" style="font-size:0.7rem;"></i>
+                                            <i class="fa-solid fa-comments"></i> الاستفسارات <i class="fa-solid fa-chevron-down" style="font-size:0.65rem;"></i>
                                         </button>
                                         <div class="dropdown-content" id="inquiriesDropdownContent">
                                             <button class="dropdown-item" data-filter="inquiries_all" onclick="setDashboardFilter('inquiries_all', this)">💬 كل الاستفسارات</button>
@@ -1554,7 +1495,7 @@
 
                                     <div class="dropdown-filter-container" id="appointmentsDropdownContainer">
                                         <button class="dropdown-filter-btn" id="appointmentsDropdownBtn" onclick="toggleDropdown('appointmentsDropdownContent')">
-                                            <i class="fa-solid fa-stethoscope"></i> الكشفيات والمواعيد <i class="fa-solid fa-chevron-down" style="font-size:0.7rem;"></i>
+                                            <i class="fa-solid fa-stethoscope"></i> الكشفيات والمواعيد <i class="fa-solid fa-chevron-down" style="font-size:0.65rem;"></i>
                                         </button>
                                         <div class="dropdown-content" id="appointmentsDropdownContent">
                                             <button class="dropdown-item" data-filter="no_inquiries_all" onclick="setDashboardFilter('no_inquiries_all', this)">📋 كل الكشفيات والمواعيد</button>
@@ -1564,7 +1505,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="filter-row" style="border-top: 1px dashed var(--border-color); padding-top: 8px;">
+                            <div class="filter-row" style="border-top: 1px dashed var(--border-color); padding-top: 6px;">
                                 <span class="filter-label"><i class="fa-solid fa-clock"></i> النطاق الزمني:</span>
                                 <div class="filter-tabs" id="timeFilterTabs">
                                     <button class="filter-tab" data-time="all" onclick="setDashboardTimeFilter('all', this)">كل الأوقات</button>
@@ -1590,8 +1531,8 @@
                                         <th>طريقة التواصل</th>
                                         <th>الخدمة / تفاصيل الطلب</th>
                                         <th>المنسق</th>
-                                        <th style="min-width: 170px;">تواصل الإدارة</th>
-                                        <th style="min-width: 270px;">إجراء الإدارة</th>
+                                        <th style="min-width: 150px;">تواصل الإدارة</th>
+                                        <th style="min-width: 250px;">إجراء الإدارة</th>
                                         <th>إجراءات</th>
                                     </tr>
                                 </thead>
@@ -1605,16 +1546,15 @@
                 <!-- صفحة الكشف -->
                 <div id="page-clients" class="page-view hidden">
                     <section class="dashboard-section">
-                        <div style="display: flex; flex-direction: column; gap: 12px; background: var(--bg-base); padding: 12px 15px; border-radius: 8px; border: 1px solid var(--border-color); margin-bottom: 15px;">
+                        <div style="display: flex; flex-direction: column; gap: 8px; background: var(--bg-base); padding: 8px 10px; border-radius: 8px; border: 1px solid var(--border-color); margin-bottom: 10px;">
                             <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
-                                <h2 style="font-size: 1.05rem; color: var(--primary-color); font-weight: 700;">
+                                <h2 style="font-size: 0.95rem; color: var(--primary-color); font-weight: 700;">
                                     <i class="fa-solid fa-file-lines"></i> صفحة الكشف (محلية لكل جهاز)
                                 </h2>
                             </div>
                             
-                            <!-- شريط الأزرار والتصنيفات للموبايل والشاشات المختلفة -->
                             <div class="client-header-controls">
-                                <select id="clientHoursSelect" onchange="setClientTimeFilterSelect(this.value)" style="background: var(--bg-surface); color: var(--text-main); border: 1px solid var(--border-color); padding: 7px 10px; border-radius: 6px; font-family: var(--font-family); font-size: 0.82rem; cursor: pointer;">
+                                <select id="clientHoursSelect" onchange="setClientTimeFilterSelect(this.value)" style="background: var(--bg-surface); color: var(--text-main); border: 1px solid var(--border-color); padding: 5px 8px; border-radius: 5px; font-family: var(--font-family); font-size: 0.78rem; cursor: pointer;">
                                     <option value="all">كل الأوقات</option>
                                     <option value="6">آخر 6 ساعات</option>
                                     <option value="8">آخر 8 ساعات</option>
@@ -1627,7 +1567,7 @@
 
                                 <div class="dropdown-filter-container" id="clientViewFilterContainer">
                                     <button class="dropdown-filter-btn" id="clientViewFilterBtn" onclick="toggleDropdown('clientViewFilterContent')">
-                                        <span><i class="fa-solid fa-filter"></i> <span id="clientViewFilterLabel">الكشف العادي</span></span> <i class="fa-solid fa-chevron-down" style="font-size:0.7rem;"></i>
+                                        <span><i class="fa-solid fa-filter"></i> <span id="clientViewFilterLabel">الكشف العادي</span></span> <i class="fa-solid fa-chevron-down" style="font-size:0.65rem;"></i>
                                     </button>
                                     <div class="dropdown-content" id="clientViewFilterContent">
                                         <button class="dropdown-item" onclick="setClientViewFilter('normal')">📋 الكشف العادى</button>
@@ -1644,9 +1584,9 @@
                             </div>
                         </div>
 
-                        <div style="margin-bottom: 12px; display: flex; gap: 10px; align-items: center; background: var(--bg-base); padding: 10px 12px; border-radius: 8px; border: 1px solid var(--border-color);">
-                            <i class="fa-solid fa-magnifying-glass" style="color: var(--text-muted);"></i>
-                            <input type="text" id="clientSearchInput" oninput="renderClientReport()" placeholder="بحث بالاسم، رقم الجوال، رقم الملف، الهوية..." style="width: 100%; background: transparent; border: none; outline: none; color: var(--text-main); font-family: var(--font-family); font-size: 0.88rem;">
+                        <div style="margin-bottom: 8px; display: flex; gap: 8px; align-items: center; background: var(--bg-base); padding: 8px 10px; border-radius: 6px; border: 1px solid var(--border-color);">
+                            <i class="fa-solid fa-magnifying-glass" style="color: var(--text-muted); font-size: 0.8rem;"></i>
+                            <input type="text" id="clientSearchInput" oninput="renderClientReport()" placeholder="بحث بالاسم، رقم الجوال، رقم الملف، الهوية..." style="width: 100%; background: transparent; border: none; outline: none; color: var(--text-main); font-family: var(--font-family); font-size: 0.82rem;">
                         </div>
 
                         <div id="clientReportList" class="client-report-container"></div>
@@ -1660,7 +1600,7 @@
                             <h2><i class="fa-solid fa-book-bookmark"></i> الدليل الشامل لـ (خدمة العملاء)</h2>
                             <button class="action-btn copy-btn" onclick="openAddLinkModal()"><i class="fa-solid fa-plus"></i> إضافة رابط جديد</button>
                         </div>
-                        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 10px;">
+                        <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 8px;">
                             💡 **ترتيب الروابط:** اضغط باستمرار مع السحب المباشر على أيقونة المقبض الزرقاء <i class="fa-solid fa-grip-vertical" style="color: var(--primary-color);"></i> لترتيب الكروت بسلاسة.
                         </p>
 
@@ -1681,7 +1621,6 @@
             </div>
             <form id="announcementForm" onsubmit="saveAnnouncementItem(event)">
                 <input type="hidden" id="editAnnouncementKey">
-                <!-- متغير للتحكم في حالة مسح الملف الحالي -->
                 <input type="hidden" id="removeFileFlag" value="false">
                 <div class="form-grid">
                     <div class="input-field full-width">
@@ -1692,26 +1631,25 @@
                     <div class="input-field full-width">
                         <label><i class="fa-solid fa-paperclip"></i> إرفاق ملف (PDF, مستندات, صور...) (اختياري)</label>
                         
-                        <!-- إظهار اسم الملف المرفق حالياً وزر لحذفه -->
-                        <div id="currentFileStatusWrapper" style="display: none; align-items: center; justify-content: space-between; background: rgba(245,158,11,0.1); border: 1px solid var(--primary-color); padding: 8px 12px; border-radius: 6px; margin-bottom: 8px;">
-                            <span id="currentFileNameLabel" style="font-size: 0.85rem; font-weight: 700; color: var(--text-main); word-break: break-all;"></span>
-                            <button type="button" onclick="removeAttachedFileInModal()" style="background: var(--danger-color); color: #fff; border: none; padding: 4px 10px; border-radius: 4px; font-size: 0.78rem; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 5px;">
+                        <div id="currentFileStatusWrapper" style="display: none; align-items: center; justify-content: space-between; background: rgba(245,158,11,0.1); border: 1px solid var(--primary-color); padding: 6px 10px; border-radius: 6px; margin-bottom: 6px;">
+                            <span id="currentFileNameLabel" style="font-size: 0.8rem; font-weight: 700; color: var(--text-main); word-break: break-all;"></span>
+                            <button type="button" onclick="removeAttachedFileInModal()" style="background: var(--danger-color); color: #fff; border: none; padding: 3px 8px; border-radius: 4px; font-size: 0.72rem; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 4px;">
                                 <i class="fa-solid fa-trash-can"></i> حذف الملف المرفق
                             </button>
                         </div>
 
-                        <input type="file" id="announcementFile" accept=".pdf,.doc,.docx,.xls,.xlsx,.txt,image/*" style="padding: 6px; cursor: pointer;">
-                        <span style="font-size: 0.75rem; color: var(--text-muted); margin-top: 3px;">يمكنك رفع ملف جديد أو استبدال الملف الحالي.</span>
+                        <input type="file" id="announcementFile" accept=".pdf,.doc,.docx,.xls,.xlsx,.txt,image/*" style="padding: 5px; cursor: pointer;">
+                        <span style="font-size: 0.72rem; color: var(--text-muted); margin-top: 2px;">يمكنك رفع ملف جديد أو استبدال الملف الحالي.</span>
                     </div>
                 </div>
-                <button type="submit" class="submit-btn" style="margin-top: 15px;"><i class="fa-solid fa-floppy-disk"></i> حفظ ونشر التنبيه</button>
+                <button type="submit" class="submit-btn" style="margin-top: 12px;"><i class="fa-solid fa-floppy-disk"></i> حفظ ونشر التنبيه</button>
             </form>
         </div>
     </div>
 
     <!-- نافذة تكبير وعرض الصورة المرفقة بحجم كامل -->
     <div class="modal" id="imagePreviewModal">
-        <div class="modal-content" style="max-width: 650px; text-align: center; padding: 15px;">
+        <div class="modal-content" style="max-width: 650px; text-align: center; padding: 12px;">
             <div class="modal-header">
                 <h3><i class="fa-solid fa-image"></i> معاينة الصورة المرفقة</h3>
                 <button class="close-modal-btn" onclick="closeImagePreviewModal()">&times;</button>
@@ -1745,7 +1683,7 @@
                         <textarea id="linkDesc" placeholder="اكتب وصفاً مختصراً للرابط والهدف منه..."></textarea>
                     </div>
                 </div>
-                <button type="submit" class="submit-btn" style="margin-top: 15px;"><i class="fa-solid fa-floppy-disk"></i> حفظ الرابط</button>
+                <button type="submit" class="submit-btn" style="margin-top: 12px;"><i class="fa-solid fa-floppy-disk"></i> حفظ الرابط</button>
             </form>
         </div>
     </div>
@@ -1757,7 +1695,7 @@
                 <h3><i class="fa-solid fa-rotate-left"></i> سلة المحذوفات المحلية</h3>
                 <button class="close-modal-btn" onclick="closeTrashModal()">&times;</button>
             </div>
-            <div id="trashModalList" style="display: flex; flex-direction: column; gap: 10px; max-height: 60vh; overflow-y: auto;"></div>
+            <div id="trashModalList" style="display: flex; flex-direction: column; gap: 6px; max-height: 60vh; overflow-y: auto;"></div>
         </div>
     </div>
 
@@ -1799,7 +1737,7 @@
                     <input type="password" id="clearPasswordInput" placeholder="أدخل كلمة المرور">
                 </div>
             </div>
-            <button type="button" class="submit-btn" style="background-color: var(--danger-color); margin-top: 15px;" onclick="executeFilteredClear()">تنفيذ الحذف</button>
+            <button type="button" class="submit-btn" style="background-color: var(--danger-color); margin-top: 12px;" onclick="executeFilteredClear()">تنفيذ الحذف</button>
         </div>
     </div>
 
@@ -1813,7 +1751,7 @@
                 <div class="input-field full-width"><label>كلمة المرور الحالية *</label><input type="password" id="oldPassword"></div>
                 <div class="input-field full-width"><label>كلمة المرور الجديدة *</label><input type="password" id="newPassword"></div>
             </div>
-            <button type="button" class="submit-btn" style="margin-top: 15px;" onclick="updatePassword()">حفظ كلمة المرور</button>
+            <button type="button" class="submit-btn" style="margin-top: 12px;" onclick="updatePassword()">حفظ كلمة المرور</button>
         </div>
     </div>
 
@@ -1899,7 +1837,7 @@
                         </label>
                     </div>
                 </div>
-                <button type="submit" class="submit-btn" style="margin-top: 12px;"><i class="fa-solid fa-floppy-disk"></i> حفظ والتحديث</button>
+                <button type="submit" class="submit-btn" style="margin-top: 10px;"><i class="fa-solid fa-floppy-disk"></i> حفظ والتحديث</button>
             </form>
         </div>
     </div>
@@ -2246,7 +2184,7 @@
             container.innerHTML = '';
 
             if (clinicAnnouncements.length === 0) {
-                container.innerHTML = '<div style="text-align: center; color: var(--text-muted); font-size: 0.85rem; padding: 10px;">لا توجد تنبيهات جديدة حالياً. انقر على "إضافة تنبيه جديد" لإرسال تحديث للعيادة.</div>';
+                container.innerHTML = '<div style="text-align: center; color: var(--text-muted); font-size: 0.82rem; padding: 8px;">لا توجد تنبيهات جديدة حالياً. انقر على "إضافة تنبيه جديد" لإرسال تحديث للعيادة.</div>';
                 return;
             }
 
@@ -2626,6 +2564,41 @@
             document.getElementById('progressBarFill').style.width = `${percentage}%`;
         }
 
+        /* دالة تنسيق الوقت في أفق مدمج وبدون حشو رأسي */
+        function formatCompactDateTimeHTML(isoCreated, isoUpdated) {
+            if (!isoCreated) return '-';
+            try {
+                const d = new Date(isoCreated);
+                const day = String(d.getDate()).padStart(2, '0');
+                const month = String(d.getMonth() + 1).padStart(2, '0');
+                const year = d.getFullYear();
+                
+                let hours = d.getHours();
+                const minutes = String(d.getMinutes()).padStart(2, '0');
+                const ampm = hours >= 12 ? 'PM' : 'AM';
+                hours = hours % 12;
+                hours = hours ? hours : 12;
+                const hoursStr = String(hours).padStart(2, '0');
+
+                let html = `<div style="font-size: 0.72rem; line-height: 1.15; white-space: nowrap;">📅 ${day}/${month}/${year} ${hoursStr}:${minutes} ${ampm}</div>`;
+                
+                if (isoUpdated) {
+                    const du = new Date(isoUpdated);
+                    const dayU = String(du.getDate()).padStart(2, '0');
+                    const monthU = String(du.getMonth() + 1).padStart(2, '0');
+                    let hoursU = du.getHours();
+                    const minutesU = String(du.getMinutes()).padStart(2, '0');
+                    const ampmU = hoursU >= 12 ? 'PM' : 'AM';
+                    hoursU = hoursU % 12;
+                    hoursU = hoursU ? hoursU : 12;
+                    const hoursUStr = String(hoursU).padStart(2, '0');
+
+                    html += `<div style="font-size: 0.68rem; color: var(--primary-color); line-height: 1.1; white-space: nowrap; font-weight:700;">✏️ ${dayU}/${monthU} ${hoursUStr}:${minutesU} ${ampmU}</div>`;
+                }
+                return html;
+            } catch(e) { return isoCreated; }
+        }
+
         function renderTable() {
             const tbody = document.getElementById('tableBody');
             if (!tbody) return;
@@ -2718,19 +2691,12 @@
                     tr.classList.add('row-apologized');
                 }
 
-                let statusBadgeHTML = '';
+                let statusBadgeHTML = '<div class="status-badge-container">';
                 if (record.isRecurring) {
-                    statusBadgeHTML += '<span class="status-badge badge-priority">⭐ أولوية</span><br>';
+                    statusBadgeHTML += '<span class="status-badge badge-priority">⭐ أولوية</span>';
                 }
                 if (record.isRepeatedRequest) {
-                    statusBadgeHTML += '<span class="status-badge badge-repeated">🔄 متكررة</span><br>';
-                }
-
-                let paymentBadgeHTML = `<span style="color: var(--text-muted); font-size: 0.8rem;">غير محدد</span>`;
-                if (record.paymentStatus === 'تم الدفع') {
-                    paymentBadgeHTML = `<span class="badge-payment-paid"><i class="fa-solid fa-circle-check"></i> تم الدفع</span>`;
-                } else if (record.paymentStatus === 'لم يتم الدفع') {
-                    paymentBadgeHTML = `<span class="badge-payment-unpaid"><i class="fa-solid fa-clock"></i> لم يتم الدفع</span>`;
+                    statusBadgeHTML += '<span class="status-badge badge-repeated">🔄 متكررة</span>';
                 }
 
                 let sClass = 'badge-other';
@@ -2740,7 +2706,14 @@
                 else if (selectVal === 'معلق') sClass = 'badge-suspended';
                 else if (selectVal === 'اعتذر') sClass = 'badge-apologized';
 
-                statusBadgeHTML += `<span class="status-badge ${sClass}">${selectVal}</span>`;
+                statusBadgeHTML += `<span class="status-badge ${sClass}">${selectVal}</span></div>`;
+
+                let paymentBadgeHTML = `<span style="color: var(--text-muted); font-size: 0.72rem;">غير محدد</span>`;
+                if (record.paymentStatus === 'تم الدفع') {
+                    paymentBadgeHTML = `<span class="badge-payment-paid"><i class="fa-solid fa-circle-check"></i> تم الدفع</span>`;
+                } else if (record.paymentStatus === 'لم يتم الدفع') {
+                    paymentBadgeHTML = `<span class="badge-payment-unpaid"><i class="fa-solid fa-clock"></i> لم يتم الدفع</span>`;
+                }
 
                 const proc = record.procedureType || '-';
                 let procClass = 'proc-default';
@@ -2755,23 +2728,20 @@
                 const isPinned = !!stLocal.isPinned;
                 const contactMethodVal = record.contactMethod || '-';
 
-                let timeCellHTML = `<div>📅 ${formatDateTimeFullCustom(record.createdAt)}</div>`;
-                if (record.updatedAt) {
-                    timeCellHTML += `<div style="font-size: 0.73rem; color: var(--primary-color); margin-top: 3px; font-weight:700;">✏️ تعديل: ${formatDateTimeFullCustom(record.updatedAt)}</div>`;
-                }
+                const timeCellHTML = formatCompactDateTimeHTML(record.createdAt, record.updatedAt);
 
                 tr.innerHTML = `
-                    <td>${index + 1}</td>
+                    <td style="font-weight:700; font-size:0.75rem;">${index + 1}</td>
                     <td>${timeCellHTML}</td>
                     <td>${statusBadgeHTML}</td>
                     <td class="client-name-cell"><strong>${record.patientName}</strong></td>
-                    <td>${record.patientPhone}</td>
-                    <td>${record.fileNumber || '-'}</td>
+                    <td style="font-family:Arial, sans-serif; font-size:0.8rem; font-weight:600;">${record.patientPhone}</td>
+                    <td style="font-size:0.78rem;">${record.fileNumber || '-'}</td>
                     <td><span class="proc-badge ${procClass}">${proc}</span></td>
                     <td>${paymentBadgeHTML}</td>
-                    <td><span style="font-weight: 600; color: var(--text-main);">${contactMethodVal}</span></td>
+                    <td><span style="font-weight: 600; font-size:0.78rem; color: var(--text-main);">${contactMethodVal}</span></td>
                     <td><div class="service-cell-box">${record.serviceRequired}</div></td>
-                    <td>${record.coordinatorName}</td>
+                    <td style="font-size:0.78rem;">${record.coordinatorName}</td>
                     <td>
                         <select class="table-input" id="adminContact_${record.firebaseKey}" onchange="handleContactChange('${record.firebaseKey}')">
                             <option value="قيد الانتظار" ${selectVal === 'قيد الانتظار' ? 'selected' : ''}>قيد الانتظار</option>
@@ -2781,14 +2751,16 @@
                             <option value="اعتذر" ${selectVal === 'اعتذر' ? 'selected' : ''}>اعتذر ❌</option>
                             <option value="أخرى" ${selectVal === 'أخرى' ? 'selected' : ''}>أخرى ✍️</option>
                         </select>
-                        <input type="text" class="table-input" id="adminOther_${record.firebaseKey}" placeholder="التفاصيل..." value="${otherDetail}" style="margin-top: 4px; ${selectVal === 'أخرى' ? '' : 'display:none;'}">
+                        <input type="text" class="table-input" id="adminOther_${record.firebaseKey}" placeholder="التفاصيل..." value="${otherDetail}" style="margin-top: 2px; ${selectVal === 'أخرى' ? '' : 'display:none;'}">
                     </td>
                     <td><textarea class="admin-action-textarea" id="action_${record.firebaseKey}" placeholder="اكتب إجراء الإدارة هنا...">${record.actionTaken || ''}</textarea></td>
                     <td>
-                        <button class="btn-pin-action ${isPinned ? 'pinned' : ''}" onclick="requestTogglePinRecord('${record.firebaseKey}')" title="${isPinned ? 'إلغاء التثبيت' : 'تثبيت العميل'}"><i class="fa-solid fa-thumbtack"></i></button>
-                        <button class="btn-save-action" onclick="saveAdminUpdate('${record.firebaseKey}')" title="حفظ"><i class="fa-solid fa-floppy-disk"></i></button>
-                        <button class="btn-edit-action" onclick="openEditModal('${record.firebaseKey}')" title="تعديل"><i class="fa-solid fa-pen"></i></button>
-                        <button class="btn-delete-action" onclick="deleteRecord('${record.firebaseKey}')" title="حذف"><i class="fa-solid fa-trash"></i></button>
+                        <div style="display:flex; gap:3px; align-items:center;">
+                            <button class="btn-pin-action ${isPinned ? 'pinned' : ''}" onclick="requestTogglePinRecord('${record.firebaseKey}')" title="${isPinned ? 'إلغاء التثبيت' : 'تثبيت العميل'}"><i class="fa-solid fa-thumbtack"></i></button>
+                            <button class="btn-save-action" onclick="saveAdminUpdate('${record.firebaseKey}')" title="حفظ"><i class="fa-solid fa-floppy-disk"></i></button>
+                            <button class="btn-edit-action" onclick="openEditModal('${record.firebaseKey}')" title="تعديل"><i class="fa-solid fa-pen"></i></button>
+                            <button class="btn-delete-action" onclick="deleteRecord('${record.firebaseKey}')" title="حذف"><i class="fa-solid fa-trash"></i></button>
+                        </div>
                     </td>
                 `;
                 tbody.appendChild(tr);
@@ -2956,7 +2928,7 @@
 
             if (csLinks.length === 0) {
                 container.innerHTML = `
-                    <div style="grid-column: 1/-1; text-align: center; padding: 30px; color: var(--text-muted);">
+                    <div style="grid-column: 1/-1; text-align: center; padding: 20px; color: var(--text-muted); font-size: 0.85rem;">
                         لا توجد روابط مضافة حالياً. انقر على "إضافة رابط جديد" لإضافة أول رابط للدليل الشامل.
                     </div>
                 `;
@@ -3346,7 +3318,7 @@
             });
 
             if (hiddenRecords.length === 0) {
-                trashContainer.innerHTML = '<div style="text-align:center; padding:20px; color:var(--text-muted); font-size:0.9rem;">سلة المحذوفات المحلية فارغة تماماً</div>';
+                trashContainer.innerHTML = '<div style="text-align:center; padding:15px; color:var(--text-muted); font-size:0.85rem;">سلة المحذوفات المحلية فارغة تماماً</div>';
                 return;
             }
 
@@ -3410,7 +3382,7 @@
             }
 
             if (openRecords.length === 0) {
-                container.innerHTML = '<div style="grid-column: 1/-1; text-align:center; padding:30px; color:var(--text-muted); font-size:1rem;">لا توجد نتائج أو حالات طابقت البحث 🎉</div>';
+                container.innerHTML = '<div style="grid-column: 1/-1; text-align:center; padding:20px; color:var(--text-muted); font-size:0.9rem;">لا توجد نتائج أو حالات طابقت البحث 🎉</div>';
                 return;
             }
 
@@ -3506,7 +3478,7 @@
                         ${dateTimeStr ? `<span class="client-datetime-badge"><i class="fa-regular fa-clock"></i> ${dateTimeStr}</span>` : ''}
                     </div>
                     <div class="client-info-row">
-                        <span class="info-label">الجوال:</span> ${phoneStr} ${idStr ? `<span style="margin-right:8px;"><span class="info-label">الهوية:</span> ${idStr}</span>` : ''}
+                        <span class="info-label">الجوال:</span> ${phoneStr} ${idStr ? `<span style="margin-right:6px;"><span class="info-label">الهوية:</span> ${idStr}</span>` : ''}
                     </div>
                     <div class="client-info-row">
                         ${serviceStr}
