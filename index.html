@@ -650,11 +650,11 @@
             color: var(--text-main);
         }
 
-        /* تعديل مربع "إجراء الإدارة" وضبط أقصى ارتفاع بطلبك */
+        /* مربع "إجراء الإدارة" مع ضبط أقصى ارتفاع */
         textarea.table-input.auto-expand-action { 
             resize: vertical; 
             min-height: 42px;
-            max-height: 140px; /* أقصى ارتفاع يصله المربع لمنع التضخم */
+            max-height: 140px;
             height: auto;
             min-width: 130px;
             max-width: 200px;
@@ -704,25 +704,25 @@
         }
         #notificationToast.show { transform: translateY(0); opacity: 1; }
 
-        /* تعديلات كروت صفحة الكشف والفواصل الاحترافية */
+        /* كروت صفحة الكشف والفواصل الاحترافية */
         .client-report-container {
             display: flex;
             flex-direction: column;
-            gap: 16px; /* مسافة أوسع وأوضح بين الكروت */
+            gap: 16px;
             width: 100%;
         }
 
         .client-card-wrapper {
             background-color: var(--bg-card);
             border: 1px solid var(--border-color);
-            border-right: 4px solid var(--primary-color); /* بوردر جانبي للتمييز والفصل */
+            border-right: 4px solid var(--primary-color);
             border-radius: var(--radius-md);
             padding: 14px 16px;
             display: flex;
             flex-direction: column;
             gap: 10px;
             position: relative;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.25); /* ظل لإبراز الكارت عن الخلفية */
+            box-shadow: 0 4px 12px rgba(0,0,0,0.25);
             width: 100%;
             overflow: hidden;
         }
@@ -1292,7 +1292,7 @@
                             </div>
                         </div>
 
-                        <!-- الفلاتر المحدثة مع فلتر اسم المنسق كخانة كتابة بدلاً من قائمة -->
+                        <!-- الفلاتر المحدثة مع خانة كتابة اسم المنسق -->
                         <div class="filter-container-box">
                             <div class="filter-row">
                                 <span class="filter-label"><i class="fa-solid fa-filter"></i> فلاتر الحالات:</span>
@@ -1338,7 +1338,6 @@
                                         <option value="فرع الوسام">فرع الوسام</option>
                                     </select>
 
-                                    <!-- خانة إدخال اسم المنسق مباشرة بدلاً من القائمة -->
                                     <span class="filter-label" style="min-width: 60px; margin-right: 10px;"><i class="fa-solid fa-user-tie"></i> المنسق:</span>
                                     <input type="text" id="coordinatorSearchInput" oninput="renderTable()" placeholder="اكتب اسم المنسق..." style="background: var(--bg-surface); color: var(--text-main); border: 1px solid var(--border-color); padding: 4px 8px; border-radius: 6px; font-family: var(--font-family); font-size: 0.8rem; width: 130px;">
                                 </div>
@@ -1764,6 +1763,17 @@
         const cachedAnnouncements = localStorage.getItem('cachedAnnouncements_v3');
         if (cachedAnnouncements) { try { clinicAnnouncements = JSON.parse(cachedAnnouncements); } catch(e) { clinicAnnouncements = []; } }
 
+        // دوال التخزين المحلي لحالة النسخ المستقلة لكل جهاز (LocalStorage)
+        function getLocalCopiedMap() {
+            try {
+                return JSON.parse(localStorage.getItem('localCopiedRecords_v2')) || [];
+            } catch(e) { return []; }
+        }
+
+        function setLocalCopiedMap(arr) {
+            localStorage.setItem('localCopiedRecords_v2', JSON.stringify(arr));
+        }
+
         function syncFilterTabsUI() {
             const statusContainer = document.getElementById('statusFilterTabs');
             if (statusContainer) {
@@ -2112,7 +2122,6 @@
                 actionTaken: '',
                 adminContactMethod: 'قيد الانتظار',
                 adminContactDetail: '',
-                isCopied: false,
                 isPinned: false,
                 isHiddenFromClients: false,
                 deletedAt: null
@@ -2188,6 +2197,7 @@
 
         function updatePinnedCountBadge() {
             let openRecords = records.filter(r => !r.isHiddenFromClients);
+            const localCopiedList = getLocalCopiedMap();
             
             if (clientHoursFilter !== 'all' && !isPinnedFilterActive) {
                 const now = new Date();
@@ -2221,7 +2231,7 @@
                 });
             } else {
                 groupedMap.forEach((groupRecords) => {
-                    const isGroupCopied = groupRecords.every(r => r.isCopied);
+                    const isGroupCopied = groupRecords.every(r => localCopiedList.includes(r.firebaseKey));
                     if (!isGroupCopied) displayCount++;
                 });
             }
@@ -2350,13 +2360,11 @@
                 });
             }
 
-            // فلتر الفرع
             const branchVal = document.getElementById('branchFilterSelect')?.value || 'all';
             if (branchVal !== 'all') {
                 filteredList = filteredList.filter(r => r.branch === branchVal);
             }
 
-            // فلتر البحث النصي باسم المنسق المباشر
             const coordinatorSearchVal = (document.getElementById('coordinatorSearchInput')?.value || '').trim().toLowerCase();
             if (coordinatorSearchVal !== '') {
                 filteredList = filteredList.filter(r => r.coordinatorName && r.coordinatorName.toLowerCase().includes(coordinatorSearchVal));
@@ -2379,7 +2387,6 @@
                 });
             }
 
-            // فلتر البحث السريع العادي
             const searchInputEl = document.getElementById('searchInput');
             if (searchInputEl) {
                 const query = searchInputEl.value.trim().toLowerCase();
@@ -2450,7 +2457,6 @@
 
                 const contactMethodHTML = `<span class="contact-method-badge"><i class="fa-solid ${cIcon}"></i> ${cMethod}</span>`;
                 const isPinned = record.isPinned;
-
                 const branchNameArabic = record.branch || 'فرع معشي';
 
                 tr.innerHTML = `
@@ -2828,18 +2834,25 @@
             } catch(e) { return isoString; }
         }
 
+        // دالة تبديل حالة النسخ لتكون محلية لكل جهاز تماماً بدون إزعاج الآخرين
         function toggleCopiedStatusGroup(keysArray) {
-            requireAdminAuth(() => {
-                const targetState = !records.find(r => keysArray.includes(r.firebaseKey))?.isCopied;
-                keysArray.forEach(k => {
-                    const rec = records.find(r => r.firebaseKey === k);
-                    if (rec) {
-                        rec.isCopied = targetState;
-                        if (navigator.onLine && !k.startsWith('local_')) dbRef.child(k).update({ isCopied: targetState });
-                    }
-                });
-                saveLocal(); renderClientReport();
+            let copiedList = getLocalCopiedMap();
+            const firstKey = keysArray[0];
+            const isCurrentlyCopied = copiedList.includes(firstKey);
+            
+            keysArray.forEach(k => {
+                if (isCurrentlyCopied) {
+                    copiedList = copiedList.filter(id => id !== k);
+                } else {
+                    if (!copiedList.includes(k)) copiedList.push(k);
+                }
             });
+            
+            setLocalCopiedMap(copiedList);
+            renderClientReport();
+            updatePinnedCountBadge();
+            
+            showToastOnly(isCurrentlyCopied ? '✖️ تم إزالة حالة النسخ من جهازك' : '✅ تم تعليم الكارت كـ (منسوخ) على جهازك فقط');
         }
 
         function hideClientGroupFromReport(keysArray) {
@@ -2936,7 +2949,6 @@
             });
         }
 
-        /* رسم كروت صفحة الكشف بالأزرار المرتبة رآسياً لجعل اسم العميل يتفرد براحته */
         function renderClientReport() {
             const container = document.getElementById('clientReportList');
             if (!container) return;
@@ -2944,6 +2956,7 @@
 
             updatePinnedCountBadge();
             let openRecords = getOpenFilteredRecords();
+            const localCopiedList = getLocalCopiedMap();
 
             const searchInputEl = document.getElementById('clientSearchInput');
             if (searchInputEl) {
@@ -2985,7 +2998,7 @@
                     mainRecord: mainRecord,
                     allKeys: allKeys,
                     servicesCombined: uniqueServices.join(' / '),
-                    isCopied: groupRecords.every(r => r.isCopied),
+                    isCopied: groupRecords.every(r => localCopiedList.includes(r.firebaseKey)),
                     isPinned: groupRecords.some(r => r.isPinned),
                     paymentStatus: mainRecord.paymentStatus || 'none',
                     latestCreatedAt: mainRecord.createdAt
@@ -3050,8 +3063,9 @@
             let openRecords = getOpenFilteredRecords();
             if (openRecords.length === 0) return alert('لا يوجد عملاء حالياً للنسخ!');
 
+            const localCopiedList = getLocalCopiedMap();
             const groupedMap = new Map();
-            const recordsToCopy = isPinnedFilterActive ? openRecords : openRecords.filter(r => !r.isCopied);
+            const recordsToCopy = isPinnedFilterActive ? openRecords : openRecords.filter(r => !localCopiedList.includes(r.firebaseKey));
 
             recordsToCopy.forEach(record => {
                 const cleanPhone = (record.patientPhone && record.patientPhone !== '-') ? record.patientPhone.replace(/\D/g, '') : '';
@@ -3060,7 +3074,7 @@
                 groupedMap.get(groupKey).push(record);
             });
 
-            if (groupedMap.size === 0 && !isPinnedFilterActive) return alert('جميع العملاء تم نسخهم سابقاً!');
+            if (groupedMap.size === 0 && !isPinnedFilterActive) return alert('جميع العملاء تم نسخهم سابقاً على جهازك!');
 
             let reportText = ``;
             let idx = 1;
@@ -3247,7 +3261,6 @@
                                     actionTaken: '',
                                     adminContactMethod: 'قيد الانتظار',
                                     adminContactDetail: '',
-                                    isCopied: false,
                                     isPinned: false,
                                     isHiddenFromClients: false,
                                     deletedAt: null
