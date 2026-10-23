@@ -522,6 +522,34 @@
             gap: 5px;
         }
 
+        /* تنسيقات صندوق الملف الحالي بزر الحذف */
+        .existing-file-box {
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px dashed var(--primary-color);
+            border-radius: var(--radius-md);
+            padding: 8px 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 8px;
+            font-size: 0.85rem;
+        }
+        .btn-remove-attachment {
+            background: var(--danger-color);
+            color: white;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: var(--font-family);
+            font-size: 0.78rem;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
         .progress-box {
             background: var(--bg-base);
             border: 1px solid var(--border-color);
@@ -1147,116 +1175,31 @@
             justify-content: space-between;
         }
 
-        /* إصلاحات حاسمة ومخصصة للشاشات والهواتف المحمولة */
+        /* إصلاحات الشاشات والهواتف المحمولة */
         @media (max-width: 768px) {
-            body {
-                overflow-x: hidden;
-            }
-            .app-layout { 
-                flex-direction: column; 
-                width: 100%; 
-            }
-            
+            body { overflow-x: hidden; }
+            .app-layout { flex-direction: column; width: 100%; }
             .sidebar {
-                width: 280px;
-                max-width: 85vw;
-                height: 100vh;
-                position: fixed;
-                top: 0;
-                right: 0;
-                transform: translateX(100%);
-                z-index: 3000;
+                width: 280px; max-width: 85vw; height: 100vh; position: fixed; top: 0; right: 0; transform: translateX(100%); z-index: 3000;
             }
-            .app-layout.sidebar-open .sidebar {
-                transform: translateX(0) !important;
+            .app-layout.sidebar-open .sidebar { transform: translateX(0) !important; }
+            .main-wrapper { margin-right: 0 !important; width: 100% !important; min-width: 0; }
+            .top-header { padding: 10px 12px; flex-wrap: nowrap; gap: 8px; }
+            .header-title { gap: 8px; min-width: 0; flex: 1; }
+            .header-title h1 { font-size: 0.95rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+            .content-body { padding: 10px 8px; gap: 12px; width: 100%; }
+            .dashboard-section { padding: 12px 10px; width: 100%; }
+            .client-header-controls { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; width: 100%; }
+            .client-header-controls select, .client-header-controls .dropdown-filter-container, .client-header-controls .action-btn {
+                width: 100%; justify-content: center; font-size: 0.78rem; padding: 8px 6px;
             }
-            
-            .main-wrapper {
-                margin-right: 0 !important;
-                width: 100% !important;
-                min-width: 0;
-            }
-            
-            .top-header {
-                padding: 10px 12px;
-                flex-wrap: nowrap;
-                gap: 8px;
-            }
-            
-            .header-title {
-                gap: 8px;
-                min-width: 0;
-                flex: 1;
-            }
-            
-            .header-title h1 {
-                font-size: 0.95rem;
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
-            }
-            
-            .content-body {
-                padding: 10px 8px;
-                gap: 12px;
-                width: 100%;
-            }
-            
-            .dashboard-section {
-                padding: 12px 10px;
-                width: 100%;
-            }
-            
-            .client-header-controls {
-                display: grid;
-                grid-template-columns: repeat(2, 1fr);
-                gap: 6px;
-                width: 100%;
-            }
-            
-            .client-header-controls select,
-            .client-header-controls .dropdown-filter-container,
-            .client-header-controls .action-btn {
-                width: 100%;
-                justify-content: center;
-                font-size: 0.78rem;
-                padding: 8px 6px;
-            }
-
-            .client-card-header {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 4px;
-            }
-
-            .client-datetime-badge {
-                align-self: flex-start;
-            }
-
-            .kpi-cards-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 8px;
-            }
-            
-            .form-grid {
-                grid-template-columns: 100%;
-            }
-
-            .filter-row {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 6px;
-            }
-            
-            .filter-tabs {
-                width: 100%;
-                overflow-x: auto;
-                padding-bottom: 4px;
-            }
-            
-            .search-field {
-                max-width: 100%;
-            }
+            .client-card-header { flex-direction: column; align-items: flex-start; gap: 4px; }
+            .client-datetime-badge { align-self: flex-start; }
+            .kpi-cards-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+            .form-grid { grid-template-columns: 100%; }
+            .filter-row { flex-direction: column; align-items: flex-start; gap: 6px; }
+            .filter-tabs { width: 100%; overflow-x: auto; padding-bottom: 4px; }
+            .search-field { max-width: 100%; }
         }
     </style>
 </head>
@@ -1594,7 +1537,7 @@
                                 </h2>
                             </div>
                             
-                            <!-- شريط الأزرار والتصنيفات للموبايل والشاشات المختلفة -->
+                            <!-- شريط الأزرار والتصنيفات -->
                             <div class="client-header-controls">
                                 <select id="clientHoursSelect" onchange="setClientTimeFilterSelect(this.value)" style="background: var(--bg-surface); color: var(--text-main); border: 1px solid var(--border-color); padding: 7px 10px; border-radius: 6px; font-family: var(--font-family); font-size: 0.82rem; cursor: pointer;">
                                     <option value="all">كل الأوقات</option>
@@ -1663,13 +1606,18 @@
             </div>
             <form id="announcementForm" onsubmit="saveAnnouncementItem(event)">
                 <input type="hidden" id="editAnnouncementKey">
+                <input type="hidden" id="removeExistingAttachment" value="false">
                 <div class="form-grid">
                     <div class="input-field full-width">
                         <label>نص التنبيه أو الملاحظة *</label>
                         <textarea id="announcementText" required placeholder="اكتب التنبيه أو التحديث الجديد للعيادة هنا..."></textarea>
                     </div>
+                    
                     <div class="input-field full-width">
-                        <label><i class="fa-solid fa-paperclip"></i> إرفاق ملف (PDF, مستندات, صور...) (اختياري)</label>
+                        <!-- صندوق يستعرض الملف المرفق حالياً إذا كان التنبيه يحتوي على ملف -->
+                        <div id="existingFileBoxContainer" style="display: none;"></div>
+
+                        <label><i class="fa-solid fa-paperclip"></i> رفع ملف جديد أو استبدال الملف (PDF, مستندات, صور...)</label>
                         <input type="file" id="announcementFile" accept=".pdf,.doc,.docx,.xls,.xlsx,.txt,image/*" style="padding: 6px; cursor: pointer;">
                         <span style="font-size: 0.75rem; color: var(--text-muted); margin-top: 3px;">يمكنك رفع ملفات PDF أو مستندات أو صور ليراها فريق العمل مباشرة.</span>
                     </div>
@@ -2283,8 +2231,11 @@
 
         function openAddAnnouncementModal() {
             document.getElementById('editAnnouncementKey').value = '';
+            document.getElementById('removeExistingAttachment').value = 'false';
             document.getElementById('announcementText').value = '';
             document.getElementById('announcementFile').value = '';
+            document.getElementById('existingFileBoxContainer').style.display = 'none';
+            document.getElementById('existingFileBoxContainer').innerHTML = '';
             document.getElementById('announcementModalTitle').innerHTML = '<i class="fa-solid fa-bullhorn"></i> إضافة تنبيه أو إشعار للعيادة';
             document.getElementById('announcementModal').classList.add('open');
         }
@@ -2292,11 +2243,39 @@
         function openEditAnnouncementModal(key) {
             const item = clinicAnnouncements.find(a => a.announcementKey === key);
             if (!item) return;
+
             document.getElementById('editAnnouncementKey').value = item.announcementKey;
+            document.getElementById('removeExistingAttachment').value = 'false';
             document.getElementById('announcementText').value = item.text || '';
             document.getElementById('announcementFile').value = '';
+
+            const containerBox = document.getElementById('existingFileBoxContainer');
+            if (item.fileUrl) {
+                const fname = item.fileName || 'ملف مرفق';
+                containerBox.innerHTML = `
+                    <div class="existing-file-box" id="existingFileNotice">
+                        <span><i class="fa-solid fa-paperclip"></i> المرفق الحالي: <strong>${fname}</strong></span>
+                        <button type="button" class="btn-remove-attachment" onclick="flagRemoveAttachment()"><i class="fa-solid fa-trash"></i> إزالة المرفق</button>
+                    </div>
+                `;
+                containerBox.style.display = 'block';
+            } else {
+                containerBox.style.display = 'none';
+                containerBox.innerHTML = '';
+            }
+
             document.getElementById('announcementModalTitle').innerHTML = '<i class="fa-solid fa-pen"></i> تعديل تنبيه العيادة';
             document.getElementById('announcementModal').classList.add('open');
+        }
+
+        function flagRemoveAttachment() {
+            document.getElementById('removeExistingAttachment').value = 'true';
+            const noticeEl = document.getElementById('existingFileNotice');
+            if (noticeEl) {
+                noticeEl.style.opacity = '0.5';
+                noticeEl.innerHTML = '<span style="color:var(--danger-color); font-weight:bold;"><i class="fa-solid fa-ban"></i> سيتم حذف المرفق عند الحفظ</span>';
+            }
+            showToastOnly('⚠️ اضغط حفظ لتأكيد حذف المرفق');
         }
 
         function closeAnnouncementModal() {
@@ -2308,6 +2287,8 @@
             const key = document.getElementById('editAnnouncementKey').value;
             const textVal = document.getElementById('announcementText').value.trim();
             const fileInput = document.getElementById('announcementFile');
+            const isRemoveAttachmentFlagged = document.getElementById('removeExistingAttachment').value === 'true';
+
             if (!textVal) return;
 
             const processAndSave = (fileUrl, fileType, fileName) => {
@@ -2315,11 +2296,17 @@
                     const item = clinicAnnouncements.find(a => a.announcementKey === key);
                     if (item) {
                         item.text = textVal;
-                        if (fileUrl !== undefined) {
+
+                        if (isRemoveAttachmentFlagged && (!fileInput.files || !fileInput.files[0])) {
+                            item.fileUrl = '';
+                            item.fileType = '';
+                            item.fileName = '';
+                        } else if (fileUrl !== undefined) {
                             item.fileUrl = fileUrl;
                             item.fileType = fileType;
                             item.fileName = fileName;
                         }
+
                         saveLocal();
                         renderAnnouncements();
                         closeAnnouncementModal();
@@ -2327,7 +2314,11 @@
 
                         if (navigator.onLine && !key.startsWith('ann_')) {
                             const updateObj = { text: textVal };
-                            if (fileUrl !== undefined) {
+                            if (isRemoveAttachmentFlagged && (!fileInput.files || !fileInput.files[0])) {
+                                updateObj.fileUrl = '';
+                                updateObj.fileType = '';
+                                updateObj.fileName = '';
+                            } else if (fileUrl !== undefined) {
                                 updateObj.fileUrl = fileUrl;
                                 updateObj.fileType = fileType;
                                 updateObj.fileName = fileName;
