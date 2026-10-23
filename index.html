@@ -706,7 +706,6 @@
             width: 100%; padding: 6px; border: 1px solid var(--border-color); border-radius: var(--radius-md); background: var(--bg-base); color: var(--text-main); font-family: var(--font-family); font-size: 0.85rem;
         }
         
-        /* ضبط صندوق الخدمة وتفاصيل الطلب بعرض مناسب */
         .service-cell-box {
             width: 280px;
             min-width: 280px;
@@ -724,7 +723,6 @@
             color: var(--text-main);
         }
 
-        /* ضبط صندوق إجراء الإدارة ليكون مطابقاً تماماً في العرض والارتفاع والشكل لصندوق الخدمة */
         textarea.admin-action-textarea {
             width: 280px;
             min-width: 280px;
@@ -744,7 +742,6 @@
             resize: vertical;
         }
 
-        /* عمود اسم العميل ليعرض بالكامل بدون كسر الجدول */
         .client-name-cell {
             min-width: 140px;
             white-space: normal;
@@ -1041,7 +1038,6 @@
             justify-content: flex-end;
         }
 
-        /* تحسينات كاملة للتجاوب مع جميع هواتف المحمول والشاشات الصغيرة */
         @media (max-width: 768px) {
             .app-layout { flex-direction: column; }
             .sidebar {
@@ -1788,7 +1784,11 @@
 
         function toggleSidebar() {
             const appLayout = document.getElementById('appLayout');
-            appLayout.classList.toggle('sidebar-open');
+            if (window.innerWidth <= 768) {
+                appLayout.classList.toggle('sidebar-open');
+            } else {
+                appLayout.classList.toggle('sidebar-collapsed');
+            }
         }
 
         function switchPage(page) {
@@ -2359,7 +2359,6 @@
             playBeepAndShowToast('⚠️ تم إضافة العميل والموعد بنجاح!');
         });
 
-        // تم إلغاء الباسورد هنا بالكامل لتصبح ميزة التثبيت محلية وسريعة بدون قيود
         function requestTogglePinRecord(key) {
             let rec = records.find(r => r.firebaseKey === key);
             if (rec) {
