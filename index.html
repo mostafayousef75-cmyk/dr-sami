@@ -983,7 +983,6 @@
             gap: 5px;
             white-space: nowrap;
             width: auto;
-            flex: 1;
         }
 
         .copied-btn.active {
@@ -1013,7 +1012,7 @@
             align-items: center;
             justify-content: center;
             gap: 4px;
-            flex: 1;
+            width: auto;
         }
 
         .btn-client-action.delete-to-trash { background-color: var(--danger-color); }
@@ -1148,7 +1147,7 @@
             justify-content: space-between;
         }
 
-        /* إصلاحات حاسمة ومخصصة لجميع الشاشات والهواتف المحمولة */
+        /* إصلاحات حاسمة ومخصصة للشاشات والهواتف المحمولة */
         @media (max-width: 768px) {
             body {
                 overflow-x: hidden;
@@ -1158,7 +1157,6 @@
                 width: 100%; 
             }
             
-            /* تعديل القائمة الجانبية للموبايل */
             .sidebar {
                 width: 280px;
                 max-width: 85vw;
