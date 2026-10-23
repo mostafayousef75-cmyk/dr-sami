@@ -148,6 +148,7 @@
             right: 0;
             z-index: 3000;
             transition: transform 0.3s ease;
+            box-shadow: -4px 0 15px rgba(0,0,0,0.5);
         }
 
         .app-layout.sidebar-collapsed .sidebar {
@@ -161,9 +162,11 @@
             left: 0;
             width: 100vw;
             height: 100vh;
-            background: rgba(0, 0, 0, 0.65);
+            background: rgba(0, 0, 0, 0.75);
             z-index: 2900;
+            backdrop-filter: blur(2px);
         }
+        
         .app-layout.sidebar-open .sidebar-backdrop {
             display: block;
         }
@@ -595,7 +598,6 @@
         }
         .input-field textarea { resize: vertical; min-height: 65px; }
 
-        /* تعديل التنسيق ليكون النص ومربع التحديد متجاورين بوضوح */
         .priority-checkbox {
             display: flex; 
             align-items: center; 
@@ -905,6 +907,7 @@
             justify-content: space-between;
             width: 100%;
             gap: 8px;
+            flex-wrap: wrap;
         }
 
         .client-card-header .client-title {
@@ -916,6 +919,7 @@
             color: var(--text-main);
             flex: 1;
             word-break: break-word;
+            min-width: 0;
         }
 
         .client-card-header .client-select-chk {
@@ -979,7 +983,7 @@
             gap: 5px;
             white-space: nowrap;
             width: auto;
-            flex: unset;
+            flex: 1;
         }
 
         .copied-btn.active {
@@ -1007,8 +1011,9 @@
             cursor: pointer;
             display: inline-flex;
             align-items: center;
+            justify-content: center;
             gap: 4px;
-            width: auto;
+            flex: 1;
         }
 
         .btn-client-action.delete-to-trash { background-color: var(--danger-color); }
@@ -1136,20 +1141,26 @@
         .client-header-controls .dropdown-filter-container,
         .client-header-controls .action-btn {
             width: auto;
-            flex: unset;
+            flex: 1 1 auto;
         }
         .client-header-controls .dropdown-filter-btn {
-            width: auto;
+            width: 100%;
             justify-content: space-between;
         }
 
+        /* إصلاحات حاسمة ومخصصة لجميع الشاشات والهواتف المحمولة */
         @media (max-width: 768px) {
             body {
                 overflow-x: hidden;
             }
-            .app-layout { flex-direction: column; width: 100%; }
+            .app-layout { 
+                flex-direction: column; 
+                width: 100%; 
+            }
+            
+            /* تعديل القائمة الجانبية للموبايل */
             .sidebar {
-                width: 270px;
+                width: 280px;
                 max-width: 85vw;
                 height: 100vh;
                 position: fixed;
@@ -1161,99 +1172,90 @@
             .app-layout.sidebar-open .sidebar {
                 transform: translateX(0) !important;
             }
-            .sidebar-backdrop {
-                z-index: 2900;
-            }
+            
             .main-wrapper {
                 margin-right: 0 !important;
                 width: 100% !important;
                 min-width: 0;
             }
+            
             .top-header {
-                padding: 10px;
+                padding: 10px 12px;
                 flex-wrap: nowrap;
                 gap: 8px;
             }
+            
             .header-title {
-                gap: 6px;
+                gap: 8px;
                 min-width: 0;
                 flex: 1;
             }
+            
             .header-title h1 {
                 font-size: 0.95rem;
                 white-space: nowrap;
                 overflow: hidden;
                 text-overflow: ellipsis;
             }
-            .open-sidebar-btn {
-                padding: 6px 10px;
-                font-size: 0.8rem;
-                flex-shrink: 0;
+            
+            .content-body {
+                padding: 10px 8px;
+                gap: 12px;
+                width: 100%;
             }
-            .theme-selector-wrapper {
-                flex-shrink: 0;
+            
+            .dashboard-section {
+                padding: 12px 10px;
+                width: 100%;
+            }
+            
+            .client-header-controls {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 6px;
+                width: 100%;
+            }
+            
+            .client-header-controls select,
+            .client-header-controls .dropdown-filter-container,
+            .client-header-controls .action-btn {
+                width: 100%;
+                justify-content: center;
+                font-size: 0.78rem;
+                padding: 8px 6px;
+            }
+
+            .client-card-header {
+                flex-direction: column;
+                align-items: flex-start;
                 gap: 4px;
             }
-            .theme-selector-wrapper label {
-                display: none;
+
+            .client-datetime-badge {
+                align-self: flex-start;
             }
-            .theme-select {
-                padding: 5px 8px;
-                font-size: 0.78rem;
-            }
-            .content-body {
-                padding: 8px;
-                gap: 10px;
-                width: 100%;
-            }
-            .dashboard-section {
-                padding: 10px;
-                width: 100%;
-            }
+
             .kpi-cards-grid {
                 grid-template-columns: repeat(2, 1fr);
                 gap: 8px;
             }
+            
             .form-grid {
                 grid-template-columns: 100%;
             }
-            .actions-toolbar {
-                display: flex;
-                flex-wrap: wrap;
-                gap: 6px;
-            }
-            .action-btn {
-                width: auto;
-                justify-content: center;
-                padding: 8px 10px;
-                font-size: 0.78rem;
-            }
-            .client-header-controls {
-                display: flex;
-                flex-wrap: wrap;
-                gap: 6px;
-                width: 100%;
-            }
-            .client-header-controls select,
-            .client-header-controls .dropdown-filter-btn,
-            .client-header-controls .action-btn {
-                width: auto;
-                flex: unset;
-                justify-content: center;
-            }
-            .links-grid {
-                grid-template-columns: 100%;
-            }
+
             .filter-row {
                 flex-direction: column;
                 align-items: flex-start;
                 gap: 6px;
             }
+            
             .filter-tabs {
                 width: 100%;
                 overflow-x: auto;
                 padding-bottom: 4px;
             }
+            
             .search-field {
                 max-width: 100%;
             }
@@ -1594,7 +1596,7 @@
                                 </h2>
                             </div>
                             
-                            <!-- شريط الأزرار بحجمها الطبيعي والمضغوط -->
+                            <!-- شريط الأزرار والتصنيفات للموبايل والشاشات المختلفة -->
                             <div class="client-header-controls">
                                 <select id="clientHoursSelect" onchange="setClientTimeFilterSelect(this.value)" style="background: var(--bg-surface); color: var(--text-main); border: 1px solid var(--border-color); padding: 7px 10px; border-radius: 6px; font-family: var(--font-family); font-size: 0.82rem; cursor: pointer;">
                                     <option value="all">كل الأوقات</option>
@@ -3441,7 +3443,7 @@
                     <div class="client-card-header">
                         <div class="client-title">
                             <input type="checkbox" class="client-select-chk" data-keys="${keysJsonStr}">
-                            <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${index + 1}- ${rec.patientName}${fileStr}</span>
+                            <span>${index + 1}- ${rec.patientName}${fileStr}</span>
                         </div>
                         ${dateTimeStr ? `<span class="client-datetime-badge"><i class="fa-regular fa-clock"></i> ${dateTimeStr}</span>` : ''}
                     </div>
