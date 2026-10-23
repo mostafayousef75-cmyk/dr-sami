@@ -22,7 +22,7 @@
         :root {
             --font-family: 'Tajawal', sans-serif;
             
-            /* السيم الافتراضي: الكحلي الفخم (Midnight Navy) */
+            /* السيم الافتراضي: الكحلي الفخم */
             --bg-base: #0b1329;
             --bg-surface: #131e3a;
             --bg-card: #1a274c;
@@ -416,15 +416,15 @@
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            padding: 4px 8px;
+            padding: 5px 10px;
             background: rgba(37, 99, 235, 0.2);
             border: 1px solid var(--primary-color);
             color: #60a5fa;
-            border-radius: 4px;
-            font-size: 0.8rem;
+            border-radius: 6px;
+            font-size: 0.82rem;
             text-decoration: none;
-            font-weight: 600;
-            margin-top: 5px;
+            font-weight: 700;
+            margin-top: 6px;
         }
         .announcement-file-link:hover { background: var(--primary-color); color: #fff; }
 
@@ -594,7 +594,7 @@
         .search-field i { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 0.8rem; }
 
         .table-container { 
-            max-height: 580px; 
+            max-height: 600px; 
             overflow-y: auto; 
             overflow-x: auto;
             position: relative;
@@ -602,7 +602,7 @@
             border-radius: var(--radius-md);
         }
 
-        table { width: 100%; border-collapse: collapse; font-size: 0.82rem; table-layout: auto; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.82rem; table-layout: fixed; }
         
         table th { 
             background-color: var(--bg-card); 
@@ -616,6 +616,25 @@
         }
 
         table th, table td { padding: 6px 5px; text-align: right; border-bottom: 1px solid var(--border-color); vertical-align: middle; color: var(--text-main); }
+
+        /* ضبط وتوسيع الخانات المهمة وتضييق الخانات الصغيرة */
+        .col-mini { width: 35px; }
+        .col-date { width: 85px; }
+        .col-status { width: 110px; }
+        .col-name { width: 130px; }
+        .col-phone { width: 105px; }
+        .col-contact { width: 95px; }
+        .col-branch { width: 85px; }
+        .col-file { width: 75px; }
+        .col-proc { width: 90px; }
+        .col-coord { width: 90px; }
+        .col-admin-contact { width: 120px; }
+
+        /* خانة (الخدمة/التفاصيل) وخانة (إجراء الإدارة) أخذت أقصى مساحة مطاطية واسعة */
+        .col-expand-wide {
+            min-width: 250px;
+            width: auto;
+        }
 
         tr.row-apologized {
             background-color: rgba(239, 68, 68, 0.15) !important;
@@ -651,46 +670,43 @@
             width: 100%; padding: 6px 8px; border: 1px solid var(--border-color); border-radius: var(--radius-md); background: var(--bg-card); color: var(--text-main); font-family: var(--font-family); font-size: 0.8rem;
         }
         
-        /* ضبط حجم مربع "الخدمة / التفاصيل" ليكون بنفس ارتفاع وحجم "إجراء الإدارة" تماماً */
+        /* مربع الخدمة/التفاصيل أصبح ممتداً ومريحاً جداً */
         .service-cell-box {
-            min-width: 130px;
-            max-width: 200px;
+            width: 100%;
             max-height: 140px;
             overflow-y: auto;
             white-space: pre-wrap;
             word-break: break-word;
-            padding: 6px 8px;
+            padding: 8px 10px;
             background: var(--bg-card);
             border-radius: 6px;
             border: 1px solid var(--border-color);
-            font-size: 0.8rem;
-            line-height: 1.4;
+            font-size: 0.85rem;
+            line-height: 1.5;
             color: var(--text-main);
         }
 
-        /* مربع "إجراء الإدارة" مع ضبط أقصى ارتفاع */
+        /* مربع إجراء الإدارة موسع ومريح */
         textarea.table-input.auto-expand-action { 
             resize: vertical; 
-            min-height: 42px;
+            min-height: 50px;
             max-height: 140px;
             height: auto;
-            min-width: 130px;
-            max-width: 200px;
-            line-height: 1.4;
-            padding: 6px 8px;
-            font-size: 0.8rem;
+            width: 100%;
+            line-height: 1.5;
+            padding: 8px 10px;
+            font-size: 0.85rem;
             overflow-y: auto;
             background: var(--bg-card);
             border-radius: 6px;
             border: 1px solid var(--border-color);
         }
 
-        /* تنسيق أزرار/أيقونات الإجراءات لتبدو عمودية ومرتبة بدلاً من التراص الأفقي الضيق */
         .action-buttons-column {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 4px;
-            width: 70px;
+            width: 65px;
         }
 
         .btn-save-action { background-color: var(--success-color); color: #fff; border: none; padding: 6px; border-radius: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
@@ -729,11 +745,11 @@
         }
         #notificationToast.show { transform: translateY(0); opacity: 1; }
 
-        /* كروت صفحة الكشف والتلوين بالأخضر عند النسخ دون إخفاء */
+        /* كروت صفحة الكشف المضغوطة والأنيقة مع نزول المنسوخ لأسفل */
         .client-report-container {
             display: flex;
             flex-direction: column;
-            gap: 16px;
+            gap: 10px;
             width: 100%;
         }
 
@@ -742,68 +758,67 @@
             border: 1px solid var(--border-color);
             border-right: 4px solid var(--primary-color);
             border-radius: var(--radius-md);
-            padding: 14px 16px;
+            padding: 10px 12px;
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 6px;
             position: relative;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
             width: 100%;
             overflow: hidden;
             transition: all 0.3s ease;
         }
 
-        /* كارت الكشف المنسوخ باللون الأخضر المميز مع استمرار ظهوره في مكانه */
         .client-card-wrapper.is-copied-style {
-            background-color: rgba(16, 185, 129, 0.15) !important;
+            background-color: rgba(16, 185, 129, 0.12) !important;
             border-color: var(--success-color) !important;
-            border-right: 5px solid var(--success-color) !important;
+            border-right: 4px solid var(--success-color) !important;
+            order: 9999; /* ينزل لأسفل الكشف اتوماتيكياً */
         }
 
         .client-card-header {
             display: flex;
-            align-items: flex-start;
+            align-items: center;
             justify-content: space-between;
             width: 100%;
-            gap: 12px;
+            gap: 8px;
             flex-wrap: wrap;
         }
 
         .client-card-header .client-title {
             display: flex;
-            align-items: flex-start;
-            gap: 10px;
-            font-size: 1rem;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.95rem;
             font-weight: 700;
             color: var(--text-main);
             flex: 1;
-            min-width: 220px;
+            min-width: 200px;
         }
 
         .client-badges-column {
             display: flex;
-            flex-direction: column;
-            gap: 5px;
-            align-items: flex-start;
-            flex-shrink: 0;
+            flex-direction: row;
+            gap: 6px;
+            align-items: center;
+            flex-wrap: wrap;
         }
 
         .client-card-header .client-select-chk {
-            width: 18px;
-            height: 18px;
+            width: 16px;
+            height: 16px;
             cursor: pointer;
             accent-color: var(--primary-color);
             flex-shrink: 0;
-            margin-top: 3px;
         }
 
         .client-datetime-badge {
             font-family: Arial, sans-serif;
-            font-size: 0.75rem;
+            font-size: 0.72rem;
             font-weight: 700;
             color: #ffffff;
             background: rgba(37, 99, 235, 0.25);
-            padding: 4px 8px;
+            padding: 3px 6px;
             border-radius: 4px;
             border: 1px solid rgba(37, 99, 235, 0.4);
             direction: ltr;
@@ -813,9 +828,9 @@
         }
 
         .client-info-row {
-            font-size: 0.88rem;
+            font-size: 0.83rem;
             color: var(--text-main);
-            line-height: 1.5;
+            line-height: 1.4;
             word-break: break-word;
         }
 
@@ -828,7 +843,7 @@
             background: #d97706;
             color: #ffffff;
             border: none;
-            padding: 4px 8px;
+            padding: 3px 8px;
             border-radius: 4px;
             font-family: var(--font-family);
             font-size: 0.75rem;
@@ -836,7 +851,7 @@
             cursor: pointer;
             display: inline-flex;
             align-items: center;
-            gap: 5px;
+            gap: 4px;
             white-space: nowrap;
         }
 
@@ -849,7 +864,7 @@
             background: rgba(255,255,255,0.06);
             border: 1px solid var(--border-color);
             color: var(--text-main);
-            padding: 4px 8px;
+            padding: 3px 8px;
             border-radius: 4px;
             font-family: var(--font-family);
             font-size: 0.75rem;
@@ -857,7 +872,7 @@
             cursor: pointer;
             display: inline-flex;
             align-items: center;
-            gap: 5px;
+            gap: 4px;
             white-space: nowrap;
         }
 
@@ -876,26 +891,25 @@
         .client-actions-row {
             display: flex;
             gap: 6px;
-            margin-top: 4px;
+            margin-top: 2px;
             justify-content: flex-end;
             width: 100%;
-            flex-wrap: wrap;
             border-top: 1px dashed var(--border-color);
-            padding-top: 8px;
+            padding-top: 6px;
         }
 
         .btn-client-action {
-            padding: 5px 10px;
+            padding: 4px 8px;
             border-radius: 4px;
             border: none;
             color: #fff;
             font-family: var(--font-family);
-            font-size: 0.78rem;
+            font-size: 0.75rem;
             font-weight: 700;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
-            gap: 5px;
+            gap: 4px;
         }
 
         .btn-client-action.delete-to-trash { background-color: var(--danger-color); }
@@ -935,9 +949,7 @@
             box-shadow: 0 0 12px rgba(124, 58, 237, 0.4);
             transform: translateY(-4px);
         }
-        .link-card:hover {
-            border-color: var(--primary-color);
-        }
+        .link-card:hover { border-color: var(--primary-color); }
         
         .drag-handle {
             position: absolute;
@@ -967,40 +979,11 @@
             padding-left: 40px;
             word-break: break-word;
         }
-        .link-card-header i {
-            color: var(--primary-color);
-            font-size: 1.1rem;
-            flex-shrink: 0;
-        }
-        .link-card-desc {
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            line-height: 1.4;
-            min-height: 30px;
-            word-break: break-word;
-        }
-        .link-card-actions {
-            display: flex;
-            gap: 6px;
-            margin-top: 4px;
-            flex-wrap: wrap;
-        }
+        .link-card-header i { color: var(--primary-color); font-size: 1.1rem; flex-shrink: 0; }
+        .link-card-desc { font-size: 0.8rem; color: var(--text-muted); line-height: 1.4; min-height: 30px; word-break: break-word; }
+        .link-card-actions { display: flex; gap: 6px; margin-top: 4px; flex-wrap: wrap; }
         .btn-open-link {
-            flex: 1;
-            background-color: var(--primary-color);
-            color: #fff;
-            text-decoration: none;
-            padding: 6px 10px;
-            border-radius: var(--radius-md);
-            font-size: 0.82rem;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 5px;
-            white-space: nowrap;
-            cursor: pointer;
-            border: none;
+            flex: 1; background-color: var(--primary-color); color: #fff; text-decoration: none; padding: 6px 10px; border-radius: var(--radius-md); font-size: 0.82rem; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 5px; white-space: nowrap; cursor: pointer; border: none;
         }
 
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 2000; justify-content: center; align-items: center; padding: 15px; }
@@ -1029,51 +1012,21 @@
                 gap: 8px;
                 width: 100%;
             }
-            .client-header-controls select {
-                grid-column: span 2;
-                width: 100%;
-            }
-            .client-header-controls .action-btn {
-                width: 100%;
-                justify-content: center;
-            }
+            .client-header-controls select { grid-column: span 2; width: 100%; }
+            .client-header-controls .action-btn { width: 100%; justify-content: center; }
 
-            .client-card-header {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 8px;
-            }
-
-            .client-actions-row {
-                justify-content: stretch;
-            }
-            .btn-client-action {
-                flex: 1;
-                justify-content: center;
-            }
-
-            .links-grid {
-                grid-template-columns: 1fr;
-            }
+            .client-card-header { flex-direction: column; align-items: flex-start; gap: 8px; }
+            .client-actions-row { justify-content: stretch; }
+            .btn-client-action { flex: 1; justify-content: center; }
+            .links-grid { grid-template-columns: 1fr; }
         }
 
         @media (max-width: 992px) {
-            .sidebar {
-                transform: translateX(100%);
-            }
-            .app-layout:not(.sidebar-collapsed) .sidebar {
-                transform: translateX(100%);
-            }
-            .app-layout.sidebar-open .sidebar {
-                transform: translateX(0) !important;
-            }
-            .main-wrapper {
-                margin-right: 0 !important;
-                width: 100% !important;
-            }
-            .open-sidebar-btn {
-                display: inline-flex !important;
-            }
+            .sidebar { transform: translateX(100%); }
+            .app-layout:not(.sidebar-collapsed) .sidebar { transform: translateX(100%); }
+            .app-layout.sidebar-open .sidebar { transform: translateX(0) !important; }
+            .main-wrapper { margin-right: 0 !important; width: 100% !important; }
+            .open-sidebar-btn { display: inline-flex !important; }
         }
     </style>
 </head>
@@ -1380,20 +1333,20 @@
                             <table id="requestsTable">
                                 <thead>
                                     <tr>
-                                        <th>م</th>
-                                        <th>التاريخ</th>
-                                        <th>الحالة والدفع</th>
-                                        <th>العميل</th>
-                                        <th>الجوال</th>
-                                        <th>التواصل</th>
-                                        <th>الفرع</th>
-                                        <th>الملف</th>
-                                        <th>الإجراء</th>
-                                        <th>الخدمة / التفاصيل</th>
-                                        <th>المنسق</th>
-                                        <th>تواصل الإدارة</th>
-                                        <th>إجراء الإدارة</th>
-                                        <th style="text-align: center;">إجراءات</th>
+                                        <th class="col-mini">م</th>
+                                        <th class="col-date">التاريخ</th>
+                                        <th class="col-status">الحالة والدفع</th>
+                                        <th class="col-name">العميل</th>
+                                        <th class="col-phone">الجوال</th>
+                                        <th class="col-contact">التواصل</th>
+                                        <th class="col-branch">الفرع</th>
+                                        <th class="col-file">الملف</th>
+                                        <th class="col-proc">الإجراء</th>
+                                        <th class="col-expand-wide">الخدمة / التفاصيل</th>
+                                        <th class="col-coord">المنسق</th>
+                                        <th class="col-admin-contact">تواصل الإدارة</th>
+                                        <th class="col-expand-wide">إجراء الإدارة</th>
+                                        <th style="text-align: center; width: 70px;">إجراءات</th>
                                     </tr>
                                 </thead>
                                 <tbody id="tableBody"></tbody>
@@ -1474,7 +1427,7 @@
     <div class="modal" id="announcementModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 id="announcementModalTitle"><i class="fa-solid fa-bullhorn"></i> إضافة تنبيه أو إشعار للعيادة</h3>
+                <h3 id="announcementModalTitle"><i class="fa-solid fa-bullhorn"></i> إضافة تنبيه للعيادة</h3>
                 <button class="close-modal-btn" onclick="closeAnnouncementModal()">&times;</button>
             </div>
             <form id="announcementForm" onsubmit="saveAnnouncementItem(event)">
@@ -1693,9 +1646,6 @@
         let clientHoursFilter = localStorage.getItem('savedClientHoursFilter') || 'all';
         let clientPaymentFilter = localStorage.getItem('savedClientPaymentFilter') || 'all';
         let isPinnedFilterActive = false;
-        
-        let originalEditPriorityState = false;
-        let originalEditRepeatedState = false;
 
         if (!localStorage.getItem('adminPassword')) {
             localStorage.setItem('adminPassword', '1234');
@@ -1773,26 +1723,25 @@
         }
 
         function saveLocal() { 
-            localStorage.setItem('cachedAppointments_v20', JSON.stringify(records));
+            localStorage.setItem('cachedAppointments_v21', JSON.stringify(records));
             localStorage.setItem('cachedCSLinks_v1', JSON.stringify(csLinks));
-            localStorage.setItem('cachedAnnouncements_v3', JSON.stringify(clinicAnnouncements));
+            localStorage.setItem('cachedAnnouncements_v4', JSON.stringify(clinicAnnouncements));
         }
 
-        const cached = localStorage.getItem('cachedAppointments_v20') || localStorage.getItem('cachedAppointments_v19');
+        const cached = localStorage.getItem('cachedAppointments_v21') || localStorage.getItem('cachedAppointments_v20');
         if (cached) { try { records = JSON.parse(cached); } catch(e) { records = []; } }
 
         const cachedLinks = localStorage.getItem('cachedCSLinks_v1');
         if (cachedLinks) { try { csLinks = JSON.parse(cachedLinks); } catch(e) { csLinks = []; } }
 
-        const cachedAnnouncements = localStorage.getItem('cachedAnnouncements_v3');
+        const cachedAnnouncements = localStorage.getItem('cachedAnnouncements_v4') || localStorage.getItem('cachedAnnouncements_v3');
         if (cachedAnnouncements) { try { clinicAnnouncements = JSON.parse(cachedAnnouncements); } catch(e) { clinicAnnouncements = []; } }
 
-        // التخزين المحلي لخانات "منسوخ" الخاصة بكل متصفح
         function getLocalCopiedMap() {
-            try { return JSON.parse(localStorage.getItem('localCopiedRecords_v3')) || []; } catch(e) { return []; }
+            try { return JSON.parse(localStorage.getItem('localCopiedRecords_v4')) || []; } catch(e) { return []; }
         }
         function setLocalCopiedMap(arr) {
-            localStorage.setItem('localCopiedRecords_v3', JSON.stringify(arr));
+            localStorage.setItem('localCopiedRecords_v4', JSON.stringify(arr));
         }
 
         function syncFilterTabsUI() {
@@ -1987,7 +1936,6 @@
             universalAuthCallback = null;
         }
 
-        // عرض التنبيهات مع دعم المرفقات والصور
         function renderAnnouncements() {
             const container = document.getElementById('announcementsListContainer');
             if (!container) return;
@@ -2005,7 +1953,7 @@
 
                 let fileHTML = '';
                 if (item.fileData) {
-                    fileHTML = `<a href="${item.fileData}" target="_blank" class="announcement-file-link"><i class="fa-solid fa-paperclip"></i> فتح/معاينة المرفق الصوري أو المستند</a>`;
+                    fileHTML = `<br><a href="${item.fileData}" target="_blank" class="announcement-file-link"><i class="fa-solid fa-paperclip"></i> فتح / معاينة المرفق الصوري أو المستند</a>`;
                 }
 
                 card.innerHTML = `
@@ -2499,18 +2447,18 @@
                 const branchNameArabic = record.branch || 'فرع معشي';
 
                 tr.innerHTML = `
-                    <td>${index + 1}</td>
-                    <td style="white-space: nowrap;">${formatDateOnly(record.createdAt)}</td>
-                    <td>${statusBadgeHTML}</td>
-                    <td><strong>${record.patientName}</strong></td>
-                    <td style="white-space: nowrap;">${record.patientPhone}</td>
-                    <td>${contactMethodHTML}</td>
-                    <td><span style="font-size: 0.78rem; font-weight:700; color:var(--primary-color);">${branchNameArabic}</span></td>
-                    <td>${record.fileNumber || '-'}</td>
-                    <td><span class="proc-badge ${procClass}">${proc}</span></td>
-                    <td><div class="service-cell-box">${record.serviceRequired}</div></td>
-                    <td>${record.coordinatorName}</td>
-                    <td style="min-width: 130px;">
+                    <td class="col-mini">${index + 1}</td>
+                    <td class="col-date" style="white-space: nowrap;">${formatDateOnly(record.createdAt)}</td>
+                    <td class="col-status">${statusBadgeHTML}</td>
+                    <td class="col-name"><strong>${record.patientName}</strong></td>
+                    <td class="col-phone" style="white-space: nowrap;">${record.patientPhone}</td>
+                    <td class="col-contact">${contactMethodHTML}</td>
+                    <td class="col-branch"><span style="font-size: 0.78rem; font-weight:700; color:var(--primary-color);">${branchNameArabic}</span></td>
+                    <td class="col-file">${record.fileNumber || '-'}</td>
+                    <td class="col-proc"><span class="proc-badge ${procClass}">${proc}</span></td>
+                    <td class="col-expand-wide"><div class="service-cell-box">${record.serviceRequired}</div></td>
+                    <td class="col-coord">${record.coordinatorName}</td>
+                    <td class="col-admin-contact">
                         <select class="table-input" id="adminContact_${record.firebaseKey}" onchange="handleContactChange('${record.firebaseKey}')">
                             <option value="قيد الانتظار" ${selectVal === 'قيد الانتظار' ? 'selected' : ''}>قيد الانتظار</option>
                             <option value="قيد الإجراء" ${selectVal === 'قيد الإجراء' ? 'selected' : ''}>قيد الإجراء 🔄</option>
@@ -2521,10 +2469,10 @@
                         </select>
                         <input type="text" class="table-input" id="adminOther_${record.firebaseKey}" placeholder="التفاصيل..." value="${otherDetail}" style="margin-top: 4px; ${selectVal === 'أخرى' ? '' : 'display:none;'}">
                     </td>
-                    <td>
+                    <td class="col-expand-wide">
                         <textarea class="table-input auto-expand-action" id="action_${record.firebaseKey}" oninput="autoExpandTextarea(this)" placeholder="اكتب إجراء الإدارة...">${record.actionTaken || ''}</textarea>
                     </td>
-                    <td style="white-space: nowrap; text-align: center;">
+                    <td style="white-space: nowrap; text-align: center; width: 70px;">
                         <div class="action-buttons-column">
                             <button class="btn-pin-action ${isPinned ? 'pinned' : ''}" onclick="requestTogglePinRecord('${record.firebaseKey}')" title="${isPinned ? 'إلغاء التثبيت' : 'تثبيت العميل'}"><i class="fa-solid fa-thumbtack"></i></button>
                             <button class="btn-save-action" onclick="saveAdminUpdate('${record.firebaseKey}')" title="حفظ"><i class="fa-solid fa-floppy-disk"></i></button>
@@ -2594,18 +2542,17 @@
             document.getElementById('editServiceRequired').value = rec.serviceRequired || '';
             document.getElementById('editPaymentStatusSelect').value = rec.paymentStatus || 'none';
 
-            originalEditPriorityState = !!rec.isRecurring;
-            originalEditRepeatedState = !!rec.isRepeatedRequest;
-
-            document.getElementById('editIsRecurring').checked = originalEditPriorityState;
-            document.getElementById('editIsRepeatedRequest').checked = originalEditRepeatedState;
+            document.getElementById('editIsRecurring').checked = !!rec.isRecurring;
+            document.getElementById('editIsRepeatedRequest').checked = !!rec.isRepeatedRequest;
 
             document.getElementById('editModal').classList.add('open');
         }
 
         function closeEditModal() { document.getElementById('editModal').classList.remove('open'); }
 
-        function executeActualEdit() {
+        // إصلاح دالة الحفظ المباشر للتعديلات بدون مشاكل
+        function saveEditedRecord(e) {
+            e.preventDefault();
             const key = document.getElementById('editFirebaseKey').value;
             let rec = records.find(r => r.firebaseKey === key);
             if (!rec) return;
@@ -2646,19 +2593,7 @@
                     isRepeatedRequest: rec.isRepeatedRequest
                 });
             }
-            alert('تم تعديل البيانات بنجاح!');
-        }
-
-        function saveEditedRecord(e) {
-            e.preventDefault();
-            const currentPriorityUI = document.getElementById('editIsRecurring').checked;
-            const currentRepeatedUI = document.getElementById('editIsRepeatedRequest').checked;
-
-            if (currentPriorityUI !== originalEditPriorityState || currentRepeatedUI !== originalEditRepeatedState) {
-                requireAdminAuth(() => { executeActualEdit(); });
-            } else {
-                executeActualEdit();
-            }
+            showToastOnly('✅ تم حفظ التعديلات بنجاح!');
         }
 
         function deleteRecord(key) {
@@ -2875,7 +2810,6 @@
             } catch(e) { return isoString; }
         }
 
-        // دالة تحويل الحالة إلى "منسوخ" مع إبقاء الكارت في مكانه وتغيير لونه للأخضر
         function toggleCopiedStatusGroup(keysArray) {
             let copiedList = getLocalCopiedMap();
             const firstKey = keysArray[0];
@@ -2893,7 +2827,7 @@
             renderClientReport();
             updatePinnedCountBadge();
             
-            showToastOnly(isCurrentlyCopied ? '✖️ تم إزالة تحديد المنسوخ' : '✅ تم تحويل الكارت للون الأخضر (منسوخ)');
+            showToastOnly(isCurrentlyCopied ? '✖️ تم إزالة تحديد المنسوخ' : '✅ تم تحويل الكارت للون الأخضر ونزوله لأسفل الكشف');
         }
 
         function hideClientGroupFromReport(keysArray) {
@@ -3046,7 +2980,11 @@
                 });
             });
 
-            consolidatedList.sort((a, b) => new Date(b.latestCreatedAt) - new Date(a.latestCreatedAt));
+            // ترتيب القائمة: غير المنسوخ أولاً، والمنسق باللون الأخضر ينزل لأسفل اتوماتيكياً
+            consolidatedList.sort((a, b) => {
+                if (a.isCopied !== b.isCopied) return a.isCopied ? 1 : -1;
+                return new Date(b.latestCreatedAt) - new Date(a.latestCreatedAt);
+            });
 
             consolidatedList.forEach((item, index) => {
                 const card = document.createElement('div');
@@ -3055,7 +2993,6 @@
                 const isPinned = item.isPinned;
                 const pStatus = item.paymentStatus;
 
-                // تلوين الكارت بالكامل بالأخضر عند النسخ دون إخفائه من القائمة
                 card.className = `client-card-wrapper ${isCopied ? 'is-copied-style' : ''}`;
                 const fileStr = (rec.fileNumber && rec.fileNumber !== '-') ? ` ${rec.fileNumber}` : '';
                 const idStr = (rec.idNumber && rec.idNumber !== '-') ? rec.idNumber : '';
@@ -3077,7 +3014,7 @@
                     <div class="client-card-header">
                         <div class="client-title">
                             <input type="checkbox" class="client-select-chk" data-keys="${keysJsonStr}">
-                            <span style="font-size:1.05rem; line-height:1.4; word-break:break-word;">${index + 1}- ${rec.patientName}${fileStr}</span>
+                            <span style="font-size:0.95rem; line-height:1.3; word-break:break-word;">${index + 1}- ${rec.patientName}${fileStr}</span>
                         </div>
                         <div class="client-badges-column">
                             ${pinBtnHTML}
@@ -3085,9 +3022,8 @@
                             ${copyBtnHTML}
                         </div>
                     </div>
-                    ${dateTimeStr ? `<div style="font-size:0.75rem;"><span class="client-datetime-badge"><i class="fa-regular fa-clock"></i> ${dateTimeStr}</span></div>` : ''}
-                    <div class="client-info-row"><span class="info-label">رقم الجوال:</span> ${phoneStr}</div>
-                    ${idStr ? `<div class="client-info-row"><span class="info-label">رقم الهوية:</span> ${idStr}</div>` : ''}
+                    ${dateTimeStr ? `<div style="font-size:0.72rem;"><span class="client-datetime-badge"><i class="fa-regular fa-clock"></i> ${dateTimeStr}</span></div>` : ''}
+                    <div class="client-info-row"><span class="info-label">رقم الجوال:</span> ${phoneStr} ${idStr ? ` | <span class="info-label">الهوية:</span> ${idStr}` : ''}</div>
                     <div class="client-info-row">${item.servicesCombined || '-'}</div>
                     <div class="client-actions-row">
                         <button class="btn-client-action delete-to-trash" onclick="hideClientGroupFromReport(${keysJsonStr})">حذف</button>
