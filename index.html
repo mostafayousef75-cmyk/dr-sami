@@ -54,17 +54,17 @@
             --primary-hover: #1d4ed8;
         }
 
-        /* 2. الذهبي الفاخر (Golden Luxury) */
+        /* 2. سيم OLED الأسود والذهبي (OLED Pure Black & Gold) */
         body.theme-golden {
-            --bg-base: #0f0d0a;
-            --bg-surface: #1a160e;
-            --bg-card: #070604;
-            --bg-sidebar: #14110b;
-            --text-main: #fef08a;
-            --text-muted: #d4d4d4;
-            --border-color: #42361b;
-            --primary-color: #ca8a04;
-            --primary-hover: #a16207;
+            --bg-base: #000000;
+            --bg-surface: #0a0a0a;
+            --bg-card: #000000;
+            --bg-sidebar: #050505;
+            --text-main: #fde047;
+            --text-muted: #a3a3a3;
+            --border-color: #262626;
+            --primary-color: #eab308;
+            --primary-hover: #ca8a04;
         }
 
         /* 3. الرصاصي الفحمي الاحترافي (Charcoal Dark Gray) */
@@ -154,8 +154,8 @@
             color: var(--primary-color);
         }
 
-        .brand-text h2 { font-size: 1.1rem; font-weight: 700; color: #fff; }
-        .brand-text p { font-size: 0.8rem; opacity: 0.7; color: #94a3b8; }
+        .brand-text h2 { font-size: 1.1rem; font-weight: 700; }
+        .brand-text p { font-size: 0.8rem; opacity: 0.7; color: var(--text-muted); }
 
         .toggle-sidebar-btn {
             background: rgba(255,255,255,0.1);
@@ -183,7 +183,7 @@
             display: flex;
             align-items: center;
             gap: 12px;
-            color: #94a3b8;
+            color: var(--text-muted);
             text-decoration: none;
             padding: 14px 16px;
             border-radius: var(--radius-md);
@@ -195,12 +195,12 @@
 
         .menu-item:hover {
             background-color: rgba(255, 255, 255, 0.05);
-            color: #ffffff;
+            color: var(--text-main);
         }
 
         .menu-item.active {
-            background-color: #1e293b;
-            color: #ffffff;
+            background-color: var(--bg-surface);
+            color: var(--text-main);
             border: 1px solid var(--primary-color);
             box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
         }
@@ -214,7 +214,7 @@
             align-items: center;
             gap: 8px;
             justify-content: center;
-            color: #fff;
+            color: var(--text-main);
         }
 
         .online-dot { width: 10px; height: 10px; background-color: #22c55e; border-radius: 50%; box-shadow: 0 0 8px #22c55e; display: inline-block; }
@@ -663,7 +663,6 @@
         .badge-apologized { background-color: #dc2626; box-shadow: 0 0 8px rgba(220, 38, 38, 0.4); }
         .badge-other { background-color: #0d9488; }
         
-        /* شارات حالة الدفع المميزة الجديدة */
         .badge-payment-paid {
             background: linear-gradient(135deg, #15803d, #22c55e);
             color: #ffffff;
@@ -705,10 +704,14 @@
             width: 100%; padding: 6px; border: 1px solid var(--border-color); border-radius: var(--radius-md); background: var(--bg-base); color: var(--text-main); font-family: var(--font-family); font-size: 0.85rem;
         }
         
+        /* ضبط صندوق الخدمة وتفاصيل الطلب بدون بكرة عرض أفقية وبحجم متناسق */
         .service-cell-box {
-            width: 200px;
+            width: 210px;
+            min-width: 210px;
+            max-width: 210px;
             white-space: pre-wrap;
             word-break: break-word;
+            overflow-wrap: break-word;
             padding: 6px 8px;
             background: var(--bg-base);
             border-radius: 4px;
@@ -718,12 +721,15 @@
             color: var(--text-main);
         }
 
-        /* تطابق صندوق إجراء الإدارة مع صندوق الخدمة المطلوبة */
+        /* ضبط صندوق إجراء الإدارة ليكون متطابقاً تماماً مع صندوق الخدمة وبدون بكرة عرض أفقية */
         textarea.admin-action-textarea {
-            width: 200px;
+            width: 210px;
+            min-width: 210px;
+            max-width: 210px;
             min-height: 55px;
             white-space: pre-wrap;
             word-break: break-word;
+            overflow-wrap: break-word;
             padding: 6px 8px;
             background: var(--bg-base);
             border-radius: 4px;
@@ -733,6 +739,14 @@
             color: var(--text-main);
             font-family: var(--font-family);
             resize: vertical;
+        }
+
+        /* عمود اسم العميل ليعرض بالكامل بدون كسر الجدول */
+        .client-name-cell {
+            min-width: 140px;
+            white-space: normal;
+            word-break: break-word;
+            overflow-wrap: break-word;
         }
 
         .btn-save-action { background-color: var(--success-color); color: #fff; border: none; padding: 5px 8px; border-radius: 4px; cursor: pointer; }
@@ -1146,7 +1160,7 @@
                         <label style="font-size: 0.8rem; font-weight: 600; color: var(--text-muted);">السيم:</label>
                         <select id="themeSelect" class="theme-select" onchange="changeTheme(this.value)">
                             <option value="theme-darkblue">الأزرق الغامق</option>
-                            <option value="theme-golden">الذهبي الفاخر</option>
+                            <option value="theme-golden">OLED الأسود والذهبي</option>
                             <option value="theme-gray">الرصاصي الفحمي</option>
                             <option value="theme-light">المضيء الفاتح</option>
                         </select>
@@ -1388,7 +1402,7 @@
                                 <thead>
                                     <tr>
                                         <th>م</th>
-                                        <th>تاريخ الإضافة</th>
+                                        <th>وقت الإضافة / التعديل</th>
                                         <th>الحالة والأولوية</th>
                                         <th>العميل</th>
                                         <th>رقم الجوال</th>
@@ -1718,7 +1732,6 @@
         let originalEditPriorityState = false;
         let originalEditRepeatedState = false;
 
-        // إدارة الحالة المحلية لكل جهاز/مستخدم لصفحة الكشف (لكي لا تتداخل بين المنسقين)
         let localClientStates = {};
         try {
             localClientStates = JSON.parse(localStorage.getItem('localClientStates_v1') || '{}');
@@ -2276,6 +2289,7 @@
                 procedureTypeValue = customVal !== '' ? customVal : 'أخرى';
             }
 
+            const nowIso = new Date().toISOString();
             const tempKey = 'local_' + Date.now();
             const newRecord = {
                 firebaseKey: tempKey,
@@ -2291,7 +2305,8 @@
                 coordinatorName: document.getElementById('coordinatorName').value,
                 isRecurring: document.getElementById('isRecurring').checked || isRepeated,
                 isRepeatedRequest: isRepeated,
-                createdAt: new Date().toISOString(),
+                createdAt: nowIso,
+                updatedAt: null,
                 actionTaken: '',
                 adminContactMethod: 'قيد الانتظار',
                 adminContactDetail: ''
@@ -2323,7 +2338,6 @@
             requireAdminAuth(() => {
                 let rec = records.find(r => r.firebaseKey === key);
                 if (rec) {
-                    // التثبيت محلياً على الجهاز لصفحة الكشف
                     let st = localClientStates[key] || {};
                     st.isPinned = !st.isPinned;
                     localClientStates[key] = st;
@@ -2495,7 +2509,6 @@
                     statusBadgeHTML += '<span class="status-badge badge-repeated">🔄 متكررة</span><br>';
                 }
 
-                // شارة حالة الدفع المميزة
                 let paymentBadgeHTML = `<span style="color: var(--text-muted); font-size: 0.8rem;">غير محدد</span>`;
                 if (record.paymentStatus === 'تم الدفع') {
                     paymentBadgeHTML = `<span class="badge-payment-paid"><i class="fa-solid fa-circle-check"></i> تم الدفع</span>`;
@@ -2525,16 +2538,22 @@
                 const isPinned = !!stLocal.isPinned;
                 const contactMethodVal = record.contactMethod || '-';
 
+                // وقت الإضافة ووقت التعديل
+                let timeCellHTML = `<div>📅 ${formatDateTimeFullCustom(record.createdAt)}</div>`;
+                if (record.updatedAt) {
+                    timeCellHTML += `<div style="font-size: 0.73rem; color: var(--primary-color); margin-top: 3px; font-weight:700;">✏️ تعديل: ${formatDateTimeFullCustom(record.updatedAt)}</div>`;
+                }
+
                 tr.innerHTML = `
                     <td>${index + 1}</td>
-                    <td>${formatDateOnly(record.createdAt)}</td>
+                    <td>${timeCellHTML}</td>
                     <td>${statusBadgeHTML}</td>
-                    <td><strong>${record.patientName}</strong></td>
+                    <td class="client-name-cell"><strong>${record.patientName}</strong></td>
                     <td>${record.patientPhone}</td>
                     <td>${record.fileNumber || '-'}</td>
                     <td><span class="proc-badge ${procClass}">${proc}</span></td>
                     <td>${paymentBadgeHTML}</td>
-                    <td><span style="font-weight: 600; color: var(--primary-color);">${contactMethodVal}</span></td>
+                    <td><span style="font-weight: 600; color: var(--text-main);">${contactMethodVal}</span></td>
                     <td><div class="service-cell-box">${record.serviceRequired}</div></td>
                     <td>${record.coordinatorName}</td>
                     <td>
@@ -2582,10 +2601,12 @@
                 adminContactSelect = otherInputVal;
             }
 
+            const nowIso = new Date().toISOString();
             let rec = records.find(r => r.firebaseKey === key);
             if (rec) { 
                 rec.actionTaken = actionVal; 
                 rec.adminContactMethod = adminContactSelect; 
+                rec.updatedAt = nowIso;
                 saveLocal(); 
                 renderTable(); 
                 updateKPIs();
@@ -2594,9 +2615,9 @@
             }
 
             if (navigator.onLine && !key.startsWith('local_')) {
-                dbRef.child(key).update({ actionTaken: actionVal, adminContactMethod: adminContactSelect });
+                dbRef.child(key).update({ actionTaken: actionVal, adminContactMethod: adminContactSelect, updatedAt: nowIso });
             }
-            alert('تم التحديث بنجاح!');
+            alert('تم التحديث بنجاح وتسجيل وقت التعديل!');
         }
 
         function openEditModal(key) {
@@ -2633,6 +2654,7 @@
             let rec = records.find(r => r.firebaseKey === key);
             if (!rec) return;
 
+            const nowIso = new Date().toISOString();
             rec.patientName = document.getElementById('editPatientName').value.trim();
             rec.patientPhone = document.getElementById('editPatientPhone').value.trim() || '-';
             rec.fileNumber = document.getElementById('editFileNumber').value.trim() || '-';
@@ -2645,6 +2667,7 @@
             rec.serviceRequired = document.getElementById('editServiceRequired').value.trim();
             rec.isRecurring = document.getElementById('editIsRecurring').checked;
             rec.isRepeatedRequest = document.getElementById('editIsRepeatedRequest').checked;
+            rec.updatedAt = nowIso;
 
             saveLocal();
             renderTable();
@@ -2666,10 +2689,11 @@
                     paymentStatus: rec.paymentStatus,
                     serviceRequired: rec.serviceRequired,
                     isRecurring: rec.isRecurring,
-                    isRepeatedRequest: rec.isRepeatedRequest
+                    isRepeatedRequest: rec.isRepeatedRequest,
+                    updatedAt: nowIso
                 });
             }
-            alert('تم تعديل البيانات بنجاح!');
+            alert('تم تعديل البيانات بنجاح وتحديث وقت التعديل!');
         }
 
         function saveEditedRecord(e) {
@@ -2947,7 +2971,6 @@
         }
 
         function getOpenFilteredRecords() {
-            // استبعاد العناصر المحذوفة محلياً من صفحة الكشف لهذا الجهاز فقط
             let openRecords = records.filter(r => {
                 const st = localClientStates[r.firebaseKey] || {};
                 return !st.isHiddenFromClients;
@@ -2995,7 +3018,6 @@
         }
 
         function toggleCopiedStatusGroup(keysArray) {
-            // تحديث محلي على الجهاز فقط لـ isCopied
             const firstKey = keysArray[0];
             let st = localClientStates[firstKey] || {};
             const targetState = !st.isCopied;
@@ -3243,7 +3265,6 @@
                 const fileStr = (rec.fileNumber && rec.fileNumber !== '-') ? ` ${rec.fileNumber}` : '';
                 const idStr = (rec.idNumber && rec.idNumber !== '-') ? rec.idNumber : '';
                 const phoneStr = (rec.patientPhone && rec.patientPhone !== '-') ? rec.patientPhone : '-';
-                const contactMethodStr = rec.contactMethod || '-';
                 const serviceStr = item.servicesCombined || '-';
                 const dateTimeStr = formatDateTimeFullCustom(item.latestCreatedAt);
                 const keysJsonStr = JSON.stringify(item.allKeys).replace(/"/g, '&quot;');
@@ -3272,7 +3293,7 @@
                         ${dateTimeStr ? `<span class="client-datetime-badge"><i class="fa-regular fa-clock"></i> ${dateTimeStr}</span>` : ''}
                     </div>
                     <div class="client-info-row">
-                        <span class="info-label">رقم الجوال:</span> ${phoneStr} &nbsp;|&nbsp; <span class="info-label">طريقة التواصل:</span> <span style="font-weight: 600; color: var(--primary-color);">${contactMethodStr}</span>
+                        <span class="info-label">رقم الجوال:</span> ${phoneStr}
                     </div>
                     ${idStr ? `<div class="client-info-row"><span class="info-label">رقم الهوية:</span> ${idStr}</div>` : ''}
                     <div class="client-info-row">
@@ -3327,7 +3348,6 @@
                 const fileStr = (item.fileNumber && item.fileNumber !== '-') ? ` ${item.fileNumber}` : '';
                 const idStr = (item.idNumber && item.idNumber !== '-') ? `رقم الهوية: ${item.idNumber}\n` : '';
                 const phoneStr = (item.patientPhone && item.patientPhone !== '-') ? item.patientPhone : '-';
-                const contactMethodStr = item.contactMethod || '-';
 
                 const uniqueServices = [];
                 groupRecords.forEach(r => {
@@ -3336,11 +3356,12 @@
                 });
                 const serviceStr = uniqueServices.join(' / ') || '-';
 
-                reportText += `${idx}- ${item.patientName}${fileStr}\nرقم الجوال: ${phoneStr} (طريقة التواصل: ${contactMethodStr})\n${idStr}${serviceStr}\n\n`;
+                // تم استبعاد طريقة التواصل بناءً على طلبك
+                reportText += `${idx}- ${item.patientName}${fileStr}\nرقم الجوال: ${phoneStr}\n${idStr}${serviceStr}\n\n`;
                 idx++;
             });
 
-            navigator.clipboard.writeText(reportText.trim()).then(() => alert(`تم نسخ (${groupedMap.size}) عميل بنجاح!`));
+            navigator.clipboard.writeText(reportText.trim()).then(() => alert(`تم نسخ (${groupedMap.size}) عميل بنجاح بدون طريقة التواصل!`));
         }
 
         function requestDeleteSelectedAccess() {
@@ -3565,6 +3586,7 @@
                                     isRecurring: !!row.isRecurring,
                                     isRepeatedRequest: !!row.isRepeatedRequest,
                                     createdAt: row.createdAt || new Date().toISOString(),
+                                    updatedAt: row.updatedAt || null,
                                     actionTaken: '',
                                     adminContactMethod: 'قيد الانتظار',
                                     adminContactDetail: ''
