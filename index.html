@@ -41,7 +41,6 @@
             --radius-md: 8px;
         }
 
-        /* 1. الأزرق الغامق (Modern Tech Blue) */
         body.theme-darkblue {
             --bg-base: #080c14;
             --bg-surface: #0f172a;
@@ -54,7 +53,6 @@
             --primary-hover: #1d4ed8;
         }
 
-        /* 2. سيم OLED الأسود (Amoled Black & Amber) */
         body.theme-amoled {
             --bg-base: #000000;
             --bg-surface: #0a0a0a;
@@ -67,7 +65,6 @@
             --primary-hover: #d97706;
         }
 
-        /* 3. الرصاصي الفحمي الاحترافي (Charcoal Dark Gray) */
         body.theme-gray {
             --bg-base: #121214;
             --bg-surface: #1a1a1e;
@@ -80,7 +77,6 @@
             --primary-hover: #4f46e5;
         }
 
-        /* 4. المضيء الفاتح الاحترافي (Professional Light) */
         body.theme-light {
             --bg-base: #f1f5f9;
             --bg-surface: #ffffff;
@@ -110,6 +106,7 @@
             max-width: 100vw;
         }
 
+        /* تنسيق مسطرة التمرير العامة */
         ::-webkit-scrollbar {
             width: 8px;
             height: 12px;
@@ -668,6 +665,7 @@
         .action-btn.select-del-btn { background-color: #dc2626; }
         .action-btn.trash-view-btn { background-color: #7c3aed; }
         .action-btn.paste-btn { background-color: #9333ea; }
+        .action-btn.export-text-btn { background-color: #0284c7; }
 
         .filter-container-box {
             background: var(--bg-base);
@@ -725,10 +723,33 @@
         }
         .search-field i { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 0.8rem; }
 
-        .table-container { 
-            max-height: 620px; 
-            overflow-y: auto; 
+        /* --- تصميم حاوية المسطرة العلوية المستقلة --- */
+        .sync-scrollbar-top {
+            width: 100%;
+            height: 14px;
             overflow-x: auto;
+            overflow-y: hidden;
+            margin-bottom: 4px;
+            display: block;
+        }
+        .sync-scrollbar-top::-webkit-scrollbar {
+            height: 12px;
+        }
+        .sync-scrollbar-top::-webkit-scrollbar-thumb {
+            background: var(--primary-color);
+            border-radius: 6px;
+        }
+        .sync-scrollbar-spacer {
+            height: 1px;
+            /* نفس عرض جدول البيانات تماماً لضمان تناسب المسطرة */
+            width: 1050px; 
+        }
+
+        /* --- جدول البيانات العادي بدون انعكاس مزعج --- */
+        .table-container { 
+            max-height: 580px; 
+            overflow-y: auto; 
+            overflow-x: hidden;
             position: relative;
             border: 1px solid var(--border-color);
             border-radius: var(--radius-md);
@@ -1357,7 +1378,7 @@
                                     <select id="contactMethod" required>
                                         <option value="">اختر طريقة التواصل...</option>
                                         <option value="اتصال">اتصال هاتفي</option>
-                                        <option value="شات">واتساب / شات</option>
+                                        <option value="شات" selected>واتساب / شات</option>
                                         <option value="بالاستقبال">بالاستقبال</option>
                                         <option value="أخرى">أخرى</option>
                                     </select>
@@ -1408,10 +1429,11 @@
 
                     <section class="dashboard-section">
                         <div class="section-header">
-                            <h2><i class="fa-solid fa-database"></i> التصدير والاستيراد للادارة</h2>
+                            <h2><i class="fa-solid fa-database"></i> التصدير والاستيراد للادارة (حسب الفلتر والفترة المحددة)</h2>
                         </div>
                         <div class="actions-toolbar">
-                            <button class="action-btn excel" onclick="exportToExcel()"><i class="fa-solid fa-file-excel"></i> تصدير Excel (بالترتيب المطلوب)</button>
+                            <button class="action-btn excel" onclick="exportToExcel()"><i class="fa-solid fa-file-excel"></i> تصدير Excel (للفلتر الحالي)</button>
+                            <button class="action-btn export-text-btn" onclick="openExportTextModal()"><i class="fa-solid fa-copy"></i> تصدير نص الكشف للشيت (للفلتر الحالي)</button>
                             <button class="action-btn paste-btn" onclick="openTextPasteModal()"><i class="fa-solid fa-paste"></i> استيراد نص صفوف الشيت مباشرة</button>
                             <button class="action-btn json" onclick="exportToJSON()"><i class="fa-solid fa-file-code"></i> تصدير JSON</button>
                             <label class="action-btn import">
@@ -1499,7 +1521,13 @@
                             </div>
                         </div>
 
-                        <div class="table-container">
+                        <!-- مسطرة التمرير العلوية المستقلة (تظهر فوق الجدول مباشرة) -->
+                        <div class="sync-scrollbar-top" id="syncScrollTop">
+                            <div class="sync-scrollbar-spacer"></div>
+                        </div>
+
+                        <!-- جدول المواعيد -->
+                        <div class="table-container" id="tableContainerBox">
                             <table id="requestsTable">
                                 <thead>
                                     <tr>
@@ -1595,6 +1623,26 @@
 
             </div>
         </main>
+    </div>
+
+    <!-- نافذة تصدير نص الكشف -->
+    <div class="modal" id="exportTextModal">
+        <div class="modal-content" style="max-width: 600px;">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-copy"></i> نص التعديلات والكشف (حسب الفلتر الحالي للشيت)</h3>
+                <button class="close-modal-btn" onclick="closeExportTextModal()">&times;</button>
+            </div>
+            <div class="form-grid">
+                <div class="input-field full-width">
+                    <label>تم تجهيز النص بالترتيب الصحيح (تشمل أوقات التحديث والإضافة):</label>
+                    <textarea id="exportedRawText" rows="8" style="min-height: 140px; font-family: Arial, sans-serif; font-size: 0.8rem;" readonly></textarea>
+                </div>
+            </div>
+            <div style="display: flex; gap: 8px; margin-top: 12px;">
+                <button type="button" class="submit-btn" style="background-color: var(--success-color); flex: 1;" onclick="copyExportedTextToClipboard()"><i class="fa-solid fa-copy"></i> نسخ النص إلى الحافظة</button>
+                <button type="button" class="submit-btn" style="background-color: var(--danger-color); width: 100px;" onclick="closeExportTextModal()">إغلاق</button>
+            </div>
+        </div>
     </div>
 
     <!-- نافذة استيراد نص صفوف الشيت مباشرة -->
@@ -2041,6 +2089,7 @@
             }
         });
 
+        // ربط مسطرة التمرير العلوية بجدول البيانات بحركة سلسة متزامنة
         window.addEventListener('DOMContentLoaded', () => {
             const activePage = localStorage.getItem('activePage') || 'dashboard';
             switchPage(activePage);
@@ -2053,6 +2102,26 @@
             syncFilterTabsUI();
             renderAnnouncements();
             renderClientReport();
+
+            const topScroll = document.getElementById('syncScrollTop');
+            const tableContainer = document.getElementById('tableContainerBox');
+            if (topScroll && tableContainer) {
+                let isSyncing = false;
+                topScroll.addEventListener('scroll', () => {
+                    if (!isSyncing) {
+                        isSyncing = true;
+                        tableContainer.scrollLeft = topScroll.scrollLeft;
+                        isSyncing = false;
+                    }
+                });
+                tableContainer.addEventListener('scroll', () => {
+                    if (!isSyncing) {
+                        isSyncing = true;
+                        topScroll.scrollLeft = tableContainer.scrollLeft;
+                        isSyncing = false;
+                    }
+                });
+            }
         });
 
         dbRef.on('value', (snapshot) => {
@@ -2656,13 +2725,7 @@
             } catch(e) { return isoCreated; }
         }
 
-        function renderTable() {
-            const tbody = document.getElementById('tableBody');
-            if (!tbody) return;
-            tbody.innerHTML = '';
-
-            syncFilterTabsUI();
-
+        function getFilteredRecordsForExport() {
             let filteredList = [...records];
             const now = new Date();
 
@@ -2732,6 +2795,17 @@
                 if (!a.isRecurring && b.isRecurring) return 1;
                 return new Date(b.createdAt) - new Date(a.createdAt);
             });
+
+            return filteredList;
+        }
+
+        function renderTable() {
+            const tbody = document.getElementById('tableBody');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+
+            syncFilterTabsUI();
+            let filteredList = getFilteredRecordsForExport();
 
             filteredList.forEach((record, index) => {
                 const tr = document.createElement('tr');
@@ -2884,7 +2958,7 @@
             document.getElementById('editFileNumber').value = rec.fileNumber || '';
             document.getElementById('editIdNumber').value = rec.idNumber || '';
             document.getElementById('editBranch').value = rec.branch || 'معشي';
-            document.getElementById('editContactMethod').value = rec.contactMethod || 'اتصال';
+            document.getElementById('editContactMethod').value = rec.contactMethod || 'شات';
             document.getElementById('editCoordinatorName').value = rec.coordinatorName || '';
             document.getElementById('editProcedureType').value = rec.procedureType || 'مراجعه';
             document.getElementById('editPaymentStatus').value = rec.paymentStatus || '';
@@ -3736,17 +3810,6 @@
             if (kRev) kRev.innerText = reviewsCount;
         }
 
-        function formatDateOnly(isoString) {
-            if (!isoString) return '-';
-            try {
-                const d = new Date(isoString);
-                const day = String(d.getDate()).padStart(2, '0');
-                const month = String(d.getMonth() + 1).padStart(2, '0');
-                const year = d.getFullYear();
-                return `${day}/${month}/${year}`;
-            } catch (e) { return isoString; }
-        }
-
         function filterTable() {
             const input = document.getElementById('searchInput').value.toLowerCase();
             document.querySelectorAll('#tableBody tr').forEach(row => {
@@ -3793,10 +3856,60 @@
             } else { alert('كلمة المرور غير صحيحة!'); }
         }
 
-        // --- ميزة التصدير والاستيراد بالترتيب المطلوب بدقة ---
+        function parseArabicOrAnyDate(rawStr) {
+            if (!rawStr) return new Date().toISOString();
+            let s = String(rawStr).trim();
+            
+            if (!isNaN(s) && !s.includes('/') && !s.includes('-') && !s.includes(':')) {
+                const num = Number(s);
+                const d = new Date((num - (25567 + 2)) * 86400 * 1000);
+                if (!isNaN(d.getTime())) return d.toISOString();
+            }
+
+            const arabicNums = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
+            for (let i = 0; i < 10; i++) {
+                s = s.replace(new RegExp(arabicNums[i], 'g'), i);
+            }
+
+            s = s.replace(/ص/g, 'AM').replace(/م/g, 'PM');
+
+            let d = new Date(s);
+            if (!isNaN(d.getTime())) return d.toISOString();
+
+            const parts = s.split(/[\/\s,\-:]+/);
+            if (parts.length >= 3) {
+                let day, month, year, hour = 0, minute = 0, second = 0;
+                if (parts[0].length === 4) {
+                    year = parseInt(parts[0]);
+                    month = parseInt(parts[1]) - 1;
+                    day = parseInt(parts[2]);
+                } else {
+                    day = parseInt(parts[0]);
+                    month = parseInt(parts[1]) - 1;
+                    year = parseInt(parts[2]);
+                }
+                if (parts.length >= 5) {
+                    hour = parseInt(parts[3]) || 0;
+                    minute = parseInt(parts[4]) || 0;
+                    if (s.toLowerCase().includes('pm') && hour < 12) hour += 12;
+                    if (s.toLowerCase().includes('am') && hour === 12) hour = 0;
+                }
+                d = new Date(year, month, day, hour, minute, second);
+                if (!isNaN(d.getTime())) return d.toISOString();
+            }
+
+            return new Date().toISOString();
+        }
+
         function exportToExcel() {
-            const dataToExport = records.map(r => ({
+            const filteredRecords = getFilteredRecordsForExport();
+            if (filteredRecords.length === 0) {
+                return alert('لا توجد بيانات مطابقة للفلتر والفترة الحالية للتصدير!');
+            }
+
+            const dataToExport = filteredRecords.map(r => ({
                 "وقت الإضافة": r.createdAt ? new Date(r.createdAt).toLocaleString('ar-EG') : '',
+                "وقت آخر تحديث": r.updatedAt ? new Date(r.updatedAt).toLocaleString('ar-EG') : 'بدون تحديث',
                 "المنسق": r.coordinatorName || '',
                 "العميل": r.patientName || '',
                 "رقم الجوال": r.patientPhone || '',
@@ -3809,9 +3922,46 @@
             }));
             const worksheet = XLSX.utils.json_to_sheet(dataToExport);
             const workbook = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(workbook, worksheet, "المواعيد");
-            XLSX.writeFile(workbook, `Majesty_Appointments_${new Date().toISOString().slice(0,10)}.xlsx`);
-            showToastOnly('✅ تم تصدير ملف الـ Excel بالترتيب المطلوب بنجاح!');
+            XLSX.utils.book_append_sheet(workbook, worksheet, "المواعيد_المحدثة");
+            XLSX.writeFile(workbook, `Majesty_Filtered_Updates_${new Date().toISOString().slice(0,10)}.xlsx`);
+            showToastOnly(`✅ تم تصدير (${filteredRecords.length}) سجل بنجاح بناءً على الفلتر والفترة المحددة!`);
+        }
+
+        function openExportTextModal() {
+            const filteredRecords = getFilteredRecordsForExport();
+            if (filteredRecords.length === 0) {
+                return alert('لا توجد بيانات مطابقة للفلتر والفترة الحالية للتصدير!');
+            }
+
+            let textRows = "";
+            filteredRecords.forEach(r => {
+                const timeStr = r.createdAt ? new Date(r.createdAt).toLocaleString('ar-EG') : '';
+                const coord = r.coordinatorName || '';
+                const name = r.patientName || '';
+                const phone = r.patientPhone || '';
+                const fileNum = r.fileNumber || '';
+                const proc = r.procedureType || '';
+                const serv = r.serviceRequired || '';
+                const contact = r.contactMethod || '';
+                const adminC = r.adminContactMethod || 'قيد الانتظار';
+                const actionT = r.actionTaken || '';
+
+                textRows += `${timeStr}\t${coord}\t${name}\t${phone}\t${fileNum}\t${proc}\t${serv}\t${contact}\t${adminC}\t${actionT}\n`;
+            });
+
+            document.getElementById('exportedRawText').value = textRows.trim();
+            document.getElementById('exportTextModal').classList.add('open');
+        }
+
+        function closeExportTextModal() {
+            document.getElementById('exportTextModal').classList.remove('open');
+        }
+
+        function copyExportedTextToClipboard() {
+            const textarea = document.getElementById('exportedRawText');
+            textarea.select();
+            document.execCommand('copy');
+            showToastOnly('📋 تم نسخ النص (حسب الفلتر الحالي)! يمكنك لصقه مباشرة في الشيت.');
         }
 
         function exportToJSON() {
@@ -3843,14 +3993,8 @@
             lines.forEach(line => {
                 const cols = line.split('\t');
                 if (cols.length >= 3) {
-                    // ترتيب الأعمدة:
-                    // 0: وقت الإضافة, 1: المنسق, 2: العميل, 3: رقم الجوال, 4: رقم الملف, 5: نوع الإجراء, 6: الخدمة/التفاصيل, 7: طريقة التواصل, 8: تواصل الإدارة, 9: إجراء الإدارة
                     const createdAtRaw = cols[0] ? cols[0].trim() : '';
-                    let parsedDate = new Date().toISOString();
-                    if (createdAtRaw) {
-                        const d = new Date(createdAtRaw);
-                        if (!isNaN(d.getTime())) parsedDate = d.toISOString();
-                    }
+                    let parsedDate = parseArabicOrAnyDate(createdAtRaw);
 
                     const coordinator = cols[1] ? cols[1].trim() : 'مسؤول';
                     const clientName = cols[2] ? cols[2].trim() : 'بدون اسم';
@@ -3858,7 +4002,8 @@
                     const fileNum = cols[4] ? cols[4].trim() : '-';
                     const procedure = cols[5] ? cols[5].trim() : 'أخرى';
                     const serviceReq = cols[6] ? cols[6].trim() : '-';
-                    const contactM = cols[7] ? cols[7].trim() : 'اتصال';
+                    // تعيين طريقة التواصل لتكون "شات" افتراضياً في الاستيراد المباشر
+                    const contactM = (cols[7] && cols[7].trim() !== '') ? cols[7].trim() : 'شات';
                     const adminContact = cols[8] ? cols[8].trim() : 'قيد الانتظار';
                     const actionTk = cols[9] ? cols[9].trim() : '';
 
@@ -3911,7 +4056,7 @@
             renderClientReport();
             closeTextPasteModal();
 
-            alert(`✅ تم استيراد وتحديث عدد (${importedCount}) صف بنجاح من الشيت مباشرة وتم ربطها بالسحابة!`);
+            alert(`✅ تم استيراد وتحديث عدد (${importedCount}) صف بنجاح من الشيت مباشرة (طريقة التواصل: شات) وتم ربطها بالسحابة!`);
         }
 
         function importData(e) {
@@ -3926,6 +4071,7 @@
                         const imported = JSON.parse(evt.target.result);
                         if (Array.isArray(imported)) {
                             imported.forEach(item => {
+                                if (!item.contactMethod) item.contactMethod = 'شات';
                                 delete item.firebaseKey;
                                 records.unshift(item);
                                 if (navigator.onLine) dbRef.push(item);
@@ -3944,11 +4090,10 @@
                         const workbook = XLSX.read(data, { type: 'array' });
                         const firstSheetName = workbook.SheetNames[0];
                         const worksheet = workbook.Sheets[firstSheetName];
-                        const jsonSheetData = XLSX.utils.sheet_to_json(worksheet, { header: 1 }); // read as raw rows array
+                        const jsonSheetData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
 
                         if (Array.isArray(jsonSheetData) && jsonSheetData.length > 0) {
                             let importedCount = 0;
-                            // Start from index 1 if row 0 is headers, or check if row 0 has header titles
                             let startIndex = 0;
                             const firstRow = jsonSheetData[0];
                             if (firstRow && (firstRow.includes('وقت الإضافة') || firstRow.includes('العميل') || firstRow.includes('المنسق'))) {
@@ -3959,24 +4104,8 @@
                                 const row = jsonSheetData[i];
                                 if (!row || row.length === 0 || !row.some(cell => cell !== undefined && cell !== '')) continue;
 
-                                // Mapping exact requested column order:
-                                // col 0: وقت الإضافة
-                                // col 1: المنسق
-                                // col 2: العميل
-                                // col 3: رقم الجوال
-                                // col 4: رقم الملف
-                                // col 5: نوع الإجراء
-                                // col 6: الخدمة / تفاصيل الطلب
-                                // col 7: طريقة التواصل
-                                // col 8: تواصل الإدارة
-                                // col 9: إجراء الإدارة
-
-                                const createdAtRaw = row[0] ? String(row[0]).trim() : '';
-                                let parsedDate = new Date().toISOString();
-                                if (createdAtRaw) {
-                                    const d = new Date(createdAtRaw);
-                                    if (!isNaN(d.getTime())) parsedDate = d.toISOString();
-                                }
+                                const createdAtRaw = row[0] !== undefined ? row[0] : '';
+                                let parsedDate = parseArabicOrAnyDate(createdAtRaw);
 
                                 const coordinator = row[1] ? String(row[1]).trim() : 'مسؤول';
                                 const clientName = row[2] ? String(row[2]).trim() : 'بدون اسم';
@@ -3984,7 +4113,8 @@
                                 const fileNum = row[4] ? String(row[4]).trim() : '-';
                                 const procedure = row[5] ? String(row[5]).trim() : 'أخرى';
                                 const serviceReq = row[6] ? String(row[6]).trim() : '-';
-                                const contactM = row[7] ? String(row[7]).trim() : 'اتصال';
+                                // ضبط طريقة التواصل لتكون "شات" افتراضياً في الاستيراد
+                                const contactM = (row[7] && String(row[7]).trim() !== '') ? String(row[7]).trim() : 'شات';
                                 const adminContact = row[8] ? String(row[8]).trim() : 'قيد الانتظار';
                                 const actionTk = row[9] ? String(row[9]).trim() : '';
 
@@ -4024,7 +4154,7 @@
                             updateKPIs();
                             updateDailyProgress();
                             renderClientReport();
-                            alert(`✅ تم استيراد عدد (${importedCount}) صف بنجاح من ملف الـ Excel وحفظها بالسحابة!`);
+                            alert(`✅ تم استيراد عدد (${importedCount}) صف بنجاح من ملف الـ Excel (طريقة التواصل: شات) وحفظها بالسحابة!`);
                         } else {
                             alert('ملف الـ Excel فارغ.');
                         }
