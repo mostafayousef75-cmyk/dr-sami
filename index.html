@@ -599,7 +599,6 @@
             padding: 6px 8px; border: 1px solid var(--border-color); border-radius: var(--radius-md); background-color: var(--bg-base); color: var(--text-main); outline: none; font-family: var(--font-family); font-size: 0.85rem; width: 100%;
         }
         
-        /* إلغاء السحب اليدوي نهائياً لمنع الأخطاء أثناء السكروِل */
         textarea {
             resize: none !important;
             overflow: hidden;
@@ -828,7 +827,6 @@
             width: 100%; padding: 3px 5px; border: 1px solid var(--border-color); border-radius: var(--radius-md); background: var(--bg-base); color: var(--text-main); font-family: var(--font-family); font-size: 0.78rem;
         }
         
-        /* أسلوب التمدد التلقائي للخانات في الجدول */
         textarea.auto-expand-input {
             width: 230px;
             min-width: 180px;
@@ -1878,7 +1876,6 @@
             }
         }
 
-        /* دالة التمدد التلقائي للمربعات بناءً على حجم النصوص */
         function autoExpandTextarea(el) {
             if (!el) return;
             el.style.height = 'auto';
@@ -2502,51 +2499,48 @@
         }
 
         function resetAllCopiedStatus() {
-    // جلب العملاء المعروضين حالياً فقط حسب الفلتر والساعات والبحث الحالية
-    let visibleRecords = getOpenFilteredRecords();
+            let visibleRecords = getOpenFilteredRecords();
 
-    const searchInputEl = document.getElementById('clientSearchInput');
-    if (searchInputEl) {
-        const searchVal = searchInputEl.value.trim().toLowerCase();
-        if (searchVal !== '') {
-            visibleRecords = visibleRecords.filter(r => {
-                const name = (r.patientName || '').toLowerCase();
-                const phone = (r.patientPhone || '').toLowerCase();
-                const file = (r.fileNumber || '').toLowerCase();
-                const id = (r.idNumber || '').toLowerCase();
-                const service = (r.serviceRequired || '').toLowerCase();
-                return name.includes(searchVal) || phone.includes(searchVal) || file.includes(searchVal) || id.includes(searchVal) || service.includes(searchVal);
-            });
+            const searchInputEl = document.getElementById('clientSearchInput');
+            if (searchInputEl) {
+                const searchVal = searchInputEl.value.trim().toLowerCase();
+                if (searchVal !== '') {
+                    visibleRecords = visibleRecords.filter(r => {
+                        const name = (r.patientName || '').toLowerCase();
+                        const phone = (r.patientPhone || '').toLowerCase();
+                        const file = (r.fileNumber || '').toLowerCase();
+                        const id = (r.idNumber || '').toLowerCase();
+                        const service = (r.serviceRequired || '').toLowerCase();
+                        return name.includes(searchVal) || phone.includes(searchVal) || file.includes(searchVal) || id.includes(searchVal) || service.includes(searchVal);
+                    });
+                }
+            }
+
+            if (visibleRecords.length === 0) {
+                return alert('لا يوجد عملاء معروضون حالياً في هذا الفلتر لإعادة ضبطهم!');
+            }
+
+            let filterLabel = 'العملاء المعروضين حالياً';
+            if (clientViewMode === 'normal') filterLabel = 'الكشف العادي';
+            else if (clientViewMode === 'pinned') filterLabel = 'المميزون';
+            else if (clientViewMode === 'copied') filterLabel = 'المنسوخون';
+            else if (clientViewMode === 'payment_unpaid') filterLabel = 'لم يتم الدفع';
+            else if (clientViewMode === 'payment_paid') filterLabel = 'تم الدفع';
+
+            if (confirm(`هل أنت متأكد من إعادة ضبط حالة النسخ لعملاء قسم (${filterLabel}) فقط؟`)) {
+                let updatedCount = 0;
+                visibleRecords.forEach(r => {
+                    let s = localClientStates[r.firebaseKey] || {};
+                    s.isCopied = false;
+                    localClientStates[r.firebaseKey] = s;
+                    updatedCount++;
+                });
+
+                saveLocalClientStates();
+                renderClientReport();
+                showToastOnly(`🔄 تم إعادة ضبط النسخ لـ (${updatedCount}) عميل في هذا الفلتر بنجاح!`);
+            }
         }
-    }
-
-    if (visibleRecords.length === 0) {
-        return alert('لا يوجد عملاء معروضون حالياً في هذا الفلتر لإعادة ضبطهم!');
-    }
-
-    // تحديد الفلتر الحالي لعرضه في رسالة التأكيد
-    let filterLabel = 'العملاء المعروضين حالياً';
-    if (clientViewMode === 'normal') filterLabel = 'الكشف العادي';
-    else if (clientViewMode === 'pinned') filterLabel = 'المميزون';
-    else if (clientViewMode === 'copied') filterLabel = 'المنسوخون';
-    else if (clientViewMode === 'payment_unpaid') filterLabel = 'لم يتم الدفع';
-    else if (clientViewMode === 'payment_paid') filterLabel = 'تم الدفع';
-
-    if (confirm(`هل أنت متأكد من إعادة ضبط حالة النسخ لعملاء قسم (${filterLabel}) فقط؟`)) {
-        let updatedCount = 0;
-        visibleRecords.forEach(r => {
-            let s = localClientStates[r.firebaseKey] || {};
-            s.isCopied = false;
-            localClientStates[r.firebaseKey] = s;
-            updatedCount++;
-        });
-
-        saveLocalClientStates();
-        renderClientReport();
-        showToastOnly(`🔄 تم إعادة ضبط النسخ لـ (${updatedCount}) عميل في هذا الفلتر بنجاح!`);
-    }
-}
-
 
         function setDashboardFilter(filterType, btn) {
             dashboardFilter = filterType;
@@ -2806,7 +2800,6 @@
                 `;
                 tbody.appendChild(tr);
 
-                // ضبط ارتفاع التكست أريا فور إنشاء الصف بناءً على محتواه
                 setTimeout(() => {
                     autoExpandTextarea(tr.querySelector(`#service_${record.firebaseKey}`));
                     autoExpandTextarea(tr.querySelector(`#action_${record.firebaseKey}`));
@@ -3474,7 +3467,8 @@
                 });
 
                 const uniqueServices = [];
-                groupRecords.forEach(r => {
+                // دمج الطلبات المكررة من الأقدم إلى الأحدث
+                [...groupRecords].reverse().forEach(r => {
                     const txt = (r.serviceRequired || '').trim();
                     if (txt && !uniqueServices.includes(txt)) {
                         uniqueServices.push(txt);
@@ -3600,7 +3594,8 @@
                 const phoneStr = (item.patientPhone && item.patientPhone !== '-') ? item.patientPhone : '-';
 
                 const uniqueServices = [];
-                groupRecords.forEach(r => {
+                // دمج الطلبات المكررة من الأقدم إلى الأحدث عند نسخ الكشف
+                [...groupRecords].reverse().forEach(r => {
                     const txt = (r.serviceRequired || '').trim();
                     if (txt && !uniqueServices.includes(txt)) uniqueServices.push(txt);
                 });
