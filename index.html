@@ -668,7 +668,6 @@
         .action-btn.select-del-btn { background-color: #dc2626; }
         .action-btn.trash-view-btn { background-color: #7c3aed; }
         .action-btn.paste-btn { background-color: #9333ea; }
-        .action-btn.export-text-btn { background-color: #0284c7; }
 
         .filter-container-box {
             background: var(--bg-base);
@@ -1413,7 +1412,6 @@
                         </div>
                         <div class="actions-toolbar">
                             <button class="action-btn excel" onclick="exportToExcel()"><i class="fa-solid fa-file-excel"></i> تصدير Excel (بالترتيب المطلوب)</button>
-                            <button class="action-btn export-text-btn" onclick="openExportTextModal()"><i class="fa-solid fa-copy"></i> تصدير نص الكشف (للنسخ للشيت)</button>
                             <button class="action-btn paste-btn" onclick="openTextPasteModal()"><i class="fa-solid fa-paste"></i> استيراد نص صفوف الشيت مباشرة</button>
                             <button class="action-btn json" onclick="exportToJSON()"><i class="fa-solid fa-file-code"></i> تصدير JSON</button>
                             <label class="action-btn import">
@@ -1597,26 +1595,6 @@
 
             </div>
         </main>
-    </div>
-
-    <!-- نافذة تصدير نص الكشف (للنسخ ولصقه في الشيت) -->
-    <div class="modal" id="exportTextModal">
-        <div class="modal-content" style="max-width: 600px;">
-            <div class="modal-header">
-                <h3><i class="fa-solid fa-copy"></i> نص الكشف المحدث (جاهز للنسخ ولصقه في الشيت)</h3>
-                <button class="close-modal-btn" onclick="closeExportTextModal()">&times;</button>
-            </div>
-            <div class="form-grid">
-                <div class="input-field full-width">
-                    <label>تم تجهيز النص بالترتيب الصحيح (اضغط زر النسخ بالأسفل):</label>
-                    <textarea id="exportedRawText" rows="8" style="min-height: 140px; font-family: Arial, sans-serif; font-size: 0.8rem;" readonly></textarea>
-                </div>
-            </div>
-            <div style="display: flex; gap: 8px; margin-top: 12px;">
-                <button type="button" class="submit-btn" style="background-color: var(--success-color); flex: 1;" onclick="copyExportedTextToClipboard()"><i class="fa-solid fa-copy"></i> نسخ النص إلى الحافظة</button>
-                <button type="button" class="submit-btn" style="background-color: var(--danger-color); width: 100px;" onclick="closeExportTextModal()">إغلاق</button>
-            </div>
-        </div>
     </div>
 
     <!-- نافذة استيراد نص صفوف الشيت مباشرة -->
@@ -3758,6 +3736,17 @@
             if (kRev) kRev.innerText = reviewsCount;
         }
 
+        function formatDateOnly(isoString) {
+            if (!isoString) return '-';
+            try {
+                const d = new Date(isoString);
+                const day = String(d.getDate()).padStart(2, '0');
+                const month = String(d.getMonth() + 1).padStart(2, '0');
+                const year = d.getFullYear();
+                return `${day}/${month}/${year}`;
+            } catch (e) { return isoString; }
+        }
+
         function filterTable() {
             const input = document.getElementById('searchInput').value.toLowerCase();
             document.querySelectorAll('#tableBody tr').forEach(row => {
@@ -3804,56 +3793,6 @@
             } else { alert('كلمة المرور غير صحيحة!'); }
         }
 
-        // --- دالة ذكية لتحليل التواريخ (تتعامل مع الأرقام العربية والإنجليزية وتنسيقات الشيت) ---
-        function parseArabicOrAnyDate(rawStr) {
-            if (!rawStr) return new Date().toISOString();
-            let s = String(rawStr).trim();
-            
-            // إذا كان رقم تسلسلي لإكسل (Excel Serial Number)
-            if (!isNaN(s) && !s.includes('/') && !s.includes('-') && !s.includes(':')) {
-                const num = Number(s);
-                const d = new Date((num - (25567 + 2)) * 86400 * 1000);
-                if (!isNaN(d.getTime())) return d.toISOString();
-            }
-
-            // تحويل الأرقام الهندية/العربية (٠١٢٣٤٥٦٧٨٩) إلى إنجليزية
-            const arabicNums = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
-            for (let i = 0; i < 10; i++) {
-                s = s.replace(new RegExp(arabicNums[i], 'g'), i);
-            }
-
-            // استبدال رموز الفترة العربية
-            s = s.replace(/ص/g, 'AM').replace(/م/g, 'PM');
-
-            let d = new Date(s);
-            if (!isNaN(d.getTime())) return d.toISOString();
-
-            // تحليل يدوي للتنسيقات الشائعة مثل DD/MM/YYYY HH:MM
-            const parts = s.split(/[\/\s,\-:]+/);
-            if (parts.length >= 3) {
-                let day, month, year, hour = 0, minute = 0, second = 0;
-                if (parts[0].length === 4) {
-                    year = parseInt(parts[0]);
-                    month = parseInt(parts[1]) - 1;
-                    day = parseInt(parts[2]);
-                } else {
-                    day = parseInt(parts[0]);
-                    month = parseInt(parts[1]) - 1;
-                    year = parseInt(parts[2]);
-                }
-                if (parts.length >= 5) {
-                    hour = parseInt(parts[3]) || 0;
-                    minute = parseInt(parts[4]) || 0;
-                    if (s.toLowerCase().includes('pm') && hour < 12) hour += 12;
-                    if (s.toLowerCase().includes('am') && hour === 12) hour = 0;
-                }
-                d = new Date(year, month, day, hour, minute, second);
-                if (!isNaN(d.getTime())) return d.toISOString();
-            }
-
-            return new Date().toISOString();
-        }
-
         // --- ميزة التصدير والاستيراد بالترتيب المطلوب بدقة ---
         function exportToExcel() {
             const dataToExport = records.map(r => ({
@@ -3873,39 +3812,6 @@
             XLSX.utils.book_append_sheet(workbook, worksheet, "المواعيد");
             XLSX.writeFile(workbook, `Majesty_Appointments_${new Date().toISOString().slice(0,10)}.xlsx`);
             showToastOnly('✅ تم تصدير ملف الـ Excel بالترتيب المطلوب بنجاح!');
-        }
-
-        function openExportTextModal() {
-            let textRows = "";
-            records.forEach(r => {
-                const timeStr = r.createdAt ? new Date(r.createdAt).toLocaleString('ar-EG') : '';
-                const coord = r.coordinatorName || '';
-                const name = r.patientName || '';
-                const phone = r.patientPhone || '';
-                const fileNum = r.fileNumber || '';
-                const proc = r.procedureType || '';
-                const serv = r.serviceRequired || '';
-                const contact = r.contactMethod || '';
-                const adminC = r.adminContactMethod || 'قيد الانتظار';
-                const actionT = r.actionTaken || '';
-
-                // الترتيب بالاعمدة مفصولة بـ Tab لسهولة اللصق المباشر في الشيت
-                textRows += `${timeStr}\t${coord}\t${name}\t${phone}\t${fileNum}\t${proc}\t${serv}\t${contact}\t${adminC}\t${actionT}\n`;
-            });
-
-            document.getElementById('exportedRawText').value = textRows.trim();
-            document.getElementById('exportTextModal').classList.add('open');
-        }
-
-        function closeExportTextModal() {
-            document.getElementById('exportTextModal').classList.remove('open');
-        }
-
-        function copyExportedTextToClipboard() {
-            const textarea = document.getElementById('exportedRawText');
-            textarea.select();
-            document.execCommand('copy');
-            showToastOnly('📋 تم نسخ الكشف! يمكنك لصقه مباشرة في الشيت.');
         }
 
         function exportToJSON() {
@@ -3937,8 +3843,14 @@
             lines.forEach(line => {
                 const cols = line.split('\t');
                 if (cols.length >= 3) {
+                    // ترتيب الأعمدة:
+                    // 0: وقت الإضافة, 1: المنسق, 2: العميل, 3: رقم الجوال, 4: رقم الملف, 5: نوع الإجراء, 6: الخدمة/التفاصيل, 7: طريقة التواصل, 8: تواصل الإدارة, 9: إجراء الإدارة
                     const createdAtRaw = cols[0] ? cols[0].trim() : '';
-                    let parsedDate = parseArabicOrAnyDate(createdAtRaw);
+                    let parsedDate = new Date().toISOString();
+                    if (createdAtRaw) {
+                        const d = new Date(createdAtRaw);
+                        if (!isNaN(d.getTime())) parsedDate = d.toISOString();
+                    }
 
                     const coordinator = cols[1] ? cols[1].trim() : 'مسؤول';
                     const clientName = cols[2] ? cols[2].trim() : 'بدون اسم';
@@ -3999,7 +3911,7 @@
             renderClientReport();
             closeTextPasteModal();
 
-            alert(`✅ تم استيراد وتحديث عدد (${importedCount}) صف بنجاح من الشيت مباشرة بنفس أوقاتها الأصلية وتم ربطها بالسحابة!`);
+            alert(`✅ تم استيراد وتحديث عدد (${importedCount}) صف بنجاح من الشيت مباشرة وتم ربطها بالسحابة!`);
         }
 
         function importData(e) {
@@ -4032,10 +3944,11 @@
                         const workbook = XLSX.read(data, { type: 'array' });
                         const firstSheetName = workbook.SheetNames[0];
                         const worksheet = workbook.Sheets[firstSheetName];
-                        const jsonSheetData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+                        const jsonSheetData = XLSX.utils.sheet_to_json(worksheet, { header: 1 }); // read as raw rows array
 
                         if (Array.isArray(jsonSheetData) && jsonSheetData.length > 0) {
                             let importedCount = 0;
+                            // Start from index 1 if row 0 is headers, or check if row 0 has header titles
                             let startIndex = 0;
                             const firstRow = jsonSheetData[0];
                             if (firstRow && (firstRow.includes('وقت الإضافة') || firstRow.includes('العميل') || firstRow.includes('المنسق'))) {
@@ -4046,8 +3959,24 @@
                                 const row = jsonSheetData[i];
                                 if (!row || row.length === 0 || !row.some(cell => cell !== undefined && cell !== '')) continue;
 
-                                const createdAtRaw = row[0] !== undefined ? row[0] : '';
-                                let parsedDate = parseArabicOrAnyDate(createdAtRaw);
+                                // Mapping exact requested column order:
+                                // col 0: وقت الإضافة
+                                // col 1: المنسق
+                                // col 2: العميل
+                                // col 3: رقم الجوال
+                                // col 4: رقم الملف
+                                // col 5: نوع الإجراء
+                                // col 6: الخدمة / تفاصيل الطلب
+                                // col 7: طريقة التواصل
+                                // col 8: تواصل الإدارة
+                                // col 9: إجراء الإدارة
+
+                                const createdAtRaw = row[0] ? String(row[0]).trim() : '';
+                                let parsedDate = new Date().toISOString();
+                                if (createdAtRaw) {
+                                    const d = new Date(createdAtRaw);
+                                    if (!isNaN(d.getTime())) parsedDate = d.toISOString();
+                                }
 
                                 const coordinator = row[1] ? String(row[1]).trim() : 'مسؤول';
                                 const clientName = row[2] ? String(row[2]).trim() : 'بدون اسم';
@@ -4095,7 +4024,7 @@
                             updateKPIs();
                             updateDailyProgress();
                             renderClientReport();
-                            alert(`✅ تم استيراد عدد (${importedCount}) صف بنجاح من ملف الـ Excel بنفس أوقاتها الأصلية وحفظها بالسحابة!`);
+                            alert(`✅ تم استيراد عدد (${importedCount}) صف بنجاح من ملف الـ Excel وحفظها بالسحابة!`);
                         } else {
                             alert('ملف الـ Excel فارغ.');
                         }
