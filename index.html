@@ -2502,17 +2502,51 @@
         }
 
         function resetAllCopiedStatus() {
-            if (confirm('هل أنت متأكد من إعادة ضبط حالة النسخ لجميع العملاء؟ سينتقلون جميعاً للوضع الافتراضي (تعليم كمنسوخ).')) {
-                Object.keys(localClientStates).forEach(key => {
-                    if (localClientStates[key]) {
-                        localClientStates[key].isCopied = false;
-                    }
-                });
-                saveLocalClientStates();
-                renderClientReport();
-                showToastOnly('🔄 تم إعادة ضبط حالة النسخ لجميع العملاء بنجاح!');
-            }
+    // جلب العملاء المعروضين حالياً فقط حسب الفلتر والساعات والبحث الحالية
+    let visibleRecords = getOpenFilteredRecords();
+
+    const searchInputEl = document.getElementById('clientSearchInput');
+    if (searchInputEl) {
+        const searchVal = searchInputEl.value.trim().toLowerCase();
+        if (searchVal !== '') {
+            visibleRecords = visibleRecords.filter(r => {
+                const name = (r.patientName || '').toLowerCase();
+                const phone = (r.patientPhone || '').toLowerCase();
+                const file = (r.fileNumber || '').toLowerCase();
+                const id = (r.idNumber || '').toLowerCase();
+                const service = (r.serviceRequired || '').toLowerCase();
+                return name.includes(searchVal) || phone.includes(searchVal) || file.includes(searchVal) || id.includes(searchVal) || service.includes(searchVal);
+            });
         }
+    }
+
+    if (visibleRecords.length === 0) {
+        return alert('لا يوجد عملاء معروضون حالياً في هذا الفلتر لإعادة ضبطهم!');
+    }
+
+    // تحديد الفلتر الحالي لعرضه في رسالة التأكيد
+    let filterLabel = 'العملاء المعروضين حالياً';
+    if (clientViewMode === 'normal') filterLabel = 'الكشف العادي';
+    else if (clientViewMode === 'pinned') filterLabel = 'المميزون';
+    else if (clientViewMode === 'copied') filterLabel = 'المنسوخون';
+    else if (clientViewMode === 'payment_unpaid') filterLabel = 'لم يتم الدفع';
+    else if (clientViewMode === 'payment_paid') filterLabel = 'تم الدفع';
+
+    if (confirm(`هل أنت متأكد من إعادة ضبط حالة النسخ لعملاء قسم (${filterLabel}) فقط؟`)) {
+        let updatedCount = 0;
+        visibleRecords.forEach(r => {
+            let s = localClientStates[r.firebaseKey] || {};
+            s.isCopied = false;
+            localClientStates[r.firebaseKey] = s;
+            updatedCount++;
+        });
+
+        saveLocalClientStates();
+        renderClientReport();
+        showToastOnly(`🔄 تم إعادة ضبط النسخ لـ (${updatedCount}) عميل في هذا الفلتر بنجاح!`);
+    }
+}
+
 
         function setDashboardFilter(filterType, btn) {
             dashboardFilter = filterType;
