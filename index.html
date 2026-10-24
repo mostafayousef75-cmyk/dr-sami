@@ -598,7 +598,13 @@
         .input-field input, .input-field select, .input-field textarea {
             padding: 6px 8px; border: 1px solid var(--border-color); border-radius: var(--radius-md); background-color: var(--bg-base); color: var(--text-main); outline: none; font-family: var(--font-family); font-size: 0.85rem; width: 100%;
         }
-        .input-field textarea { resize: vertical; min-height: 55px; }
+        
+        /* إلغاء السحب اليدوي نهائياً لمنع الأخطاء أثناء السكروِل */
+        textarea {
+            resize: none !important;
+            overflow: hidden;
+            min-height: 40px;
+        }
 
         .priority-checkbox {
             display: flex; 
@@ -744,7 +750,7 @@
         }
 
         table th, table td { 
-            padding: 2px 6px !important; 
+            padding: 4px 6px !important; 
             text-align: right; 
             border-bottom: 1px solid var(--border-color); 
             vertical-align: middle; 
@@ -822,44 +828,23 @@
             width: 100%; padding: 3px 5px; border: 1px solid var(--border-color); border-radius: var(--radius-md); background: var(--bg-base); color: var(--text-main); font-family: var(--font-family); font-size: 0.78rem;
         }
         
-        .service-cell-box {
-            width: 240px;
-            min-width: 240px;
-            max-width: 240px;
-            height: auto !important;
-            min-height: unset !important;
-            white-space: pre-wrap;
-            word-break: break-word;
-            overflow-wrap: break-word;
-            padding: 2px 5px;
+        /* أسلوب التمدد التلقائي للخانات في الجدول */
+        textarea.auto-expand-input {
+            width: 230px;
+            min-width: 180px;
+            min-height: 36px;
+            padding: 4px 6px;
             background: var(--bg-base);
             border-radius: 5px;
             border: 1px solid var(--border-color);
             font-size: 0.78rem;
-            line-height: 1.25;
-            color: var(--text-main);
-            box-sizing: border-box;
-        }
-
-        textarea.admin-action-textarea {
-            width: 240px;
-            min-width: 240px;
-            max-width: 240px;
-            height: auto !important;
-            min-height: 32px !important;
-            white-space: pre-wrap;
-            word-break: break-word;
-            overflow-wrap: break-word;
-            padding: 2px 5px;
-            background: var(--bg-base);
-            border-radius: 5px;
-            border: 1px solid var(--border-color);
-            font-size: 0.78rem;
-            line-height: 1.25;
+            line-height: 1.3;
             color: var(--text-main);
             font-family: var(--font-family);
-            resize: vertical;
+            resize: none !important;
+            overflow: hidden;
             box-sizing: border-box;
+            display: block;
         }
 
         .client-name-cell {
@@ -1409,7 +1394,7 @@
                                 </div>
                                 <div class="input-field full-width">
                                     <label>الخدمة المطلوبة / تفاصيل المشكلة والطلب *</label>
-                                    <textarea id="serviceRequired" required placeholder="اكتب تفاصيل طلب العميل المشكلة أو الموعد المطلوب..."></textarea>
+                                    <textarea id="serviceRequired" required placeholder="اكتب تفاصيل طلب العميل المشكلة أو الموعد المطلوب..." oninput="autoExpandTextarea(this)"></textarea>
                                 </div>
                                 <div class="input-field full-width">
                                     <label class="priority-checkbox">
@@ -1625,7 +1610,7 @@
                 <div class="form-grid">
                     <div class="input-field full-width">
                         <label>نص التنبيه أو الملاحظة *</label>
-                        <textarea id="announcementText" required placeholder="اكتب التنبيه أو التحديث الجديد للعيادة هنا..."></textarea>
+                        <textarea id="announcementText" required placeholder="اكتب التنبيه أو التحديث الجديد للعيادة هنا..." oninput="autoExpandTextarea(this)"></textarea>
                     </div>
                     
                     <div class="input-field full-width">
@@ -1680,7 +1665,7 @@
                     </div>
                     <div class="input-field full-width">
                         <label>وصف مختصر</label>
-                        <textarea id="linkDesc" placeholder="اكتب وصفاً مختصراً للرابط والهدف منه..."></textarea>
+                        <textarea id="linkDesc" placeholder="اكتب وصفاً مختصراً للرابط والهدف منه..." oninput="autoExpandTextarea(this)"></textarea>
                     </div>
                 </div>
                 <button type="submit" class="submit-btn" style="margin-top: 12px;"><i class="fa-solid fa-floppy-disk"></i> حفظ الرابط</button>
@@ -1822,7 +1807,7 @@
                     </div>
                     <div class="input-field full-width">
                         <label>الخدمة المطلوبة / تفاصيل المشكلة والطلب *</label>
-                        <textarea id="editServiceRequired" required></textarea>
+                        <textarea id="editServiceRequired" required oninput="autoExpandTextarea(this)"></textarea>
                     </div>
                     <div class="input-field full-width">
                         <label class="priority-checkbox">
@@ -1891,6 +1876,13 @@
             } else {
                 appLayout.classList.toggle('sidebar-collapsed');
             }
+        }
+
+        /* دالة التمدد التلقائي للمربعات بناءً على حجم النصوص */
+        function autoExpandTextarea(el) {
+            if (!el) return;
+            el.style.height = 'auto';
+            el.style.height = (el.scrollHeight) + 'px';
         }
 
         function switchPage(page) {
@@ -2279,6 +2271,7 @@
 
             document.getElementById('announcementModalTitle').innerHTML = '<i class="fa-solid fa-pen"></i> تعديل تنبيه العيادة';
             document.getElementById('announcementModal').classList.add('open');
+            setTimeout(() => { autoExpandTextarea(document.getElementById('announcementText')); }, 50);
         }
 
         function removeAttachedFileInModal() {
@@ -2488,6 +2481,7 @@
 
             this.reset();
             document.getElementById('customProcedureWrapper').style.display = 'none';
+            autoExpandTextarea(document.getElementById('serviceRequired'));
             
             playBeepAndShowToast('⚠️ تم إضافة العميل والموعد بنجاح!');
         });
@@ -2753,7 +2747,7 @@
                     <td><span class="proc-badge ${procClass}">${proc}</span></td>
                     <td>${paymentBadgeHTML}</td>
                     <td><span style="font-weight: 600; font-size:0.78rem; color: var(--text-main);">${contactMethodVal}</span></td>
-                    <td><div class="service-cell-box">${record.serviceRequired}</div></td>
+                    <td><textarea class="auto-expand-input" id="service_${record.firebaseKey}" placeholder="تفاصيل الطلب..." oninput="autoExpandTextarea(this)">${record.serviceRequired || ''}</textarea></td>
                     <td style="font-size:0.78rem;">${record.coordinatorName}</td>
                     <td>
                         <select class="table-input" id="adminContact_${record.firebaseKey}" onchange="handleContactChange('${record.firebaseKey}')">
@@ -2766,7 +2760,7 @@
                         </select>
                         <input type="text" class="table-input" id="adminOther_${record.firebaseKey}" placeholder="التفاصيل..." value="${otherDetail}" style="margin-top: 2px; ${selectVal === 'أخرى' ? '' : 'display:none;'}">
                     </td>
-                    <td><textarea class="admin-action-textarea" id="action_${record.firebaseKey}" placeholder="اكتب إجراء الإدارة هنا...">${record.actionTaken || ''}</textarea></td>
+                    <td><textarea class="auto-expand-input" id="action_${record.firebaseKey}" placeholder="اكتب إجراء الإدارة هنا..." oninput="autoExpandTextarea(this)">${record.actionTaken || ''}</textarea></td>
                     <td>
                         <div style="display:flex; gap:3px; align-items:center;">
                             <button class="btn-pin-action ${isPinned ? 'pinned' : ''}" onclick="requestTogglePinRecord('${record.firebaseKey}')" title="${isPinned ? 'إلغاء التثبيت' : 'تثبيت العميل'}"><i class="fa-solid fa-thumbtack"></i></button>
@@ -2777,6 +2771,12 @@
                     </td>
                 `;
                 tbody.appendChild(tr);
+
+                // ضبط ارتفاع التكست أريا فور إنشاء الصف بناءً على محتواه
+                setTimeout(() => {
+                    autoExpandTextarea(tr.querySelector(`#service_${record.firebaseKey}`));
+                    autoExpandTextarea(tr.querySelector(`#action_${record.firebaseKey}`));
+                }, 0);
             });
             filterTable();
         }
@@ -2795,6 +2795,7 @@
 
         function saveAdminUpdate(key) {
             const actionVal = document.getElementById(`action_${key}`).value;
+            const serviceVal = document.getElementById(`service_${key}`) ? document.getElementById(`service_${key}`).value : undefined;
             let adminContactSelect = document.getElementById(`adminContact_${key}`).value;
             const otherInputVal = document.getElementById(`adminOther_${key}`).value.trim();
 
@@ -2806,6 +2807,7 @@
             let rec = records.find(r => r.firebaseKey === key);
             if (rec) { 
                 rec.actionTaken = actionVal; 
+                if (serviceVal !== undefined) rec.serviceRequired = serviceVal;
                 rec.adminContactMethod = adminContactSelect; 
                 rec.updatedAt = nowIso;
                 saveLocal(); 
@@ -2816,7 +2818,9 @@
             }
 
             if (navigator.onLine && !key.startsWith('local_')) {
-                dbRef.child(key).update({ actionTaken: actionVal, adminContactMethod: adminContactSelect, updatedAt: nowIso });
+                const updateData = { actionTaken: actionVal, adminContactMethod: adminContactSelect, updatedAt: nowIso };
+                if (serviceVal !== undefined) updateData.serviceRequired = serviceVal;
+                dbRef.child(key).update(updateData);
             }
             alert('تم التحديث بنجاح وتسجيل وقت التعديل!');
         }
@@ -2844,6 +2848,7 @@
             document.getElementById('editIsRepeatedRequest').checked = originalEditRepeatedState;
 
             document.getElementById('editModal').classList.add('open');
+            setTimeout(() => { autoExpandTextarea(document.getElementById('editServiceRequired')); }, 50);
         }
 
         function closeEditModal() {
@@ -3102,6 +3107,7 @@
                 document.getElementById('linkDesc').value = item.desc || '';
                 document.getElementById('linkModalTitle').innerHTML = '<i class="fa-solid fa-pen"></i> تعديل بيانات الرابط';
                 document.getElementById('linkModal').classList.add('open');
+                setTimeout(() => { autoExpandTextarea(document.getElementById('linkDesc')); }, 50);
             });
         }
 
@@ -3529,6 +3535,10 @@
                 return !st.isCopied;
             });
 
+            if (recordsToCopy.length === 0) {
+                return alert('جميع العملاء الموجودين تم وضع علامة "تم النسخ" عليهم سابقاً!');
+            }
+
             recordsToCopy.forEach(record => {
                 const cleanPhone = (record.patientPhone && record.patientPhone !== '-') ? record.patientPhone.replace(/\D/g, '') : '';
                 const groupKey = (cleanPhone.length >= 8) ? cleanPhone : (record.patientName || '').trim().toLowerCase();
@@ -3539,16 +3549,17 @@
                 groupedMap.get(groupKey).push(record);
             });
 
-            if (groupedMap.size === 0) {
-                return alert('جميع العملاء الموجودين تم وضع علامة "تم النسخ" عليهم سابقاً!');
-            }
-
             let reportText = ``;
             let idx = 1;
+            let keysToMarkAsCopied = [];
 
             groupedMap.forEach((groupRecords) => {
                 groupRecords.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
                 const item = groupRecords[0];
+
+                groupRecords.forEach(r => {
+                    keysToMarkAsCopied.push(r.firebaseKey);
+                });
 
                 const fileStr = (item.fileNumber && item.fileNumber !== '-') ? ` ${item.fileNumber}` : '';
                 const idStr = (item.idNumber && item.idNumber !== '-') ? `رقم الهوية: ${item.idNumber}\n` : '';
@@ -3565,7 +3576,17 @@
                 idx++;
             });
 
-            navigator.clipboard.writeText(reportText.trim()).then(() => alert(`تم نسخ (${groupedMap.size}) عميل بنجاح بدون طريقة التواصل!`));
+            navigator.clipboard.writeText(reportText.trim()).then(() => {
+                keysToMarkAsCopied.forEach(k => {
+                    let s = localClientStates[k] || {};
+                    s.isCopied = true;
+                    localClientStates[k] = s;
+                });
+                saveLocalClientStates();
+                renderClientReport();
+
+                alert(`تم نسخ (${groupedMap.size}) عميل بنجاح وتحويلهم تلقائياً إلى "تم النسخ"!`);
+            });
         }
 
         function requestDeleteSelectedAccess() {
