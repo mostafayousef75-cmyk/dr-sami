@@ -667,6 +667,7 @@
         .action-btn.reset-copy-btn { background-color: #d97706; }
         .action-btn.select-del-btn { background-color: #dc2626; }
         .action-btn.trash-view-btn { background-color: #7c3aed; }
+        .action-btn.paste-btn { background-color: #9333ea; }
 
         .filter-container-box {
             background: var(--bg-base);
@@ -1410,11 +1411,12 @@
                             <h2><i class="fa-solid fa-database"></i> التصدير والاستيراد للادارة</h2>
                         </div>
                         <div class="actions-toolbar">
-                            <button class="action-btn excel" onclick="exportToExcel()"><i class="fa-solid fa-file-excel"></i> تصدير Excel</button>
+                            <button class="action-btn excel" onclick="exportToExcel()"><i class="fa-solid fa-file-excel"></i> تصدير Excel (بالترتيب المطلوب)</button>
+                            <button class="action-btn paste-btn" onclick="openTextPasteModal()"><i class="fa-solid fa-paste"></i> استيراد نص صفوف الشيت مباشرة</button>
                             <button class="action-btn json" onclick="exportToJSON()"><i class="fa-solid fa-file-code"></i> تصدير JSON</button>
                             <label class="action-btn import">
                                 <i class="fa-solid fa-file-import"></i> استيراد ملفات
-                                <input type="file" id="importFile" accept=".json,.xlsx,.xls" onchange="importData(event)" hidden>
+                                <input type="file" id="importFile" accept=".json,.xlsx,.xls,.csv" onchange="importData(event)" hidden>
                             </label>
                             <button class="action-btn clear-all" onclick="openClearModal()"><i class="fa-solid fa-trash-can"></i> مسح بفلتر وباسورد</button>
                             <button class="action-btn settings" onclick="openPasswordModal()"><i class="fa-solid fa-key"></i> تغيير كلمة المرور</button>
@@ -1593,6 +1595,26 @@
 
             </div>
         </main>
+    </div>
+
+    <!-- نافذة استيراد نص صفوف الشيت مباشرة -->
+    <div class="modal" id="textPasteModal">
+        <div class="modal-content" style="max-width: 600px;">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-paste"></i> استيراد نص صفوف الشيت مباشرة</h3>
+                <button class="close-modal-btn" onclick="closeTextPasteModal()">&times;</button>
+            </div>
+            <div class="form-grid">
+                <div class="input-field full-width">
+                    <label>ترتيب الأعمدة المطلوبة في النص أو النسخ:</label>
+                    <p style="font-size: 0.75rem; color: var(--primary-color); line-height: 1.4; margin-bottom: 6px;">
+                        1. وقت الإضافة | 2. المنسق | 3. العميل | 4. رقم الجوال | 5. رقم الملف | 6. نوع الإجراء | 7. الخدمة / تفاصيل الطلب | 8. طريقة التواصل | 9. تواصل الإدارة | 10. إجراء الإدارة
+                    </p>
+                    <textarea id="rawSheetText" rows="6" placeholder="الصق صفوف الشيت أو الجداول المنسوخة هنا مباشرة..." style="min-height: 120px;" oninput="autoExpandTextarea(this)"></textarea>
+                </div>
+            </div>
+            <button type="button" class="submit-btn" style="margin-top: 12px; background-color: #9333ea;" onclick="processRawSheetText()"><i class="fa-solid fa-file-import"></i> استيراد وإضافة للسيستم والسحابة</button>
+        </div>
     </div>
 
     <!-- نافذة إضافة / تعديل تنبيه / إشعار عام جديد -->
@@ -3467,7 +3489,6 @@
                 });
 
                 const uniqueServices = [];
-                // دمج الطلبات المكررة من الأقدم إلى الأحدث
                 [...groupRecords].reverse().forEach(r => {
                     const txt = (r.serviceRequired || '').trim();
                     if (txt && !uniqueServices.includes(txt)) {
@@ -3594,7 +3615,6 @@
                 const phoneStr = (item.patientPhone && item.patientPhone !== '-') ? item.patientPhone : '-';
 
                 const uniqueServices = [];
-                // دمج الطلبات المكررة من الأقدم إلى الأحدث عند نسخ الكشف
                 [...groupRecords].reverse().forEach(r => {
                     const txt = (r.serviceRequired || '').trim();
                     if (txt && !uniqueServices.includes(txt)) uniqueServices.push(txt);
@@ -3773,16 +3793,125 @@
             } else { alert('كلمة المرور غير صحيحة!'); }
         }
 
+        // --- ميزة التصدير والاستيراد بالترتيب المطلوب بدقة ---
         function exportToExcel() {
-            const worksheet = XLSX.utils.json_to_sheet(records);
+            const dataToExport = records.map(r => ({
+                "وقت الإضافة": r.createdAt ? new Date(r.createdAt).toLocaleString('ar-EG') : '',
+                "المنسق": r.coordinatorName || '',
+                "العميل": r.patientName || '',
+                "رقم الجوال": r.patientPhone || '',
+                "رقم الملف": r.fileNumber || '',
+                "نوع الإجراء": r.procedureType || '',
+                "الخدمة / تفاصيل الطلب": r.serviceRequired || '',
+                "طريقة التواصل": r.contactMethod || '',
+                "تواصل الإدارة": r.adminContactMethod || 'قيد الانتظار',
+                "إجراء الإدارة": r.actionTaken || ''
+            }));
+            const worksheet = XLSX.utils.json_to_sheet(dataToExport);
             const workbook = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(workbook, worksheet, "المواعيد");
-            XLSX.writeFile(workbook, `Appointments_${new Date().toISOString().slice(0,10)}.xlsx`);
+            XLSX.writeFile(workbook, `Majesty_Appointments_${new Date().toISOString().slice(0,10)}.xlsx`);
+            showToastOnly('✅ تم تصدير ملف الـ Excel بالترتيب المطلوب بنجاح!');
         }
 
         function exportToJSON() {
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(records, null, 2));
             const a = document.createElement('a'); a.href = dataStr; a.download = `Appointments_Backup.json`; a.click();
+        }
+
+        function openTextPasteModal() {
+            requireAdminAuth(() => {
+                document.getElementById('rawSheetText').value = '';
+                document.getElementById('textPasteModal').classList.add('open');
+            });
+        }
+
+        function closeTextPasteModal() {
+            document.getElementById('textPasteModal').classList.remove('open');
+        }
+
+        function processRawSheetText() {
+            const text = document.getElementById('rawSheetText').value.trim();
+            if (!text) {
+                alert('يرجى لصق نص الصفوف أولاً!');
+                return;
+            }
+
+            const lines = text.split('\n');
+            let importedCount = 0;
+
+            lines.forEach(line => {
+                const cols = line.split('\t');
+                if (cols.length >= 3) {
+                    // ترتيب الأعمدة:
+                    // 0: وقت الإضافة, 1: المنسق, 2: العميل, 3: رقم الجوال, 4: رقم الملف, 5: نوع الإجراء, 6: الخدمة/التفاصيل, 7: طريقة التواصل, 8: تواصل الإدارة, 9: إجراء الإدارة
+                    const createdAtRaw = cols[0] ? cols[0].trim() : '';
+                    let parsedDate = new Date().toISOString();
+                    if (createdAtRaw) {
+                        const d = new Date(createdAtRaw);
+                        if (!isNaN(d.getTime())) parsedDate = d.toISOString();
+                    }
+
+                    const coordinator = cols[1] ? cols[1].trim() : 'مسؤول';
+                    const clientName = cols[2] ? cols[2].trim() : 'بدون اسم';
+                    const phone = cols[3] ? cols[3].trim() : '-';
+                    const fileNum = cols[4] ? cols[4].trim() : '-';
+                    const procedure = cols[5] ? cols[5].trim() : 'أخرى';
+                    const serviceReq = cols[6] ? cols[6].trim() : '-';
+                    const contactM = cols[7] ? cols[7].trim() : 'اتصال';
+                    const adminContact = cols[8] ? cols[8].trim() : 'قيد الانتظار';
+                    const actionTk = cols[9] ? cols[9].trim() : '';
+
+                    const cleanNewPhone = phone !== '-' ? phone.replace(/\D/g, '') : '';
+                    const isRepeated = records.some(r => {
+                        const cleanExistingPhone = (r.patientPhone && r.patientPhone !== '-') ? r.patientPhone.replace(/\D/g, '') : '';
+                        return (cleanNewPhone.length >= 8 && cleanExistingPhone === cleanNewPhone) || (r.patientName && r.patientName.trim().toLowerCase() === clientName.toLowerCase());
+                    });
+
+                    const tempKey = 'local_' + Date.now() + Math.random().toString(36).substr(2, 4);
+                    const newRecord = {
+                        firebaseKey: tempKey,
+                        patientName: clientName,
+                        patientPhone: phone,
+                        fileNumber: fileNum,
+                        idNumber: '-',
+                        branch: 'معشي',
+                        procedureType: procedure,
+                        contactMethod: contactM,
+                        paymentStatus: '',
+                        serviceRequired: serviceReq,
+                        coordinatorName: coordinator,
+                        isRecurring: false,
+                        isRepeatedRequest: isRepeated,
+                        createdAt: parsedDate,
+                        updatedAt: null,
+                        actionTaken: actionTk,
+                        adminContactMethod: adminContact,
+                        adminContactDetail: ''
+                    };
+
+                    records.unshift(newRecord);
+                    importedCount++;
+
+                    if (navigator.onLine) {
+                        const uploadData = { ...newRecord };
+                        delete uploadData.firebaseKey;
+                        dbRef.push(uploadData).then((pushedRef) => {
+                            const idx = records.findIndex(r => r.firebaseKey === tempKey);
+                            if (idx !== -1) { records[idx].firebaseKey = pushedRef.key; saveLocal(); }
+                        });
+                    }
+                }
+            });
+
+            saveLocal();
+            renderTable();
+            updateKPIs();
+            updateDailyProgress();
+            renderClientReport();
+            closeTextPasteModal();
+
+            alert(`✅ تم استيراد وتحديث عدد (${importedCount}) صف بنجاح من الشيت مباشرة وتم ربطها بالسحابة!`);
         }
 
         function importData(e) {
@@ -3799,22 +3928,15 @@
                             imported.forEach(item => {
                                 delete item.firebaseKey;
                                 records.unshift(item);
-                                if (navigator.onLine) {
-                                    dbRef.push(item);
-                                }
+                                if (navigator.onLine) dbRef.push(item);
                             });
-                            saveLocal(); 
-                            renderTable(); 
-                            updateKPIs(); 
-                            updateDailyProgress(); 
-                            renderClientReport();
-                            renderTrashModalList();
-                            alert('تم استيراد وحفظ ملف JSON وسحابة Firebase بنجاح!');
+                            saveLocal(); renderTable(); updateKPIs(); updateDailyProgress(); renderClientReport();
+                            alert('تم استيراد ملف JSON بنجاح!');
                         }
                     } catch(err) { alert('خطأ في تحليل ملف الـ JSON'); }
                 };
                 reader.readAsText(file);
-            } else if (fileName.endsWith('.xlsx') || fileName.endsWith('.xls')) {
+            } else if (fileName.endsWith('.xlsx') || fileName.endsWith('.xls') || fileName.endsWith('.csv')) {
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     try {
@@ -3822,53 +3944,97 @@
                         const workbook = XLSX.read(data, { type: 'array' });
                         const firstSheetName = workbook.SheetNames[0];
                         const worksheet = workbook.Sheets[firstSheetName];
-                        const jsonSheetData = XLSX.utils.sheet_to_json(worksheet);
+                        const jsonSheetData = XLSX.utils.sheet_to_json(worksheet, { header: 1 }); // read as raw rows array
 
                         if (Array.isArray(jsonSheetData) && jsonSheetData.length > 0) {
-                            jsonSheetData.forEach(row => {
+                            let importedCount = 0;
+                            // Start from index 1 if row 0 is headers, or check if row 0 has header titles
+                            let startIndex = 0;
+                            const firstRow = jsonSheetData[0];
+                            if (firstRow && (firstRow.includes('وقت الإضافة') || firstRow.includes('العميل') || firstRow.includes('المنسق'))) {
+                                startIndex = 1;
+                            }
+
+                            for (let i = startIndex; i < jsonSheetData.length; i++) {
+                                const row = jsonSheetData[i];
+                                if (!row || row.length === 0 || !row.some(cell => cell !== undefined && cell !== '')) continue;
+
+                                // Mapping exact requested column order:
+                                // col 0: وقت الإضافة
+                                // col 1: المنسق
+                                // col 2: العميل
+                                // col 3: رقم الجوال
+                                // col 4: رقم الملف
+                                // col 5: نوع الإجراء
+                                // col 6: الخدمة / تفاصيل الطلب
+                                // col 7: طريقة التواصل
+                                // col 8: تواصل الإدارة
+                                // col 9: إجراء الإدارة
+
+                                const createdAtRaw = row[0] ? String(row[0]).trim() : '';
+                                let parsedDate = new Date().toISOString();
+                                if (createdAtRaw) {
+                                    const d = new Date(createdAtRaw);
+                                    if (!isNaN(d.getTime())) parsedDate = d.toISOString();
+                                }
+
+                                const coordinator = row[1] ? String(row[1]).trim() : 'مسؤول';
+                                const clientName = row[2] ? String(row[2]).trim() : 'بدون اسم';
+                                const phone = row[3] ? String(row[3]).trim() : '-';
+                                const fileNum = row[4] ? String(row[4]).trim() : '-';
+                                const procedure = row[5] ? String(row[5]).trim() : 'أخرى';
+                                const serviceReq = row[6] ? String(row[6]).trim() : '-';
+                                const contactM = row[7] ? String(row[7]).trim() : 'اتصال';
+                                const adminContact = row[8] ? String(row[8]).trim() : 'قيد الانتظار';
+                                const actionTk = row[9] ? String(row[9]).trim() : '';
+
+                                const cleanNewPhone = phone !== '-' ? phone.replace(/\D/g, '') : '';
+                                const isRepeated = records.some(r => {
+                                    const cleanExistingPhone = (r.patientPhone && r.patientPhone !== '-') ? r.patientPhone.replace(/\D/g, '') : '';
+                                    return (cleanNewPhone.length >= 8 && cleanExistingPhone === cleanNewPhone) || (r.patientName && r.patientName.trim().toLowerCase() === clientName.toLowerCase());
+                                });
+
                                 const formattedRow = {
-                                    patientName: row.patientName || row['اسم العميل'] || 'بدون اسم',
-                                    patientPhone: row.patientPhone || row['رقم الجوال'] || '-',
-                                    fileNumber: row.fileNumber || row['رقم الملف'] || '-',
-                                    idNumber: row.idNumber || row['رقم الهوية / الإقامة'] || '-',
-                                    branch: row.branch || row['الفرع'] || 'معشي',
-                                    procedureType: row.procedureType || row['نوع الإجراء'] || 'أخرى',
-                                    contactMethod: row.contactMethod || row['طريقة التواصل'] || 'اتصال',
-                                    paymentStatus: row.paymentStatus || row['حالة الدفع'] || '',
-                                    serviceRequired: row.serviceRequired || row['الخدمة المطلوبة / تفاصيل المشكلة والطلب'] || '-',
-                                    coordinatorName: row.coordinatorName || row['اسم المنسق'] || 'مسؤول',
-                                    isRecurring: !!row.isRecurring,
-                                    isRepeatedRequest: !!row.isRepeatedRequest,
-                                    createdAt: row.createdAt || new Date().toISOString(),
-                                    updatedAt: row.updatedAt || null,
-                                    actionTaken: '',
-                                    adminContactMethod: 'قيد الانتظار',
+                                    patientName: clientName,
+                                    patientPhone: phone,
+                                    fileNumber: fileNum,
+                                    idNumber: '-',
+                                    branch: 'معشي',
+                                    procedureType: procedure,
+                                    contactMethod: contactM,
+                                    paymentStatus: '',
+                                    serviceRequired: serviceReq,
+                                    coordinatorName: coordinator,
+                                    isRecurring: false,
+                                    isRepeatedRequest: isRepeated,
+                                    createdAt: parsedDate,
+                                    updatedAt: null,
+                                    actionTaken: actionTk,
+                                    adminContactMethod: adminContact,
                                     adminContactDetail: ''
                                 };
 
                                 records.unshift(formattedRow);
-                                if (navigator.onLine) {
-                                    dbRef.push(formattedRow);
-                                }
-                            });
+                                importedCount++;
+                                if (navigator.onLine) dbRef.push(formattedRow);
+                            }
 
                             saveLocal();
                             renderTable();
                             updateKPIs();
                             updateDailyProgress();
                             renderClientReport();
-                            renderTrashModalList();
-                            alert('تم استيراد وحفظ ملف الـ Excel وسحابة Firebase بنجاح!');
+                            alert(`✅ تم استيراد عدد (${importedCount}) صف بنجاح من ملف الـ Excel وحفظها بالسحابة!`);
                         } else {
-                            alert('ملف الـ Excel فارغ أو لا يحتوي على بيانات مطابقة.');
+                            alert('ملف الـ Excel فارغ.');
                         }
                     } catch (err) {
-                        alert('حدث خطأ أثناء قراءة ملف الـ Excel. تأكد من أنه ملف صالح تم تصديره من نفس النظام.');
+                        alert('حدث خطأ أثناء قراءة ملف الـ Excel.');
                     }
                 };
-                reader.readAsArrayBuffer(e.target.result);
+                reader.readAsArrayBuffer(file);
             } else {
-                alert('نوع الملف غير مدعوم. يرجى اختيار ملف JSON أو Excel صالح.');
+                alert('نوع الملف غير مدعوم.');
             }
             e.target.value = false;
         }
