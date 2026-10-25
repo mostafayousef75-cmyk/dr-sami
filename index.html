@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مجمع ماجستي الطبي - إدارة المواعيد ودليل الكول سنتر</title>
+    <title>مجمع ماجستي الطبي - إدارة المواعيد وكشف العملاء</title>
     
     <!-- خط Tajawal -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
     
-    <!-- FontAwesome للأيقونات -->
+    <!-- FontAwesome الأيقونات -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <!-- المكتبات الخارجية: Excel + Firebase -->
@@ -133,10 +133,8 @@
         .sidebar-menu {
             display: flex;
             flex-direction: column;
-            gap: 8px;
-            margin-top: 20px;
-            overflow-y: auto;
-            max-height: calc(100vh - 180px);
+            gap: 10px;
+            margin-top: 25px;
         }
 
         .menu-item {
@@ -145,9 +143,9 @@
             gap: 12px;
             color: #94a3b8;
             text-decoration: none;
-            padding: 12px 14px;
+            padding: 14px 16px;
             border-radius: var(--radius-md);
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             font-weight: 600;
             cursor: pointer;
             border: 1px solid transparent;
@@ -925,34 +923,6 @@
         }
         .btn-open-link:hover { background-color: var(--primary-hover); }
 
-        .sheet-doc-container {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-        .sheet-card {
-            background: var(--bg-base);
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius-md);
-            padding: 15px;
-        }
-        .sheet-card h3 {
-            color: var(--primary-color);
-            font-size: 1rem;
-            margin-bottom: 8px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .sheet-card p, .sheet-card ul {
-            font-size: 0.88rem;
-            line-height: 1.6;
-            color: var(--text-main);
-        }
-        .sheet-card ul {
-            padding-right: 20px;
-        }
-
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 2000; justify-content: center; align-items: center; padding: 15px; }
         .modal.open { display: flex; }
         .modal-content { background: var(--bg-surface); border-radius: var(--radius-lg); width: 100%; max-width: 520px; max-height: 90vh; overflow-y: auto; padding: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); border: 1px solid var(--border-color); color: var(--text-main); }
@@ -1048,7 +1018,7 @@
                     <div class="brand-icon"><i class="fa-solid fa-hospital"></i></div>
                     <div class="brand-text">
                         <h2>مجمع ماجستي</h2>
-                        <p>تنسيق المواعيد والابديتات</p>
+                        <p>د. سامي - التنسيق الطبي</p>
                     </div>
                 </div>
                 <button class="toggle-sidebar-btn" onclick="toggleSidebar()" title="إغلاق القائمة">
@@ -1065,29 +1035,9 @@
                     <i class="fa-solid fa-file-lines"></i>
                     <span>صفحة الكشف</span>
                 </div>
-                <div class="menu-item" id="menu-doctors" onclick="switchPage('doctors')">
-                    <i class="fa-solid fa-user-doctor"></i>
-                    <span>دوام الأطباء والعيادات</span>
-                </div>
-                <div class="menu-item" id="menu-services" onclick="switchPage('services')">
-                    <i class="fa-solid fa-tooth"></i>
-                    <span>الأقسام والأجهزة والخدمات</span>
-                </div>
-                <div class="menu-item" id="menu-offers" onclick="switchPage('offers')">
-                    <i class="fa-solid fa-tags"></i>
-                    <span>العروض والأسعار</span>
-                </div>
-                <div class="menu-item" id="menu-inquiries" onclick="switchPage('inquiries')">
-                    <i class="fa-solid fa-circle-question"></i>
-                    <span>الاستفسارات والتعليمات</span>
-                </div>
-                <div class="menu-item" id="menu-coordinators" onclick="switchPage('coordinators')">
-                    <i class="fa-solid fa-clipboard-user"></i>
-                    <span>قوانين المنسقين</span>
-                </div>
                 <div class="menu-item" id="menu-csguide" onclick="switchPage('csguide')">
                     <i class="fa-solid fa-book-bookmark"></i>
-                    <span>الدليل الشامل للروابط</span>
+                    <span>الدليل الشامل لـ (خدمة العملاء)</span>
                 </div>
             </nav>
 
@@ -1115,7 +1065,7 @@
 
             <div class="content-body">
                 
-                <!-- 1. مؤشر الأداء والمواعيد -->
+                <!-- صفحة مؤشر الأداء والمواعيد -->
                 <div id="page-dashboard" class="page-view">
                     
                     <section class="clinic-announcements-box">
@@ -1343,7 +1293,7 @@
 
                 </div>
 
-                <!-- 2. صفحة الكشف -->
+                <!-- صفحة الكشف -->
                 <div id="page-clients" class="page-view hidden">
                     <section class="dashboard-section">
                         <div style="display: flex; flex-direction: column; gap: 12px; background: var(--bg-base); padding: 12px 15px; border-radius: 8px; border: 1px solid var(--border-color); margin-bottom: 15px;">
@@ -1385,171 +1335,11 @@
                     </section>
                 </div>
 
-                <!-- 3. دوام الأطباء والعيادات -->
-                <div id="page-doctors" class="page-view hidden">
-                    <section class="dashboard-section">
-                        <div class="section-header">
-                            <h2><i class="fa-solid fa-user-doctor"></i> دوام أطباء مجمع ماجستي الطبي (معشي والوسام)</h2>
-                        </div>
-                        <div class="sheet-doc-container">
-                            <div class="sheet-card">
-                                <h3>معلومات الاتصال العامة</h3>
-                                <p>رقم الاتصال بماجستي: <strong>920031480</strong> - <strong>966127372722</strong></p>
-                            </div>
-                            <div class="sheet-card">
-                                <h3>د. سامي الدبعي (استشاري جراحة وجه وفكين وزراعة وخلع) - فرع معشي</h3>
-                                <p><strong>الكشفية:</strong> 100 ريال | <strong>الجنسية:</strong> يمني</p>
-                                <p><strong>الدوام:</strong> يومياً في معشي ماعدا السبت نصف دوام من 1 م إلى 10 م.</p>
-                            </div>
-                            <div class="sheet-card">
-                                <h3>د. إيهاب هاشم (طبيب أسنان عام)</h3>
-                                <p><strong>الكشفية:</strong> 75 ريال (يوم الجمعة بـ 100 ريال ويعمل تنظيف جير) | <strong>الجنسية:</strong> مصري</p>
-                                <p><strong>الدوام:</strong> يومياً من 9 ص إلى 12 م | الفترة المسائية: من 4:30 إلى 9:30 م. الجمعة والسبت دوام من 4 م إلى 8 م.</p>
-                            </div>
-                            <div class="sheet-card">
-                                <h3>د. محمود اللبان (أخصائي تركيبات وزراعة) - فرع معشي</h3>
-                                <p><strong>الكشفية:</strong> 100 ريال | <strong>الجنسية:</strong> فلسطيني</p>
-                                <p><strong>الدوام:</strong> 9 ص - 12 م و 4:30 م - 9:30 م ماعدا الخميس من 10 ص إلى 2 م. (بنحجز عادي، إلا لو عميل منتظر تركيبات).</p>
-                            </div>
-                            <div class="sheet-card">
-                                <h3>د. تبيان (طبيبة أسنان عامة) - فرع الوسام</h3>
-                                <p><strong>الكشفية:</strong> 75 ريال (الجمعة بـ 100 ريال وتعمل تنظيف جير) | <strong>الجنسية:</strong> سودانية (تستقبل من 3 سنوات)</p>
-                                <p><strong>الدوام:</strong> من السبت إلى الأربعاء من 2 م إلى 10 م (الأوف يوم الخميس).</p>
-                            </div>
-                            <div class="sheet-card">
-                                <h3>د. عبدالله اسبيناتي (أخصائي تقويم أسنان) - فرع معشي</h3>
-                                <p><strong>الكشفية:</strong> 75 ريال | <strong>الجنسية:</strong> سوري</p>
-                                <p><strong>الدوام:</strong> 1 م إلى 9 م يومياً بمعشي، ويوم الخميس من 11 صباحاً إلى 7 مساءً فقط. (نصف ساعة للشد، ساعة للتركيب والفك).</p>
-                            </div>
-                            <div class="sheet-card">
-                                <h3>د. نازك قيناوي (أخصائية جلدية) - فرع معشي</h3>
-                                <p><strong>الكشفية:</strong> 75 ريال | <strong>الجنسية:</strong> سودانية</p>
-                                <p><strong>الدوام:</strong> من 2 م إلى 10 م (الأحد والاثنين والثلاثاء والأربعاء والخميس بمعشي، أجازه جمعة وسبت).</p>
-                            </div>
-                            <div class="sheet-card">
-                                <h3>د. مروان عوني (أخصائي الجذور والعصب أسنان) - فرع معشي</h3>
-                                <p><strong>الكشفية:</strong> 100 ريال | <strong>الجنسية:</strong> تونسي</p>
-                                <p><strong>الدوام:</strong> 1 م إلى 9 م ماعدا الخميس من 10 ص إلى 2 م. (لا نسوي انتظار أبداً يوم الخميس).</p>
-                            </div>
-                            <div class="sheet-card">
-                                <h3>د. فؤاد بهجت / د. مصعب ميرغني / د. منال العلي / د. سيرين القابسي / د. أبان ابراهيم / د. أحمد الشقفة</h3>
-                                <p>أطباء عامون وطوارئ وأسرة وأخصائيون بفرعي معشي والوسام حسب الجداول المحدثة (الكشفية 75 ريال).</p>
-                            </div>
-                        </div>
-                    </section>
-                </div>
-
-                <!-- 4. الأقسام والأجهزة والخدمات -->
-                <div id="page-services" class="page-view hidden">
-                    <section class="dashboard-section">
-                        <div class="section-header">
-                            <h2><i class="fa-solid fa-tooth"></i> الأقسام والفروع وأجهزة الليزر والأشعة والمختبر</h2>
-                        </div>
-                        <div class="sheet-doc-container">
-                            <div class="sheet-card">
-                                <h3>أجهزة فرع معشي والوسام (الجلدية والأسنان)</h3>
-                                <ul>
-                                    <li><strong>جنتل ماكس برو:</strong> متاح بالفرعين لإزالة الشعر (سريع ودقيق، تبريد قوي).</li>
-                                    <li><strong>كلاريتي تو:</strong> متاح بفرع الوسام (سريع ودقيق مع حركة الرول).</li>
-                                    <li><strong>سبيكترا / هيليوس:</strong> ليزر كربوني، تشقير، إزالة تاتو، وتوريد الشفايف.</li>
-                                    <li><strong>هايدرا تاتش / برايمي:</strong> تنظيف البشرة العميق وإزالة الرؤوس السوداء (هيدراتش 4 مراحل مثل هيدرافيشال).</li>
-                                    <li><strong>أجهزة الأسنان:</strong> مايكروسكوب (علاج العصب)، البيزو للزراعة وتوسيع العظم، سكنر (مقاسات وابتسامة)، ليزر قص اللثة.</li>
-                                </ul>
-                            </div>
-                            <div class="sheet-card">
-                                <h3>التحاليل الطبية والمختبر (فرع الوسام)</h3>
-                                <p>المختبر متواجد بفرع الوسام (التوجه مباشرة خلال وقت الدوام). يتوفر: تحاليل تساقط الشعر، الهرمونات الشاملة، فحص السكر، الغدة الدرقية، الفحوصات الشاملة وقبل العمليات.</p>
-                            </div>
-                        </div>
-                    </section>
-                </div>
-
-                <!-- 5. العروض والأسعار -->
-                <div id="page-offers" class="page-view hidden">
-                    <section class="dashboard-section">
-                        <div class="section-header">
-                            <h2><i class="fa-solid fa-tags"></i> عروض الأسنان، الليزر، والجلدية والتجميل</h2>
-                        </div>
-                        <div class="sheet-doc-container">
-                            <div class="sheet-card">
-                                <h3>عروض الأسنان</h3>
-                                <ul>
-                                    <li>تقويم أسنان معدني (شامل الكشفية والتركيب والامثله والأشعة) 15 شهر: 2996 ريال (والشد الشهري 196 ريال).</li>
-                                    <li>زراعة أسنان: ابتداءً من الأسعار المعتمدة بالعروض.</li>
-                                    <li>تركيبات اى ماكس وزيركون وتنظيف الجير.</li>
-                                </ul>
-                            </div>
-                            <div class="sheet-card">
-                                <h3>عروض الليزر (نساء ورجال)</h3>
-                                <ul>
-                                    <li>جسم كامل (يشمل الوجه، البكينى، والاندر ارم - التشقير لا يشمل الوجه بل الظهر والبطن): جنتل ماكس برو / كلاريتي.</li>
-                                    <li>جلسة واحدة جسم كامل، 3 جلسات، 4 جلسات، ومنطقة واحدة (اندر ارم أو بكيني).</li>
-                                    <li>تشقير الحواجب والوجه، وتشقير الظهر والأكتاف.</li>
-                                </ul>
-                            </div>
-                            <div class="sheet-card">
-                                <h3>عروض الحقن والتجميل</h3>
-                                <ul>
-                                    <li>فراكشنال ليزر (169 ريال)، بوتوكس كامل الوجه، فيلر (توسيال أو جوفيدريم)، أبرة السالمون، أبر النضارة، وليب بوستر.</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </section>
-                </div>
-
-                <!-- 6. الاستفسارات والتعليمات -->
-                <div id="page-inquiries" class="page-view hidden">
-                    <section class="dashboard-section">
-                        <div class="section-header">
-                            <h2><i class="fa-solid fa-circle-question"></i> الأسئلة الشائعة والتعليمات (FAQ)</h2>
-                        </div>
-                        <div class="sheet-doc-container">
-                            <div class="sheet-card">
-                                <h3>سياسة حجز عروض الليزر والزراعة</h3>
-                                <ul>
-                                    <li><strong>استرجاع المبالغ:</strong> لا يوجد استرجاع للمبالغ المالية، بل تُستبدل بخدمة أخرى أو تظل رصيداً للعميل.</li>
-                                    <li><strong>دفع العروض:</strong> إذا سبق للعميل عمل ليزر وليس لديه مشاكل صحية، يمكنه دفع العرض مباشرة ومقابلة الدكتورة وقت الجلسة. أما لأول مرة فيفضل الكشف أولاً.</li>
-                                    <li><strong>عرض الزراعة والتقويم:</strong> المبلغ غير قابل للاسترداد إذا أصر العميل على الحجز مباشرة، ويُعمل انتظار كشفية لمدة أسبوع.</li>
-                                </ul>
-                            </div>
-                            <div class="sheet-card">
-                                <h3>الأسئلة المتكررة</h3>
-                                <ul>
-                                    <li><strong>هل ينفع حجز جلسة ليزر بدون كشفية؟</strong> نعم، إذا كانت العميل تعرف ولا ترغب بدفع كشفية متاح حجز الجلسة مباشرة.</li>
-                                    <li><strong>هل الأبر العضلية أو الفيتامينات تحتاج وصفة؟</strong> مكملات مثل B12 وفيتامين D عادي بدون وصفة، أما أبر النضارة فتحت إشراف الطبيب.</li>
-                                    <li><strong>هل يوجد تقسيط تارا؟</strong> متوفر حسب تقييم العميل من 3 إلى 12 شهر.</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </section>
-                </div>
-
-                <!-- 7. قوانين المنسقين -->
-                <div id="page-coordinators" class="page-view hidden">
-                    <section class="dashboard-section">
-                        <div class="section-header">
-                            <h2><i class="fa-solid fa-clipboard-user"></i> قوانين وتعليمات المنسقين وجداول الأطباء</h2>
-                        </div>
-                        <div class="sheet-doc-container">
-                            <div class="sheet-card">
-                                <h3>تعليمات هامة للجميع</h3>
-                                <ul>
-                                    <li>مدة موعد التركيب ساعة كاملة، والشد نصف ساعة.</li>
-                                    <li>يمنع منعاً باتاً تحديد موعد لمدة ربع ساعة، ويُستثنى المنسقون المخولون فقط.</li>
-                                    <li>يمنع تعديل مدة أي موعد أو تقليصها عن المحددة في النظام.</li>
-                                    <li>عند استقبال أي حالة، يجب أولاً الرجوع إلى الطبيب والتأكد من إمكانية استقبال الحالة.</li>
-                                    <li>يمنع منعاً باتاً تعديل أو تغيير موعد قام بإدخاله موظف آخر دون علمه.</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </section>
-                </div>
-
-                <!-- 8. الدليل الشامل للروابط -->
+                <!-- الدليل الشامل لـ (خدمة العملاء) -->
                 <div id="page-csguide" class="page-view hidden">
                     <section class="dashboard-section">
                         <div class="section-header">
-                            <h2><i class="fa-solid fa-book-bookmark"></i> الدليل الشامل لـ (خدمة العملاء والروابط)</h2>
+                            <h2><i class="fa-solid fa-book-bookmark"></i> الدليل الشامل لـ (خدمة العملاء)</h2>
                             <button class="action-btn copy-btn" onclick="openAddLinkModal()"><i class="fa-solid fa-plus"></i> إضافة رابط جديد</button>
                         </div>
                         <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 10px;">
@@ -1564,7 +1354,7 @@
         </main>
     </div>
 
-    <!-- النافذة المنبثقة لإضافة / تعديل تنبيه -->
+    <!-- نافذة إضافة / تعديل تنبيه / إشعار عام جديد مع رفع ملفات أو صور -->
     <div class="modal" id="announcementModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -1581,6 +1371,7 @@
                     <div class="input-field full-width">
                         <label><i class="fa-solid fa-paperclip"></i> إرفاق ملف (PDF, مستندات, صور...) (اختياري)</label>
                         <input type="file" id="announcementFile" accept=".pdf,.doc,.docx,.xls,.xlsx,.txt,image/*" style="padding: 6px; cursor: pointer;">
+                        <span style="font-size: 0.75rem; color: var(--text-muted); margin-top: 3px;">يمكنك رفع ملفات PDF أو مستندات أو صور ليراها فريق العمل مباشرة.</span>
                     </div>
                 </div>
                 <button type="submit" class="submit-btn" style="margin-top: 15px;"><i class="fa-solid fa-floppy-disk"></i> حفظ ونشر التنبيه</button>
@@ -1588,7 +1379,7 @@
         </div>
     </div>
 
-    <!-- نافذة معاينة الصورة المرفقة -->
+    <!-- نافذة تكبير وعرض الصورة المرفقة بحجم كامل -->
     <div class="modal" id="imagePreviewModal">
         <div class="modal-content" style="max-width: 650px; text-align: center; padding: 15px;">
             <div class="modal-header">
@@ -1601,7 +1392,7 @@
         </div>
     </div>
 
-    <!-- نافذة إضافة رابط جديد -->
+    <!-- نافذة إضافة / تعديل رابط جديد في الدليل الشامل -->
     <div class="modal" id="linkModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -1629,7 +1420,7 @@
         </div>
     </div>
 
-    <!-- سلة المحذوفات -->
+    <!-- نافذة سلة المحذوفات والاسترجاع -->
     <div class="modal" id="trashModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -1640,7 +1431,7 @@
         </div>
     </div>
 
-    <!-- تأكيد كلمة المرور -->
+    <!-- نافذة إدخال كلمة المرور الموحدة -->
     <div class="modal" id="passAuthModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -1657,7 +1448,6 @@
         </div>
     </div>
 
-    <!-- مسح البيانات -->
     <div class="modal" id="clearModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -1683,7 +1473,6 @@
         </div>
     </div>
 
-    <!-- تغيير كلمة المرور -->
     <div class="modal" id="passwordModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -1698,7 +1487,6 @@
         </div>
     </div>
 
-    <!-- تعديل بيانات العميل -->
     <div class="modal" id="editModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -1779,7 +1567,7 @@
     </div>
 
     <script>
-        const firebaseConfig = { databaseURL: "https://monasqen-default-rtdb.firebaseio.com/" };
+        const firebaseConfig = { databaseURL: "https://dr-sami-default-rtdb.firebaseio.com/" };
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
         const dbRef = database.ref('appointments');
@@ -1829,25 +1617,21 @@
 
             localStorage.setItem('activePage', page);
 
-            const titles = {
-                'dashboard': 'مؤشر الأداء والمواعيد',
-                'clients': 'صفحة الكشف',
-                'doctors': 'دوام الأطباء والعيادات',
-                'services': 'الأقسام والأجهزة والخدمات',
-                'offers': 'العروض والأسعار',
-                'inquiries': 'الاستفسارات والتعليمات',
-                'coordinators': 'قوانين المنسقين',
-                'csguide': 'الدليل الشامل للروابط'
-            };
-
-            const viewEl = document.getElementById(`page-${page}`);
-            const menuEl = document.getElementById(`menu-${page}`);
-            if (viewEl) viewEl.classList.remove('hidden');
-            if (menuEl) menuEl.classList.add('active');
-            document.getElementById('pageTitle').innerText = titles[page] || 'مجمع ماجستي الطبي';
-
-            if (page === 'clients') renderClientReport();
-            if (page === 'csguide') renderCSLinks();
+            if (page === 'dashboard') {
+                document.getElementById('page-dashboard').classList.remove('hidden');
+                document.getElementById('menu-dashboard').classList.add('active');
+                document.getElementById('pageTitle').innerText = 'مؤشر الأداء والمواعيد';
+            } else if (page === 'clients') {
+                document.getElementById('page-clients').classList.remove('hidden');
+                document.getElementById('menu-clients').classList.add('active');
+                document.getElementById('pageTitle').innerText = 'صفحة الكشف';
+                renderClientReport();
+            } else if (page === 'csguide') {
+                document.getElementById('page-csguide').classList.remove('hidden');
+                document.getElementById('menu-csguide').classList.add('active');
+                document.getElementById('pageTitle').innerText = 'الدليل الشامل لـ (خدمة العملاء)';
+                renderCSLinks();
+            }
 
             if (window.innerWidth <= 992) {
                 document.getElementById('appLayout').classList.remove('sidebar-open');
@@ -1866,16 +1650,98 @@
         const cachedLinks = localStorage.getItem('cachedCSLinks_v1');
         if (cachedLinks) { try { csLinks = JSON.parse(cachedLinks); } catch(e) { csLinks = []; } }
 
-        const cachedAnnouncements = localStorage.getItem('cachedAnnouncements_v3');
+        const cachedAnnouncements = localStorage.getItem('cachedAnnouncements_v3') || localStorage.getItem('cachedAnnouncements_v2');
         if (cachedAnnouncements) { try { clinicAnnouncements = JSON.parse(cachedAnnouncements); } catch(e) { clinicAnnouncements = []; } }
+
+        function syncFilterTabsUI() {
+            const statusContainer = document.getElementById('statusFilterTabs');
+            if (statusContainer) {
+                statusContainer.querySelectorAll('.filter-tab').forEach(btn => {
+                    if (btn.getAttribute('data-filter') === dashboardFilter) {
+                        btn.classList.add('active');
+                    } else {
+                        btn.classList.remove('active');
+                    }
+                });
+
+                const inquiriesBtn = document.getElementById('inquiriesDropdownBtn');
+                const isInquiriesActive = dashboardFilter.startsWith('inquiries_');
+                if (isInquiriesActive) {
+                    inquiriesBtn.classList.add('active');
+                    statusContainer.querySelectorAll('#inquiriesDropdownContent .dropdown-item').forEach(item => {
+                        if (item.getAttribute('data-filter') === dashboardFilter) {
+                            item.classList.add('active');
+                        } else {
+                            item.classList.remove('active');
+                        }
+                    });
+                } else {
+                    inquiriesBtn.classList.remove('active');
+                    statusContainer.querySelectorAll('#inquiriesDropdownContent .dropdown-item').forEach(item => item.classList.remove('active'));
+                }
+
+                const appointmentsBtn = document.getElementById('appointmentsDropdownBtn');
+                const isAppointmentsActive = dashboardFilter.startsWith('no_inquiries_');
+                if (isAppointmentsActive) {
+                    appointmentsBtn.classList.add('active');
+                    statusContainer.querySelectorAll('#appointmentsDropdownContent .dropdown-item').forEach(item => {
+                        if (item.getAttribute('data-filter') === dashboardFilter) {
+                            item.classList.add('active');
+                        } else {
+                            item.classList.remove('active');
+                        }
+                    });
+                } else {
+                    appointmentsBtn.classList.remove('active');
+                    statusContainer.querySelectorAll('#appointmentsDropdownContent .dropdown-item').forEach(item => item.classList.remove('active'));
+                }
+            }
+
+            const timeContainer = document.getElementById('timeFilterTabs');
+            if (timeContainer) {
+                timeContainer.querySelectorAll('.filter-tab').forEach(btn => {
+                    if (btn.getAttribute('data-time') === dashboardTimeFilter) {
+                        btn.classList.add('active');
+                    } else {
+                        btn.classList.remove('active');
+                    }
+                });
+            }
+            updatePinnedCountBadge();
+        }
+
+        function toggleDropdown(contentId) {
+            const content = document.getElementById(contentId);
+            document.querySelectorAll('.dropdown-content').forEach(dc => {
+                if (dc.id !== contentId) dc.classList.remove('show');
+            });
+            content.classList.toggle('show');
+        }
+
+        window.addEventListener('click', function(e) {
+            if (!e.target.closest('.dropdown-filter-container')) {
+                document.querySelectorAll('.dropdown-content').forEach(dc => dc.classList.remove('show'));
+            }
+        });
 
         window.addEventListener('DOMContentLoaded', () => {
             const activePage = localStorage.getItem('activePage') || 'dashboard';
             switchPage(activePage);
 
             const hoursSelect = document.getElementById('clientHoursSelect');
-            if (hoursSelect) hoursSelect.value = clientHoursFilter;
+            if (hoursSelect) {
+                hoursSelect.value = clientHoursFilter;
+            }
 
+            isPinnedFilterActive = false;
+            const btn = document.getElementById('pinnedFilterBtn');
+            if (btn) {
+                btn.style.backgroundColor = '#16a34a';
+                btn.style.borderColor = '#22c55e';
+                btn.style.boxShadow = 'none';
+            }
+
+            syncFilterTabsUI();
             renderAnnouncements();
             renderClientReport();
         });
@@ -1894,6 +1760,7 @@
             updateKPIs();
             updateDailyProgress();
             renderClientReport();
+            renderTrashModalList();
         });
 
         linksDbRef.on('value', (snapshot) => {
@@ -1925,6 +1792,19 @@
         });
 
         function playBeepAndShowToast(msg) {
+            try {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(587.33, audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.25);
+            } catch(e) { console.log('Audio Context blocked'); }
+
             showToastOnly(msg);
         }
 
@@ -1969,21 +1849,26 @@
         function openBase64File(dataUrl, fileName = 'file.pdf') {
             try {
                 if (!dataUrl) return;
+                
                 if (dataUrl.startsWith('http://') || dataUrl.startsWith('https://')) {
                     window.open(dataUrl, '_blank');
                     return;
                 }
+
                 const arr = dataUrl.split(',');
                 const mimeMatch = arr[0].match(/:(.*?);/);
                 const mime = mimeMatch ? mimeMatch[1] : 'application/pdf';
                 const bstr = atob(arr[1]);
                 let n = bstr.length;
                 const u8arr = new Uint8Array(n);
-                while (n--) { u8arr[n] = bstr.charCodeAt(n); }
+                while (n--) {
+                    u8arr[n] = bstr.charCodeAt(n);
+                }
                 const blob = new Blob([u8arr], { type: mime });
                 const blobUrl = URL.createObjectURL(blob);
+
                 const newWin = window.open(blobUrl, '_blank');
-                if (!newWin || newWin.closed) {
+                if (!newWin || newWin.closed || typeof newWin.closed === 'undefined') {
                     const a = document.createElement('a');
                     a.href = blobUrl;
                     a.download = fileName;
@@ -1991,7 +1876,9 @@
                     a.click();
                     document.body.removeChild(a);
                 }
-            } catch(e) { alert('عذراً، لم نتمكن من فتح الملف.'); }
+            } catch(e) {
+                alert('عذراً، لم نتمكن من فتح الملف. حاول تنزيله.');
+            }
         }
 
         function renderAnnouncements() {
@@ -2000,7 +1887,7 @@
             container.innerHTML = '';
 
             if (clinicAnnouncements.length === 0) {
-                container.innerHTML = '<div style="text-align: center; color: var(--text-muted); font-size: 0.85rem; padding: 10px;">لا توجد تنبيهات جديدة حالياً.</div>';
+                container.innerHTML = '<div style="text-align: center; color: var(--text-muted); font-size: 0.85rem; padding: 10px;">لا توجد تنبيهات جديدة حالياً. انقر على "إضافة تنبيه جديد" لإرسال تحديث للعيادة.</div>';
                 return;
             }
 
@@ -2013,14 +1900,16 @@
                 if (item.fileUrl) {
                     if (item.fileType && item.fileType.startsWith('image/')) {
                         attachmentHTML = `
-                            <div class="announcement-thumbnail-wrapper" onclick="openImagePreview('${item.fileUrl}')">
+                            <div class="announcement-thumbnail-wrapper" onclick="openImagePreview('${item.fileUrl}')" title="اضغط لمعاينة الصورة المكبرة">
                                 <img src="${item.fileUrl}" alt="مرفق">
                             </div>
                         `;
                     } else {
+                        const fileName = item.fileName || 'فتح الملف المرفق';
+                        const safeKey = item.announcementKey;
                         attachmentHTML = `
-                            <button type="button" class="announcement-file-btn" onclick="triggerFileDownload('${item.announcementKey}')">
-                                <i class="fa-solid fa-file-pdf"></i> ${item.fileName || 'ملف مرفق'}
+                            <button type="button" class="announcement-file-btn" onclick="triggerFileDownload('${safeKey}')" title="اضغط لفتح/تحميل الملف">
+                                <i class="fa-solid fa-file-pdf"></i> ${fileName}
                             </button>
                         `;
                     }
@@ -2033,8 +1922,12 @@
                     <div class="announcement-footer-row">
                         <span><i class="fa-regular fa-clock"></i> ${dateStr}</span>
                         <div class="announcement-actions-group">
-                            <button class="btn-edit-announcement-card" onclick="openEditAnnouncementModal('${item.announcementKey}')"><i class="fa-solid fa-pen"></i> تعديل</button>
-                            <button class="btn-delete-announcement-card" onclick="deleteAnnouncement('${item.announcementKey}')"><i class="fa-solid fa-trash-can"></i> حذف</button>
+                            <button class="btn-edit-announcement-card" onclick="openEditAnnouncementModal('${item.announcementKey}')" title="تعديل التنبيه">
+                                <i class="fa-solid fa-pen"></i> تعديل
+                            </button>
+                            <button class="btn-delete-announcement-card" onclick="deleteAnnouncement('${item.announcementKey}')" title="حذف التنبيه">
+                                <i class="fa-solid fa-trash-can"></i> حذف
+                            </button>
                         </div>
                     </div>
                 `;
@@ -2044,14 +1937,20 @@
 
         function triggerFileDownload(key) {
             const item = clinicAnnouncements.find(a => a.announcementKey === key);
-            if (item && item.fileUrl) openBase64File(item.fileUrl, item.fileName || 'document.pdf');
+            if (item && item.fileUrl) {
+                openBase64File(item.fileUrl, item.fileName || 'document.pdf');
+            }
         }
 
         function openImagePreview(url) {
             document.getElementById('previewFullImageTag').src = url;
             document.getElementById('imagePreviewModal').classList.add('open');
         }
-        function closeImagePreviewModal() { document.getElementById('imagePreviewModal').classList.remove('open'); }
+
+        function closeImagePreviewModal() {
+            document.getElementById('imagePreviewModal').classList.remove('open');
+            document.getElementById('previewFullImageTag').src = '';
+        }
 
         function openAddAnnouncementModal() {
             document.getElementById('editAnnouncementKey').value = '';
@@ -2066,11 +1965,14 @@
             if (!item) return;
             document.getElementById('editAnnouncementKey').value = item.announcementKey;
             document.getElementById('announcementText').value = item.text || '';
+            document.getElementById('announcementFile').value = '';
             document.getElementById('announcementModalTitle').innerHTML = '<i class="fa-solid fa-pen"></i> تعديل تنبيه العيادة';
             document.getElementById('announcementModal').classList.add('open');
         }
 
-        function closeAnnouncementModal() { document.getElementById('announcementModal').classList.remove('open'); }
+        function closeAnnouncementModal() {
+            document.getElementById('announcementModal').classList.remove('open');
+        }
 
         function saveAnnouncementItem(e) {
             e.preventDefault();
@@ -2084,27 +1986,52 @@
                     const item = clinicAnnouncements.find(a => a.announcementKey === key);
                     if (item) {
                         item.text = textVal;
-                        if (fileUrl !== undefined) { item.fileUrl = fileUrl; item.fileType = fileType; item.fileName = fileName; }
+                        if (fileUrl !== undefined) {
+                            item.fileUrl = fileUrl;
+                            item.fileType = fileType;
+                            item.fileName = fileName;
+                        }
                         saveLocal();
                         renderAnnouncements();
                         closeAnnouncementModal();
                         showToastOnly('✏️ تم تعديل التنبيه بنجاح!');
+
                         if (navigator.onLine && !key.startsWith('ann_')) {
-                            announcementsDbRef.child(key).update({ text: textVal, fileUrl, fileType, fileName });
+                            const updateObj = { text: textVal };
+                            if (fileUrl !== undefined) {
+                                updateObj.fileUrl = fileUrl;
+                                updateObj.fileType = fileType;
+                                updateObj.fileName = fileName;
+                            }
+                            announcementsDbRef.child(key).update(updateObj);
                         }
                     }
                 } else {
                     const tempKey = 'ann_' + Date.now();
-                    const newAnn = { announcementKey: tempKey, text: textVal, fileUrl: fileUrl || '', fileType: fileType || '', fileName: fileName || '', createdAt: new Date().toISOString() };
+                    const newAnn = {
+                        announcementKey: tempKey,
+                        text: textVal,
+                        fileUrl: fileUrl || '',
+                        fileType: fileType || '',
+                        fileName: fileName || '',
+                        createdAt: new Date().toISOString()
+                    };
+
                     clinicAnnouncements.unshift(newAnn);
                     saveLocal();
                     renderAnnouncements();
                     closeAnnouncementModal();
-                    showToastOnly('📢 تم نشر التنبيه بنجاح!');
+                    
+                    playBeepAndShowToast('📢 تم نشر التنبيه بنجاح للجميع!');
+
                     if (navigator.onLine) {
-                        announcementsDbRef.push(newAnn).then((pushedRef) => {
+                        const uploadData = { text: newAnn.text, fileUrl: newAnn.fileUrl, fileType: newAnn.fileType, fileName: newAnn.fileName, createdAt: newAnn.createdAt };
+                        announcementsDbRef.push(uploadData).then((pushedRef) => {
                             const idx = clinicAnnouncements.findIndex(a => a.announcementKey === tempKey);
-                            if (idx !== -1) { clinicAnnouncements[idx].announcementKey = pushedRef.key; saveLocal(); }
+                            if (idx !== -1) {
+                                clinicAnnouncements[idx].announcementKey = pushedRef.key;
+                                saveLocal();
+                            }
                         });
                     }
                 }
@@ -2113,11 +2040,23 @@
             if (fileInput.files && fileInput.files[0]) {
                 const file = fileInput.files[0];
                 const reader = new FileReader();
-                reader.onload = evt => processAndSave(evt.target.result, file.type, file.name);
+                reader.onload = function(evt) {
+                    processAndSave(evt.target.result, file.type, file.name);
+                };
                 reader.readAsDataURL(file);
             } else {
-                let existingItem = key ? clinicAnnouncements.find(a => a.announcementKey === key) : null;
-                processAndSave(existingItem?.fileUrl || '', existingItem?.fileType || '', existingItem?.fileName || '');
+                let existingFileUrl = undefined;
+                let existingFileType = undefined;
+                let existingFileName = undefined;
+                if (key) {
+                    const existingItem = clinicAnnouncements.find(a => a.announcementKey === key);
+                    if (existingItem) {
+                        existingFileUrl = existingItem.fileUrl || '';
+                        existingFileType = existingItem.fileType || '';
+                        existingFileName = existingItem.fileName || '';
+                    }
+                }
+                processAndSave(existingFileUrl, existingFileType, existingFileName);
             }
         }
 
@@ -2126,8 +2065,11 @@
                 clinicAnnouncements = clinicAnnouncements.filter(a => a.announcementKey !== key);
                 saveLocal();
                 renderAnnouncements();
-                if (navigator.onLine && !key.startsWith('ann_')) announcementsDbRef.child(key).remove();
-                showToastOnly('🗑️ تم الحذف بنجاح!');
+
+                if (navigator.onLine && !key.startsWith('ann_')) {
+                    announcementsDbRef.child(key).remove();
+                }
+                showToastOnly('🗑️ تم حذف التنبيه بنجاح!');
             }
         }
 
@@ -2137,7 +2079,10 @@
                 pendingPriorityCheckbox = checkbox;
                 checkbox.checked = false;
                 requireAdminAuth(() => {
-                    if (pendingPriorityCheckbox) { pendingPriorityCheckbox.checked = true; pendingPriorityCheckbox = null; }
+                    if (pendingPriorityCheckbox) {
+                        pendingPriorityCheckbox.checked = true;
+                        pendingPriorityCheckbox = null;
+                    }
                 });
             }
         }
@@ -2163,7 +2108,9 @@
 
             const isRepeated = records.some(r => {
                 const cleanExistingPhone = (r.patientPhone && r.patientPhone !== '-') ? r.patientPhone.replace(/\D/g, '') : '';
-                return (cleanNewPhone.length >= 8 && cleanExistingPhone === cleanNewPhone) || (r.patientName && r.patientName.trim().toLowerCase() === patientNameVal.toLowerCase());
+                const matchPhone = (cleanNewPhone.length >= 8 && cleanExistingPhone === cleanNewPhone);
+                const matchName = (r.patientName && r.patientName.trim().toLowerCase() === patientNameVal.toLowerCase());
+                return matchPhone || matchName;
             });
 
             let procedureTypeValue = document.getElementById('procedureType').value;
@@ -2214,6 +2161,7 @@
 
             this.reset();
             document.getElementById('customProcedureWrapper').style.display = 'none';
+            
             playBeepAndShowToast('⚠️ تم إضافة العميل والموعد بنجاح!');
         });
 
@@ -2224,35 +2172,59 @@
                     rec.isPinned = !rec.isPinned;
                     saveLocal();
                     renderTable();
+                    updatePinnedCountBadge();
                     renderClientReport();
-                    if (navigator.onLine && !key.startsWith('local_')) dbRef.child(key).update({ isPinned: rec.isPinned });
-                    showToastOnly(rec.isPinned ? '📌 تم التثبيت' : '✖️ تمت الإزالة');
+
+                    if (navigator.onLine && !key.startsWith('local_')) {
+                        dbRef.child(key).update({ isPinned: rec.isPinned });
+                    }
+
+                    showToastOnly(rec.isPinned ? '📌 تم التثبيت في المميزين' : '✖️ تم إزالتها من المميزين');
                 }
             });
         }
 
         function updatePinnedCountBadge() {
             let openRecords = records.filter(r => !r.isHiddenFromClients);
+            
             if (clientHoursFilter !== 'all' && !isPinnedFilterActive) {
                 const now = new Date();
-                openRecords = openRecords.filter(r => (now - new Date(r.createdAt)) / (1000 * 60 * 60) <= parseFloat(clientHoursFilter));
+                openRecords = openRecords.filter(r => {
+                    const diffHours = (now - new Date(r.createdAt)) / (1000 * 60 * 60);
+                    return diffHours <= parseFloat(clientHoursFilter);
+                });
             }
+            
             const groupedMap = new Map();
             openRecords.forEach(record => {
                 const cleanPhone = (record.patientPhone && record.patientPhone !== '-') ? record.patientPhone.replace(/\D/g, '') : '';
                 const groupKey = (cleanPhone.length >= 8) ? cleanPhone : (record.patientName || '').trim().toLowerCase();
-                if (!groupedMap.has(groupKey)) groupedMap.set(groupKey, []);
+                
+                if (!groupedMap.has(groupKey)) {
+                    groupedMap.set(groupKey, []);
+                }
                 groupedMap.get(groupKey).push(record);
             });
 
             let displayCount = 0;
-            groupedMap.forEach((groupRecords) => {
-                if (isPinnedFilterActive) {
-                    if (groupRecords.some(r => r.isPinned)) displayCount++;
-                } else {
-                    if (!groupRecords.every(r => r.isCopied)) displayCount++;
-                }
-            });
+
+            if (isPinnedFilterActive) {
+                // إذا كنا في صفحة المميزين: يحسب عدد المجموعات التي بها عميل مثبت فقط
+                groupedMap.forEach((groupRecords) => {
+                    if (groupRecords.some(r => r.isPinned)) {
+                        displayCount++;
+                    }
+                });
+            } else {
+                // إذا كنا في الكشف العادي: يحسب عدد العملاء المتبقين (غير المنسوخين)
+                groupedMap.forEach((groupRecords) => {
+                    const isGroupCopied = groupRecords.every(r => r.isCopied);
+                    if (!isGroupCopied) {
+                        displayCount++;
+                    }
+                });
+            }
+
             const badgeEl = document.getElementById('pinnedCount');
             if (badgeEl) badgeEl.innerText = displayCount;
         }
@@ -2263,9 +2235,13 @@
             if (btn) {
                 if (isPinnedFilterActive) {
                     btn.style.backgroundColor = '#d97706';
+                    btn.style.borderColor = '#f59e0b';
+                    btn.style.boxShadow = '0 0 12px rgba(217, 119, 6, 0.5)';
                     btn.innerHTML = `<i class="fa-solid fa-thumbtack"></i> 📌 المميزون ( <span id="pinnedCount">0</span> )`;
                 } else {
                     btn.style.backgroundColor = '#16a34a';
+                    btn.style.borderColor = '#22c55e';
+                    btn.style.boxShadow = 'none';
                     btn.innerHTML = `<i class="fa-solid fa-file-lines"></i> ✅ الكشف العادي ( <span id="pinnedCount">0</span> )`;
                 }
             }
@@ -2275,9 +2251,17 @@
         function setDashboardFilter(filterType, btn) {
             dashboardFilter = filterType;
             localStorage.setItem('savedDashboardFilter', filterType);
+            
             document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.dropdown-item').forEach(i => i.classList.remove('active'));
-            if (btn) btn.classList.add('active');
+            
+            if (btn) {
+                btn.classList.add('active');
+                if (btn.classList.contains('dropdown-item')) {
+                    btn.closest('.dropdown-filter-container').querySelector('.dropdown-filter-btn').classList.add('active');
+                }
+            }
+            document.querySelectorAll('.dropdown-content').forEach(dc => dc.classList.remove('show'));
             renderTable();
         }
 
@@ -2291,14 +2275,24 @@
 
         function updateDailyProgress() {
             const now = new Date();
-            const todayRecords = records.filter(r => new Date(r.createdAt).toDateString() === now.toDateString());
+            const todayRecords = records.filter(r => {
+                const d = new Date(r.createdAt);
+                return d.toDateString() === now.toDateString();
+            });
+
             const totalToday = todayRecords.length;
             if (totalToday === 0) {
                 document.getElementById('progressText').innerText = '0% (لا توجد حالات اليوم)';
                 document.getElementById('progressBarFill').style.width = '0%';
                 return;
             }
-            const completedToday = todayRecords.filter(r => (r.adminContactMethod && r.adminContactMethod !== 'قيد الانتظار') || (r.actionTaken && r.actionTaken.trim() !== '')).length;
+
+            const completedToday = todayRecords.filter(r => {
+                const contact = r.adminContactMethod || 'قيد الانتظار';
+                const hasAction = r.actionTaken && r.actionTaken.trim() !== '';
+                return contact !== 'قيد الانتظار' || hasAction;
+            }).length;
+
             const percentage = Math.round((completedToday / totalToday) * 100);
             document.getElementById('progressText').innerText = `${percentage}% (${completedToday} من ${totalToday} حالات مُنجزة)`;
             document.getElementById('progressBarFill').style.width = `${percentage}%`;
@@ -2308,45 +2302,145 @@
             const tbody = document.getElementById('tableBody');
             if (!tbody) return;
             tbody.innerHTML = '';
+
+            syncFilterTabsUI();
+
             let filteredList = [...records];
             const now = new Date();
 
-            if (dashboardFilter === 'priority') filteredList = filteredList.filter(r => r.isRecurring);
-            else if (dashboardFilter === 'repeated') filteredList = filteredList.filter(r => r.isRepeatedRequest);
-            else if (dashboardFilter === 'plants') filteredList = filteredList.filter(r => r.procedureType && r.procedureType.includes('زراعة'));
-            else if (dashboardFilter === 'extraction') filteredList = filteredList.filter(r => r.procedureType && r.procedureType.includes('خلع'));
-            else if (dashboardFilter === 'review') filteredList = filteredList.filter(r => r.procedureType && r.procedureType.includes('مراجعه'));
+            if (dashboardFilter === 'priority') {
+                filteredList = filteredList.filter(r => r.isRecurring);
+            } else if (dashboardFilter === 'repeated') {
+                filteredList = filteredList.filter(r => r.isRepeatedRequest);
+            } else if (dashboardFilter === 'plants') {
+                filteredList = filteredList.filter(r => r.procedureType && r.procedureType.includes('زراعة'));
+            } else if (dashboardFilter === 'extraction') {
+                filteredList = filteredList.filter(r => r.procedureType && r.procedureType.includes('خلع'));
+            } else if (dashboardFilter === 'review') {
+                filteredList = filteredList.filter(r => r.procedureType && r.procedureType.includes('مراجعه'));
+            } else if (dashboardFilter === 'inquiries_all') {
+                filteredList = filteredList.filter(r => r.procedureType && r.procedureType.includes('استفسارات'));
+            } else if (dashboardFilter === 'inquiries_done') {
+                filteredList = filteredList.filter(r => {
+                    const isQ = (r.procedureType && r.procedureType.includes('استفسارات'));
+                    const hasChange = (r.adminContactMethod && r.adminContactMethod !== 'قيد الانتظار') || (r.actionTaken && r.actionTaken.trim() !== '');
+                    return isQ && hasChange;
+                });
+            } else if (dashboardFilter === 'inquiries_pending') {
+                filteredList = filteredList.filter(r => {
+                    const isQ = (r.procedureType && r.procedureType.includes('استفسارات'));
+                    const isPending = (!r.adminContactMethod || r.adminContactMethod === 'قيد الانتظار') && (!r.actionTaken || r.actionTaken.trim() === '');
+                    return isQ && isPending;
+                });
+            } else if (dashboardFilter === 'no_inquiries_all') {
+                filteredList = filteredList.filter(r => !r.procedureType || !r.procedureType.includes('استفسارات'));
+            } else if (dashboardFilter === 'no_inquiries_done') {
+                filteredList = filteredList.filter(r => {
+                    const isNotQ = (!r.procedureType || !r.procedureType.includes('استفسارات'));
+                    const hasChange = (r.adminContactMethod && r.adminContactMethod !== 'قيد الانتظار') || (r.actionTaken && r.actionTaken.trim() !== '');
+                    return isNotQ && hasChange;
+                });
+            } else if (dashboardFilter === 'no_inquiries_pending') {
+                filteredList = filteredList.filter(r => {
+                    const isNotQ = (!r.procedureType || !r.procedureType.includes('استفسارات'));
+                    const isPending = (!r.adminContactMethod || r.adminContactMethod === 'قيد الانتظار') && (!r.actionTaken || r.actionTaken.trim() === '');
+                    return isNotQ && isPending;
+                });
+            }
 
-            filteredList.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            if (dashboardTimeFilter === 'today') {
+                filteredList = filteredList.filter(r => {
+                    const d = new Date(r.createdAt);
+                    return d.toDateString() === now.toDateString();
+                });
+            } else if (dashboardTimeFilter === 'week') {
+                filteredList = filteredList.filter(r => {
+                    const diffTime = now - new Date(r.createdAt);
+                    return diffTime <= 7 * 24 * 60 * 60 * 1000;
+                });
+            } else if (dashboardTimeFilter === 'month') {
+                filteredList = filteredList.filter(r => {
+                    const d = new Date(r.createdAt);
+                    return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+                });
+            }
+
+            filteredList.sort((a, b) => {
+                if (a.isRecurring && !b.isRecurring) return -1;
+                if (!a.isRecurring && b.isRecurring) return 1;
+                return new Date(b.createdAt) - new Date(a.createdAt);
+            });
 
             filteredList.forEach((record, index) => {
                 const tr = document.createElement('tr');
-                if (record.isRecurring) tr.classList.add('row-priority-pulse');
+                if (record.isRecurring) {
+                    tr.classList.add('row-priority-pulse');
+                }
+
                 const currentContact = record.adminContactMethod || 'قيد الانتظار';
+                const isOther = !['قيد الانتظار', 'قيد الإجراء', 'تم التواصل', 'معلق', 'اعتذر'].includes(currentContact);
+                const selectVal = isOther ? 'أخرى' : currentContact;
+                const otherDetail = isOther ? currentContact : (record.adminContactDetail || '');
+
+                if (selectVal === 'اعتذر') {
+                    tr.classList.add('row-apologized');
+                }
+
+                let statusBadgeHTML = '';
+                if (record.isRecurring) {
+                    statusBadgeHTML += '<span class="status-badge badge-priority">⭐ أولوية</span><br>';
+                }
+                if (record.isRepeatedRequest) {
+                    statusBadgeHTML += '<span class="status-badge badge-repeated">🔄 متكررة</span><br>';
+                }
+
+                let sClass = 'badge-other';
+                if (selectVal === 'قيد الانتظار') sClass = 'badge-pending';
+                else if (selectVal === 'قيد الإجراء') sClass = 'badge-inprogress';
+                else if (selectVal === 'تم التواصل') sClass = 'badge-completed';
+                else if (selectVal === 'معلق') sClass = 'badge-suspended';
+                else if (selectVal === 'اعتذر') sClass = 'badge-apologized';
+
+                statusBadgeHTML += `<span class="status-badge ${sClass}">${selectVal}</span>`;
+
+                const proc = record.procedureType || '-';
+                let procClass = 'proc-default';
+                if (proc.includes('زراعة')) procClass = 'proc-plant';
+                else if (proc.includes('خلع')) procClass = 'proc-extraction';
+                else if (proc.includes('جراحه')) procClass = 'proc-surgery';
+                else if (proc.includes('فك خياطه')) procClass = 'proc-stitches';
+                else if (proc.includes('مراجعه')) procClass = 'proc-review';
+                else if (proc.includes('استفسارات')) procClass = 'proc-inquiry';
+
+                const isPinned = record.isPinned;
 
                 tr.innerHTML = `
                     <td>${index + 1}</td>
                     <td>${formatDateOnly(record.createdAt)}</td>
-                    <td><span class="status-badge badge-pending">${currentContact}</span></td>
+                    <td>${statusBadgeHTML}</td>
                     <td><strong>${record.patientName}</strong></td>
                     <td>${record.patientPhone}</td>
                     <td>${record.fileNumber || '-'}</td>
-                    <td><span class="proc-badge proc-default">${record.procedureType || '-'}</span></td>
+                    <td><span class="proc-badge ${procClass}">${proc}</span></td>
                     <td><div class="service-cell-box">${record.serviceRequired}</div></td>
                     <td>${record.coordinatorName}</td>
                     <td>
-                        <select class="table-input" id="adminContact_${record.firebaseKey}">
-                            <option value="قيد الانتظار" ${currentContact === 'قيد الانتظار' ? 'selected' : ''}>قيد الانتظار</option>
-                            <option value="تم التواصل" ${currentContact === 'تم التواصل' ? 'selected' : ''}>تم التواصل ✅</option>
-                            <option value="اعتذر" ${currentContact === 'اعتذر' ? 'selected' : ''}>اعتذر ❌</option>
+                        <select class="table-input" id="adminContact_${record.firebaseKey}" onchange="handleContactChange('${record.firebaseKey}')">
+                            <option value="قيد الانتظار" ${selectVal === 'قيد الانتظار' ? 'selected' : ''}>قيد الانتظار</option>
+                            <option value="قيد الإجراء" ${selectVal === 'قيد الإجراء' ? 'selected' : ''}>قيد الإجراء 🔄</option>
+                            <option value="تم التواصل" ${selectVal === 'تم التواصل' ? 'selected' : ''}>تم التواصل ✅</option>
+                            <option value="معلق" ${selectVal === 'معلق' ? 'selected' : ''}>معلق 🟡</option>
+                            <option value="اعتذر" ${selectVal === 'اعتذر' ? 'selected' : ''}>اعتذر ❌</option>
+                            <option value="أخرى" ${selectVal === 'أخرى' ? 'selected' : ''}>أخرى ✍️</option>
                         </select>
+                        <input type="text" class="table-input" id="adminOther_${record.firebaseKey}" placeholder="التفاصيل..." value="${otherDetail}" style="margin-top: 5px; ${selectVal === 'أخرى' ? '' : 'display:none;'}">
                     </td>
                     <td><textarea class="table-input" id="action_${record.firebaseKey}">${record.actionTaken || ''}</textarea></td>
                     <td>
-                        <button class="btn-pin-action ${record.isPinned ? 'pinned' : ''}" onclick="requestTogglePinRecord('${record.firebaseKey}')"><i class="fa-solid fa-thumbtack"></i></button>
-                        <button class="btn-save-action" onclick="saveAdminUpdate('${record.firebaseKey}')"><i class="fa-solid fa-floppy-disk"></i></button>
-                        <button class="btn-edit-action" onclick="openEditModal('${record.firebaseKey}')"><i class="fa-solid fa-pen"></i></button>
-                        <button class="btn-delete-action" onclick="deleteRecord('${record.firebaseKey}')"><i class="fa-solid fa-trash"></i></button>
+                        <button class="btn-pin-action ${isPinned ? 'pinned' : ''}" onclick="requestTogglePinRecord('${record.firebaseKey}')" title="${isPinned ? 'إلغاء التثبيت' : 'تثبيت العميل (يتطلب باسورد)'}"><i class="fa-solid fa-thumbtack"></i></button>
+                        <button class="btn-save-action" onclick="saveAdminUpdate('${record.firebaseKey}')" title="حفظ"><i class="fa-solid fa-floppy-disk"></i></button>
+                        <button class="btn-edit-action" onclick="openEditModal('${record.firebaseKey}')" title="تعديل"><i class="fa-solid fa-pen"></i></button>
+                        <button class="btn-delete-action" onclick="deleteRecord('${record.firebaseKey}')" title="حذف"><i class="fa-solid fa-trash"></i></button>
                     </td>
                 `;
                 tbody.appendChild(tr);
@@ -2354,18 +2448,48 @@
             filterTable();
         }
 
+        function handleContactChange(key) {
+            const selectVal = document.getElementById(`adminContact_${key}`).value;
+            const otherInput = document.getElementById(`adminOther_${key}`);
+            if (selectVal === 'أخرى') {
+                otherInput.style.display = 'block';
+                otherInput.focus();
+            } else {
+                otherInput.style.display = 'none';
+                otherInput.value = '';
+            }
+        }
+
         function saveAdminUpdate(key) {
             const actionVal = document.getElementById(`action_${key}`).value;
-            const contactVal = document.getElementById(`adminContact_${key}`).value;
+            let adminContactSelect = document.getElementById(`adminContact_${key}`).value;
+            const otherInputVal = document.getElementById(`adminOther_${key}`).value.trim();
+
+            if (adminContactSelect === 'أخرى' && otherInputVal !== '') {
+                adminContactSelect = otherInputVal;
+            }
+
             let rec = records.find(r => r.firebaseKey === key);
-            if (rec) { rec.actionTaken = actionVal; rec.adminContactMethod = contactVal; saveLocal(); renderTable(); }
-            if (navigator.onLine && !key.startsWith('local_')) dbRef.child(key).update({ actionTaken: actionVal, adminContactMethod: contactVal });
-            showToastOnly('✅ تم الحفظ');
+            if (rec) { 
+                rec.actionTaken = actionVal; 
+                rec.adminContactMethod = adminContactSelect; 
+                saveLocal(); 
+                renderTable(); 
+                updateKPIs();
+                updateDailyProgress();
+                renderClientReport();
+            }
+
+            if (navigator.onLine && !key.startsWith('local_')) {
+                dbRef.child(key).update({ actionTaken: actionVal, adminContactMethod: adminContactSelect });
+            }
+            alert('تم التحديث بنجاح!');
         }
 
         function openEditModal(key) {
             const rec = records.find(r => r.firebaseKey === key);
             if (!rec) return;
+
             document.getElementById('editFirebaseKey').value = rec.firebaseKey;
             document.getElementById('editPatientName').value = rec.patientName || '';
             document.getElementById('editPatientPhone').value = rec.patientPhone || '';
@@ -2376,32 +2500,93 @@
             document.getElementById('editCoordinatorName').value = rec.coordinatorName || '';
             document.getElementById('editProcedureType').value = rec.procedureType || 'مراجعه';
             document.getElementById('editServiceRequired').value = rec.serviceRequired || '';
+            
+            originalEditPriorityState = !!rec.isRecurring;
+            originalEditRepeatedState = !!rec.isRepeatedRequest;
+
+            document.getElementById('editIsRecurring').checked = originalEditPriorityState;
+            document.getElementById('editIsRepeatedRequest').checked = originalEditRepeatedState;
+
             document.getElementById('editModal').classList.add('open');
         }
-        function closeEditModal() { document.getElementById('editModal').classList.remove('open'); }
 
-        function saveEditedRecord(e) {
-            e.preventDefault();
+        function closeEditModal() {
+            document.getElementById('editModal').classList.remove('open');
+        }
+
+        function executeActualEdit() {
             const key = document.getElementById('editFirebaseKey').value;
             let rec = records.find(r => r.firebaseKey === key);
             if (!rec) return;
+
             rec.patientName = document.getElementById('editPatientName').value.trim();
             rec.patientPhone = document.getElementById('editPatientPhone').value.trim() || '-';
             rec.fileNumber = document.getElementById('editFileNumber').value.trim() || '-';
+            rec.idNumber = document.getElementById('editIdNumber').value.trim() || '-';
+            rec.branch = document.getElementById('editBranch').value;
+            rec.contactMethod = document.getElementById('editContactMethod').value;
+            rec.coordinatorName = document.getElementById('editCoordinatorName').value.trim();
+            rec.procedureType = document.getElementById('editProcedureType').value;
             rec.serviceRequired = document.getElementById('editServiceRequired').value.trim();
+            rec.isRecurring = document.getElementById('editIsRecurring').checked;
+            rec.isRepeatedRequest = document.getElementById('editIsRepeatedRequest').checked;
+
             saveLocal();
             renderTable();
+            updateKPIs();
+            updateDailyProgress();
+            renderClientReport();
             closeEditModal();
-            showToastOnly('✏️ تم التعديل');
+
+            if (navigator.onLine && !key.startsWith('local_')) {
+                dbRef.child(key).update({
+                    patientName: rec.patientName,
+                    patientPhone: rec.patientPhone,
+                    fileNumber: rec.fileNumber,
+                    idNumber: rec.idNumber,
+                    branch: rec.branch,
+                    contactMethod: rec.contactMethod,
+                    coordinatorName: rec.coordinatorName,
+                    procedureType: rec.procedureType,
+                    serviceRequired: rec.serviceRequired,
+                    isRecurring: rec.isRecurring,
+                    isRepeatedRequest: rec.isRepeatedRequest
+                });
+            }
+            alert('تم تعديل البيانات بنجاح!');
+        }
+
+        function saveEditedRecord(e) {
+            e.preventDefault();
+            const currentPriorityUI = document.getElementById('editIsRecurring').checked;
+            const currentRepeatedUI = document.getElementById('editIsRepeatedRequest').checked;
+
+            if (currentPriorityUI !== originalEditPriorityState || currentRepeatedUI !== originalEditRepeatedState) {
+                requireAdminAuth(() => {
+                    executeActualEdit();
+                });
+            } else {
+                executeActualEdit();
+            }
         }
 
         function deleteRecord(key) {
             requireAdminAuth(() => {
-                if (confirm('هل أنت متأكد من الحذف؟')) {
-                    records = records.filter(r => r.firebaseKey !== key);
-                    saveLocal();
-                    renderTable();
-                    if (navigator.onLine && !key.startsWith('local_')) dbRef.child(key).remove();
+                if (confirm('هل أنت متأكد من حذف هذا العميل؟')) {
+                    const itemIdx = records.findIndex(r => r.firebaseKey === key);
+                    if (itemIdx !== -1) {
+                        records.splice(itemIdx, 1);
+                        saveLocal();
+                        renderTable();
+                        updateKPIs();
+                        updateDailyProgress();
+                        renderClientReport();
+                        updatePinnedCountBadge();
+
+                        if (navigator.onLine && !key.startsWith('local_')) {
+                            dbRef.child(key).remove();
+                        }
+                    }
                 }
             });
         }
@@ -2415,7 +2600,11 @@
             container.innerHTML = '';
 
             if (csLinks.length === 0) {
-                container.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 20px; color: var(--text-muted);">لا توجد روابط مضافة حالياً.</div>';
+                container.innerHTML = `
+                    <div style="grid-column: 1/-1; text-align: center; padding: 30px; color: var(--text-muted);">
+                        لا توجد روابط مضافة حالياً. انقر على "إضافة رابط جديد" لإضافة أول رابط للدليل الشامل.
+                    </div>
+                `;
                 return;
             }
 
@@ -2425,47 +2614,131 @@
                 card.setAttribute('data-index', index);
 
                 card.innerHTML = `
-                    <div class="drag-handle" title="اسحب للترتيب"><i class="fa-solid fa-grip-vertical"></i></div>
-                    <div class="link-card-header"><i class="fa-solid fa-globe"></i><span>${item.title}</span></div>
-                    <div class="link-card-desc">${item.desc || ''}</div>
+                    <div class="drag-handle" title="اضغط باستمرار واسحب من هنا للترتيب"><i class="fa-solid fa-grip-vertical"></i></div>
+                    <div class="link-card-header">
+                        <i class="fa-solid fa-globe"></i>
+                        <span>${item.title}</span>
+                    </div>
+                    <div class="link-card-desc">${item.desc || 'لا يوجد وصف مُضاف.'}</div>
                     <div class="link-card-actions">
-                        <button type="button" class="btn-open-link" onclick="window.open('${item.url}', '_blank')"><i class="fa-solid fa-arrow-up-right-from-square"></i> فتح</button>
-                        <button class="btn-edit-action" onclick="openEditLinkModal('${item.linkKey}')"><i class="fa-solid fa-pen"></i></button>
-                        <button class="btn-delete-action" onclick="deleteCSLink('${item.linkKey}')"><i class="fa-solid fa-trash"></i></button>
+                        <button type="button" class="btn-open-link" onclick="secureOpenLink('${item.url}')"><i class="fa-solid fa-arrow-up-right-from-square"></i> فتح الموقع</button>
+                        <button class="btn-edit-action" onclick="openEditLinkModal('${item.linkKey}')" title="تعديل الرابط"><i class="fa-solid fa-pen"></i></button>
+                        <button class="btn-delete-action" onclick="deleteCSLink('${item.linkKey}')" title="حذف الرابط"><i class="fa-solid fa-trash"></i></button>
                     </div>
                 `;
 
                 const handle = card.querySelector('.drag-handle');
+
                 handle.addEventListener('mousedown', (e) => {
                     e.preventDefault();
                     requireAdminAuth(() => {
                         card.setAttribute('draggable', 'true');
                         draggedCardIndex = index;
                         card.classList.add('dragging');
+                        
+                        const dragEvent = new DragEvent('dragstart', { bubbles: true, cancelable: true });
+                        card.dispatchEvent(dragEvent);
                     });
                 });
 
-                card.addEventListener('dragover', (e) => { e.preventDefault(); card.classList.add('drag-over'); });
-                card.addEventListener('dragleave', () => card.classList.remove('drag-over'));
+                card.addEventListener('dragstart', (e) => {
+                    if (!card.classList.contains('dragging')) {
+                        e.preventDefault();
+                    }
+                });
+
+                card.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    card.classList.add('drag-over');
+                });
+
+                card.addEventListener('dragleave', () => {
+                    card.classList.remove('drag-over');
+                });
+
                 card.addEventListener('drop', (e) => {
                     e.preventDefault();
                     card.classList.remove('drag-over');
                     const targetIdx = parseInt(card.getAttribute('data-index'));
-                    if (draggedCardIndex !== null && draggedCardIndex !== targetIdx) reorderCSLinks(draggedCardIndex, targetIdx);
+                    if (draggedCardIndex !== null && draggedCardIndex !== targetIdx) {
+                        reorderCSLinks(draggedCardIndex, targetIdx);
+                    }
                 });
-                card.addEventListener('dragend', () => { card.removeAttribute('draggable'); card.classList.remove('dragging'); draggedCardIndex = null; });
+
+                card.addEventListener('dragend', () => {
+                    card.removeAttribute('draggable');
+                    card.classList.remove('dragging');
+                    document.querySelectorAll('.link-card').forEach(c => c.classList.remove('drag-over'));
+                    draggedCardIndex = null;
+                });
+
+                handle.addEventListener('touchstart', (e) => {
+                    requireAdminAuth(() => {
+                        activeTouchHandle = card;
+                        draggedCardIndex = index;
+                        card.classList.add('dragging');
+                    });
+                }, { passive: true });
+
+                handle.addEventListener('touchmove', (e) => {
+                    if (!activeTouchHandle) return;
+                    const touchLoc = e.touches[0];
+                    const targetEl = document.elementFromPoint(touchLoc.clientX, touchLoc.clientY);
+
+                    document.querySelectorAll('.link-card').forEach(c => c.classList.remove('drag-over'));
+                    if (targetEl) {
+                        const targetCard = targetEl.closest('.link-card');
+                        if (targetCard && targetCard !== activeTouchHandle) {
+                            targetCard.classList.add('drag-over');
+                        }
+                    }
+                }, { passive: true });
+
+                handle.addEventListener('touchend', (e) => {
+                    if (!activeTouchHandle) return;
+
+                    const touchLoc = e.changedTouches[0];
+                    const targetEl = document.elementFromPoint(touchLoc.clientX, touchLoc.clientY);
+
+                    activeTouchHandle.classList.remove('dragging');
+                    document.querySelectorAll('.link-card').forEach(c => c.classList.remove('drag-over'));
+
+                    if (targetEl) {
+                        const targetCard = targetEl.closest('.link-card');
+                        if (targetCard) {
+                            const targetIdx = parseInt(targetCard.getAttribute('data-index'));
+                            if (draggedCardIndex !== null && draggedCardIndex !== targetIdx) {
+                                reorderCSLinks(draggedCardIndex, targetIdx);
+                            }
+                        }
+                    }
+
+                    activeTouchHandle = null;
+                    draggedCardIndex = null;
+                });
 
                 container.appendChild(card);
             });
         }
 
+        function secureOpenLink(url) {
+            window.open(url, '_blank');
+        }
+
         function reorderCSLinks(fromIdx, toIdx) {
             const movedItem = csLinks.splice(fromIdx, 1)[0];
             csLinks.splice(toIdx, 0, movedItem);
-            csLinks.forEach((link, idx) => { link.orderIndex = idx; });
+
+            csLinks.forEach((link, idx) => {
+                link.orderIndex = idx;
+                if (navigator.onLine && !link.linkKey.startsWith('link_')) {
+                    linksDbRef.child(link.linkKey).update({ orderIndex: idx });
+                }
+            });
+
             saveLocal();
             renderCSLinks();
-            showToastOnly('🔄 تم الترتيب بنجاح');
+            showToastOnly('🔄 تم ترتيب الكروت بنجاح!');
         }
 
         function openAddLinkModal() {
@@ -2474,6 +2747,7 @@
                 document.getElementById('linkTitle').value = '';
                 document.getElementById('linkUrl').value = '';
                 document.getElementById('linkDesc').value = '';
+                document.getElementById('linkModalTitle').innerHTML = '<i class="fa-solid fa-link"></i> إضافة رابط جديد';
                 document.getElementById('linkModal').classList.add('open');
             });
         }
@@ -2486,10 +2760,14 @@
                 document.getElementById('linkTitle').value = item.title || '';
                 document.getElementById('linkUrl').value = item.url || '';
                 document.getElementById('linkDesc').value = item.desc || '';
+                document.getElementById('linkModalTitle').innerHTML = '<i class="fa-solid fa-pen"></i> تعديل بيانات الرابط';
                 document.getElementById('linkModal').classList.add('open');
             });
         }
-        function closeLinkModal() { document.getElementById('linkModal').classList.remove('open'); }
+
+        function closeLinkModal() {
+            document.getElementById('linkModal').classList.remove('open');
+        }
 
         function saveLinkItem(e) {
             e.preventDefault();
@@ -2500,24 +2778,49 @@
 
             if (key) {
                 let item = csLinks.find(l => l.linkKey === key);
-                if (item) { item.title = title; item.url = url; item.desc = desc; }
+                if (item) {
+                    item.title = title;
+                    item.url = url;
+                    item.desc = desc;
+
+                    if (navigator.onLine && !key.startsWith('link_')) {
+                        linksDbRef.child(key).update({ title, url, desc });
+                    }
+                }
             } else {
                 const tempKey = 'link_' + Date.now();
-                csLinks.push({ linkKey: tempKey, title, url, desc, orderIndex: csLinks.length });
+                const newOrderIndex = csLinks.length;
+                const newLink = { linkKey: tempKey, title, url, desc, orderIndex: newOrderIndex };
+                csLinks.push(newLink);
+
+                if (navigator.onLine) {
+                    linksDbRef.push({ title, url, desc, orderIndex: newOrderIndex }).then((pushedRef) => {
+                        const idx = csLinks.findIndex(l => l.linkKey === tempKey);
+                        if (idx !== -1) { csLinks[idx].linkKey = pushedRef.key; saveLocal(); }
+                    });
+                }
             }
+
             saveLocal();
             renderCSLinks();
             closeLinkModal();
-            showToastOnly('✅ تم الحفظ');
+            showToastOnly('✅ تم حفظ الرابط بنجاح!');
         }
 
         function deleteCSLink(key) {
             requireAdminAuth(() => {
-                if (confirm('هل أنت متأكد من الحذف؟')) {
-                    csLinks = csLinks.filter(l => l.linkKey !== key);
-                    saveLocal();
-                    renderCSLinks();
-                    showToastOnly('🗑️ تم الحذف');
+                if (confirm('هل أنت متأكد من حذف هذا الرابط من الدليل الشامل؟')) {
+                    const idx = csLinks.findIndex(l => l.linkKey === key);
+                    if (idx !== -1) {
+                        csLinks.splice(idx, 1);
+                        saveLocal();
+                        renderCSLinks();
+
+                        if (navigator.onLine && !key.startsWith('link_')) {
+                            linksDbRef.child(key).remove();
+                        }
+                        showToastOnly('🗑️ تم حذف الرابط بنجاح!');
+                    }
                 }
             });
         }
@@ -2529,10 +2832,18 @@
         }
 
         function getOpenFilteredRecords() {
-            let openRecords = records.filter(r => !r.isHiddenFromClients && (!isPinnedFilterActive || r.isPinned));
+            let openRecords = records.filter(r => {
+                if (r.isHiddenFromClients) return false;
+                if (isPinnedFilterActive && !r.isPinned) return false;
+                return true;
+            });
+
             if (clientHoursFilter !== 'all' && !isPinnedFilterActive) {
                 const now = new Date();
-                openRecords = openRecords.filter(r => (now - new Date(r.createdAt)) / (1000 * 60 * 60) <= parseFloat(clientHoursFilter));
+                openRecords = openRecords.filter(r => {
+                    const diffHours = (now - new Date(r.createdAt)) / (1000 * 60 * 60);
+                    return diffHours <= parseFloat(clientHoursFilter);
+                });
             }
             return openRecords;
         }
@@ -2541,7 +2852,19 @@
             if (!isoString) return '';
             try {
                 const d = new Date(isoString);
-                return `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()} , ${String(d.getHours() % 12 || 12).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}${d.getHours() >= 12 ? 'PM' : 'AM'}`;
+                const day = String(d.getDate()).padStart(2, '0');
+                const month = String(d.getMonth() + 1).padStart(2, '0');
+                const year = d.getFullYear();
+                
+                let hours = d.getHours();
+                const minutes = String(d.getMinutes()).padStart(2, '0');
+                const seconds = String(d.getSeconds()).padStart(2, '0');
+                const ampm = hours >= 12 ? 'PM' : 'AM';
+                hours = hours % 12;
+                hours = hours ? hours : 12;
+                const hoursStr = String(hours).padStart(2, '0');
+
+                return `${day}/${month}/${year} , ${hoursStr}:${minutes}:${seconds}${ampm}`;
             } catch(e) { return isoString; }
         }
 
@@ -2550,7 +2873,12 @@
                 const targetState = !records.find(r => keysArray.includes(r.firebaseKey))?.isCopied;
                 keysArray.forEach(k => {
                     const rec = records.find(r => r.firebaseKey === k);
-                    if (rec) rec.isCopied = targetState;
+                    if (rec) {
+                        rec.isCopied = targetState;
+                        if (navigator.onLine && !k.startsWith('local_')) {
+                            dbRef.child(k).update({ isCopied: targetState });
+                        }
+                    }
                 });
                 saveLocal();
                 renderClientReport();
@@ -2562,11 +2890,140 @@
                 const nowIso = new Date().toISOString();
                 keysArray.forEach(k => {
                     let rec = records.find(r => r.firebaseKey === k);
-                    if (rec) { rec.isHiddenFromClients = true; rec.deletedAt = nowIso; }
+                    if (rec) {
+                        rec.isHiddenFromClients = true;
+                        rec.deletedAt = nowIso;
+                        if (navigator.onLine && !k.startsWith('local_')) {
+                            dbRef.child(k).update({ isHiddenFromClients: true, deletedAt: nowIso });
+                        }
+                    }
                 });
                 saveLocal();
                 renderClientReport();
-                showToastOnly('🗑️ تم النقل لسلة المحذوفات');
+                renderTrashModalList();
+                showToastOnly('🗑️ تم نقل الطلبات إلى سلة المحذوفات بنجاح!');
+            });
+        }
+
+        function permanentDeleteGroupFromReport(keysArray) {
+            requireAdminAuth(() => {
+                if (confirm('⚠️ تنبيه: هل أنت متأكد من الحذف النهائي للعميل وجميع طلباته المكررة من النظام بالكامل؟')) {
+                    records = records.filter(r => !keysArray.includes(r.firebaseKey));
+                    saveLocal();
+                    renderTable();
+                    updateKPIs();
+                    updateDailyProgress();
+                    renderClientReport();
+                    renderTrashModalList();
+                    updatePinnedCountBadge();
+
+                    keysArray.forEach(k => {
+                        if (navigator.onLine && !k.startsWith('local_')) {
+                            dbRef.child(k).remove();
+                        }
+                    });
+                    alert('تم الحذف النهائي للعميل وجميع طلباته المنسوبة إليه.');
+                }
+            });
+        }
+
+        function restoreClientToReport(key) {
+            requireAdminAuth(() => {
+                let rec = records.find(r => r.firebaseKey === key);
+                if (rec) {
+                    rec.isHiddenFromClients = false;
+                    rec.deletedAt = null;
+                    saveLocal();
+                    renderClientReport();
+                    renderTrashModalList();
+                    if (navigator.onLine && !key.startsWith('local_')) {
+                        dbRef.child(key).update({ isHiddenFromClients: false, deletedAt: null });
+                    }
+                    showToastOnly('↩️ تم استرجاع العميل إلى صفحة الكشف بنجاح!');
+                }
+            });
+        }
+
+        function permanentDeleteClientFromReport(key) {
+            requireAdminAuth(() => {
+                if (confirm('⚠️ تنبيه: هل أنت متأكد من الحذف النهائي لهذا العميل من النظام بالكامل؟ لا يمكن استرجاعه بعد الآن.')) {
+                    const idx = records.findIndex(r => r.firebaseKey === key);
+                    if (idx !== -1) {
+                        records.splice(idx, 1);
+                        saveLocal();
+                        renderTable();
+                        updateKPIs();
+                        updateDailyProgress();
+                        renderClientReport();
+                        renderTrashModalList();
+                        updatePinnedCountBadge();
+
+                        if (navigator.onLine && !key.startsWith('local_')) {
+                            dbRef.child(key).remove();
+                        }
+                        alert('تم الحذف النهائي للعميل بنجاح.');
+                    }
+                }
+            });
+        }
+
+        function checkTrashAuthAndOpen() {
+            requireAdminAuth(() => {
+                openTrashModal();
+            });
+        }
+
+        function openTrashModal() {
+            renderTrashModalList();
+            document.getElementById('trashModal').classList.add('open');
+        }
+
+        function closeTrashModal() {
+            document.getElementById('trashModal').classList.remove('open');
+        }
+
+        function renderTrashModalList() {
+            const trashContainer = document.getElementById('trashModalList');
+            if (!trashContainer) return;
+            trashContainer.innerHTML = '';
+
+            let hiddenRecords = records.filter(r => r.isHiddenFromClients);
+
+            if (hiddenRecords.length === 0) {
+                trashContainer.innerHTML = '<div style="text-align:center; padding:20px; color:var(--text-muted); font-size:0.9rem;">سلة المحذوفات فارغة تماماً</div>';
+                return;
+            }
+
+            hiddenRecords.sort((a, b) => new Date(b.deletedAt || b.createdAt) - new Date(a.deletedAt || a.createdAt));
+
+            hiddenRecords.forEach((item, index) => {
+                const card = document.createElement('div');
+                card.className = 'client-card-wrapper';
+
+                const fileStr = (item.fileNumber && item.fileNumber !== '-') ? ` ${item.fileNumber}` : '';
+                const phoneStr = (item.patientPhone && item.patientPhone !== '-') ? item.patientPhone : '-';
+                const serviceStr = item.serviceRequired || '-';
+                const dateTimeStr = formatDateTimeFullCustom(item.createdAt);
+
+                card.innerHTML = `
+                    <div class="client-card-header">
+                        <div class="client-title">
+                            <span>${index + 1}- ${item.patientName}${fileStr}</span>
+                        </div>
+                        ${dateTimeStr ? `<span class="client-datetime-badge"><i class="fa-regular fa-clock"></i> ${dateTimeStr}</span>` : ''}
+                    </div>
+                    <div class="client-info-row"><span class="info-label">رقم الجوال:</span> ${phoneStr}</div>
+                    <div class="client-info-row">${serviceStr}</div>
+                    <div class="client-actions-row">
+                        <button class="btn-client-action restore" onclick="restoreClientToReport('${item.firebaseKey}')">
+                            <i class="fa-solid fa-rotate-left"></i> استرجاع
+                        </button>
+                        <button class="btn-client-action permanent-delete" onclick="permanentDeleteClientFromReport('${item.firebaseKey}')">
+                            <i class="fa-solid fa-trash-can"></i> حذف نهائي
+                        </button>
+                    </div>
+                `;
+                trashContainer.appendChild(card);
             });
         }
 
@@ -2574,41 +3031,134 @@
             const container = document.getElementById('clientReportList');
             if (!container) return;
             container.innerHTML = '';
+
             updatePinnedCountBadge();
 
             let openRecords = getOpenFilteredRecords();
+
+            const searchInputEl = document.getElementById('clientSearchInput');
+            if (searchInputEl) {
+                const searchVal = searchInputEl.value.trim().toLowerCase();
+                if (searchVal !== '') {
+                    openRecords = openRecords.filter(r => {
+                        const name = (r.patientName || '').toLowerCase();
+                        const phone = (r.patientPhone || '').toLowerCase();
+                        const file = (r.fileNumber || '').toLowerCase();
+                        const id = (r.idNumber || '').toLowerCase();
+                        const service = (r.serviceRequired || '').toLowerCase();
+                        return name.includes(searchVal) || phone.includes(searchVal) || file.includes(searchVal) || id.includes(searchVal) || service.includes(searchVal);
+                    });
+                }
+            }
+
             if (openRecords.length === 0) {
-                container.innerHTML = '<div style="text-align:center; padding:30px; color:var(--text-muted);">لا توجد حالات حالياً.</div>';
+                container.innerHTML = '<div style="text-align:center; padding:30px; color:var(--text-muted); font-size:1rem;">لا توجد نتائج أو حالات طابقت البحث 🎉</div>';
                 return;
             }
 
             const groupedMap = new Map();
+
             openRecords.forEach(record => {
                 const cleanPhone = (record.patientPhone && record.patientPhone !== '-') ? record.patientPhone.replace(/\D/g, '') : '';
                 const groupKey = (cleanPhone.length >= 8) ? cleanPhone : (record.patientName || '').trim().toLowerCase();
-                if (!groupedMap.has(groupKey)) groupedMap.set(groupKey, []);
+
+                if (!groupedMap.has(groupKey)) {
+                    groupedMap.set(groupKey, []);
+                }
                 groupedMap.get(groupKey).push(record);
             });
 
-            groupedMap.forEach((groupRecords) => {
-                const rec = groupRecords[0];
-                const allKeys = groupRecords.map(r => r.firebaseKey);
-                const isCopied = groupRecords.every(r => r.isCopied);
+            let consolidatedList = [];
 
+            groupedMap.forEach((groupRecords) => {
+                groupRecords.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+                const mainRecord = groupRecords[0];
+                const allKeys = groupRecords.map(r => r.firebaseKey);
+                const isRepeatedGroup = groupRecords.length > 1 || groupRecords.some(r => r.isRepeatedRequest);
+                const isCopiedGroup = groupRecords.every(r => r.isCopied);
+                const isPinnedGroup = groupRecords.some(r => r.isPinned);
+
+                const uniqueServices = [];
+                groupRecords.forEach(r => {
+                    const txt = (r.serviceRequired || '').trim();
+                    if (txt && !uniqueServices.includes(txt)) {
+                        uniqueServices.push(txt);
+                    }
+                });
+
+                const combinedServicesStr = uniqueServices.join(' / ');
+
+                consolidatedList.push({
+                    mainRecord: mainRecord,
+                    allKeys: allKeys,
+                    servicesCombined: combinedServicesStr,
+                    isRepeated: isRepeatedGroup,
+                    isCopied: isCopiedGroup,
+                    isPinned: isPinnedGroup,
+                    latestCreatedAt: mainRecord.createdAt
+                });
+            });
+
+            consolidatedList.sort((a, b) => {
+                if (a.isCopied !== b.isCopied) {
+                    return a.isCopied ? 1 : -1;
+                }
+                return new Date(b.latestCreatedAt) - new Date(a.latestCreatedAt);
+            });
+
+            consolidatedList.forEach((item, index) => {
                 const card = document.createElement('div');
+                const rec = item.mainRecord;
+                const isCopied = item.isCopied;
+                const isPinned = item.isPinned;
+
                 card.className = `client-card-wrapper ${isCopied && !isPinnedFilterActive ? 'is-copied' : ''}`;
+
+                const fileStr = (rec.fileNumber && rec.fileNumber !== '-') ? ` ${rec.fileNumber}` : '';
+                const idStr = (rec.idNumber && rec.idNumber !== '-') ? rec.idNumber : '';
+                const phoneStr = (rec.patientPhone && rec.patientPhone !== '-') ? rec.patientPhone : '-';
+                const serviceStr = item.servicesCombined || '-';
+                const dateTimeStr = formatDateTimeFullCustom(item.latestCreatedAt);
+                const keysJsonStr = JSON.stringify(item.allKeys).replace(/"/g, '&quot;');
+
+                const pinBtnHTML = `
+                    <button class="copied-btn" style="background-color: ${isPinned ? '#d97706' : '#475569'}; border-color: ${isPinned ? '#f59e0b' : '#64748b'}; color: #ffffff;" onclick="requestTogglePinRecord('${rec.firebaseKey}')" title="${isPinned ? 'إلغاء التثبيت من المميزين' : 'تثبيت في المميزين'}">
+                        📌 ${isPinned ? 'المميزون' : 'تثبيت'}
+                    </button>
+                `;
+
+                const copyBtnHTML = !isPinnedFilterActive ? `
+                    <button class="copied-btn ${isCopied ? 'active' : ''}" onclick="toggleCopiedStatusGroup(${keysJsonStr})">
+                        <i class="fa-solid ${isCopied ? 'fa-circle-check' : 'fa-check'}"></i> ${isCopied ? 'تم النسخ' : 'تعليم كمنسوخ'}
+                    </button>
+                ` : '';
+
                 card.innerHTML = `
                     <div class="client-card-header">
                         <div class="client-title">
-                            <input type="checkbox" class="client-select-chk" data-keys='${JSON.stringify(allKeys)}'>
-                            <span>${rec.patientName} (${rec.patientPhone})</span>
-                            <button class="copied-btn ${isCopied ? 'active' : ''}" onclick='toggleCopiedStatusGroup(${JSON.stringify(allKeys)})'>${isCopied ? 'تم النسخ' : 'تعليم كمنسوخ'}</button>
+                            <input type="checkbox" class="client-select-chk" data-keys="${keysJsonStr}">
+                            <span>${index + 1}-${rec.patientName}${fileStr}</span>
+                            <div style="display: flex; gap: 6px; align-items: center; flex-wrap: wrap;">
+                                ${pinBtnHTML}${copyBtnHTML}
+                            </div>
                         </div>
-                        <span class="client-datetime-badge">${formatDateTimeFullCustom(rec.createdAt)}</span>
+                        ${dateTimeStr ? `<span class="client-datetime-badge"><i class="fa-regular fa-clock"></i> ${dateTimeStr}</span>` : ''}
                     </div>
-                    <div class="client-info-row">${rec.serviceRequired}</div>
+                    <div class="client-info-row">
+                        <span class="info-label">رقم الجوال:</span> ${phoneStr}
+                    </div>
+                    ${idStr ? `<div class="client-info-row"><span class="info-label">رقم الهوية:</span> ${idStr}</div>` : ''}
+                    <div class="client-info-row">
+                        ${serviceStr}
+                    </div>
                     <div class="client-actions-row">
-                        <button class="btn-client-action delete-to-trash" onclick='hideClientGroupFromReport(${JSON.stringify(allKeys)})'>حذف</button>
+                        <button class="btn-client-action delete-to-trash" onclick="hideClientGroupFromReport(${keysJsonStr})">
+                            حذف
+                        </button>
+                        <button class="btn-client-action permanent-delete" onclick="permanentDeleteGroupFromReport(${keysJsonStr})">
+                            حذف نهائي
+                        </button>
                     </div>
                 `;
                 container.appendChild(card);
@@ -2616,26 +3166,160 @@
         }
 
         function copyClientReport() {
-            let openRecords = getOpenFilteredRecords().filter(r => !r.isCopied);
-            if (openRecords.length === 0) return alert('لا توجد حالات جديدة للنسخ!');
-            let reportText = '';
-            openRecords.forEach((item, idx) => {
-                reportText += `${idx + 1}- ${item.patientName}\nجوال: ${item.patientPhone}\n${item.serviceRequired}\n\n`;
+            let openRecords = getOpenFilteredRecords();
+            if (openRecords.length === 0) {
+                return alert('لا يوجد عملاء حالياً للنسخ!');
+            }
+
+            const groupedMap = new Map();
+            const recordsToCopy = isPinnedFilterActive ? openRecords : openRecords.filter(r => !r.isCopied);
+
+            recordsToCopy.forEach(record => {
+                const cleanPhone = (record.patientPhone && record.patientPhone !== '-') ? record.patientPhone.replace(/\D/g, '') : '';
+                const groupKey = (cleanPhone.length >= 8) ? cleanPhone : (record.patientName || '').trim().toLowerCase();
+
+                if (!groupedMap.has(groupKey)) {
+                    groupedMap.set(groupKey, []);
+                }
+                groupedMap.get(groupKey).push(record);
             });
-            navigator.clipboard.writeText(reportText.trim()).then(() => alert('تم النسخ بنجاح!'));
+
+            if (groupedMap.size === 0 && !isPinnedFilterActive) {
+                return alert('جميع العملاء الموجودين تم وضع علامة "تم النسخ" عليهم سابقاً!');
+            }
+
+            let reportText = ``;
+            let idx = 1;
+
+            groupedMap.forEach((groupRecords) => {
+                groupRecords.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                const item = groupRecords[0];
+
+                const fileStr = (item.fileNumber && item.fileNumber !== '-') ? ` ${item.fileNumber}` : '';
+                const idStr = (item.idNumber && item.idNumber !== '-') ? `رقم الهوية: ${item.idNumber}\n` : '';
+                const phoneStr = (item.patientPhone && item.patientPhone !== '-') ? item.patientPhone : '-';
+
+                const uniqueServices = [];
+                groupRecords.forEach(r => {
+                    const txt = (r.serviceRequired || '').trim();
+                    if (txt && !uniqueServices.includes(txt)) uniqueServices.push(txt);
+                });
+                const serviceStr = uniqueServices.join(' / ') || '-';
+
+                reportText += `${idx}- ${item.patientName}${fileStr}\nرقم الجوال: ${phoneStr}\n${idStr}${serviceStr}\n\n`;
+                idx++;
+            });
+
+            navigator.clipboard.writeText(reportText.trim()).then(() => alert(`تم نسخ (${groupedMap.size}) عميل بنجاح!`));
+        }
+
+        function requestDeleteSelectedAccess() {
+            const checkboxes = document.querySelectorAll('.client-select-chk:checked');
+            if (checkboxes.length === 0) {
+                return alert('يرجى اختيار عميل واحد على الأقل من الخانات المحددة!');
+            }
+            requireAdminAuth(() => {
+                if (confirm('هل أنت متأكد من الحذف النهائي للعملاء المحددين من النظام بالكامل؟')) {
+                    let keysToDelete = [];
+                    checkboxes.forEach(cb => {
+                        const attr = cb.getAttribute('data-keys');
+                        if (attr) {
+                            try {
+                                const parsed = JSON.parse(attr);
+                                keysToDelete = keysToDelete.concat(parsed);
+                            } catch(e) {}
+                        }
+                    });
+
+                    records = records.filter(r => !keysToDelete.includes(r.firebaseKey));
+                    saveLocal();
+                    renderTable();
+                    updateKPIs();
+                    updateDailyProgress();
+                    renderClientReport();
+                    renderTrashModalList();
+                    updatePinnedCountBadge();
+
+                    keysToDelete.forEach(k => {
+                        if (navigator.onLine && !k.startsWith('local_')) {
+                            dbRef.child(k).remove();
+                        }
+                    });
+                    alert('تم الحذف النهائي للمحددين بنجاح.');
+                }
+            });
+        }
+
+        function requestDeleteRangeAccess() {
+            requireAdminAuth(() => {
+                const filterDesc = clientHoursFilter === 'all' ? 'جميع الأوقات' : `آخر ${clientHoursFilter} ساعة`;
+                if (confirm(`⚠️ تحذير إدارة: هل أنت متأكد تماماً من رغبتك في حذف مسح الفترة (${filterDesc}) نهائياً من النظام؟`)) {
+                    executeDeleteClientsTimeRange();
+                }
+            });
+        }
+
+        function executeDeleteClientsTimeRange() {
+            const now = new Date();
+            let keysToDelete = [];
+
+            records = records.filter(r => {
+                let shouldDelete = false;
+                if (!r.isHiddenFromClients) {
+                    if (clientHoursFilter === 'all') {
+                        shouldDelete = true;
+                    } else {
+                        const diffHours = (now - new Date(r.createdAt)) / (1000 * 60 * 60);
+                        if (diffHours <= parseFloat(clientHoursFilter)) shouldDelete = true;
+                    }
+                }
+
+                if (shouldDelete && !r.firebaseKey.startsWith('local_')) {
+                    keysToDelete.push(r.firebaseKey);
+                }
+                return !shouldDelete;
+            });
+
+            saveLocal();
+            renderTable();
+            updateKPIs();
+            updateDailyProgress();
+            renderClientReport();
+            renderTrashModalList();
+            updatePinnedCountBadge();
+
+            keysToDelete.forEach(k => {
+                if (navigator.onLine) {
+                    dbRef.child(k).remove();
+                }
+            });
+            alert('تم مسح الحالات المحددة نهائياً بنجاح.');
         }
 
         function updateKPIs() {
             document.getElementById('kpi-total').innerText = records.length;
             document.getElementById('kpi-recurring').innerText = records.filter(r => r.isRecurring).length;
             document.getElementById('kpi-repeated').innerText = records.filter(r => r.isRepeatedRequest).length;
-            document.getElementById('kpi-plants').innerText = records.filter(r => r.procedureType?.includes('زراعة')).length;
-            document.getElementById('kpi-extractions').innerText = records.filter(r => r.procedureType?.includes('خلع')).length;
-            document.getElementById('kpi-reviews').innerText = records.filter(r => r.procedureType?.includes('مراجعه')).length;
+            document.getElementById('kpi-plants').innerText = records.filter(r => (r.procedureType && r.procedureType.includes('زراعة'))).length;
+            
+            const extractionsCount = records.filter(r => r.procedureType && r.procedureType.includes('خلع')).length;
+            const reviewsCount = records.filter(r => r.procedureType && r.procedureType.includes('مراجعه')).length;
+
+            const kExt = document.getElementById('kpi-extractions');
+            const kRev = document.getElementById('kpi-reviews');
+            if (kExt) kExt.innerText = extractionsCount;
+            if (kRev) kRev.innerText = reviewsCount;
         }
 
-        function formatDateOnly(iso) {
-            try { const d = new Date(iso); return `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}`; } catch(e) { return '-'; }
+        function formatDateOnly(isoString) {
+            if (!isoString) return '-';
+            try {
+                const d = new Date(isoString);
+                const day = String(d.getDate()).padStart(2, '0');
+                const month = String(d.getMonth() + 1).padStart(2, '0');
+                const year = d.getFullYear();
+                return `${day}/${month}/${year}`;
+            } catch (e) { return isoString; }
         }
 
         function filterTable() {
@@ -2645,38 +3329,51 @@
             });
         }
 
-        function openClearModal() { requireAdminAuth(() => document.getElementById('clearModal').classList.add('open')); }
+        function openClearModal() { 
+            requireAdminAuth(() => {
+                document.getElementById('clearModal').classList.add('open');
+            });
+        }
         function closeClearModal() { document.getElementById('clearModal').classList.remove('open'); }
-        function openPasswordModal() { requireAdminAuth(() => document.getElementById('passwordModal').classList.add('open')); }
+        
+        function openPasswordModal() { 
+            requireAdminAuth(() => {
+                document.getElementById('passwordModal').classList.add('open');
+            });
+        }
         function closePasswordModal() { document.getElementById('passwordModal').classList.remove('open'); }
-        function checkTrashAuthAndOpen() { requireAdminAuth(() => document.getElementById('trashModal').classList.add('open')); }
-        function closeTrashModal() { document.getElementById('trashModal').classList.remove('open'); }
 
         function updatePassword() {
             const oldP = document.getElementById('oldPassword').value;
             const newP = document.getElementById('newPassword').value;
             if (oldP === localStorage.getItem('adminPassword')) {
                 localStorage.setItem('adminPassword', newP);
-                alert('تم التغيير بنجاح');
+                alert('تم تغيير كلمة المرور بنجاح!');
                 closePasswordModal();
-            } else { alert('كلمة المرور خاطئة'); }
+            } else { alert('كلمة المرور الحالية خاطئة!'); }
         }
 
         function executeFilteredClear() {
-            if (document.getElementById('clearPasswordInput').value === localStorage.getItem('adminPassword')) {
+            const pass = document.getElementById('clearPasswordInput').value;
+            if (pass === localStorage.getItem('adminPassword')) {
                 records = [];
                 saveLocal();
                 renderTable();
                 updateKPIs();
+                updateDailyProgress();
+                renderClientReport();
+                renderTrashModalList();
+                updatePinnedCountBadge();
                 closeClearModal();
-            } else { alert('خطأ في كلمة المرور'); }
+                if (navigator.onLine) dbRef.set(null);
+            } else { alert('كلمة المرور غير صحيحة!'); }
         }
 
         function exportToExcel() {
-            const ws = XLSX.utils.json_to_sheet(records);
-            const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, "المواعيد");
-            XLSX.writeFile(wb, `Appointments_${new Date().toISOString().slice(0,10)}.xlsx`);
+            const worksheet = XLSX.utils.json_to_sheet(records);
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, "المواعيد");
+            XLSX.writeFile(workbook, `Appointments_${new Date().toISOString().slice(0,10)}.xlsx`);
         }
 
         function exportToJSON() {
@@ -2687,20 +3384,93 @@
         function importData(e) {
             const file = e.target.files[0];
             if (!file) return;
-            const reader = new FileReader();
-            reader.onload = function(evt) {
-                try {
-                    const imported = JSON.parse(evt.target.result);
-                    if (Array.isArray(imported)) {
-                        records = imported.concat(records);
-                        saveLocal();
-                        renderTable();
-                        updateKPIs();
-                        alert('تم الاستيراد بنجاح');
+            const fileName = file.name.toLowerCase();
+
+            if (fileName.endsWith('.json')) {
+                const reader = new FileReader();
+                reader.onload = function(evt) {
+                    try {
+                        const imported = JSON.parse(evt.target.result);
+                        if (Array.isArray(imported)) {
+                            imported.forEach(item => {
+                                delete item.firebaseKey;
+                                records.unshift(item);
+                                if (navigator.onLine) {
+                                    dbRef.push(item);
+                                }
+                            });
+                            saveLocal(); 
+                            renderTable(); 
+                            updateKPIs(); 
+                            updateDailyProgress(); 
+                            renderClientReport();
+                            renderTrashModalList();
+                            updatePinnedCountBadge();
+                            alert('تم استيراد وحفظ ملف JSON وسحابة Firebase بنجاح!');
+                        }
+                    } catch(err) { alert('خطأ في تحليل ملف الـ JSON'); }
+                };
+                reader.readAsText(file);
+            } else if (fileName.endsWith('.xlsx') || fileName.endsWith('.xls')) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        const data = new Uint8Array(e.target.result);
+                        const workbook = XLSX.read(data, { type: 'array' });
+                        const firstSheetName = workbook.SheetNames[0];
+                        const worksheet = workbook.Sheets[firstSheetName];
+                        const jsonSheetData = XLSX.utils.sheet_to_json(worksheet);
+
+                        if (Array.isArray(jsonSheetData) && jsonSheetData.length > 0) {
+                            jsonSheetData.forEach(row => {
+                                const formattedRow = {
+                                    patientName: row.patientName || row['اسم العميل'] || 'بدون اسم',
+                                    patientPhone: row.patientPhone || row['رقم الجوال'] || '-',
+                                    fileNumber: row.fileNumber || row['رقم الملف'] || '-',
+                                    idNumber: row.idNumber || row['رقم الهوية / الإقامة'] || '-',
+                                    branch: row.branch || row['الفرع'] || 'معشي',
+                                    procedureType: row.procedureType || row['نوع الإجراء'] || 'أخرى',
+                                    contactMethod: row.contactMethod || row['طريقة التواصل'] || 'اتصال',
+                                    serviceRequired: row.serviceRequired || row['الخدمة المطلوبة / تفاصيل المشكلة والطلب'] || '-',
+                                    coordinatorName: row.coordinatorName || row['اسم المنسق'] || 'مسؤول',
+                                    isRecurring: !!row.isRecurring,
+                                    isRepeatedRequest: !!row.isRepeatedRequest,
+                                    createdAt: row.createdAt || new Date().toISOString(),
+                                    actionTaken: '',
+                                    adminContactMethod: 'قيد الانتظار',
+                                    adminContactDetail: '',
+                                    isCopied: false,
+                                    isPinned: false,
+                                    isHiddenFromClients: false,
+                                    deletedAt: null
+                                };
+
+                                records.unshift(formattedRow);
+                                if (navigator.onLine) {
+                                    dbRef.push(formattedRow);
+                                }
+                            });
+
+                            saveLocal();
+                            renderTable();
+                            updateKPIs();
+                            updateDailyProgress();
+                            renderClientReport();
+                            renderTrashModalList();
+                            updatePinnedCountBadge();
+                            alert('تم استيراد وحفظ ملف الـ Excel وسحابة Firebase بنجاح!');
+                        } else {
+                            alert('ملف الـ Excel فارغ أو لا يحتوي على بيانات مطابقة.');
+                        }
+                    } catch (err) {
+                        alert('حدث خطأ أثناء قراءة ملف الـ Excel. تأكد من أنه ملف صالح تم تصديره من نفس النظام.');
                     }
-                } catch(err) { alert('خطأ في ملف الاستيراد'); }
-            };
-            reader.readAsText(file);
+                };
+                reader.readAsArrayBuffer(e.target.result);
+            } else {
+                alert('نوع الملف غير مدعوم. يرجى اختيار ملف JSON أو Excel صالح.');
+            }
+            e.target.value = false;
         }
     </script>
 </body>
